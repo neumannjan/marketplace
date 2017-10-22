@@ -1,0 +1,30 @@
+version: '3'
+services:
+  web:
+    image: webdevops/php-apache-dev:7.1
+    depends_on:
+      - db
+    links:
+      - db
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - .:/app
+    environment:
+      PHP_DEBUGGER: xdebug
+      PHP_DISPLAY_ERRORS: 1
+      XDEBUG_REMOTE_AUTOSTART: 0
+      XDEBUG_REMOTE_HOST: 172.19.0.1
+      WEB_DOCUMENT_ROOT: "/app"
+  db:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - "3307:3306"
+    volumes:
+      - databasevol:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+volumes:
+  databasevol:

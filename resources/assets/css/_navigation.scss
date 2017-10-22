@@ -1,0 +1,25 @@
+.navbar-vertical {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: $v-nav-width;
+  flex-direction: column;
+
+  .navbar-brand {
+    margin-right: 0;
+    margin-bottom: $navbar-padding-x;
+  }
+
+  .navbar-nav {
+    flex-direction: column;
+  }
+
+  .fa {
+    font-size: $v-nav-icon-size;
+  }
+}
+
+.main-content {
+  margin-left: $v-nav-width;
+}

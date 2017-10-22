@@ -1,0 +1,35 @@
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  position: relative;
+  flex-grow: 1;
+}
+
+.main {
+  /* Margin bottom by footer height */
+  margin-bottom: $footer-height;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: $footer-height;
+  //line-height: $footer-height; /* Vertically center the text there */
+  background-color: $footer-background;
+  color: $footer-color;
+
+  .footer-inner {
+    @extend .container, .d-flex, .align-items-center;
+    height: 100%;
+  }
+}

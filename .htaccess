@@ -1,0 +1,8 @@
+# prevent directory listings
+Options -Indexes
+# follow symbolic links
+Options FollowSymlinks
+RewriteEngine on
+
+RewriteCond %{REQUEST_URI} ^.*$
+RewriteRule ^(.*)$ /public/$1
