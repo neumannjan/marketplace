@@ -13,9 +13,9 @@ return [
     |
     */
 
-    'failed' => 'These credentials do not match our records.',
-    'inactive' => 'This user has not yet been activated.',
-    'banned' => 'This user has been banned.',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
+    'failed' => 'Tyto přihlašovací údaje neodpovídají našim záznamům.',
+    'inactive' => 'Tento uživatel zatím nebyl aktivován.',
+    'banned' => 'Tento uživatel byl zablokován.',
+    'throttle' => 'Příliš mnoho pokusů o přihlášení. Zkuste to prosím znovu za :seconds vteřin.',
 
 ];

@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Rules\Slug;
 use App\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
@@ -23,13 +26,6 @@ class RegisterController extends Controller
     use RegistersUsers;
 
     /**
-     * Where to redirect users after registration.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/home';
-
-    /**
      * Create a new controller instance.
      *
      * @return void
@@ -43,14 +39,15 @@ class RegisterController extends Controller
      * Get a validator for an incoming registration request.
      *
      * @param  array $data
-     * @return \Illuminate\Contracts\Validation\Validator
+     * @return \Illuminate\Validation\Validator
      */
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required|string|max:255',
+            'username' => ['required', 'string', 'min:5', 'max:255', 'unique:users', new Slug()],
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:8|confirmed|letters|numbers',
+            'display_name' => 'nullable|string|max:128'
         ]);
     }
 
@@ -63,9 +60,42 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         return User::create([
-            'name' => $data['name'],
+            'username' => $data['username'],
             'email' => $data['email'],
-            'password' => bcrypt($data['password']),
+            'password' => \Hash::make($data['password']),
+            'display_name' => $data['display_name'],
+            'status' => User::STATUS_INACTIVE
         ]);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        event(new Registered($user = $this->create($request->all())));
+
+        // do not login
+
+        return $this->registered($request, $user);
+    }
+
+    /**
+     * @param User $user
+     * @inheritDoc
+     */
+    protected function registered(Request $request, $user)
+    {
+        //TODO send email
+        //TODO only if set
+        $user->sendRegistrationActivateNotification();
+
+        return redirect()->route('index')->with('success.register', __('flash.success.register', [
+            'email' => $user->email
+        ]));
+    }
+
+
 }
