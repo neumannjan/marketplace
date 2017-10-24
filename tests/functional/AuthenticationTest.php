@@ -247,4 +247,15 @@ class AuthenticationTest extends \Codeception\Test\Unit
         $i->amOnRoute('index');
         $i->dontSeeAuthentication();
     }
+
+    public function testBannedUserSessionExpirationImmediate()
+    {
+        $i = $this->tester;
+
+        $user = $this->_register(\App\User::STATUS_BANNED);
+
+        $i->amLoggedAs($user);
+        $i->amOnRoute('index');
+        $i->dontSeeAuthentication();
+    }
 }

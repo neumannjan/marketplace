@@ -16,9 +16,9 @@ class User extends Authenticatable
 
     const ACTIVATION_TOKEN_LENGTH = 32;
 
-    const STATUS_INACTIVE = 'inactive';
-    const STATUS_ACTIVE = 'active';
-    const STATUS_BANNED = 'banned';
+    const STATUS_INACTIVE = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUS_BANNED = 2;
 
     /**
      * The attributes that are mass assignable.
