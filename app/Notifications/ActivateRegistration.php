@@ -28,7 +28,10 @@ class ActivateRegistration extends LocalizedMailNotification
             ->subject($this->__('greeting'))
             ->greeting($this->__('greeting'))
             ->line($this->__('line1'))
-            ->action($this->__('action'), url(route('user.activate', $this->token)))
+            ->action($this->__('action'), url(route('user.activate', [
+                'token' => $this->token,
+                'username' => $this->username
+            ])))
             ->line($this->__('line2'))
             ->line($this->__('line3'));
     }

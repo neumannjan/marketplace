@@ -8,7 +8,7 @@
                     <div class="panel-heading">Register</div> {{-- TODO translate --}}
 
                     <div class="panel-body">
-                        <form class="form-horizontal" method="POST" action="{{ route('register') }}">
+                        <form id="form-register" class="form-horizontal" method="POST" action="{{ route('register') }}">
                             {{ csrf_field() }}
 
                             @component('components.input', ['id' => 'username', 'type' => 'text', 'required' => true, 'autofocus' => true])
