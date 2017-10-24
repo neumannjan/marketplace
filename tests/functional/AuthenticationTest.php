@@ -158,7 +158,7 @@ class AuthenticationTest extends \Codeception\Test\Unit
         ]);
 
         $i->seeResponseCodeIs(200);
-        $i->amLoggedAs($user);
+        $i->seeAuthentication();
     }
 
     public function testUserLoginWithEmail()
@@ -174,7 +174,7 @@ class AuthenticationTest extends \Codeception\Test\Unit
         ]);
 
         $i->seeResponseCodeIs(200);
-        $i->amLoggedAs($user);
+        $i->seeAuthentication();
     }
 
     public function testUserLoginWrongCredentials()
@@ -227,6 +227,24 @@ class AuthenticationTest extends \Codeception\Test\Unit
         $i->seeResponseCodeIs(200);
         $i->seeCurrentRouteIs('login');
         $i->see(__('auth.banned'));
+        $i->dontSeeAuthentication();
+    }
+
+    public function testBannedUserSessionExpiration()
+    {
+        $i = $this->tester;
+
+        $user = $this->_register();
+
+        $i->amLoggedAs($user);
+        $i->amOnRoute('index');
+
+        $user->status = \App\User::STATUS_BANNED;
+        $user->save();
+
+        $i->seeAuthentication();
+
+        $i->amOnRoute('index');
         $i->dontSeeAuthentication();
     }
 }

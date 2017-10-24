@@ -24,7 +24,7 @@ class CreateUsersTable extends Migration
             $table->string('activation_token');
             $table->string('display_name')->nullable();
             $table->string('options')->nullable();
-            $table->enum('status', ['inactive', 'active', 'banned']);
+            $table->enum('status', ['inactive', 'active', 'banned']); //TODO replace enum with tinyint
             $table->rememberToken();
             $table->timestamps();
 
