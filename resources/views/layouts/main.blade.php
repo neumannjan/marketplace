@@ -9,7 +9,7 @@
 @endpush
 
 @section('body')
-    <div class="wrapper" id="wrapper">
+    <div class="wrapper" id="app">
         <div class="navbar navbar-expand navbar-dark bg-dark navbar-vertical">
             <a class="navbar-brand" href="#">Nav</a>
             @component('components.nav', [

@@ -11,5 +11,9 @@ let mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/assets/js/app.jsx', 'public/js')
-    .sass('resources/assets/css/app.scss', 'public/css');
+mix
+    .autoload({}) //disable autoload of jquery, which we do not use and therefore do not need
+    .js('resources/assets/js/app.jsx', 'public/js')
+    .sass('resources/assets/css/app.scss', 'public/css')
+    .sourceMaps()
+    .version();
