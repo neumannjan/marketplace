@@ -7,9 +7,13 @@ use App\Api\ByeRequest;
 use App\Api\HelloRequest;
 use App\Api\Request\Request as ApiRequest;
 use App\Api\Response\CompositeResponse;
+use App\Api\Response\Response as ApiResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+/**
+ * Controller for the internal API that is used exclusively by the frontend.
+ */
 class InternApiController extends Controller
 {
     private $requests;
@@ -33,18 +37,22 @@ class InternApiController extends Controller
         if ($data != null) {
             foreach ($data as $requestName => $parameters) {
 
-                $class = $this->requests[$requestName];
+                if (isset($this->requests[$requestName])) {
+                    $class = $this->requests[$requestName];
 
-                /** @var ApiRequest $request */
-                $request = new $class();
+                    /** @var ApiRequest $request */
+                    $request = new $class();
 
-                if ($parameters instanceof \stdClass) {
-                    $parameters = (array)$parameters;
-                } elseif ($parameters !== (array)$parameters) {
-                    $parameters = [];
+                    if ($parameters instanceof \stdClass) {
+                        $parameters = (array)$parameters;
+                    } elseif ($parameters !== (array)$parameters) {
+                        $parameters = [];
+                    }
+
+                    $responses[] = $request->resolve($requestName, $parameters);
+                } else {
+                    $responses[] = new ApiResponse($requestName, false, "Unknown request.");
                 }
-
-                $responses[] = $request->resolve($requestName, $parameters);
             }
         }
 

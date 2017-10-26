@@ -5,6 +5,9 @@ namespace App\Http\Middleware;
 use App\User;
 use Closure;
 
+/**
+ * Middleware that logs out users that are inactive or banned.
+ */
 class LogoutUserIfNotActive
 {
     /**

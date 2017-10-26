@@ -5,6 +5,10 @@ namespace App\Rules;
 use http\Exception\RuntimeException;
 use Illuminate\Contracts\Validation\Rule;
 
+/**
+ * Validation rule that asserts that the value consists
+ * only of letters, numbers, dashes and underscores.
+ */
 class Slug implements Rule
 {
     /**

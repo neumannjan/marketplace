@@ -5,6 +5,10 @@ namespace App\Notifications;
 
 use Illuminate\Notifications\Messages\MailMessage;
 
+/**
+ * Mail {@see Notification notification} that informs users of their new account and allows
+ * them to activate it.
+ */
 class ActivateRegistration extends LocalizedMailNotification
 {
     public $token, $username, $email;

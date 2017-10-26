@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+/**
+ * Controller for the application frontend
+ */
 class AppController extends Controller
 {
     /**

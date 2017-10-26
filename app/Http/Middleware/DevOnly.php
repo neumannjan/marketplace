@@ -4,6 +4,9 @@ namespace App\Http\Middleware;
 
 use Closure;
 
+/**
+ * Middleware that allows access only if the app is in development.
+ */
 class DevOnly
 {
     /**

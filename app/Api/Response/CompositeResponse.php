@@ -2,7 +2,10 @@
 
 namespace App\Api\Response;
 
-
+/**
+ * API Response that is able to combine multiple {@see \App\Api\Response\Response Responses} into one.
+ * @see \App\Api\Response\ResponseInterface
+ */
 class CompositeResponse implements ResponseInterface
 {
     /** @var Response[] */

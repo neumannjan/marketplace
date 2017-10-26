@@ -6,6 +6,9 @@ use App\Observers\UserObserver;
 use App\User;
 use Illuminate\Support\ServiceProvider;
 
+/**
+ * Defines observers of model classes.
+ */
 class DatabaseServiceProvider extends ServiceProvider
 {
     /**

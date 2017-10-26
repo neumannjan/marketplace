@@ -5,6 +5,9 @@ namespace App\Observers;
 
 use App\User;
 
+/**
+ * Events for the {@see \App\User User} model
+ */
 class UserObserver
 {
     public function creating(User $user)

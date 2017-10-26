@@ -6,6 +6,10 @@ namespace App\Api\Response;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 
+/**
+ * API Response class.
+ * @see \App\Api\Response\ResponseInterface
+ */
 class Response implements ResponseInterface
 {
     /** @var string */
@@ -30,7 +34,7 @@ class Response implements ResponseInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     final function getName()
     {
@@ -38,7 +42,7 @@ class Response implements ResponseInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getAsArray()
     {
@@ -59,8 +63,7 @@ class Response implements ResponseInterface
     }
 
     /**
-     * @param int $options
-     * @return string
+     * @inheritdoc
      */
     public function getAsJson($options = 0)
     {

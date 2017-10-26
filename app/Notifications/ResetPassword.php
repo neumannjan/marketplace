@@ -4,6 +4,9 @@ namespace App\Notifications;
 
 use Illuminate\Notifications\Messages\MailMessage;
 
+/**
+ * Mail {@see Notification notification} that allows users to reset their password.
+ */
 class ResetPassword extends LocalizedMailNotification
 {
     /**

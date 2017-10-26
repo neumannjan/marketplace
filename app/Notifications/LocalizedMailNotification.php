@@ -6,6 +6,9 @@ namespace App\Notifications;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
+/**
+ * Mail {@see Notification notification} class that simplifies internationalization of the contents.
+ */
 abstract class LocalizedMailNotification extends Notification
 {
 

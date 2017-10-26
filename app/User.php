@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /**
- * App\User
+ * User model. Manages users in the database.
  */
 class User extends Authenticatable
 {
