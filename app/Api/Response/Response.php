@@ -44,7 +44,7 @@ class Response implements ResponseInterface
     /**
      * @inheritdoc
      */
-    public function getAsArray()
+    public function toArray()
     {
         $raw = $this->content;
 
@@ -65,7 +65,7 @@ class Response implements ResponseInterface
     /**
      * @inheritdoc
      */
-    public function getAsJson($options = 0)
+    public function toJson($options = 0)
     {
         $raw = $this->content;
 

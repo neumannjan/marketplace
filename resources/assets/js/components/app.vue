@@ -4,19 +4,20 @@
             <a class="navbar-brand" href="#">Nav</a>
             <side-nav class="navbar-nav" :items="[
                 {
-                    name: 'index',
                     label: 'Dashboard',
-                    icon: 'fa fa-home'
+                    icon: 'fa fa-home',
+                    route: 'index'
                 },
                 {
-                    name: 'user',
                     label: 'Admin',
+                    icon: 'fa fa-cog',
+                    route: 'user',
                     params: {
                         name: 'admin'
-                    },
-                    icon: 'fa fa-cog'
+                    }
                 }
             ]"></side-nav>
+            <user-nav class="navbar-nav mt-auto"></user-nav>
         </div>
         <div class="main-content">
             <main role="main" class="main container">
@@ -34,10 +35,12 @@
 
 <script>
     import NavComponent from './widgets/nav.vue';
+    import UserNavComponent from './widgets/user-nav.vue';
 
     export default {
         components: {
-            'side-nav': NavComponent
+            'side-nav': NavComponent,
+            'user-nav': UserNavComponent,
         }
     };
 </script>

@@ -41,7 +41,7 @@
                 } else {
                     $links = [
                         [
-                            'icon' => "fa fa-sign-in",
+                            'icon' => "fa fa-sign-out",
                             'name' => "Log out",
                             'route' => "logout",
                             'onclick' => "event.preventDefault();document.getElementById('logout-form').submit();"

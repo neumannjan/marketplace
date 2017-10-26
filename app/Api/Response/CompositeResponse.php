@@ -27,26 +27,32 @@ class CompositeResponse implements ResponseInterface
         return null;
     }
 
-    public function getAsArray()
+    /**
+     * @inheritdoc
+     */
+    public function toArray()
     {
         $result = [];
 
         foreach ($this->responses as $response) {
-            $r = $response->getAsArray();
+            $r = $response->toArray();
             $result[$response->getName()] = array_first($r);
         }
 
         return $result;
     }
 
-    public function getAsJson($options = 0)
+    /**
+     * @inheritdoc
+     */
+    public function toJson($options = 0)
     {
         $result = null;
 
         if ($this->responses != null) {
             $first = true;
             foreach ($this->responses as $response) {
-                $r = substr($response->getAsJson($options), 1, -1);
+                $r = substr($response->toJson($options), 1, -1);
 
                 if ($first) {
                     $result = '{' . $r;
@@ -60,6 +66,6 @@ class CompositeResponse implements ResponseInterface
             return $result . '}';
         }
 
-        return '{}';
+        return json_encode(new \stdClass());
     }
 }

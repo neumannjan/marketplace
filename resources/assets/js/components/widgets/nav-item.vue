@@ -1,19 +1,26 @@
 <template>
     <li :class="['nav-item', {active: this.active}]">
-        <router-link class="nav-link" :to="route" :aria-label="labelFull">
+        <router-link v-if="isToRoute" class="nav-link" :to="routeDefinition" :aria-label="labelFull">
             <i v-if="icon" :class="[icon]" aria-hidden="true"></i>
             <template v-else>
                 {{ label }}
                 <span class="sr-only">&nbsp;(current)</span> <!-- TODO translate the "current" word -->
             </template>
         </router-link>
+        <a v-else="" href="#" class="nav-link" @click="callback">
+            <i v-if="icon" :class="[icon]" aria-hidden="true"></i>
+            <template v-else>
+                {{ label }}
+                <span class="sr-only">&nbsp;(current)</span> <!-- TODO translate the "current" word -->
+            </template>
+        </a>
     </li>
 </template>
 
 <script>
     export default {
         props: {
-            name: {
+            route: {
                 type: String
             },
             path: {
@@ -28,21 +35,25 @@
             },
             icon: {
                 type: String
-            }
+            },
+            callback: {}
         },
         computed: {
             active() {
-                return this.name === this.$route.name || this.path === this.$route.path;
+                return this.route === this.$route.name || this.path === this.$route.path;
             },
             labelFull() {
                 return this.label + (this.active ? ' (current)' : ''); // TODO translate the "current" word
             },
-            route() {
-                if (this.name) {
-                    return {name: this.name, params: this.params};
+            routeDefinition() {
+                if (this.route) {
+                    return {name: this.route, params: this.params};
                 } else {
                     return {path: this.path};
                 }
+            },
+            isToRoute() {
+                return this.route || this.path;
             }
         },
     };

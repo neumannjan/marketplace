@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 
 use App\Api\ByeRequest;
 use App\Api\HelloRequest;
+use App\Api\LogoutRequest;
 use App\Api\Request\Request as ApiRequest;
 use App\Api\Response\CompositeResponse;
 use App\Api\Response\Response as ApiResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Controller for the internal API that is used exclusively by the frontend.
@@ -25,7 +26,8 @@ class InternApiController extends Controller
     {
         $this->requests = [
             'hello' => HelloRequest::class,
-            'bye' => ByeRequest::class
+            'bye' => ByeRequest::class,
+            'logout' => LogoutRequest::class,
         ];
     }
 
@@ -58,6 +60,6 @@ class InternApiController extends Controller
 
         $compositeResponse = new CompositeResponse($responses);
 
-        return new JsonResponse($compositeResponse->getAsJson(), 200, [], true);
+        return new JsonResponse($compositeResponse);
     }
 }
