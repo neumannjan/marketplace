@@ -8,36 +8,86 @@ let config = () => ({
     }
 });
 
+/**
+ * Request object base
+ * @param params Request parameters
+ * @param thenCallback Callback for what to do with the result
+ * @constructor
+ */
 let Request = (params, thenCallback) => ({
-    fire() {
+    fire(includeGlobal = true) {
+        let _params = params;
+
+        if (includeGlobal)
+            _params['global'] = {};
+
         let data = {
-            api: JSON.stringify(params)
+            api: JSON.stringify(_params)
         };
 
-        axios.post('/api', data, config()).then(thenCallback);
+        let _then = response => {
+            if (includeGlobal) {
+                let global = response.data['global'].result;
+                store.commit('merge', global);
+            }
+
+            thenCallback(response);
+        };
+
+        axios.post('/api', data, config()).then(_then);
     }
 });
 
+/**
+ * A single request for the API
+ * @param name Request name
+ * @param params Request parameters
+ * @constructor
+ */
 let SingleRequest = (name, params) => {
-    let successCallback = null;
-    let errorCallback = null;
+    let successCallbacks = [];
+    let errorCallbacks = [];
+    let thenCallbacks = [];
 
+    /**
+     * Define a callback for what to do when the request results with a success
+     * @param callback
+     * @returns {SingleRequest} this, for chaining
+     */
     function success(callback) {
-        successCallback = callback;
+        successCallbacks.push(callback);
         return this;
     }
 
+    /**
+     * Define a callback for what to do when the request results with an error
+     * @param callback
+     * @returns {SingleRequest} this, for chaining
+     */
     function error(callback) {
-        errorCallback = callback;
+        errorCallbacks.push(callback);
+        return this;
+    }
+
+    /**
+     * Define a callback for what to do after the whole API call is made
+     * @param callback
+     * @returns {SingleRequest} this, for chaining
+     */
+    function then(callback) {
+        thenCallbacks.push(callback);
         return this;
     }
 
     let _then = (response) => {
         let data = response.data[name];
-        let callback = data.success ? successCallback : errorCallback;
+        let callbacks = data.success ? successCallbacks : errorCallbacks;
 
-        if (callback)
-            callback(data.result);
+        for (let c of callbacks)
+            c(data.result);
+
+        for (let c of thenCallbacks)
+            c(response.data);
     };
 
     if (!params)
@@ -52,19 +102,30 @@ let SingleRequest = (name, params) => {
         ...request,
         success: success,
         error: error,
+        then: then,
         getName: () => name,
         getParams: () => params,
-        getSuccessCallback: () => successCallback,
-        getErrorCallback: () => errorCallback,
+        getSuccessCallbacks: () => successCallbacks,
+        getErrorCallbacks: () => errorCallbacks,
+        getThenCallbacks: () => thenCallbacks,
     };
 };
 
+/**
+ * A combination of requests executed with a single API call
+ * @constructor
+ */
 let CompositeRequest = () => {
     let requests = [];
     let params = {};
-    let thenCallback = null;
-    let errorCallback = null;
+    let thenCallbacks = [];
+    let errorCallbacks = [];
 
+    /**
+     * Add a single request to this composite request
+     * @param {SingleRequest} request
+     * @returns {CompositeRequest} this, for chaining
+     */
     function ask(request) {
         requests.push(request);
         params[request.getName()] = request.getParams();
@@ -72,15 +133,23 @@ let CompositeRequest = () => {
         return this;
     }
 
+    /**
+     * Define a callback for what to do after the whole API call is made
+     * @param callback
+     * @returns {CompositeRequest} this, for chaining
+     */
     function then(callback) {
-        thenCallback = callback;
-
+        thenCallbacks.push(callback);
         return this;
     }
 
+    /**
+     * Define an error callback that will be called individually for every request that returns an error.
+     * @param callback
+     * @returns {CompositeRequest} this, for chaining
+     */
     function error(callback) {
-        errorCallback = callback;
-
+        errorCallbacks.push(callback);
         return this;
     }
 
@@ -88,17 +157,23 @@ let CompositeRequest = () => {
         for (let request of requests) {
             let name = request.getName();
             let data = response.data[name];
-            let callback = data.success ? request.getSuccessCallback() : request.getErrorCallback();
+            let callbacks = data.success ? request.getSuccessCallbacks() : request.getErrorCallbacks();
+            let childThenCallbacks = request.getThenCallbacks();
 
-            if (callback)
-                callback(data.result);
+            for (let c of callbacks)
+                c(data.result);
 
-            if (!data.success && errorCallback)
-                errorCallback(name, data.result);
+            if (!data.success) {
+                for (let c of errorCallbacks)
+                    c(name, data.result);
+            }
+
+            for (let c of childThenCallbacks)
+                c(response.data);
         }
 
-        if (thenCallback)
-            thenCallback()
+        for (let c of thenCallbacks)
+            c(response.data);
     };
 
     let request = Request(params, _then);
@@ -111,7 +186,6 @@ let CompositeRequest = () => {
     };
 };
 
-// default function
 export default {
     CompositeRequest: CompositeRequest,
     SingleRequest: SingleRequest

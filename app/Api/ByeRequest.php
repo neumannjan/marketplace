@@ -4,6 +4,7 @@ namespace App\Api;
 
 
 use App\Api\Request\Request;
+use App\Api\Response\Response;
 
 class ByeRequest extends Request
 {
@@ -20,11 +21,11 @@ class ByeRequest extends Request
     /**
      * @inheritDoc
      */
-    protected function doResolve($parameters)
+    protected function doResolve($name, $parameters)
     {
-        $name = $parameters['name'];
-        return [
-            'message' => "Bye $name!"
-        ];
+        $n = $parameters['name'];
+        return new Response($name, true, [
+            'message' => "Bye $n!"
+        ]);
     }
 }

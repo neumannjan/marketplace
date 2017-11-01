@@ -7,7 +7,7 @@
                 <span class="sr-only">&nbsp;(current)</span> <!-- TODO translate the "current" word -->
             </template>
         </router-link>
-        <a v-else="" href="#" class="nav-link" @click="callback">
+        <a v-else="" href="#" class="nav-link" @click.prevent="callback">
             <i v-if="icon" :class="[icon]" aria-hidden="true"></i>
             <template v-else>
                 {{ label }}

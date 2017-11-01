@@ -4,6 +4,7 @@ namespace App\Api;
 
 
 use App\Api\Request\Request;
+use App\Api\Response\Response;
 
 class LogoutRequest extends Request
 {
@@ -11,16 +12,12 @@ class LogoutRequest extends Request
     /**
      * @inheritDoc
      */
-    protected function doResolve($parameters)
+    protected function doResolve($name, $parameters)
     {
         \Auth::logout();
 
-        //TODO are these lines (and token passing) necessary ?
         \Session::invalidate();
-        \Session::regenerateToken();
 
-        return [
-            'token' => csrf_token()
-        ];
+        return new Response($name, true, []);
     }
 }

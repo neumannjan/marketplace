@@ -33,13 +33,13 @@ abstract class Request
 
     /**
      * This function is called only when all validation passed.
-     * Can return anything that can be serialized.
+     * Should return a Response.
      *
-     * @throws ResolveException On any failure.
+     * @param string $name
      * @param array $parameters
-     * @return mixed
+     * @return Response
      */
-    protected abstract function doResolve($parameters);
+    protected abstract function doResolve($name, $parameters);
 
     /**
      * Call this to resolve the request and get a Response instance
@@ -48,7 +48,7 @@ abstract class Request
      * @param array $parameters
      * @return Response
      */
-    public function resolve($name, $parameters)
+    public final function resolve($name, $parameters)
     {
 
         if (($errorMsg = $this->shouldResolve()) !== true) {
@@ -61,11 +61,6 @@ abstract class Request
             return new Response($name, false, $validator->errors());
         }
 
-        try {
-            $result = $this->doResolve($parameters);
-            return new Response($name, true, $result);
-        } catch (ResolveException $e) {
-            return new Response($name, false, $e->getMessage());
-        }
+        return $this->doResolve($name, $parameters);
     }
 }

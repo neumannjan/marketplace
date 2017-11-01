@@ -8,7 +8,7 @@ Vue.use(Vuex);
 let store = new Vuex.Store({
     state: {
         is_authenticated: false,
-        token: false
+        token: false,
     },
     modules: {},
     mutations: {
@@ -34,9 +34,8 @@ let store = new Vuex.Store({
     actions: {
         logout(context) {
             api.SingleRequest('logout')
-                .success((result) => {
+                .success(() => {
                     context.commit('logout');
-                    context.commit('token', result.token);
                 })
                 .fire();
         }

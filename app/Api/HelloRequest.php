@@ -4,6 +4,7 @@ namespace App\Api;
 
 
 use App\Api\Request\Request;
+use App\Api\Response\Response;
 
 class HelloRequest extends Request
 {
@@ -20,11 +21,11 @@ class HelloRequest extends Request
     /**
      * @inheritDoc
      */
-    protected function doResolve($parameters)
+    protected function doResolve($name, $parameters)
     {
-        $name = $parameters['name'];
-        return [
-            'message' => "Hello $name!"
-        ];
+        $n = $parameters['name'];
+        return new Response($name, true, [
+            'message' => "Hello $n!"
+        ]);
     }
 }

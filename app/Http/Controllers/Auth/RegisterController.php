@@ -88,8 +88,7 @@ class RegisterController extends Controller
      */
     protected function registered(Request $request, $user)
     {
-        //TODO send email
-        //TODO only if set
+        //TODO send only if set
         $user->sendRegistrationActivateNotification();
 
         return redirect()->route('index')->with('success.register', __('flash.success.register', [

@@ -2,22 +2,8 @@
     <div class="wrapper">
         <div class="navbar navbar-expand navbar-dark bg-dark navbar-vertical">
             <a class="navbar-brand" href="#">Nav</a>
-            <side-nav class="navbar-nav" :items="[
-                {
-                    label: 'Dashboard',
-                    icon: 'fa fa-home',
-                    route: 'index'
-                },
-                {
-                    label: 'Admin',
-                    icon: 'fa fa-cog',
-                    route: 'user',
-                    params: {
-                        name: 'admin'
-                    }
-                }
-            ]"></side-nav>
-            <user-nav class="navbar-nav mt-auto"></user-nav>
+            <top-nav class="navbar-nav"></top-nav>
+            <bottom-nav class="navbar-nav mt-auto"></bottom-nav>
         </div>
         <div class="main-content">
             <main role="main" class="main container">
@@ -34,13 +20,13 @@
 </template>
 
 <script>
-    import NavComponent from './widgets/nav.vue';
-    import UserNavComponent from './widgets/user-nav.vue';
+    import TopNavComponent from './widgets/nav/top-nav.vue';
+    import BottomNavComponent from './widgets/nav/bottom-nav.vue';
 
     export default {
         components: {
-            'side-nav': NavComponent,
-            'user-nav': UserNavComponent,
+            'top-nav': TopNavComponent,
+            'bottom-nav': BottomNavComponent,
         }
     };
 </script>

@@ -5,8 +5,7 @@
 <script>
     import NavComponent from './nav.vue';
     import {mapState} from 'vuex';
-    import store from '../../store/store';
-    import Api from '../../api';
+    import store from '../../../store/store';
 
     let guestItems = [
         {

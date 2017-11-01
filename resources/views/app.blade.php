@@ -11,10 +11,7 @@
 @push('meta')
     <script type="text/javascript">
                 @php
-                    $data = [
-                        'token' => csrf_token(),
-                        'is_authenticated' => Auth::check()
-                    ];
+                    $data = \App\Api\GlobalRequest::get();
 
                     /**
                      * Base64 is used here to obfuscate the result, so that noobs don't think they are

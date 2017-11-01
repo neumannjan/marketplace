@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 
 use App\Api\ByeRequest;
+use App\Api\GlobalRequest;
 use App\Api\HelloRequest;
+use App\Api\LoginRequest;
 use App\Api\LogoutRequest;
 use App\Api\Request\Request as ApiRequest;
 use App\Api\Response\CompositeResponse;
@@ -25,15 +27,17 @@ class InternApiController extends Controller
     public function __construct()
     {
         $this->requests = [
-            'hello' => HelloRequest::class,
-            'bye' => ByeRequest::class,
+            'global' => GlobalRequest::class,
+            'login' => LoginRequest::class,
             'logout' => LogoutRequest::class,
+            'hello' => HelloRequest::class, //TODO remove
+            'bye' => ByeRequest::class,
         ];
     }
 
     public function index(Request $request)
     {
-        $data = json_decode($request->input("api"));
+        $data = json_decode($request->input("api"), true);
 
         $responses = [];
         if ($data != null) {
