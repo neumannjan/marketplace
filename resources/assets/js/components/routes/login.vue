@@ -42,7 +42,9 @@
         }),
         methods: {
             submit() {
-                this.$v.$touch();
+                //TODO make sure that we can call the api when the only invalid is the api
+                //TODO messages
+                this.$v.$reset();
                 if (!this.$v.$invalid) {
                     this.$apiCall(Api.SingleRequest('login', this.form))
                         .then(() => this.$v.$touch())

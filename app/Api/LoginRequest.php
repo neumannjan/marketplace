@@ -11,7 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 /**
- * TODO work in progress. I might actually have to use regular Laravel request/response classes
+ * TODO add documentation
+ * TODO make request handle ValidationException and revert to it where possible (sendLockoutResponse will go away completely)
  */
 class LoginRequest extends ApiRequest
 {
@@ -146,8 +147,19 @@ class LoginRequest extends ApiRequest
     /**
      * @inheritDoc
      */
-    protected function authenticated(Request $request, $user)
+    protected function attemptLogin(Request $request)
     {
+        return $this->guard()->attempt($this->credentials($request), $this->remember);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function sendLoginResponse(Request $request)
+    {
+        $request->session()->regenerate();
+        $this->clearLoginAttempts($request);
+
         return [];
     }
 
