@@ -2,9 +2,12 @@
     <div class="col-sm-8 col-md-6 col-lg-4">
         <h1>Login</h1>
 
-        <form-input class="form-group" :validation="$v.form.login" v-model="form.login" required autofocus>Login
+        <form-input class="form-group" :serverValidation="validation && validation.login ? validation.login : null"
+                    :validation="$v.form.login" v-model="form.login" required autofocus>Login
         </form-input>
-        <form-input class="form-group" :validation="$v.form.password" v-model="form.password" type="password" required>
+        <form-input class="form-group"
+                    :serverValidation="validation && validation.password ? validation.password : null"
+                    :validation="$v.form.password" v-model="form.password" type="password" required>
             Password
         </form-input>
 
@@ -25,10 +28,9 @@
     import {required, minLength} from 'vuelidate/lib/validators';
 
     import title from './../mixins/title';
-    import api, {apiValidator} from './../mixins/api';
 
     export default {
-        mixins: [title, api],
+        mixins: [title],
         components: {
             'form-input': InputComponent,
             'form-select': SelectComponent
@@ -38,23 +40,28 @@
                 login: "",
                 password: "",
                 remember: false,
-            }
+            },
+            validation: null
         }),
         methods: {
             submit() {
-                //TODO make sure that we can call the api when the only invalid is the api
                 //TODO messages
                 this.$v.$reset();
                 if (!this.$v.$invalid) {
-                    this.$apiCall(Api.SingleRequest('login', this.form))
+                    this.validation = null;
+                    Api.SingleRequest('login', this.form)
                         .then(() => this.$v.$touch())
                         .success(() => this.$router.push({name: 'index'}))
+                        .error((result) => {
+                            if (result.validation) {
+                                this.validation = result.validation;
+                            }
+                        })
                         .fire();
                 } else {
                     this.$v.$touch();
-                    console.log('form invalid: api not called');
                 }
-            }
+            },
         },
         computed: {
             title() {
@@ -66,12 +73,10 @@
                 login: {
                     required,
                     minLength: minLength(5),
-                    ...apiValidator('login', 'login')
                 },
                 password: {
                     required,
                     minLength: minLength(8),
-                    ...apiValidator('login', 'password')
                 },
             }
         }

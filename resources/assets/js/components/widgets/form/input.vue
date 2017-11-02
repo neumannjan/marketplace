@@ -4,7 +4,7 @@
             <slot></slot>
         </label>
         <input :id="id" :type="type" :class="['form-control', {'is-invalid': error, 'is-valid': valid}]" :value="value"
-               @input="$emit('input', $event.target.value)" @blur="validation.$touch()" :autofocus="autofocus"
+               @input="onInput" @blur="touch()" :autofocus="autofocus"
                :required="required" :aria-describedby="hint ? hintId : false">
         <span v-if="error" class="invalid-feedback"><strong>{{ error }}</strong></span>
         <small v-if="!!hint" :id="hintId" class="form-text text-muted">{{ hint }}</small>
@@ -15,9 +15,11 @@
     export default {
         data: () => ({
             id: null,
+            serverDirty: false,
         }),
         props: {
             validation: Object,
+            serverValidation: Array,
             label: String,
             hint: String,
             type: {
@@ -28,18 +30,34 @@
             autofocus: Boolean,
             required: Boolean,
         },
+        watch: {
+            serverValidation() {
+                this.serverDirty = (this.serverValidation && this.serverValidation.length > 0);
+            }
+        },
+        methods: {
+            touch() {
+                this.validation.$touch();
+                this.serverDirty = false;
+            },
+            onInput(event) {
+                this.$emit('input', event.target.value);
+                this.touch();
+            }
+        },
         computed: {
             hintId() {
                 return this.id + '-hint';
             },
-            dirty() {
-                return this.validation.$dirty;
-            },
             valid() {
-                return this.dirty && !this.validation.$invalid;
+                return (this.serverDirty && (!this.serverValidation || this.serverValidation.length === 0)) || (this.validation.$dirty && !this.validation.$invalid);
             },
             error() {
-                if (!this.dirty || this.valid) {
+                if (this.serverDirty && this.serverValidation && this.serverValidation.length > 0) {
+                    return this.serverValidation[0];
+                }
+
+                if (!this.validation.$dirty || this.valid) {
                     return null;
                 }
 

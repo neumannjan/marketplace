@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Rules\Slug;
 use App\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -43,12 +42,10 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
-        return Validator::make($data, [
-            'username' => ['required', 'string', 'min:5', 'max:255', 'unique:users', new Slug()],
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed|letters|numbers',
-            'display_name' => 'nullable|string|max:128'
-        ]);
+        $validationRules = User::getValidationRules();
+        $validationRules['password'][] = 'confirmed';
+
+        return Validator::make($data, $validationRules);
     }
 
     /**

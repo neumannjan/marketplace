@@ -43,7 +43,7 @@ export let apiValidator = (requestName, validationName) => ({
 
         let single = api.response[requestName];
 
-        return !!(single.success || !single.result.validation || !single.result.validation[validationName]);
+        return (single.success || !single.result.validation || !single.result.validation[validationName]);
 
 
     }

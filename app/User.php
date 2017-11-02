@@ -4,6 +4,7 @@ namespace App;
 
 use App\Notifications\ActivateRegistration;
 use App\Notifications\ResetPassword;
+use App\Rules\Slug;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -89,5 +90,19 @@ class User extends Authenticatable
         }
 
         return false;
+    }
+
+    /**
+     * Get validation rules for a creation request.
+     * @return array
+     */
+    public static function getValidationRules()
+    {
+        return [
+            'username' => ['required', 'string', 'min:5', 'max:255', 'unique:users', new Slug()],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'letters', 'numbers'],
+            'display_name' => ['nullable', 'string', 'max:128'],
+        ];
     }
 }
