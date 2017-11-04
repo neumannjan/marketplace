@@ -2,21 +2,28 @@
     <div class="col-sm-8 col-md-6 col-lg-4">
         <h1>Login</h1>
 
-        <form-input class="form-group" :serverValidation="validation && validation.login ? validation.login : null"
-                    :validation="$v.form.login" v-model="form.login" required autofocus>Login
-        </form-input>
-        <form-input class="form-group"
-                    :serverValidation="validation && validation.password ? validation.password : null"
-                    :validation="$v.form.password" v-model="form.password" type="password" required>
-            Password
-        </form-input>
+        <form id="form-login">
+            <form-input class="form-group"
+                        label="Login"
+                        :serverValidation="validation && validation.login ? validation.login : null"
+                        :validation="$v.form.login"
+                        v-model="form.login"
+                        required autofocus></form-input>
+            <form-input class="form-group"
+                        label="Password"
+                        :serverValidation="validation && validation.password ? validation.password : null"
+                        :validation="$v.form.password"
+                        v-model="form.password"
+                        type="password" required></form-input>
 
-        <form-select class="form-group" v-model="form.remember">Remember Me</form-select>
+            <form-select class="form-group" v-model="form.remember">Remember Me</form-select>
 
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary" @click="submit">Login</button> <!-- TODO translate -->
-            <router-link class="btn btn-link" :to="{ name: 'password-request' }">Forgot Your Password?</router-link>
-        </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary" @click.prevent="submit">Login</button>
+                <!-- TODO translate -->
+                <router-link class="btn btn-link" :to="{ name: 'password-request' }">Forgot Your Password?</router-link>
+            </div>
+        </form>
     </div>
 </template>
 

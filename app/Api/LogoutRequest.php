@@ -6,6 +6,9 @@ namespace App\Api;
 use App\Api\Request\Request;
 use App\Api\Response\Response;
 
+/**
+ * API logout request
+ */
 class LogoutRequest extends Request
 {
 

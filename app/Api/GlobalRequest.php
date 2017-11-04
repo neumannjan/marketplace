@@ -6,6 +6,9 @@ namespace App\Api;
 use App\Api\Request\Request;
 use App\Api\Response\Response;
 
+/**
+ * Request that contains global variables that the frontend might request repeatedly.
+ */
 class GlobalRequest extends Request
 {
     /**
@@ -13,10 +16,10 @@ class GlobalRequest extends Request
      */
     protected function doResolve($name, $parameters)
     {
-        return new Response($name, true, self::get());
+        return new Response($name, true, static::get());
     }
 
-    public static final function get()
+    public static function get()
     {
         $token = csrf_token();
 

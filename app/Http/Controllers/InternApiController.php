@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 
-use App\Api\ByeRequest;
 use App\Api\GlobalRequest;
-use App\Api\HelloRequest;
 use App\Api\LoginRequest;
 use App\Api\LogoutRequest;
 use App\Api\Request\Request as ApiRequest;
@@ -30,8 +28,6 @@ class InternApiController extends Controller
             'global' => GlobalRequest::class,
             'login' => LoginRequest::class,
             'logout' => LogoutRequest::class,
-            'hello' => HelloRequest::class, //TODO remove
-            'bye' => ByeRequest::class,
         ];
     }
 

@@ -1,7 +1,7 @@
 <template>
     <div>
         <label :for="id">
-            <slot></slot>
+            <slot>{{ label }}</slot>
         </label>
         <input :id="id" :type="type" :class="['form-control', {'is-invalid': error, 'is-valid': valid}]" :value="value"
                @input="onInput" @blur="touch()" :autofocus="autofocus"
@@ -12,6 +12,8 @@
 </template>
 
 <script>
+    import {helpers} from '../../../store/store';
+
     export default {
         data: () => ({
             id: null,
@@ -65,8 +67,12 @@
                     .filter(key => key[0] !== '$');
 
                 for (let key of params) {
-                    if (!this.validation[key])
-                        return key;
+                    if (!this.validation[key]) {
+                        return helpers.trans('validation.' + key, {
+                            attribute: this.label,
+                            ...this.validation.$params[key]
+                        });
+                    }
                 }
 
                 return null;

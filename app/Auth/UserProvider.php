@@ -11,6 +11,10 @@ use Illuminate\Contracts\Auth\Authenticatable as UserContract;
  */
 class UserProvider extends EloquentUserProvider
 {
+    const LOGIN_KEY = 'login';
+    const EMAIL_KEY = 'email';
+    const USERNAME_KEY = 'username';
+
     /**
      * @inheritDoc
      */
@@ -23,6 +27,31 @@ class UserProvider extends EloquentUserProvider
         }
 
         return parent::validateCredentials($user, $credentials);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function retrieveByCredentials(array $credentials)
+    {
+        if ($credentials == null) {
+            return null;
+        }
+
+        if (isset($credentials[self::LOGIN_KEY])) {
+            $value = $credentials[self::LOGIN_KEY];
+            $key = $this->guessLoginKey($value);
+
+            $credentials[$key] = $value;
+            unset($credentials[self::LOGIN_KEY]);
+        }
+
+        return parent::retrieveByCredentials($credentials);
+    }
+
+    protected function guessLoginKey($value)
+    {
+        return (filter_var($value, FILTER_VALIDATE_EMAIL) !== false ? self::EMAIL_KEY : self::USERNAME_KEY);
     }
 
 }

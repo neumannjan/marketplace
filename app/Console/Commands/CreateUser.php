@@ -6,12 +6,17 @@ namespace App\Console\Commands;
 use App\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
-/** TODO make sure this class is actually useful */
+/**
+ * Console command to create a new user
+ */
 class CreateUser extends Command
 {
     protected $signature = 'user:create {username} {email} {password} {--d|display-name=} {--s|status=active}';
+
+    protected $description = 'Create a new user';
 
     public function handle()
     {
@@ -20,28 +25,41 @@ class CreateUser extends Command
             'email' => $this->argument('email'),
             'password' => $this->argument('password'),
             'display_name' => $this->option('display-name'),
-            'status' => $this->getStatusValue($this->option('status')),
+            'status' => $this->option('status'),
         ];
 
+        // set validation rules
         $rules = User::getValidationRules();
+        $rules['status'] = [
+            Rule::in(['active', 'banned', 'inactive'])
+        ];
 
+        // validate input
         $validator = \Validator::make($data, $rules);
         try {
             $validator->validate();
         } catch (ValidationException $e) {
-            echo json_encode($validator->messages()->getMessages(), JSON_PRETTY_PRINT);
+            $this->error(json_encode($validator->messages()->getMessages(), JSON_PRETTY_PRINT));
             throw new ValidationException($validator);
         }
 
+        // modify input
         $data['password'] = Hash::make($data['password']);
+        $data['status'] = $this->getStatusValue($data['status']);
 
+        // create the user
         $u = new User($data);
         $u->save();
     }
 
-    protected function getStatusValue($string)
+    /**
+     * Convert a string status to its integer counterpart
+     * @param string $stringValue
+     * @return int
+     */
+    protected function getStatusValue($stringValue)
     {
-        switch ($string) {
+        switch ($stringValue) {
             case 'active':
                 return User::STATUS_ACTIVE;
             case 'banned':

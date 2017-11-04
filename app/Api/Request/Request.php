@@ -5,6 +5,7 @@ namespace App\Api\Request;
 
 use App\Api\Response\Response;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 /**
  * API request class
@@ -14,8 +15,8 @@ abstract class Request
 
     /**
      * Decides whether the request will be resolved.
-     * If the request should not run, but terminate with an error, returns the error message. Otherwise returns true.
-     * @return true|string
+     * If the request should not run, returns the error message. Otherwise returns true.
+     * @return true
      */
     protected function shouldResolve()
     {
@@ -37,6 +38,7 @@ abstract class Request
      *
      * @param string $name
      * @param array $parameters
+     * @throws ValidationException
      * @return Response
      */
     protected abstract function doResolve($name, $parameters);
@@ -50,17 +52,19 @@ abstract class Request
      */
     public final function resolve($name, $parameters)
     {
+        try {
+            if (($errorMsg = $this->shouldResolve()) !== true) {
+                return new Response($name, false, $errorMsg);
+            }
 
-        if (($errorMsg = $this->shouldResolve()) !== true) {
-            return new Response($name, false, $errorMsg);
+            $validator = Validator::make($parameters, $this->rules());
+            $validator->validate();
+
+            return $this->doResolve($name, $parameters);
+        } catch (ValidationException $e) {
+            return new Response($name, false, [
+                'validation' => $e->errors()
+            ]);
         }
-
-        $validator = Validator::make($parameters, $this->rules());
-
-        if ($validator->fails()) {
-            return new Response($name, false, $validator->errors());
-        }
-
-        return $this->doResolve($name, $parameters);
     }
 }

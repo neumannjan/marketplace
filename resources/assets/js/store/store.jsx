@@ -9,6 +9,7 @@ let store = new Vuex.Store({
     state: {
         is_authenticated: false,
         token: false,
+        messages: [],
     },
     modules: {},
     mutations: {
@@ -16,13 +17,10 @@ let store = new Vuex.Store({
             for (let [key, value] of Object.entries(data)) {
                 if (Array.isArray(value) && Array.isArray(state[key])) {
                     state[key] = merge(state[key], value);
-                } else {
+                } else if (state[key] !== undefined) {
                     state[key] = value;
                 }
             }
-        },
-        auth(state, authState) {
-            state.is_authenticated = authState;
         },
         logout(state) {
             state.is_authenticated = false;
@@ -45,5 +43,31 @@ let store = new Vuex.Store({
 if (data) {
     store.commit('merge', JSON.parse(atob(data)));
 }
+
+export let helpers = {
+    trans(key, parameters) {
+        if (!store.state.messages)
+            return key;
+
+        let value = key.split('.').reduce(function (a, b) {
+            if (a && (typeof a === 'object') && a[b])
+                return a[b];
+            else
+                return null;
+        }, store.state.messages);
+
+        if (!value)
+            return key;
+
+        if (!parameters || parameters.length === 0)
+            return value;
+
+        for (let [param, replacement] of Object.entries(parameters)) {
+            value = value.replace(':' + param, replacement);
+        }
+
+        return value;
+    }
+};
 
 export default store;
