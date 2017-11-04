@@ -12,7 +12,7 @@
 </template>
 
 <script>
-    import {helpers} from '../../../store/store';
+    import {helpers as storeHelpers} from '../../../store/store';
 
     export default {
         data: () => ({
@@ -22,7 +22,10 @@
         props: {
             validation: Object,
             serverValidation: Array,
-            label: String,
+            label: {
+                type: String,
+                required: true
+            },
             hint: String,
             type: {
                 type: String,
@@ -39,12 +42,13 @@
         },
         methods: {
             touch() {
-                this.validation.$touch();
-                this.serverDirty = false;
+                if (this.validation)
+                    this.validation.$touch();
             },
             onInput(event) {
                 this.$emit('input', event.target.value);
                 this.touch();
+                this.serverDirty = false;
             }
         },
         computed: {
@@ -59,7 +63,7 @@
                     return this.serverValidation[0];
                 }
 
-                if (!this.validation.$dirty || this.valid) {
+                if (!this.validation || !this.validation.$dirty || this.valid) {
                     return null;
                 }
 
@@ -68,7 +72,7 @@
 
                 for (let key of params) {
                     if (!this.validation[key]) {
-                        return helpers.trans('validation.' + key, {
+                        return storeHelpers.trans('validation.' + key, {
                             attribute: this.label,
                             ...this.validation.$params[key]
                         });
@@ -79,7 +83,7 @@
             }
         },
         mounted() {
-            this.id = this._uid;
+            this.id = 'input-' + this._uid;
         }
     };
 </script>

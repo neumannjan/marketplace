@@ -5,13 +5,14 @@
         <form id="form-login">
             <form-input class="form-group"
                         label="Login"
-                        :serverValidation="validation && validation.login ? validation.login : null"
+                        :serverValidation="$serverValidationOn('form.login')"
                         :validation="$v.form.login"
                         v-model="form.login"
+                        hint="Username or email"
                         required autofocus></form-input>
             <form-input class="form-group"
                         label="Password"
-                        :serverValidation="validation && validation.password ? validation.password : null"
+                        :serverValidation="$serverValidationOn('form.password')"
                         :validation="$v.form.password"
                         v-model="form.password"
                         type="password" required></form-input>
@@ -30,14 +31,14 @@
 <script>
     import InputComponent from '../widgets/form/input.vue';
     import SelectComponent from '../widgets/form/select.vue';
-    import Api from '../../api';
 
     import {required, minLength} from 'vuelidate/lib/validators';
 
     import title from './../mixins/title';
+    import form from './../mixins/form';
 
     export default {
-        mixins: [title],
+        mixins: [title, form],
         components: {
             'form-input': InputComponent,
             'form-select': SelectComponent
@@ -47,27 +48,11 @@
                 login: "",
                 password: "",
                 remember: false,
-            },
-            validation: null
+            }
         }),
         methods: {
             submit() {
-                //TODO ensure that you cannot just hold the enter key and call the same request a sh*t ton of times.
-                this.$v.$reset();
-                if (!this.$v.$invalid) {
-                    this.validation = null;
-                    Api.SingleRequest('login', this.form)
-                        .then(() => this.$v.$touch())
-                        .success(() => this.$router.push({name: 'index'}))
-                        .error((result) => {
-                            if (result.validation) {
-                                this.validation = result.validation;
-                            }
-                        })
-                        .fire();
-                } else {
-                    this.$v.$touch();
-                }
+                this.$submitForm('login', 'form', () => this.$router.push({name: 'index'}));
             },
         },
         computed: {
