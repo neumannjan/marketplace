@@ -52,7 +52,7 @@
         }),
         methods: {
             submit() {
-                //TODO messages
+                //TODO ensure that you cannot just hold the enter key and call the same request a sh*t ton of times.
                 this.$v.$reset();
                 if (!this.$v.$invalid) {
                     this.validation = null;
