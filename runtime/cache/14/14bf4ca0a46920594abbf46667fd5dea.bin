@@ -1,0 +1,1 @@
+a:2:{i:0;a:4:{s:4:"name";a:2:{s:5:"en-US";s:11:"Marketplace";s:2:"cs";s:5:"Burza";}s:9:"languages";a:2:{i:0;s:2:"en";i:1;s:2:"cs";}s:16:"language_default";s:2:"en";s:5:"email";s:16:"test@example.com";}i:1;O:26:"yii\caching\FileDependency":3:{s:8:"fileName";s:31:"/var/www/html/config/config.yml";s:4:"data";i:1508415337;s:8:"reusable";b:0;}}

@@ -1,0 +1,139 @@
+2017-10-18 22:00:15 [-][-][-][error][yii\base\InvalidConfigException] exception 'yii\base\InvalidConfigException' with message 'The table does not exist: {{%users}}' in /var/www/html/vendor/yiisoft/yii2/db/ActiveRecord.php:349
+Stack trace:
+#0 /var/www/html/vendor/yiisoft/yii2/db/ActiveRecord.php(380): yii\db\ActiveRecord::getTableSchema()
+#1 /var/www/html/vendor/yiisoft/yii2/db/BaseActiveRecord.php(474): yii\db\ActiveRecord->attributes()
+#2 /var/www/html/vendor/yiisoft/yii2/db/BaseActiveRecord.php(304): yii\db\BaseActiveRecord->hasAttribute('email')
+#3 /var/www/html/models/auth/User.php(54): yii\db\BaseActiveRecord->__set('email', 'test@test.com')
+#4 /var/www/html/commands/UserController.php(99): app\models\auth\User::newUser('test@test.com', 'test', 'knight10', 1)
+#5 [internal function]: app\commands\UserController->actionNew()
+#6 /var/www/html/vendor/yiisoft/yii2/base/InlineAction.php(57): call_user_func_array(Array, Array)
+#7 /var/www/html/vendor/yiisoft/yii2/base/Controller.php(157): yii\base\InlineAction->runWithParams(Array)
+#8 /var/www/html/vendor/yiisoft/yii2/console/Controller.php(135): yii\base\Controller->runAction('new', Array)
+#9 /var/www/html/vendor/yiisoft/yii2/base/Module.php(528): yii\console\Controller->runAction('new', Array)
+#10 /var/www/html/vendor/yiisoft/yii2/console/Application.php(180): yii\base\Module->runAction('user/new', Array)
+#11 /var/www/html/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('user/new', Array)
+#12 /var/www/html/vendor/yiisoft/yii2/base/Application.php(386): yii\console\Application->handleRequest(Object(yii\console\Request))
+#13 /var/www/html/yii(20): yii\base\Application->run()
+#14 {main}
+2017-10-18 21:59:57 [-][-][-][info][application] $_SERVER = [
+    'APPLICATION_USER' => 'application'
+    'WEB_DOCUMENT_INDEX' => 'index.php'
+    'HOSTNAME' => 'f5d481039dc3'
+    'XDEBUG_REMOTE_AUTOSTART' => '0'
+    'WEB_DOCUMENT_ROOT' => '/var/www/html'
+    'TERM' => 'xterm'
+    'PHP_INI_DIR' => '/usr/local/etc/php'
+    'PHP_ASC_URL' => 'https://secure.php.net/get/php-5.6.31.tar.xz.asc/from/this/mirror'
+    'OLDPWD' => '/'
+    'APPLICATION_PATH' => '/app'
+    'LC_ALL' => 'C.UTF-8'
+    'PHP_CFLAGS' => '-fstack-protector-strong -fpic -fpie -O2'
+    'LOG_STDERR' => ''
+    'PHP_MD5' => ''
+    'PHPIZE_DEPS' => 'autoconf 		dpkg-dev 		file 		g++ 		gcc 		libc-dev 		libpcre3-dev 		make 		pkg-config 		re2c'
+    'XDEBUG_REMOTE_HOST' => '172.19.0.1'
+    'PHP_URL' => 'https://secure.php.net/get/php-5.6.31.tar.xz/from/this/mirror'
+    'PHP_DEBUGGER' => 'xdebug'
+    'APPLICATION_GID' => '1000'
+    'WEB_NO_CACHE_PATTERN' => '\\.(css|js|gif|png|jpg|svg|json|xml)$'
+    'PHP_LDFLAGS' => '-Wl,-O1 -Wl,--hash-style=both -pie'
+    'PATH' => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+    'APPLICATION_GROUP' => 'application'
+    'GPG_KEYS' => '0BD78B5F97500D450838F95DFE857D9A90D90EC1 6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3'
+    'PHP_CPPFLAGS' => '-fstack-protector-strong -fpic -fpie -O2'
+    'PWD' => '/var/www/html'
+    'LANG' => 'C.UTF-8'
+    'LOG_STDOUT' => ''
+    'DOCKER_CONF_HOME' => '/opt/docker/'
+    'PHP_DISPLAY_ERRORS' => '1'
+    'SHLVL' => '1'
+    'HOME' => '/root'
+    'PHP_SHA256' => 'c464af61240a9b7729fabe0314cdbdd5a000a4f0c9bd201f89f8628732fe4ae4'
+    'WEB_PHP_SOCKET' => '127.0.0.1:9000'
+    'APPLICATION_UID' => '1000'
+    'WEB_ALIAS_DOMAIN' => '*.vm'
+    'PHP_VERSION' => '5.6.31'
+    'PHP_EXTRA_CONFIGURE_ARGS' => '--enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data'
+    'WEB_PHP_TIMEOUT' => '600'
+    '_' => './yii'
+    'PHP_SELF' => './yii'
+    'SCRIPT_NAME' => './yii'
+    'SCRIPT_FILENAME' => './yii'
+    'PATH_TRANSLATED' => './yii'
+    'DOCUMENT_ROOT' => ''
+    'REQUEST_TIME_FLOAT' => 1508363997.6159
+    'REQUEST_TIME' => 1508363997
+    'argv' => [
+        0 => './yii'
+        1 => 'user/new'
+    ]
+    'argc' => 2
+]
+2017-10-18 22:00:22 [-][-][-][error][yii\console\UnknownCommandException] exception 'yii\base\InvalidRouteException' with message 'Unable to resolve the request "migrations/".' in /var/www/html/vendor/yiisoft/yii2/base/Module.php:537
+Stack trace:
+#0 /var/www/html/vendor/yiisoft/yii2/console/Application.php(180): yii\base\Module->runAction('migrations/', Array)
+#1 /var/www/html/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('migrations/', Array)
+#2 /var/www/html/vendor/yiisoft/yii2/base/Application.php(386): yii\console\Application->handleRequest(Object(yii\console\Request))
+#3 /var/www/html/yii(20): yii\base\Application->run()
+#4 {main}
+
+Next exception 'yii\console\UnknownCommandException' with message 'Unknown command "migrations/".' in /var/www/html/vendor/yiisoft/yii2/console/Application.php:183
+Stack trace:
+#0 /var/www/html/vendor/yiisoft/yii2/console/Application.php(147): yii\console\Application->runAction('migrations/', Array)
+#1 /var/www/html/vendor/yiisoft/yii2/base/Application.php(386): yii\console\Application->handleRequest(Object(yii\console\Request))
+#2 /var/www/html/yii(20): yii\base\Application->run()
+#3 {main}
+2017-10-18 22:00:22 [-][-][-][info][application] $_SERVER = [
+    'APPLICATION_USER' => 'application'
+    'WEB_DOCUMENT_INDEX' => 'index.php'
+    'HOSTNAME' => 'f5d481039dc3'
+    'XDEBUG_REMOTE_AUTOSTART' => '0'
+    'WEB_DOCUMENT_ROOT' => '/var/www/html'
+    'TERM' => 'xterm'
+    'PHP_INI_DIR' => '/usr/local/etc/php'
+    'PHP_ASC_URL' => 'https://secure.php.net/get/php-5.6.31.tar.xz.asc/from/this/mirror'
+    'OLDPWD' => '/'
+    'APPLICATION_PATH' => '/app'
+    'LC_ALL' => 'C.UTF-8'
+    'PHP_CFLAGS' => '-fstack-protector-strong -fpic -fpie -O2'
+    'LOG_STDERR' => ''
+    'PHP_MD5' => ''
+    'PHPIZE_DEPS' => 'autoconf 		dpkg-dev 		file 		g++ 		gcc 		libc-dev 		libpcre3-dev 		make 		pkg-config 		re2c'
+    'XDEBUG_REMOTE_HOST' => '172.19.0.1'
+    'PHP_URL' => 'https://secure.php.net/get/php-5.6.31.tar.xz/from/this/mirror'
+    'PHP_DEBUGGER' => 'xdebug'
+    'APPLICATION_GID' => '1000'
+    'WEB_NO_CACHE_PATTERN' => '\\.(css|js|gif|png|jpg|svg|json|xml)$'
+    'PHP_LDFLAGS' => '-Wl,-O1 -Wl,--hash-style=both -pie'
+    'PATH' => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+    'APPLICATION_GROUP' => 'application'
+    'GPG_KEYS' => '0BD78B5F97500D450838F95DFE857D9A90D90EC1 6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3'
+    'PHP_CPPFLAGS' => '-fstack-protector-strong -fpic -fpie -O2'
+    'PWD' => '/var/www/html'
+    'LANG' => 'C.UTF-8'
+    'LOG_STDOUT' => ''
+    'DOCKER_CONF_HOME' => '/opt/docker/'
+    'PHP_DISPLAY_ERRORS' => '1'
+    'SHLVL' => '1'
+    'HOME' => '/root'
+    'PHP_SHA256' => 'c464af61240a9b7729fabe0314cdbdd5a000a4f0c9bd201f89f8628732fe4ae4'
+    'WEB_PHP_SOCKET' => '127.0.0.1:9000'
+    'APPLICATION_UID' => '1000'
+    'WEB_ALIAS_DOMAIN' => '*.vm'
+    'PHP_VERSION' => '5.6.31'
+    'PHP_EXTRA_CONFIGURE_ARGS' => '--enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data'
+    'WEB_PHP_TIMEOUT' => '600'
+    '_' => './yii'
+    'PHP_SELF' => './yii'
+    'SCRIPT_NAME' => './yii'
+    'SCRIPT_FILENAME' => './yii'
+    'PATH_TRANSLATED' => './yii'
+    'DOCUMENT_ROOT' => ''
+    'REQUEST_TIME_FLOAT' => 1508364022.5945
+    'REQUEST_TIME' => 1508364022
+    'argv' => [
+        0 => './yii'
+        1 => 'migrations/'
+    ]
+    'argc' => 2
+]

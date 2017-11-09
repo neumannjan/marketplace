@@ -7,6 +7,7 @@
         </div>
         <div class="main-content">
             <main role="main" class="main container">
+                <flash-messages></flash-messages>
                 <router-view></router-view>
             </main>
 
@@ -22,11 +23,13 @@
 <script>
     import TopNavComponent from './widgets/nav/top-nav.vue';
     import BottomNavComponent from './widgets/nav/bottom-nav.vue';
+    import FlashMessagesComponent from './widgets/flash-messages.vue';
 
     export default {
         components: {
             'top-nav': TopNavComponent,
             'bottom-nav': BottomNavComponent,
+            'flash-messages': FlashMessagesComponent,
         }
     };
 </script>

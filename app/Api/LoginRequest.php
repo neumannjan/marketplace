@@ -20,7 +20,7 @@ class LoginRequest extends ApiRequest
      */
     protected function shouldResolve()
     {
-        return \Auth::guest() ? true : 'Already logged in.';
+        return \Auth::guest();
     }
 
     /**

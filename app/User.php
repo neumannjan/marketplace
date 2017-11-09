@@ -102,7 +102,7 @@ class User extends Authenticatable
             'username' => ['required', 'string', 'min:5', 'max:255', 'unique:users', new Slug()],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'letters', 'numbers'],
-            'display_name' => ['nullable', 'string', 'max:128'],
+            'display_name' => ['nullable', 'string', 'max:128'], //TODO display name should be verified somehow really
         ];
     }
 }

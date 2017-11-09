@@ -6,8 +6,9 @@ namespace App\Http\Controllers;
 use App\Api\GlobalRequest;
 use App\Api\LoginRequest;
 use App\Api\LogoutRequest;
+use App\Api\RegisterRequest;
 use App\Api\Request\Request as ApiRequest;
-use App\Api\Response\CompositeResponse;
+use App\Api\Response\CompositeResponse as CompositeApiResponse;
 use App\Api\Response\Response as ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -28,6 +29,7 @@ class InternApiController extends Controller
             'global' => GlobalRequest::class,
             'login' => LoginRequest::class,
             'logout' => LogoutRequest::class,
+            'register' => RegisterRequest::class,
         ];
     }
 
@@ -58,7 +60,7 @@ class InternApiController extends Controller
             }
         }
 
-        $compositeResponse = new CompositeResponse($responses);
+        $compositeResponse = new CompositeApiResponse($responses);
 
         return new JsonResponse($compositeResponse);
     }

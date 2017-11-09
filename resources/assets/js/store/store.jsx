@@ -9,6 +9,7 @@ let store = new Vuex.Store({
     state: {
         is_authenticated: false,
         token: false,
+        flash: {},
         messages: [],
     },
     modules: {},
@@ -27,6 +28,12 @@ let store = new Vuex.Store({
         },
         token(state, token) {
             state.token = token;
+        },
+        removeFlash(state, flash) {
+            delete state.flash[flash.type][flash.key];
+        },
+        addFlash(state, flash) {
+            state.flash[flash.type][flash.key] = flash.message;
         }
     },
     actions: {

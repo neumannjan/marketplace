@@ -1,6 +1,8 @@
 <template>
     <div>
         <h1>Index page</h1>
+
+        <button class="btn btn-primary" @click="flash">Gimme dat flash</button>
     </div>
 </template>
 
@@ -19,8 +21,12 @@
             })
         },
         methods: {
-            toggleAuth() {
-                this.$store.commit('auth', !this.auth);
+            flash() {
+                this.$store.commit('addFlash', {
+                    type: 'success',
+                    key: 'test-' + this.$store.state.flash.length,
+                    message: 'Test flash!!'
+                });
             }
         }
     };

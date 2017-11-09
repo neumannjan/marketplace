@@ -64,11 +64,11 @@
             form: {
                 login: {
                     required,
-                    minLength: minLength(5),
+                    min: minLength(5),
                 },
                 password: {
                     required,
-                    minLength: minLength(8),
+                    min: minLength(8),
                 },
             }
         }
