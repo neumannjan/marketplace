@@ -16,9 +16,9 @@ class InitialRequest extends GlobalRequest
             'validation' => [
                 'min' => trans('validation.min.string'),
                 'required' => trans('validation.required'),
-                'email' => trans('validation.email'),
+                'slug' => trans('validation.slug'), //TODO letters, numbers
                 'confirmed' => trans('validation.confirmed'),
-                'slug' => trans('validation.slug'),
+                'email' => trans('validation.email'),
             ]
         ];
 

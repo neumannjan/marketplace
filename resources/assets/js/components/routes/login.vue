@@ -32,7 +32,7 @@
     import InputComponent from '../widgets/form/input.vue';
     import SelectComponent from '../widgets/form/select.vue';
 
-    import {required, minLength} from 'vuelidate/lib/validators';
+    import { required, minLength } from 'vuelidate/lib/validators';
 
     import title from './../mixins/title';
     import form from './../mixins/form';

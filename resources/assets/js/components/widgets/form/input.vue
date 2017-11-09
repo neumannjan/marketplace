@@ -56,7 +56,7 @@
                 return this.id + '-hint';
             },
             valid() {
-                return (this.serverDirty && (!this.serverValidation || this.serverValidation.length === 0)) || (this.validation.$dirty && !this.validation.$invalid);
+                return (this.serverDirty && (!this.serverValidation || this.serverValidation.length === 0)) || (this.validation && this.validation.$dirty && !this.validation.$invalid);
             },
             error() {
                 if (this.serverDirty && this.serverValidation && this.serverValidation.length > 0) {

@@ -23,5 +23,4 @@
 
 ### Frontend
 * Translate UI
-* Retrieves data from API
-    * needs to be logged in obvs
+* Add correct viewport settings for mobile devices

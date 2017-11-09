@@ -19,8 +19,7 @@
                         label="Display Name"
                         :serverValidation="$serverValidationOn('form.display_name')"
                         :validation="$v.form.display_name"
-                        v-model="form.display_name"
-                        required></form-input>
+                        v-model="form.display_name"></form-input>
             <form-input class="form-group"
                         label="Password"
                         :serverValidation="$serverValidationOn('form.password')"
@@ -28,7 +27,7 @@
                         v-model="form.password"
                         type="password" required></form-input>
             <form-input class="form-group"
-                        label="Password"
+                        label="Confirm Password"
                         :serverValidation="$serverValidationOn('form.password_confirmation')"
                         :validation="$v.form.password_confirmation"
                         v-model="form.password_confirmation"
@@ -91,12 +90,19 @@
                     required,
                     email,
                 },
-                display_name: {
-
-                },
                 password: {
                     required,
                     min: minLength(8),
+                    letters(value) {
+                        if (value === '') return true;
+
+                        return value.match(/[a-zA-Z]/) !== null;
+                    },
+                    numbers(value) {
+                        if (value === '') return true;
+
+                        return value.match(/[0-9]/) !== null;
+                    }
                 },
                 password_confirmation: {
                     required,
