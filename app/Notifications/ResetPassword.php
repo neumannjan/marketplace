@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Http\AppRoutes;
 use Illuminate\Notifications\Messages\MailMessage;
 
 /**
@@ -32,7 +33,7 @@ class ResetPassword extends LocalizedMailNotification
     {
         return (new MailMessage())
             ->line($this->__('line1'))
-            ->action($this->__('action'), url(route('password.reset', $this->token)))
+            ->action($this->__('action'), url(AppRoutes::passwordResetRoute($this->token)))
             ->line($this->__('line2'));
     }
 

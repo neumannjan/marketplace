@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Api;
+namespace App\Api\Request;
 
 
 use App\Api\Data\FlashMessages;
-use App\Api\Request\Request;
 use App\Api\Response\Response;
 
 /**

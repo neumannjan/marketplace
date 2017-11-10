@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 
-use App\Api\GlobalRequest;
-use App\Api\LoginRequest;
-use App\Api\LogoutRequest;
-use App\Api\RegisterRequest;
+use App\Api\Request\Auth\LoginRequest;
+use App\Api\Request\Auth\LogoutRequest;
+use App\Api\Request\Auth\PasswordEmailRequest;
+use App\Api\Request\Auth\PasswordResetRequest;
+use App\Api\Request\Auth\RegisterRequest;
+use App\Api\Request\GlobalRequest;
 use App\Api\Request\Request as ApiRequest;
 use App\Api\Response\CompositeResponse as CompositeApiResponse;
 use App\Api\Response\Response as ApiResponse;
@@ -30,6 +32,8 @@ class InternApiController extends Controller
             'login' => LoginRequest::class,
             'logout' => LogoutRequest::class,
             'register' => RegisterRequest::class,
+            'password-email' => PasswordEmailRequest::class,
+            'password-reset' => PasswordResetRequest::class,
         ];
     }
 

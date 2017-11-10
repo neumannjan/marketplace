@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Api;
+namespace App\Api\Request\Auth;
 
 
 use App\Api\Request\Request;

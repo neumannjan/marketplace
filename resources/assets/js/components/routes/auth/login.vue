@@ -22,20 +22,20 @@
             <div class="form-group">
                 <button type="submit" class="btn btn-primary" @click.prevent="submit">Login</button>
                 <!-- TODO translate -->
-                <router-link class="btn btn-link" :to="{ name: 'password-request' }">Forgot Your Password?</router-link>
+                <router-link class="btn btn-link" :to="{ name: 'password-email' }">Forgot Your Password?</router-link>
             </div>
         </form>
     </div>
 </template>
 
 <script>
-    import InputComponent from '../widgets/form/input.vue';
-    import SelectComponent from '../widgets/form/select.vue';
+    import InputComponent from '../../widgets/form/input.vue';
+    import SelectComponent from '../../widgets/form/select.vue';
 
     import { required, minLength } from 'vuelidate/lib/validators';
 
-    import title from './../mixins/title';
-    import form from './../mixins/form';
+    import title from './../../mixins/title';
+    import form from './../../mixins/form';
 
     export default {
         mixins: [title, form],

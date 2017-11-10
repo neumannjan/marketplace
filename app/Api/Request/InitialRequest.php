@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Api;
+namespace App\Api\Request;
 
 /**
  * Request that contains variables that the frontend might require at the beginning of its existence.

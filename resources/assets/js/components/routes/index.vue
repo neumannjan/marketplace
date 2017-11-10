@@ -1,8 +1,6 @@
 <template>
     <div>
         <h1>Index page</h1>
-
-        <button class="btn btn-primary" @click="flash">Gimme dat flash</button>
     </div>
 </template>
 
@@ -21,13 +19,6 @@
             })
         },
         methods: {
-            flash() {
-                this.$store.commit('addFlash', {
-                    type: 'success',
-                    key: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
-                    message: 'Test flash!!'
-                });
-            }
         }
     };
 </script>

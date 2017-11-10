@@ -27,17 +27,21 @@ class ActivateController extends Controller
         return $this->redirectSuccess();
     }
 
-    protected function redirectInvalidLink()
+    protected function redirectToLogin()
     {
         return redirect()
-            ->route('login')
+            ->route('app', ['route' => 'login']);
+    }
+
+    protected function redirectInvalidLink()
+    {
+        return $this->redirectToLogin()
             ->with('danger.activate-link-invalid', __('flash.danger.activate-link-invalid'));
     }
 
     protected function redirectSuccess()
     {
-        return redirect()
-            ->route('login')
+        return $this->redirectToLogin()
             ->with('success.activate', __('flash.success.activate'));
     }
 }
