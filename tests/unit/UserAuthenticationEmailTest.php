@@ -29,14 +29,18 @@ class UserAuthenticationEmailTest extends \Codeception\Test\Unit
 
         $request = new \Illuminate\Http\Request();
         $request->setMethod('POST');
-        $request->request->set('username', self::USERNAME);
-        $request->request->set('email', self::EMAIL);
-        $request->request->set('password', self::PASSWORD);
-        $request->request->set('password_confirmation', self::PASSWORD);
-        $request->request->set('display_name', self::DISPLAY_NAME);
+        $request->request->set('api', json_encode([
+            'register' => [
+                'username' => self::USERNAME,
+                'email' => self::EMAIL,
+                'password' => self::PASSWORD,
+                'password_confirmation' => self::PASSWORD,
+                'display_name' => self::DISPLAY_NAME,
+            ]
+        ]));
 
-        $controller = new \App\Http\Controllers\Auth\RegisterController();
-        $controller->register($request);
+        $controller = new \App\Http\Controllers\InternApiController();
+        $controller->index($request);
 
         $user = \App\User::first();
         $this->assertNotNull($user);

@@ -1,6 +1,8 @@
 <?php
 
-
+/**
+ * TODO convert to acceptance
+ */
 class AuthenticationTest extends \Codeception\Test\Unit
 {
     const USERNAME = 'testuser';
