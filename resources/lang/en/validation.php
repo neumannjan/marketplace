@@ -31,6 +31,10 @@ return [
     ],
     'boolean' => ':attribute field must be true or false.',
     'confirmed' => ':attribute confirmation does not match.',
+    'contains' => [
+        'numeric' => ':attribute must contain at least one number.',
+        'non_numeric' => ':attribute must contain at least one character that is not a number.',
+    ],
     'date' => ':attribute is not a valid date.',
     'date_format' => ':attribute does not match format :format.',
     'different' => ':attribute and :other must be different.',

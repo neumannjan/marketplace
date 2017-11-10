@@ -9,15 +9,8 @@ use Illuminate\Contracts\Validation\Rule;
  * Validation rule that asserts that the value consists
  * only of letters, numbers, dashes and underscores.
  */
-class Slug implements Rule
+class SlugRule implements Rule
 {
-    /**
-     * Create a new rule instance.
-     */
-    public function __construct()
-    {
-        //
-    }
 
     /**
      * Determine if the validation rule passes.
@@ -28,7 +21,7 @@ class Slug implements Rule
      */
     public function passes($attribute, $value)
     {
-        $result = preg_match('/[a-zA-Z0-9-_]+/', $value);
+        $result = preg_match('/^[a-zA-Z0-9-_]+$/', $value);
 
         if ($result === false) {
             throw new RuntimeException();

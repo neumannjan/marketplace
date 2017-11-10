@@ -31,6 +31,10 @@ return [
     ],
     'boolean' => ':attribute musí být true nebo false',
     'confirmed' => ':attribute nebylo odsouhlaseno.',
+    'contains' => [
+        'numeric' => ':attribute musí obsahovat alespoň jedno číslo.',
+        'non_numeric' => ':attribute musí obsahovat alespoň jeden nečíselný znak.',
+    ],
     'date' => ':attribute musí být platné datum.',
     'date_format' => ':attribute není platný formát data podle :format.',
     'different' => ':attribute a :other se musí lišit.',

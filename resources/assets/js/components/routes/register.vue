@@ -93,12 +93,12 @@
                 password: {
                     required,
                     min: minLength(8),
-                    letters(value) {
+                    nonNumeric(value) {
                         if (value === '') return true;
 
-                        return value.match(/[a-zA-Z]/) !== null;
+                        return value.match(/[^0-9]/) !== null;
                     },
-                    numbers(value) {
+                    numeric(value) {
                         if (value === '') return true;
 
                         return value.match(/[0-9]/) !== null;

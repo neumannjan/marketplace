@@ -4,7 +4,9 @@ namespace App;
 
 use App\Notifications\ActivateRegistration;
 use App\Notifications\ResetPassword;
-use App\Rules\Slug;
+use App\Rules\ContainsNonNumericRule;
+use App\Rules\ContainsNumericRule;
+use App\Rules\SlugRule;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -99,9 +101,9 @@ class User extends Authenticatable
     public static function getValidationRules()
     {
         return [
-            'username' => ['required', 'string', 'min:5', 'max:255', 'unique:users', new Slug()],
+            'username' => ['required', 'string', 'min:5', 'max:255', 'unique:users', new SlugRule()],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'letters', 'numbers'],
+            'password' => ['required', 'string', 'min:8', new ContainsNumericRule(), new ContainsNonNumericRule()],
             'display_name' => ['nullable', 'string', 'max:128'], //TODO display name should be verified somehow really
         ];
     }
