@@ -3,10 +3,9 @@
 namespace App\Api;
 
 
+use App\Api\Data\FlashMessages;
 use App\Api\Request\Request;
 use App\Api\Response\Response;
-use Illuminate\Session\SessionManager;
-use Illuminate\Session\Store;
 
 /**
  * Request that contains global variables that the frontend might request repeatedly.
@@ -36,20 +35,13 @@ class GlobalRequest extends Request
         $is_authenticated = \Auth::check();
 
         // flash messages
-        /** @var Store $session */
-        $session = \App::get('session');
-        $flash = [
-            'success' => (object) ($session->get('status', []) + $session->get('success', [])),
-            'danger' => (object) ($session->get('danger', [])),
-            'warning' => (object) ($session->get('warning', [])),
-            'primary' => (object) ($session->get('primary', [])),
-            'secondary' => (object) ($session->get('secondary', [])),
-        ];
+
+        $flash = (new FlashMessages())->toPassable();
 
         return compact(
             'token',
             'is_authenticated',
             'flash'
-            );
+        );
     }
 }

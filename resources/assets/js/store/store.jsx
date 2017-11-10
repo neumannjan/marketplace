@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import merge from 'deepmerge';
 import api from '../api';
 
 Vue.use(Vuex);
@@ -14,11 +13,9 @@ let store = new Vuex.Store({
     },
     modules: {},
     mutations: {
-        merge(state, data) {
+        global(state, data) {
             for (let [key, value] of Object.entries(data)) {
-                if (Array.isArray(value) && Array.isArray(state[key])) {
-                    state[key] = merge(state[key], value);
-                } else if (state[key] !== undefined) {
+                if (state[key] !== undefined) {
                     state[key] = value;
                 }
             }
@@ -29,11 +26,11 @@ let store = new Vuex.Store({
         token(state, token) {
             state.token = token;
         },
-        removeFlash(state, flash) {
-            delete state.flash[flash.type][flash.key];
+        removeFlash(state, key) {
+            Vue.delete(state.flash, key);
         },
         addFlash(state, flash) {
-            state.flash[flash.type][flash.key] = flash.message;
+            Vue.set(state.flash, flash.key, flash);
         }
     },
     actions: {
@@ -48,7 +45,7 @@ let store = new Vuex.Store({
 });
 
 if (data) {
-    store.commit('merge', JSON.parse(atob(data)));
+    store.commit('global', JSON.parse(atob(data)));
 }
 
 export let helpers = {

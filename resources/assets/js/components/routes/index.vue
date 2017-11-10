@@ -24,7 +24,7 @@
             flash() {
                 this.$store.commit('addFlash', {
                     type: 'success',
-                    key: 'test-' + this.$store.state.flash.length,
+                    key: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                     message: 'Test flash!!'
                 });
             }

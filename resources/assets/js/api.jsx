@@ -28,7 +28,7 @@ let Request = (params, thenCallback) => ({
         let _then = response => {
             if (includeGlobal) {
                 let global = response.data['global'].result;
-                store.commit('merge', global);
+                store.commit('global', global);
             }
 
             thenCallback(response);

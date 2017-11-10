@@ -1,6 +1,7 @@
 <template>
     <div>
-        <alert v-for="flash in flashMessages" :key="flash.key" @close="remove(flash)" :type="flash.type">{{ flash.message }}</alert>
+        <alert v-for="(flash, key) in messages" :key="key" @close="remove(key)" :type="flash.type">{{ flash.message }}
+        </alert>
     </div>
 </template>
 
@@ -12,24 +13,13 @@
             alert: AlertComponent
         },
         computed: {
-            flashMessages() {
-                let messages = [];
-                for([type, flashesOfType] of Object.entries(this.$store.state.flash)) {
-                    for([key, message] of Object.entries(flashesOfType)) {
-                        messages.push({
-                            type: type,
-                            key: key,
-                            message: message
-                        });
-                    }
-                }
-
-                return messages;
+            messages() {
+                return this.$store.state.flash;
             }
         },
         methods: {
-            remove(flash) {
-                this.$store.commit('removeFlash', flash);
+            remove(key) {
+                this.$store.commit('removeFlash', key);
             }
         }
     }
