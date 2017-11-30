@@ -26,19 +26,13 @@ class AcceptanceTester extends \Codeception\Actor
      * Define custom actions here
      */
 
-    protected $usingTestEnvironment = false;
-
-    public function useTestEnvironment()
-    {
-        if (!$this->usingTestEnvironment) {
-            $this->usingTestEnvironment = true;
-        }
-    }
+    protected $amOnPageCalled = false;
 
     public function loginAsUser(\App\User $user)
     {
-        if (!$this->usingTestEnvironment) {
-            $this->useTestEnvironment();
+        if (!$this->amOnPageCalled) {
+            $this->_amOnPage('/');
+            $this->amOnPageCalled = true;
         }
 
         $this->setCookie(\App\Tests\TestHelper::COOKIE_AUTH_NAME, (string)$user->id);
@@ -51,16 +45,17 @@ class AcceptanceTester extends \Codeception\Actor
      */
     public function amOnPage($page)
     {
-        if ($this->usingTestEnvironment) {
-            $this->setCookie(\App\Tests\TestHelper::COOKIE_NAME, 'ok');
+        if (!$this->amOnPageCalled) {
+            $this->_amOnPage('/');
+            $this->amOnPageCalled = true;
         }
+
+        $this->setCookie(\App\Tests\TestHelper::COOKIE_NAME, 'ok');
 
         $this->_amOnPage($page);
 
         // assert that a response cookie is present
-        if ($this->usingTestEnvironment) {
-            $this->seeCookie(\App\Tests\TestHelper::RESPONSE_COOKIE_NAME);
-        }
+        $this->seeCookie(\App\Tests\TestHelper::RESPONSE_COOKIE_NAME);
     }
 
     public function amOnRoute($route, array $parameters = [])

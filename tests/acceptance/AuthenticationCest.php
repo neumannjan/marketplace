@@ -10,8 +10,6 @@ class AuthenticationCest
 
     public function _before(AcceptanceTester $I)
     {
-        $I->amOnPage('/');
-        $I->useTestEnvironment();
         \App\User::truncate();
     }
 
@@ -38,7 +36,7 @@ class AuthenticationCest
     public function userRegistrationAndActivation(AcceptanceTester $I)
     {
         $I->amOnPage('/register');
-        $I->wait(1);
+        $I->waitForElement('input', 5);
         $I->see(__('validation.attributes.password_confirmation'));
 
         $I->fillField(['name' => 'username'], self::USERNAME);
@@ -49,9 +47,8 @@ class AuthenticationCest
 
         $I->click('#submit');
 
-        $I->wait(1);
-        $I->dontSeeElement('input', ['name' => 'password_confirmation']);
         $I->waitForElement('.alert', 5);
+        $I->dontSeeElement('input', ['name' => 'password_confirmation']);
         $I->see(__('flash.success.register', [
             'email' => self::EMAIL
         ]));
@@ -147,9 +144,8 @@ class AuthenticationCest
 
         $I->click('#submit');
 
-        $I->wait(1);
+        $I->waitForElement('.fa-sign-out', 5);
         $I->dontSeeElement('input', ['name' => 'password']);
-        $I->seeElement('.fa-sign-out');
     }
 
     public function loginWithEmail(AcceptanceTester $I)
@@ -163,9 +159,8 @@ class AuthenticationCest
 
         $I->click('#submit');
 
-        $I->wait(1);
+        $I->waitForElement('.fa-sign-out', 5);
         $I->dontSeeElement('input', ['name' => 'password']);
-        $I->seeElement('.fa-sign-out');
     }
 
     public function loginWrongCredentials(AcceptanceTester $I)
@@ -179,7 +174,7 @@ class AuthenticationCest
 
         $I->click('#submit');
 
-        $I->wait(1);
+        $I->waitForElement('.invalid-feedback', 5);
         $I->seeElement('input', ['name' => 'login']);
         $I->see(__('auth.failed'));
         $I->dontSeeElement('.fa-sign-out');
@@ -196,7 +191,7 @@ class AuthenticationCest
 
         $I->click('#submit');
 
-        $I->wait(1);
+        $I->waitForElement('.invalid-feedback', 5);
         $I->seeElement('input', ['name' => 'login']);
         $I->see(__('auth.inactive'));
         $I->dontSeeElement('.fa-sign-out');
@@ -213,7 +208,7 @@ class AuthenticationCest
 
         $I->click('#submit');
 
-        $I->wait(1);
+        $I->waitForElement('.invalid-feedback', 5);
         $I->seeElement('input', ['name' => 'login']);
         $I->see(__('auth.banned'));
         $I->dontSeeElement('.fa-sign-out');
