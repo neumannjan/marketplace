@@ -34,7 +34,9 @@ let Request = (params, thenCallback) => ({
             thenCallback(response);
         };
 
-        axios.post('/api', data, config()).then(_then);
+        axios.post('/api', data, config()).then(_then).catch(error => {
+            alert(JSON.stringify(error.response.data.message, null, 2));
+        });
     }
 });
 

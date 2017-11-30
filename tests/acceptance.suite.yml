@@ -7,6 +7,10 @@
 actor: AcceptanceTester
 modules:
     enabled:
-        - PhpBrowser:
+        - WebDriver:
             url: http://localhost:8080/
+            browser: chrome
+            port: 4444
         - \Helper\Acceptance
+        - Asserts
+bootstrap: _bootstrap.php

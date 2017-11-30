@@ -3,7 +3,8 @@
         <label :for="id">
             <slot>{{ label }}</slot>
         </label>
-        <input :id="id" :type="type" :class="['form-control', {'is-invalid': error, 'is-valid': valid}]" :value="value"
+        <input :id="id" :name="name" :type="type" :class="['form-control', {'is-invalid': error, 'is-valid': valid}]"
+               :value="value"
                @input="onInput" @blur="touch()" :autofocus="autofocus"
                :required="required" :aria-describedby="hint ? hintId : false">
         <span v-if="error" class="invalid-feedback"><strong>{{ error }}</strong></span>
@@ -30,6 +31,10 @@
             type: {
                 type: String,
                 default: 'text'
+            },
+            name: {
+                type: String,
+                required: true
             },
             value: String,
             autofocus: Boolean,

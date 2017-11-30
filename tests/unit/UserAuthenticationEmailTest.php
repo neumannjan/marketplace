@@ -53,5 +53,8 @@ class UserAuthenticationEmailTest extends \Codeception\Test\Unit
             'token' => $user->activation_token,
             'username' => self::USERNAME
         ]), '/'));
+
+        // there used to be a bug that displayed HTML as text; hence this check
+        $i->seeEmailContainsNot('<pre');
     }
 }

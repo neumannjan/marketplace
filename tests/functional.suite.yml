@@ -13,4 +13,3 @@ modules:
             run_database_migrations: true
         # add a framework module here
         - \Helper\Functional
-bootstrap: ../_bootstrap.php

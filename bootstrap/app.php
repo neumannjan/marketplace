@@ -16,6 +16,34 @@ $app = new Illuminate\Foundation\Application(
 );
 
 /*
+|
+|-------------------------------------------------------------------------
+| Initialize proper settings for Codeception acceptance tests
+|-------------------------------------------------------------------------
+|
+| We point the application to the proper .env file, in case the request comes
+| from an acceptance test. Log in a user if necessary.
+|
+*/
+
+// create test helper instance
+$testHelper = new \App\Tests\TestHelper($app->basePath('tests'));
+
+// register test helper as singleton
+$app->instance(\App\Tests\TestHelper::class, $testHelper);
+
+// set environment variables
+if ($testHelper->isRunner() || $testHelper->isSeleniumRequest()) {
+    $app->useEnvironmentPath($testHelper->getTestsDir());
+
+    if ($testHelper->isRunner()) {
+        $app->loadEnvironmentFrom('.env.runner');
+    } else {
+        $app->loadEnvironmentFrom('.env.server');
+    }
+}
+
+/*
 |--------------------------------------------------------------------------
 | Bind Important Interfaces
 |--------------------------------------------------------------------------
