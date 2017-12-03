@@ -23,4 +23,5 @@
 
 ### Frontend
 * Translate UI
-* Add correct viewport settings for mobile devices
+* Add image srcsets
+* Remove old blade files

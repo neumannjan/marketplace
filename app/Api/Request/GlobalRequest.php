@@ -35,7 +35,10 @@ class GlobalRequest extends Request
 
         // flash messages
 
-        $flash = (new FlashMessages())->toPassable();
+        $flashMessages = new FlashMessages();
+        $flashMessages->clearSession();
+
+        $flash = $flashMessages->toPassable();
 
         return compact(
             'token',

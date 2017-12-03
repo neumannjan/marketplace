@@ -15,8 +15,9 @@ class InitialRequest extends GlobalRequest
         $array['messages'] = [
             'validation' => [
                 'min' => trans('validation.min.string'),
+                'max' => trans('validation.max.string'),
                 'required' => trans('validation.required'),
-                'slug' => trans('validation.slug'), //TODO letters, numbers
+                'slug' => trans('validation.slug'),
                 'numeric' => trans('validation.contains.numeric'),
                 'nonNumeric' => trans('validation.contains.non_numeric'),
                 'confirmed' => trans('validation.confirmed'),

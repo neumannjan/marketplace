@@ -104,7 +104,7 @@ class User extends Authenticatable
             'username' => ['required', 'string', 'min:5', 'max:255', 'unique:users', new SlugRule()],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', new ContainsNumericRule(), new ContainsNonNumericRule()],
-            'display_name' => ['nullable', 'string', 'max:128'], //TODO display name should be verified somehow really
+            'display_name' => ['nullable', 'string', 'max:50'],
         ];
     }
 }

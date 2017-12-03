@@ -25,10 +25,14 @@ class LogoutUserIfNotActive
 
             if ($user->status !== User::STATUS_ACTIVE) {
                 \Auth::logout();
-                \Session::invalidate(); //TODO is this line necessary?
-                //TODO make work for JS frontend as well
-                return \Response::redirectToRoute('app')
-                    ->with('warning.session-expired', __('flash.warning.session-expired'));
+                \Session::invalidate();
+
+                \Session::flash('warning.session-expired', __('flash.warning.session-expired'));
+
+                // do not redirect if this is an API request
+                if (!$request->isXmlHttpRequest()) {
+                    return \Response::redirectToRoute('app');
+                }
             }
         }
 

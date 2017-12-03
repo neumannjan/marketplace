@@ -13,6 +13,8 @@ class FlashMessages implements Passable
 {
     public $messages;
 
+    const TYPES = ['success', 'status', 'danger', 'warning', 'primary', 'secondary'];
+
     /**
      * FlashMessages constructor.
      */
@@ -22,7 +24,7 @@ class FlashMessages implements Passable
         $session = \App::get('session');
         $this->messages = new \stdClass();
 
-        foreach (['success', 'status', 'danger', 'warning', 'primary', 'secondary'] as $type) {
+        foreach (self::TYPES as $type) {
             $messages = $session->get($type);
 
             if (!$messages) {
@@ -39,6 +41,19 @@ class FlashMessages implements Passable
                     'message' => $message,
                 ];
             }
+        }
+    }
+
+    /**
+     * Removes all flash messages from session
+     */
+    public function clearSession()
+    {
+        /** @var Store $session */
+        $session = \App::get('session');
+
+        foreach (self::TYPES as $type) {
+            $session->remove($type);
         }
     }
 
