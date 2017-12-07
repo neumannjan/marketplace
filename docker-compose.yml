@@ -18,7 +18,9 @@ services:
       XDEBUG_REMOTE_HOST: 172.19.0.1
       WEB_DOCUMENT_ROOT: "/app"
   db:
-    image: mysql:5.7
+    #image: mysql:5.7
+    #image: mariadb:10.2
+    image: mysql/mysql-server:5.7
     restart: always
     ports:
       - "3307:3306"
