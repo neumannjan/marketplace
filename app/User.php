@@ -4,16 +4,10 @@ namespace App;
 
 use App\Notifications\ActivateRegistration;
 use App\Notifications\ResetPassword;
-use App\Offer;
 use App\Rules\ContainsNonNumericRule;
 use App\Rules\ContainsNumericRule;
 use App\Rules\SlugRule;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\DatabaseNotification;
-use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 
 /**
@@ -28,23 +22,23 @@ use Illuminate\Notifications\Notifiable;
  * @property array $options
  * @property int $status 0 == inactive, 1 == active, 2 == banned
  * @property string|null $remember_token
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property-read DatabaseNotificationCollection|DatabaseNotification[] $notifications
- * @method static Builder|User whereActivationToken($value)
- * @method static Builder|User whereCreatedAt($value)
- * @method static Builder|User whereDisplayName($value)
- * @method static Builder|User whereEmail($value)
- * @method static Builder|User whereId($value)
- * @method static Builder|User whereOptions($value)
- * @method static Builder|User wherePassword($value)
- * @method static Builder|User whereRememberToken($value)
- * @method static Builder|User whereStatus($value)
- * @method static Builder|User whereUpdatedAt($value)
- * @method static Builder|User whereUsername($value)
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Offer[] $bought
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Offer[] $offers
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereActivationToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereDisplayName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereOptions($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUsername($value)
  * @mixin \Eloquent
- * @property-read Collection|Offer[] $bought
- * @property-read Collection|Offer[] $offers
  */
 class User extends Authenticatable
 {
@@ -143,11 +137,11 @@ class User extends Authenticatable
 
     public function offers()
     {
-        return $this->hasMany(Offer::class, 'author');
+        return $this->hasMany(Offer::class, 'author_user_id');
     }
 
     public function bought()
     {
-        return $this->hasMany(Offer::class, 'sold_to');
+        return $this->hasMany(Offer::class, 'sold_to_user_id');
     }
 }

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: nojmy
- * Date: 7.12.17
- * Time: 13:42
- */
 
 namespace App;
 
@@ -19,40 +13,41 @@ use Illuminate\Database\Eloquent\Model;
  * App\Offer
  *
  * @property int $id
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
  * @property string $name
  * @property string $description
- * @property int $author
+ * @property int $author_user_id
  * @property int $status 0 == inactive, 1 == available, 2 == sold
- * @property int|null $sold_to
- * @method static Builder|Offer whereAuthor($value)
- * @method static Builder|Offer whereCreatedAt($value)
- * @method static Builder|Offer whereDescription($value)
- * @method static Builder|Offer whereId($value)
- * @method static Builder|Offer whereName($value)
- * @method static Builder|Offer whereSoldTo($value)
- * @method static Builder|Offer whereStatus($value)
- * @method static Builder|Offer whereUpdatedAt($value)
- * @mixin \Eloquent
- * @property-read Collection|Image[] $images
+ * @property int|null $sold_to_user_id
+ * @property-read \App\User $author
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Image[] $images
  * @property-read \App\User $soldTo
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer whereAuthorUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer whereSoldToUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class Offer extends Model
 {
 
     public function images()
     {
-        return $this->hasMany(Image::class, 'offer');
+        return $this->hasMany(Image::class, 'offer_id');
     }
 
     public function author()
     {
-        return $this->belongsTo(User::class, null, 'author');
+        return $this->belongsTo(User::class, null, 'author_user_id');
     }
 
     public function soldTo()
     {
-        return $this->belongsTo(User::class, null, 'sold_to');
+        return $this->belongsTo(User::class, null, 'sold_to_user_id');
     }
 }

@@ -21,12 +21,12 @@ class CreateOffersTable extends Migration
             $table->timestamps();
             $table->string('name');
             $table->text('description');
-            $table->unsignedInteger('author');
+            $table->unsignedInteger('author_user_id');
             $table->unsignedTinyInteger('status')->comment('0 == inactive, 1 == available, 2 == sold');
-            $table->unsignedInteger('sold_to')->nullable();
+            $table->unsignedInteger('sold_to_user_id')->nullable();
 
-            $table->foreign('author')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('sold_to')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('author_user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('sold_to_user_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 
