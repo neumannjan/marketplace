@@ -7,6 +7,7 @@ use App\Api\Request\Request;
 use App\Api\Response\Response;
 use App\User;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Collection;
 
 /**
  * TODO documentation
@@ -36,7 +37,7 @@ class RegisterRequest extends Request
     /**
      * @inheritdoc
      */
-    protected function doResolve($name, $parameters)
+    protected function doResolve($name, Collection $parameters)
     {
         $user = User::create([
             'username' => $parameters['username'],
@@ -59,7 +60,7 @@ class RegisterRequest extends Request
             'email' => $user->email
         ]));
 
-        return new Response($name, true, []);
+        return new Response(true, []);
     }
 
     /**

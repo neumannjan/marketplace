@@ -4,6 +4,7 @@ namespace App\Api\Request;
 
 
 use App\Api\Response\Response;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -36,12 +37,11 @@ abstract class Request
      * This function is called only when all validation passed.
      * Should return a Response.
      *
-     * @param string $name
-     * @param array $parameters
-     * @throws ValidationException
+     * @param $name
+     * @param Collection $parameters
      * @return Response
      */
-    protected abstract function doResolve($name, $parameters);
+    protected abstract function doResolve($name, Collection $parameters);
 
     /**
      * Call this to resolve the request and get a Response instance
@@ -49,22 +49,44 @@ abstract class Request
      * @param string $name
      * @param array $parameters
      * @return Response
+     * @internal param $url
      */
     public final function resolve($name, $parameters)
     {
+        if(!$parameters instanceof Collection)
+            $parameters = Collection::make($parameters);
+
         try {
             if (($errorMsg = $this->shouldResolve()) !== true) {
-                return new Response($name, false, $errorMsg);
+                $response = new Response(false, $errorMsg);
+                $response->setName($name);
+
+                return $response;
             }
 
-            $validator = Validator::make($parameters, $this->rules());
-            $validator->validate();
+            $this->validateRules($parameters);
 
-            return $this->doResolve($name, $parameters);
+            $response = $this->doResolve($name, $parameters);
+            $response->setName($name);
+
+            return $response;
         } catch (ValidationException $e) {
-            return new Response($name, false, [
+            $response = new Response(false, [
                 'validation' => $e->errors()
             ]);
+
+            $response->setName($name);
+
+            return $response;
         }
+    }
+
+    /**
+     * @param Collection $parameters
+     */
+    protected function validateRules($parameters)
+    {
+        $validator = Validator::make($parameters->all(), $this->rules());
+        $validator->validate();
     }
 }

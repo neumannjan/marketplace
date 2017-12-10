@@ -22,15 +22,22 @@ class Response implements ResponseInterface
     private $content;
 
     /**
-     * @param string $name
      * @param bool $success
      * @param mixed $content
+     * @internal param string $name
      */
-    public function __construct($name, $success, $content)
+    public function __construct($success, $content)
     {
-        $this->name = $name;
         $this->success = $success;
         $this->content = $content;
+    }
+
+    /**
+     * @param string $name
+     */
+    final function setName($name)
+    {
+        $this->name = $name;
     }
 
     /**
@@ -42,10 +49,23 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Ensure that a response name has been set
+     */
+    private function assertHasName()
+    {
+        if($this->name == null || !is_string($this->name))
+        {
+            throw new \RuntimeException("Response does not have a name");
+        }
+    }
+
+    /**
      * @inheritdoc
      */
     public function toArray()
     {
+        $this->assertHasName();
+
         $raw = $this->content;
 
         if ($raw instanceof Arrayable) {
@@ -67,6 +87,8 @@ class Response implements ResponseInterface
      */
     public function toJson($options = 0)
     {
+        $this->assertHasName();
+
         $raw = $this->content;
 
         if ($raw instanceof Jsonable) {

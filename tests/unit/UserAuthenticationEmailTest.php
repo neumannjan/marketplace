@@ -39,7 +39,7 @@ class UserAuthenticationEmailTest extends \Codeception\Test\Unit
             ]
         ]));
 
-        $controller = new \App\Http\Controllers\InternApiController();
+        $controller = new \App\Http\Controllers\PrivateApiController();
         $controller->index($request);
 
         $user = \App\User::first();

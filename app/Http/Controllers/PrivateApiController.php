@@ -18,7 +18,7 @@ use Illuminate\Http\Request;
 /**
  * Controller for the internal API that is used exclusively by the frontend.
  */
-class InternApiController extends Controller
+class PrivateApiController extends Controller
 {
     private $requests;
 
@@ -33,23 +33,25 @@ class InternApiController extends Controller
             'logout' => LogoutRequest::class,
             'register' => RegisterRequest::class,
             'password-email' => PasswordEmailRequest::class,
-            'password-reset' => PasswordResetRequest::class,
+            'password-reset' => PasswordResetRequest::class
         ];
     }
 
-    public function index(Request $request)
+    /**
+     * @param array $data
+     * @return JsonResponse
+     */
+    protected function resolve($data)
     {
-        $data = json_decode($request->input("api"), true);
-
         $responses = [];
         if ($data != null) {
-            foreach ($data as $requestName => $parameters) {
+            foreach ($data as $name => $parameters) {
 
-                if (isset($this->requests[$requestName])) {
-                    $class = $this->requests[$requestName];
+                if (isset($this->requests[$name])) {
+                    $class = $this->requests[$name];
 
-                    /** @var ApiRequest $request */
-                    $request = new $class();
+                    /** @var ApiRequest $apiRequest */
+                    $apiRequest = new $class();
 
                     if ($parameters instanceof \stdClass) {
                         $parameters = (array)$parameters;
@@ -57,9 +59,12 @@ class InternApiController extends Controller
                         $parameters = [];
                     }
 
-                    $responses[] = $request->resolve($requestName, $parameters);
+                    $responses[] = $apiRequest->resolve($name, $parameters);
                 } else {
-                    $responses[] = new ApiResponse($requestName, false, "Unknown request.");
+                    $response = new ApiResponse(false, "Unknown request.");
+                    $response->setName($name);
+
+                    $responses[] = $response;
                 }
             }
         }
@@ -67,5 +72,15 @@ class InternApiController extends Controller
         $compositeResponse = new CompositeApiResponse($responses);
 
         return new JsonResponse($compositeResponse);
+    }
+
+    public function index(Request $request)
+    {
+        return $this->resolve(json_decode($request->input("api"), true));
+    }
+
+    public function single($name, Request $request)
+    {
+        return $this->resolve([$name => $request->input()]);
     }
 }

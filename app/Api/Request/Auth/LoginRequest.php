@@ -6,6 +6,7 @@ namespace App\Api\Request\Auth;
 use App\Api\Request\Request as ApiRequest;
 use App\Api\Response\Response as ApiResponse;
 use App\Auth\AuthenticatesUsers;
+use Illuminate\Support\Collection;
 
 /**
  * API login request
@@ -26,15 +27,15 @@ class LoginRequest extends ApiRequest
     /**
      * @inheritDoc
      */
-    protected function doResolve($name, $parameters)
+    protected function doResolve($name, Collection $parameters)
     {
         $login = $password = $remember = null;
-        extract($parameters, EXTR_IF_EXISTS);
+        extract($parameters->all(), EXTR_IF_EXISTS);
 
         $response = $this->login($login, $password, $remember);
 
         if (!$response instanceof ApiResponse) {
-            return new ApiResponse($name, true, $response);
+            return new ApiResponse(true, $response);
         }
 
         return $response;

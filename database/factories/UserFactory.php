@@ -13,13 +13,29 @@ use Faker\Generator as Faker;
 |
 */
 
+/** @var \Illuminate\Database\Eloquent\Factory $factory */
+
 $factory->define(App\User::class, function (Faker $faker) {
     static $password;
 
     return [
-        'name' => $faker->name,
+        'username' => $faker->unique()->userName,
         'email' => $faker->unique()->safeEmail,
-        'password' => $password ?: $password = bcrypt('secret'),
+        'password' => $password ?: $password = bcrypt('secret999'),
+        'display_name'=> $faker->firstName . ' ' . $faker->lastName,
         'remember_token' => str_random(10),
+        'status' => $faker->biasedNumberBetween(0, 2, function($i){return sin($i*2);})
     ];
 });
+
+$factory->state(\App\User::class, 'active', [
+    'status' => \App\User::STATUS_ACTIVE
+]);
+
+$factory->state(\App\User::class, 'banned', [
+    'status' => \App\User::STATUS_BANNED
+]);
+
+$factory->state(\App\User::class, 'inactive', [
+    'status' => \App\User::STATUS_INACTIVE
+]);

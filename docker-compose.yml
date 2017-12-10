@@ -10,7 +10,7 @@ services:
       - "8080:80"
       - "8443:443"
     volumes:
-      - .:/app
+      - .:/app:z
     environment:
       PHP_DEBUGGER: xdebug
       PHP_DISPLAY_ERRORS: 1

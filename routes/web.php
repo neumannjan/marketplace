@@ -11,10 +11,12 @@
 |
 */
 
-/** POST route to the internal API */
-Route::post('api', 'InternApiController@index');
-/** GET route to the internal API - works in the development environment only */
-Route::get('api', 'InternApiController@index')->middleware('dev');
+/** POST routes to the private API */
+Route::post('api', 'PrivateApiController@index');
+Route::post('api/{name}', 'PrivateApiController@single')->name('api.single');
+/** GET routes to the private API - work in the development environment only */
+Route::get('api', 'PrivateApiController@index')->middleware('dev');
+Route::get('api/{name}', 'PrivateApiController@single')->middleware('dev');
 
 // User Activation Route
 Route::get('user/activate/{username}/{token}', 'Auth\ActivateController@activate')->name('user.activate');

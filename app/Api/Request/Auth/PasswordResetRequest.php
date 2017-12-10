@@ -8,6 +8,7 @@ use App\Api\Response\Response;
 use App\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Passwords\PasswordBroker;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -44,7 +45,7 @@ class PasswordResetRequest extends Request
     /**
      * @inheritdoc
      */
-    protected function doResolve($name, $parameters)
+    protected function doResolve($name, Collection $parameters)
     {
         $response = \Password::broker()->reset([
             'email' => $parameters['email'],
@@ -66,7 +67,7 @@ class PasswordResetRequest extends Request
         switch ($response) {
             case PasswordBroker::PASSWORD_RESET:
                 \Session::flash("success.password-reset", trans($response));
-                return new Response($name, true, []);
+                return new Response(true, []);
             default:
                 throw ValidationException::withMessages([
                     'email' => [trans($response)]
