@@ -22,9 +22,11 @@ $factory->define(App\User::class, function (Faker $faker) {
         'username' => $faker->unique()->userName,
         'email' => $faker->unique()->safeEmail,
         'password' => $password ?: $password = bcrypt('secret999'),
-        'display_name'=> $faker->firstName . ' ' . $faker->lastName,
+        'display_name' => $faker->name,
         'remember_token' => str_random(10),
-        'status' => $faker->biasedNumberBetween(0, 2, function($i){return sin($i*2);})
+        'status' => $faker->biasedNumberBetween(0, 2, function ($i) {
+            return sin($i * M_PI);
+        })
     ];
 });
 

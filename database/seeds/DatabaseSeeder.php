@@ -17,12 +17,15 @@ class DatabaseSeeder extends Seeder
             factory(\App\Offer::class, 10)->make()->each(function (\App\Offer $o) use ($u) {
                 $o->author_user_id = $u->id;
 
-                if($o->status === \App\Offer::STATUS_SOLD)
+                if ($o->status == \App\Offer::STATUS_SOLD)
                 {
-                    $o->sold_to_user_id = \App\User::whereKeyNot($u->id)->first()->id;
+                    $soldTo = \App\User::whereKeyNot($u->id)->inRandomOrder()->limit(1)->first(['id']);
 
-                    if($o->sold_to_user_id == null)
+                    if ($soldTo) {
+                        $o->sold_to_user_id = $soldTo->id;
+                    } else {
                         $o->status = \App\Offer::STATUS_AVAILABLE;
+                    }
                 }
 
                 $o->save();

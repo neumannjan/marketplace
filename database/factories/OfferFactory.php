@@ -6,9 +6,11 @@ use Faker\Generator as Faker;
 
 $factory->define(\App\Offer::class, function (Faker $faker) {
     return [
-        'name' => $faker->words(3, true),
-        'description' => $faker->paragraphs(3, true),
-        'status' => $faker->biasedNumberBetween(0, 2, function($i){return sin($i*2);})
+        'name' => $faker->catchPhrase,
+        'description' => $faker->realText(400),
+        'status' => $faker->biasedNumberBetween(0, 2, function ($i) {
+            return sin($i * M_PI);
+        })
     ];
 });
 
