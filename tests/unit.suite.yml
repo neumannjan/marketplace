@@ -6,7 +6,7 @@ actor: UnitTester
 modules:
     enabled:
         - Laravel5:
-            environment_file: tests/.env.runner
+            environment_file: .env.testing
             run_database_migrations: true
         - EmailAssertions
         - Asserts

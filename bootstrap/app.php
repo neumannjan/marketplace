@@ -32,15 +32,11 @@ $testHelper = new \App\Tests\TestHelper($app->basePath('tests'));
 // register test helper as singleton
 $app->instance(\App\Tests\TestHelper::class, $testHelper);
 
-// set environment variables
-if ($testHelper->isRunner() || $testHelper->isSeleniumRequest()) {
-    $app->useEnvironmentPath($testHelper->getTestsDir());
-
-    if ($testHelper->isRunner()) {
-        $app->loadEnvironmentFrom('.env.runner');
-    } else {
-        $app->loadEnvironmentFrom('.env.server');
-    }
+// set environment
+if ($testHelper->isRunner()) {
+    $app->loadEnvironmentFrom('.env.testing');
+} else if ($testHelper->isSeleniumRequest()) {
+    $app->loadEnvironmentFrom('.env.testingserver');
 }
 
 /*

@@ -9,7 +9,7 @@ actor: FunctionalTester
 modules:
     enabled:
         - Laravel5:
-            environment_file: tests/.env.testing
+            environment_file: .env.testing
             run_database_migrations: true
         # add a framework module here
         - \Helper\Functional
