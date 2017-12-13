@@ -62,4 +62,11 @@ class AcceptanceTester extends \Codeception\Actor
     {
         $this->amOnPage(route($route, $parameters, false));
     }
+
+    public function truncateModelTable($modelClass)
+    {
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0;');
+        $modelClass::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
+    }
 }

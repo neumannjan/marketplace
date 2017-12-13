@@ -33,7 +33,7 @@ class ResetPassword extends LocalizedMailNotification
     {
         return (new MailMessage())
             ->line($this->__('line1'))
-            ->action($this->__('action'), url(AppRoutes::passwordResetRoute($this->token)))
+            ->action($this->__('action'), url(AppRoutes::passwordReset($this->token)))
             ->line($this->__('line2'));
     }
 

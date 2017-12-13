@@ -10,7 +10,7 @@ class AuthenticationCest
 
     public function _before(AcceptanceTester $I)
     {
-        \App\User::truncate();
+        $I->truncateModelTable(\App\User::class);
     }
 
     public function _after(AcceptanceTester $I)
@@ -229,5 +229,49 @@ class AuthenticationCest
         $I->amOnPage('/');
         $I->see(__('flash.warning.session-expired'));
         $I->dontSeeElement('.fa-sign-out');
+    }
+
+    public function passwordResetRequest(AcceptanceTester $I)
+    {
+        $this->_register(\App\User::STATUS_ACTIVE);
+
+        $I->amOnPage('/password/reset');
+        $I->fillField(['name' => 'email'], self::EMAIL);
+        $I->click('#submit');
+
+        $I->waitForElement('.alert', 5);
+        $I->see(__('passwords.sent'));
+    }
+
+    public function passwordReset(AcceptanceTester $I)
+    {
+        $user = $this->_register(\App\User::STATUS_ACTIVE);
+
+        $newPassword = 'newPassword999';
+
+        /** @var \Illuminate\Auth\Passwords\TokenRepositoryInterface $tokens */
+        $tokens = app(\Illuminate\Auth\Passwords\DatabaseTokenRepository::class, [
+            'table' => 'password_resets',
+            'hashKey' => 'hashkey'
+        ]);
+        $token = $tokens->create($user);
+
+        $I->amOnPage("/password/reset/$token");
+        $I->seeElement('input', ['name' => 'password_confirmation']);
+        $I->fillField(['name' => 'email'], self::EMAIL);
+        $I->fillField(['name' => 'password'], $newPassword);
+        $I->fillField(['name' => 'password_confirmation'], $newPassword);
+        $I->click('#submit');
+
+        $I->waitForElement('.alert', 5);
+        $I->see(__('passwords.reset'));
+
+        $I->amOnPage('/login');
+        $I->fillField(['name' => 'login'], self::EMAIL);
+        $I->fillField(['name' => 'password'], $newPassword);
+        $I->click('#submit');
+
+        $I->waitForElement('.fa-sign-out', 5);
+        $I->dontSeeElement('input', ['name' => 'password']);
     }
 }

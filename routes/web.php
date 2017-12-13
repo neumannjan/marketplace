@@ -12,7 +12,7 @@
 */
 
 /** POST routes to the private API */
-Route::post('api', 'PrivateApiController@index');
+Route::post('api', 'PrivateApiController@index')->name('api');
 Route::post('api/{name}', 'PrivateApiController@single')->name('api.single');
 /** GET routes to the private API - work in the development environment only */
 Route::get('api', 'PrivateApiController@index')->middleware('dev');

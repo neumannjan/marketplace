@@ -5,13 +5,16 @@
         <form id="form-register">
             <form-input class="form-group"
                         label="E-mail"
+                        name="email"
                         :serverValidation="$serverValidationOn('form.email')"
                         :validation="$v.form.email"
                         v-model="form.email"
                         type="email" required autofocus></form-input>
 
             <div class="form-group">
-                <button type="submit" class="btn btn-primary" @click.prevent="submit">Send Password Reset Link</button>
+                <button type="submit" id="submit" class="btn btn-primary" @click.prevent="submit">Send Password Reset
+                    Link
+                </button>
                 <!-- TODO translate -->
             </div>
         </form>

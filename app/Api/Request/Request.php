@@ -17,7 +17,7 @@ abstract class Request
     /**
      * Decides whether the request will be resolved.
      * If the request should not run, returns the error message. Otherwise returns true.
-     * @return true
+     * @return true|string
      */
     protected function shouldResolve()
     {
@@ -40,6 +40,7 @@ abstract class Request
      * @param $name
      * @param Collection $parameters
      * @return Response
+     * @throws ValidationException
      */
     protected abstract function doResolve($name, Collection $parameters);
 
@@ -83,6 +84,7 @@ abstract class Request
 
     /**
      * @param Collection $parameters
+     * @throws ValidationException
      */
     protected function validateRules($parameters)
     {

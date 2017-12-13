@@ -23,7 +23,7 @@ class AppRoutes
      */
     public static final function route($route, $absolute = true)
     {
-        return route('api', ['route' => $route], true);
+        return route('app', ['route' => $route], true);
     }
 
     /**
@@ -42,8 +42,8 @@ class AppRoutes
      * @param bool $absolute
      * @return string
      */
-    public static final function passwordResetRoute($token, $absolute = true)
+    public static final function passwordReset($token, $absolute = true)
     {
-        return self::route("token/$token", $absolute);
+        return self::route("password/reset/$token", $absolute);
     }
 }
