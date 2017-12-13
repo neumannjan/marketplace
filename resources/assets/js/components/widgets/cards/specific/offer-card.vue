@@ -4,11 +4,11 @@
 
         <div slot="pre-footer" class="card-footer py-1">
             <div class="row">
-                <button type="button" class="col-sm btn btn-link">
+                <button type="button" class="col btn btn-link">
                     <span class="fa fa-heart"></span>
                 </button>
 
-                <button type="button" class="col-sm btn btn-link">
+                <button type="button" class="col btn btn-link">
                     <span class="fa fa-shopping-cart"></span>
                 </button>
             </div>
