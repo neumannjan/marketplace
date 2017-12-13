@@ -16,5 +16,7 @@ $factory->define(\App\Image::class, function (Faker $faker) {
     return [
         'size_original' => $orig,
         'size_tiny' => $tiny,
+        'width' => $width,
+        'height' => $height
     ];
 });

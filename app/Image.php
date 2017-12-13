@@ -25,6 +25,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Image extends Model
 {
+    const SIZES = ['original', 'tiny'];
+
     public function offer()
     {
         return $this->belongsTo(Offer::class, null, 'offer_id');

@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateImagesTable extends Migration
 {
@@ -21,6 +21,8 @@ class CreateImagesTable extends Migration
             $table->timestamps();
             $table->string('size_original');
             $table->string('size_tiny')->nullable();
+            $table->unsignedInteger('width');
+            $table->unsignedInteger('height');
 
             $table->unsignedInteger('offer_id')->nullable();
             $table->foreign('offer_id')->references('id')->on('offers')->onDelete('cascade');

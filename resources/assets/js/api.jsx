@@ -40,6 +40,80 @@ let Request = (params, thenCallback) => ({
     }
 });
 
+let URLRequest = (url) => {
+    let successCallbacks = [];
+    let errorCallbacks = [];
+    let thenCallbacks = [];
+
+    /**
+     * Define a callback for what to do when the request results with a success
+     * @param callback
+     * @returns {SingleRequest} this, for chaining
+     */
+    function success(callback) {
+        successCallbacks.push(callback);
+        return this;
+    }
+
+    /**
+     * Define a callback for what to do when the request results with an error
+     * @param callback
+     * @returns {SingleRequest} this, for chaining
+     */
+    function error(callback) {
+        errorCallbacks.push(callback);
+        return this;
+    }
+
+    /**
+     * Define a callback for what to do after the whole API call is made
+     * @param callback
+     * @returns {SingleRequest} this, for chaining
+     */
+    function then(callback) {
+        thenCallbacks.push(callback);
+        return this;
+    }
+
+    let _then = response => {
+
+        let globalDone = false;
+        let localDone = false;
+        for (let [key, value] of Object.entries(response.data)) {
+            if (key === 'global') {
+                store.commit('global', value.result);
+                globalDone = true;
+            } else {
+                if (globalDone && localDone) break;
+                else if (localDone) continue;
+
+                let callbacks = value.success ? successCallbacks : errorCallbacks;
+
+                for (let c of callbacks)
+                    c(value.result);
+
+                for (let c of thenCallbacks)
+                    c(response.data);
+
+                localDone = true;
+            }
+        }
+    };
+
+    function fire() {
+        axios.post(url, {}, config()).then(_then).catch(error => {
+            alert(JSON.stringify(error.response.data.message, null, 2));
+        });
+    }
+
+    return {
+        success: success,
+        error: error,
+        then: then,
+        fire: fire,
+    }
+};
+
 /**
  * A single request for the API
  * @param name Request name
@@ -190,5 +264,6 @@ let CompositeRequest = () => {
 
 export default {
     CompositeRequest: CompositeRequest,
-    SingleRequest: SingleRequest
+    SingleRequest: SingleRequest,
+    URLRequest: URLRequest,
 };

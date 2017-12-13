@@ -8,6 +8,7 @@ use App\Api\Request\Auth\LogoutRequest;
 use App\Api\Request\Auth\PasswordEmailRequest;
 use App\Api\Request\Auth\PasswordResetRequest;
 use App\Api\Request\Auth\RegisterRequest;
+use App\Api\Request\DB\OfferRequest;
 use App\Api\Request\GlobalRequest;
 use App\Api\Request\Request as ApiRequest;
 use App\Api\Response\CompositeResponse as CompositeApiResponse;
@@ -28,12 +29,18 @@ class PrivateApiController extends Controller
     public function __construct()
     {
         $this->requests = [
+            //Global
             'global' => GlobalRequest::class,
+
+            //Auth
             'login' => LoginRequest::class,
             'logout' => LogoutRequest::class,
             'register' => RegisterRequest::class,
             'password-email' => PasswordEmailRequest::class,
-            'password-reset' => PasswordResetRequest::class
+            'password-reset' => PasswordResetRequest::class,
+
+            //DB
+            'offers' => OfferRequest::class
         ];
     }
 
@@ -81,6 +88,9 @@ class PrivateApiController extends Controller
 
     public function single($name, Request $request)
     {
-        return $this->resolve([$name => $request->input()]);
+        return $this->resolve([
+            $name => $request->input(),
+            'global' => '' //add global request automatically for single requests
+        ]);
     }
 }
