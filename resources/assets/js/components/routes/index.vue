@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1>Index page</h1>
-        <cards :url="url" :component="component" @update="update" :startCards="startCards"></cards>
+        <cards url="/api/offers?status=1" :component="component"></cards>
     </div>
 </template>
 
@@ -9,7 +9,6 @@
     import title from '../mixins/title';
     import Cards from '../widgets/cards/infinite-scroll-masonry';
     import OfferCard from '../widgets/cards/specific/offer-card';
-    import {mapState} from 'vuex';
 
     export default {
         mixins: [title],
@@ -20,16 +19,5 @@
             title: "Index page",
             component: OfferCard,
         }),
-        methods: {
-            update(cardData) {
-                this.$store.commit('routes/updateIndex', cardData);
-            }
-        },
-        computed: {
-            ...mapState({
-                startCards: state => state.routes.index.cards,
-                url: state => state.routes.index.nextUrl !== undefined ? state.routes.index.nextUrl : "/api/offers?status=1"
-            }),
-        }
     };
 </script>

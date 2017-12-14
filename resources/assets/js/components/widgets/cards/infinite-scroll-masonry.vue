@@ -16,10 +16,6 @@
             },
             component: {
                 required: true
-            },
-            startCards: {
-                type: Array,
-                default: () => []
             }
         },
         components: {
@@ -41,10 +37,6 @@
                     .success(result => {
                         this.addCards(result.data);
                         this.nextUrl = result['next_page_url'];
-                        this.$emit('update', {
-                            nextUrl: this.nextUrl,
-                            cards: this.cards
-                        });
                         this.busy = false;
                     })
                     .fire();
@@ -57,10 +49,7 @@
         },
         created() {
             this.nextUrl = this.url;
-            this.cards = this.startCards;
-
-            if (this.cards.length === 0)
-                this.request();
+            this.request();
         }
     };
 </script>
