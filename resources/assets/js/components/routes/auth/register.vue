@@ -1,6 +1,6 @@
 <template>
     <div class="col-sm-8 col-md-6 col-lg-4">
-        <h1>Register</h1>
+        <h1>{{ title }}</h1>
 
         <form id="form-register">
             <form-input class="form-group"
@@ -52,11 +52,11 @@
 
     import {required, minLength, maxLength, email, sameAs} from 'vuelidate/lib/validators';
 
-    import title from './../../mixins/title';
+    import route from '../../mixins/route';
     import form from './../../mixins/form';
 
     export default {
-        mixins: [title, form],
+        mixins: [route, form],
         components: {
             'form-input': InputComponent,
             'form-select': SelectComponent

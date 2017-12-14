@@ -3,6 +3,10 @@ let changeTitle = (instance, to) => {
 };
 
 export default {
+    data: () => ({
+        scrollX: 0,
+        scrollY: 0,
+    }),
     beforeRouteEnter(to, from, next) {
         next(vm => {
             changeTitle(vm, to);
@@ -11,5 +15,13 @@ export default {
     beforeRouteUpdate(to, from, next) {
         changeTitle(this, to);
         next();
+    },
+    beforeRouteLeave(to, from, next) {
+        this.scrollX = window.scrollX;
+        this.scrollY = window.scrollY;
+        next();
+    },
+    activated() {
+        window.scroll(this.scrollX, this.scrollY);
     }
 }

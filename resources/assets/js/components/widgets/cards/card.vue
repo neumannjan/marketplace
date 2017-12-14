@@ -4,9 +4,10 @@
             <slot name="header"></slot>
         </div>
         <slot name="post-header"></slot>
-        <img class="card-img-top" v-lazy="imgObj" :alt="data.title" ref="img" :height="elHeight">
+        <img v-if="img" class="card-img-top" v-lazy="imgObj" :alt="title" ref="img" :height="elHeight">
         <div class="card-body">
-            <h4 class="card-title">{{ data.title }}</h4>
+            <h4 v-if="title" class="card-title">{{ title }}</h4>
+            <h6 v-if="subtitle" class="card-subtitle mb-2 text-muted">{{ subtitle }}</h6>
             <p class="card-text">
                 <slot></slot>
             </p>
@@ -22,33 +23,39 @@
     export default {
         name: "card",
         props: {
-            data: {
-                type: Object,
-                required: true,
-            }
+            title: String,
+            subtitle: String,
+            img: String,
+            thumb: String,
+            width: Number,
+            height: Number,
         },
         data: () => ({
             elHeight: 0,
         }),
         computed: {
             imgObj() {
+                if (!this.img) return {};
+
                 return {
-                    src: this.data.img,
-                    loading: this.data.thumb,
+                    src: this.img,
+                    loading: this.thumb,
                 }
             }
         },
         mounted() {
-            this.elHeight = this.data.height * this.$refs.img.offsetWidth / this.data.width;
+            if (this.img) {
+                this.elHeight = this.height * this.$refs.img.offsetWidth / this.width;
 
-            let handler = ({bindType, el, naturalHeight, naturalWidth, $parent, src, loading, error}, formCache) => {
-                if (el === this.$refs.img) {
-                    this.elHeight = 'auto';
-                    this.$Lazyload.$off('loaded', handler);
-                }
-            };
+                let handler = ({bindType, el, naturalHeight, naturalWidth, $parent, src, loading, error}, formCache) => {
+                    if (el === this.$refs.img) {
+                        this.elHeight = 'auto';
+                        this.$Lazyload.$off('loaded', handler);
+                    }
+                };
 
-            this.$Lazyload.$on('loaded', handler);
+                this.$Lazyload.$on('loaded', handler);
+            }
         }
     }
 </script>

@@ -1,12 +1,28 @@
 <template>
-    <masonry :cards="cards" :component="component" v-infinite-scroll="request" infinite-scroll-disabled="busy"
-             infinite-scroll-distance="100"></masonry>
+    <div>
+        <masonry v-if="this.busy || this.cards.length > 0" :cards="cards" :component="component"
+                 v-infinite-scroll="request" infinite-scroll-disabled="busy"
+                 infinite-scroll-distance="200">
+            <template slot="below">
+                <template v-if="hasMore">
+                    <slot name="loading"></slot>
+                </template>
+            </template>
+        </masonry>
+        <template v-if="hasMore">
+            <slot name="loading-after"></slot>
+        </template>
+        <template v-else="">
+            <slot name="loaded"></slot>
+        </template>
+    </div>
 </template>
 
 <script>
     import api from '../../../api';
     import infiniteScroll from 'vue-infinite-scroll';
     import MasonryComponent from '../../widgets/cards/masonry';
+    import CardComponent from '../../widgets/cards/card';
 
     export default {
         props: {
@@ -19,18 +35,31 @@
             }
         },
         components: {
-            masonry: MasonryComponent
+            masonry: MasonryComponent,
+            card: CardComponent
         },
         directives: {
             infiniteScroll
         },
+        computed: {
+            hasMore() {
+                return this.nextUrl !== undefined && this.nextUrl !== false && this.nextUrl !== null;
+            }
+        },
         data: () => ({
             cards: [],
             busy: false,
-            nextUrl: null
+            nextUrl: null,
+            active: true
         }),
         methods: {
             request() {
+                if (this.active === false)
+                    return;
+
+                if (!this.hasMore)
+                    return false;
+
                 this.busy = true;
 
                 api.URLRequest(this.nextUrl)
@@ -50,6 +79,12 @@
         created() {
             this.nextUrl = this.url;
             this.request();
+        },
+        activated() {
+            this.active = true;
+        },
+        deactivated() {
+            this.active = false;
         }
     };
 </script>

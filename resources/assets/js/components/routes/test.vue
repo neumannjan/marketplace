@@ -1,13 +1,13 @@
 <template>
-    <h1>{{ name }} page</h1>
+    <h1>{{ title }}</h1>
 </template>
 
 <script>
-    import title from './../mixins/title';
+    import route from '../mixins/route';
 
     export default {
         props: ['name'],
-        mixins: [title],
+        mixins: [route],
         computed: {
             title() {
                 return this.name + " page";

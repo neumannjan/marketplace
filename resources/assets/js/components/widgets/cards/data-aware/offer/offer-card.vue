@@ -1,5 +1,5 @@
 <template>
-    <card :data="cardData">
+    <card v-bind="cardData">
         {{ shortDesc }}
 
         <div slot="pre-footer" class="card-footer py-1">
@@ -17,7 +17,7 @@
 </template>
 
 <script>
-    import CardComponent from "../card";
+    import CardComponent from "../../card";
 
     export default {
         name: "offer-card",
@@ -55,9 +55,7 @@
 </script>
 
 <style scoped type="text/scss" lang="scss">
-    @import "~bootstrap/scss/functions";
-    @import "~bootstrap/scss/variables";
-    @import "~bootstrap/scss/mixins";
+    @import "../../../../../../css/includes";
 
     .card-footer button {
         color: $gray-700;

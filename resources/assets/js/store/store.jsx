@@ -11,7 +11,6 @@ let store = new Vuex.Store({
         flash: {},
         messages: [],
     },
-    modules: {},
     mutations: {
         global(state, data) {
             for (let [key, value] of Object.entries(data)) {
@@ -41,7 +40,8 @@ let store = new Vuex.Store({
                 })
                 .fire();
         }
-    }
+    },
+    modules: {}
 });
 
 if (data) {

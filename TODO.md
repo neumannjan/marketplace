@@ -25,3 +25,5 @@
 * Translate UI
 * Add image srcsets
 * Remove old blade files
+* Internet down warning
+* Fix footer & left menu on mobile devices

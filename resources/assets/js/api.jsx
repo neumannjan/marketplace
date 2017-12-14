@@ -102,6 +102,10 @@ let URLRequest = (url) => {
 
     function fire() {
         axios.post(url, {}, config()).then(_then).catch(error => {
+            if (error.response === undefined) {
+                alert('Unknown POST request error');
+                return;
+            }
             alert(JSON.stringify(error.response.data.message, null, 2));
         });
     }

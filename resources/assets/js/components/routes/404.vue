@@ -1,9 +1,16 @@
 <template>
     <div>
-        <h1>404</h1>
+        <h1>{{ title }}</h1>
     </div>
 </template>
 
 <script>
-    export default {};
+    import route from '../mixins/route';
+
+    export default {
+        mixins: [route],
+        data: () => ({
+            title: "404"
+        })
+    };
 </script>

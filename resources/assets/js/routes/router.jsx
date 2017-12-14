@@ -14,6 +14,10 @@ import GuestGuard from './guards/guest';
 
 Vue.use(VueRouter);
 
+export let cached = [
+    IndexRoute
+];
+
 export default new VueRouter({
     mode: 'history',
     routes: [

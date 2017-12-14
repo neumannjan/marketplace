@@ -8,7 +8,9 @@
         <div class="main-content">
             <main role="main" class="main container">
                 <flash-messages></flash-messages>
-                <router-view></router-view>
+                <keep-alive :include="keepAlive">
+                    <router-view></router-view>
+                </keep-alive>
             </main>
 
             <footer class="footer">
@@ -24,12 +26,16 @@
     import TopNavComponent from './widgets/nav/top-nav.vue';
     import BottomNavComponent from './widgets/nav/bottom-nav.vue';
     import FlashMessagesComponent from './widgets/flash-messages.vue';
+    import {cached} from '../routes/router';
 
     export default {
         components: {
             'top-nav': TopNavComponent,
             'bottom-nav': BottomNavComponent,
             'flash-messages': FlashMessagesComponent,
-        }
+        },
+        data: () => ({
+            keepAlive: cached
+        })
     };
 </script>
