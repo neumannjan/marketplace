@@ -120,6 +120,6 @@ class User extends Authenticatable
 
     public function profileImage()
     {
-        return $this->belongsTo(Image::class, null, 'profile_image_id');
+        return $this->belongsTo(Image::class, 'profile_image_id');
     }
 }

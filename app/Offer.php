@@ -22,12 +22,12 @@ class Offer extends Model
 
     public function author()
     {
-        return $this->belongsTo(User::class, null, 'author_user_id');
+        return $this->belongsTo(User::class, 'author_user_id');
     }
 
     public function soldTo()
     {
-        return $this->belongsTo(User::class, null, 'sold_to_user_id');
+        return $this->belongsTo(User::class, 'sold_to_user_id');
     }
 
     /**

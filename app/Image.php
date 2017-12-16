@@ -14,7 +14,7 @@ class Image extends Model
 
     public function offer()
     {
-        return $this->belongsTo(Offer::class, null, 'offer_id');
+        return $this->belongsTo(Offer::class, 'offer_id');
     }
 
     public function user()
