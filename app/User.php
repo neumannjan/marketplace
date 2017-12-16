@@ -118,7 +118,7 @@ class User extends Authenticatable
         return $this->hasMany(Offer::class, 'sold_to_user_id');
     }
 
-    public function profileImage()
+    public function profile_image()
     {
         return $this->belongsTo(Image::class, 'profile_image_id');
     }

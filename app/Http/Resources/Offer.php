@@ -17,6 +17,7 @@ class Offer extends Resource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'author' => User::make($this->author),
             'price' => $this->price,
             'description' => $this->description,
             'status' => $this->status,

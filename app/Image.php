@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Image extends Model
 {
-    const SIZES = ['original', 'tiny', 'icon'];
+    const SIZES = ['original', 'tiny', 'icon', 'icon_2x'];
 
     public function offer()
     {

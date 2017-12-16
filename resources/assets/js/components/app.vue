@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <div class="navbar navbar-expand navbar-dark bg-dark navbar-vertical">
-            <a class="navbar-brand" href="#">Nav</a>
+            <a class="navbar-brand" href="#">Nav</a> <!--TODO replace-->
             <top-nav class="navbar-nav"></top-nav>
             <bottom-nav class="navbar-nav mt-auto"></bottom-nav>
         </div>
@@ -15,7 +15,7 @@
 
             <footer class="footer">
                 <div class="footer-inner">
-                    <span class="ml-auto">&copy; Company 2017</span>
+                    <span class="ml-auto">&copy; Company 2017</span> <!--TODO replace-->
                 </div>
             </footer>
         </div>

@@ -53,6 +53,7 @@
 
                 return {
                     key: this.data.id,
+                    alt: this.data.name,
                     img: image['size_original'],
                     thumb: image['size_tiny'],
                     width: image['width'],
