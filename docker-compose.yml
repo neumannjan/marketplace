@@ -1,7 +1,7 @@
 version: '3'
 services:
   web:
-    image: webdevops/php-apache-dev:7.1
+    image: webdevops/php-apache-dev:alpine-php7
     depends_on:
       - db
     links:
