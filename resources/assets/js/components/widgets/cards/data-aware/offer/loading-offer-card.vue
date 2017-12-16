@@ -83,6 +83,6 @@
     }
 
     .loading-short.loading-title {
-        margin-bottom: $headings-line-height + $headings-margin-bottom - 1rem;
+        margin-bottom: calc(#{$headings-line-height - 1em} + #{$headings-margin-bottom});
     }
 </style>

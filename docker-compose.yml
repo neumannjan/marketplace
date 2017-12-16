@@ -29,8 +29,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
   selenium:
-    image: selenium/standalone-chrome-debug:3.7.1
-    #image: selenium/standalone-firefox-debug:3.4.0
+    image: selenium/standalone-chrome-debug:3.8.1
+    #image: selenium/standalone-firefox-debug:3.8.1
     depends_on:
       - web
     ports:
