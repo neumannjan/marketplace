@@ -15,7 +15,14 @@ let store = new Vuex.Store({
         global(state, data) {
             for (let [key, value] of Object.entries(data)) {
                 if (state[key] !== undefined) {
-                    state[key] = value;
+
+                    if (state[key] instanceof Array && value instanceof Array) {
+                        state[key] = [].concat(state[key], value);
+                    } else if (state[key] instanceof Object && value instanceof Object) {
+                        state[key] = Object.assign({}, state[key], value);
+                    } else {
+                        state[key] = value;
+                    }
                 }
             }
         },
