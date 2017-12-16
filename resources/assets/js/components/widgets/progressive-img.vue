@@ -70,6 +70,7 @@
     .img-wrapper, .img-placeholder-wrapper {
         position: relative;
         overflow: hidden;
+        z-index: 0;
     }
 
     .img-wrapper > *, .img-placeholder-wrapper > * {
