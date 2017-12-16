@@ -1,29 +1,46 @@
 <template>
     <card v-bind="cardData">
-        {{ shortDesc }}
+        <a href="#" class="text-dark"><h4 class="card-title">{{ data.name }}</h4></a>
+        <p class="card-text">{{ shortDesc }}</p>
+        <p class="h5 card-text">{{ data.price }}</p>
 
-        <div slot="pre-footer" class="card-footer py-1">
-            <div class="row">
-                <button type="button" class="col btn btn-link">
-                    <span class="fa fa-heart"></span>
-                </button>
-
-                <button type="button" class="col btn btn-link">
-                    <span class="fa fa-shopping-cart"></span>
-                </button>
-            </div>
-        </div>
+        <card-icon-footer slot="footer" :buttons="buttons" :gray="true"></card-icon-footer>
     </card>
 </template>
 
 <script>
-    import CardComponent from "../../card";
+    import Card from "../../card";
+    import CardIconFooter from "../../card-icon-footer";
+
+    import 'vue-awesome/icons/heart';
+    import 'vue-awesome/icons/shopping-cart';
+    import 'vue-awesome/icons/expand';
 
     export default {
         name: "offer-card",
         components: {
-            card: CardComponent
+            Card,
+            CardIconFooter
         },
+        data: () => ({
+            buttons: [
+                {
+                    icon: 'heart',
+                    label: 'Like',
+                    callback: null
+                },
+                {
+                    icon: 'shopping-cart',
+                    label: 'Buy',
+                    callback: null
+                },
+                {
+                    icon: 'expand',
+                    label: 'Expand',
+                    callback: null
+                }
+            ]
+        }),
         props: {
             data: {
                 type: Object,
@@ -36,7 +53,6 @@
 
                 return {
                     key: this.data.id,
-                    title: this.data.name,
                     img: image['size_original'],
                     thumb: image['size_tiny'],
                     width: image['width'],
@@ -54,15 +70,8 @@
     }
 </script>
 
-<style scoped type="text/scss" lang="scss">
-    @import "../../../../../../css/includes";
-
-    .card-footer button {
-        color: $gray-700;
-        cursor: pointer;
-
-        &:hover {
-            color: $gray-900;
-        }
+<style scoped>
+    a {
+        text-decoration: none;
     }
 </style>

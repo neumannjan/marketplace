@@ -25,6 +25,7 @@ class CreateUsersTable extends Migration
             $table->string('display_name')->nullable();
             $table->string('options')->nullable();
             $table->tinyInteger('status')->comment('0 == inactive, 1 == active, 2 == banned');
+            $table->text('description');
             $table->rememberToken();
             $table->timestamps();
 

@@ -4,13 +4,9 @@
             <slot name="header"></slot>
         </div>
         <slot name="post-header"></slot>
-        <img v-if="img" class="card-img-top" v-lazy="imgObj" :alt="title" ref="img" :height="elHeight">
+        <a href="#"><img v-if="img" class="card-img-top" v-lazy="imgObj" :alt="alt" ref="img" :height="elHeight"></a>
         <div class="card-body">
-            <h4 v-if="title" class="card-title">{{ title }}</h4>
-            <h6 v-if="subtitle" class="card-subtitle mb-2 text-muted">{{ subtitle }}</h6>
-            <p class="card-text">
-                <slot></slot>
-            </p>
+            <slot></slot>
         </div>
         <slot name="pre-footer"></slot>
         <div v-if="$slots.footer" class="card-footer">
@@ -23,9 +19,8 @@
     export default {
         name: "card",
         props: {
-            title: String,
-            subtitle: String,
             img: String,
+            alt: String,
             thumb: String,
             width: Number,
             height: Number,

@@ -21,6 +21,8 @@ class CreateImagesTable extends Migration
             $table->timestamps();
             $table->string('size_original');
             $table->string('size_tiny')->nullable();
+            $table->string('size_icon')->nullable();
+            $table->string('size_icon_2x')->nullable();
             $table->unsignedInteger('width');
             $table->unsignedInteger('height');
 

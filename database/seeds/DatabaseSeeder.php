@@ -12,6 +12,13 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         factory(\App\User::class, 20)->make()->each(function (\App\User $u) {
+
+            //set profile image
+            /** @var \App\Image $image */
+            $image = factory(\App\Image::class)->create();
+
+            $u->profile_image_id = $image->id;
+
             //save user
             $u->save();
 

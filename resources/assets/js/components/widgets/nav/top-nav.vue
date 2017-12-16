@@ -5,15 +5,18 @@
 <script>
     import NavComponent from './nav.vue';
 
+    import 'vue-awesome/icons/home';
+    import 'vue-awesome/icons/cog';
+
     let items = [
         {
             label: 'Dashboard',
-            icon: 'fa fa-home',
+            icon: 'home',
             route: 'index'
         },
         {
             label: 'Admin',
-            icon: 'fa fa-cog',
+            icon: 'cog',
             route: 'user',
             params: {
                 name: 'admin'

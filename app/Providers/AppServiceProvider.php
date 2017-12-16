@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Helpers\Money;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,10 +24,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        // money parser and formatter
+        $this->app->singleton('money', function ($app) {
+            /** @var \App $app */
 
-        if (class_exists('Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider')) {
-            $this->app->register('Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider');
-        }
+            return new Money($app->getLocale());
+        });
     }
 }

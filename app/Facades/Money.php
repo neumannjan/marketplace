@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Facades;
+
+
+use Illuminate\Support\Facades\Facade;
+
+/**
+ * A Laravel `Facade` for a currency `NumberFormatter`.
+ */
+class Money extends Facade
+{
+    /**
+     * @inheritDoc
+     */
+    protected static function getFacadeAccessor()
+    {
+        return 'money';
+    }
+
+}

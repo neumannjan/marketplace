@@ -8,6 +8,8 @@ $factory->define(\App\Offer::class, function (Faker $faker) {
     return [
         'name' => $faker->words(3, true),
         'description' => $faker->realText(400),
+        'price_value' => $faker->randomFloat(3, 0, 10000),
+        'currency_code' => $faker->currencyCode,
         'status' => $faker->biasedNumberBetween(0, 2, function ($i) {
             return sin($i * M_PI);
         })

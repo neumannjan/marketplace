@@ -7,15 +7,19 @@
     import {mapState} from 'vuex';
     import store from '../../../store/store';
 
+    import 'vue-awesome/icons/sign-in';
+    import 'vue-awesome/icons/user-plus';
+    import 'vue-awesome/icons/sign-out';
+
     let guestItems = [
         {
             label: 'Log in',
-            icon: 'fa fa-sign-in',
+            icon: 'sign-in',
             route: 'login'
         },
         {
             label: 'Register',
-            icon: 'fa fa-user-plus',
+            icon: 'user-plus',
             route: 'register'
         },
     ];
@@ -23,7 +27,7 @@
     let authItems = [
         {
             label: 'Log out',
-            icon: 'fa fa-sign-out',
+            icon: 'sign-out',
             callback: () => store.dispatch('logout')
         },
     ];

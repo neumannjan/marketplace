@@ -17,6 +17,7 @@ class Offer extends Resource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'price' => $this->price,
             'description' => $this->description,
             'status' => $this->status,
             'images' => Image::collection($this->images),

@@ -2,34 +2,36 @@
     <card class="text-muted">
         <div slot="post-header" class="img-dummy card-img-top"></div>
 
-        <!-- TODO -->
         <div class="loading loading-title"></div>
         <div class="loading loading-title loading-short"></div>
         <div class="loading"></div>
         <div class="loading"></div>
         <div class="loading loading-short"></div>
 
-        <div slot="pre-footer" class="card-footer bg-white border-light py-1">
-            <div class="row">
-                <button type="button" class="col btn btn-link text-muted">
-                    <div class="text-center col fa fa-heart"></div>
-                </button>
-
-                <button type="button" class="col btn btn-link text-muted">
-                    <div class="text-center col fa fa-shopping-cart"></div>
-                </button>
-            </div>
-        </div>
+        <card-icon-footer :buttons="buttons" slot="footer" class="bg-white border-light" button-class="text-muted"
+                          :gray="false"></card-icon-footer>
     </card>
 </template>
 
 <script>
     import Card from '../../card';
+    import CardIconFooter from '../../card-icon-footer';
+
+    import 'vue-awesome/icons/heart';
+    import 'vue-awesome/icons/shopping-cart';
 
     export default {
         name: "loading-offer-card",
+        data: () => ({
+            buttons: [
+                {icon: 'heart'},
+                {icon: 'shopping-cart'},
+                {icon: 'expand'},
+            ]
+        }),
         components: {
-            card: Card
+            Card,
+            CardIconFooter
         }
     }
 </script>

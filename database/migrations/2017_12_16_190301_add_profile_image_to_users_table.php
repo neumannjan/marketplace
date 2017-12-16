@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class AddProfileImageToUsersTable extends Migration
+{
+    const TABLE = 'users';
+
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table(self::TABLE, function (Blueprint $table) {
+            $table->unsignedInteger('profile_image_id')->nullable();
+            $table->foreign('profile_image_id')->references('id')->on('images')->onDelete('set null');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table(self::TABLE, function (Blueprint $table) {
+            $table->dropForeign(['profile_image_id']);
+            $table->dropColumn('profile_image_id');
+        });
+    }
+}
