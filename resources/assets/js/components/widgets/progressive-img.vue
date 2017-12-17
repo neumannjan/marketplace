@@ -1,12 +1,6 @@
 <template>
     <div class="img-wrapper" :style="wrapperStyle">
-        <img :class="['img-full', imgClass]" v-lazy="imgObj" :alt="alt">
-        <transition name="fade">
-            <div v-show="!loaded" class="img-placeholder-wrapper">
-                <img :src="placeholder" :class="['img-placeholder', imgClass]" :alt="alt">
-                <div class="bg-white"></div>
-            </div>
-        </transition>
+        <img :class="[imgClass, loadClass]" v-lazy="imgObj" :alt="alt">
     </div>
 </template>
 
@@ -36,7 +30,8 @@
             }
         },
         data: () => ({
-            loaded: false
+            loaded: false,
+            loadClass: 'loading'
         }),
         computed: {
             imgObj() {
@@ -53,8 +48,9 @@
         },
         methods: {
             onLoaded({src}) {
-                if (src === this.src)
-                    this.loaded = true;
+                if (src !== this.src) return;
+
+                this.loadClass = 'loaded';
             }
         },
         created() {
@@ -62,51 +58,54 @@
         },
         destroyed() {
             this.$Lazyload.$off('loaded', this.onLoaded);
+        },
+        deactivated() {
+            if (this.loadClass === 'loaded') {
+                this.loadClass = '';
+            }
         }
     }
 </script>
 
 <style scoped>
-    .img-wrapper, .img-placeholder-wrapper {
+    .img-wrapper {
         position: relative;
         overflow: hidden;
         z-index: 0;
     }
 
-    .img-wrapper > *, .img-placeholder-wrapper > * {
-        /*transition: 0.5s filter ease-in-out;
-        will-change: filter;*/
+    img {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: auto;
+        will-change: filter, transform;
     }
 
-    .img-full[lazy=loading] {
-        z-index: -2;
+    @keyframes unblur {
+        from {
+            filter: blur(30px);
+            transform: scale(1.4);
+        }
+
+        99% {
+            filter: blur(0.5px);
+            transform: scale(1);
+        }
+
+        to {
+            filter: none;
+            transform: none;
+        }
     }
 
-    .img-placeholder-wrapper {
-        height: 100%;
-        z-index: 2;
-    }
-
-    .img-placeholder {
-        transform: scale(2);
+    img.loading {
         filter: blur(30px);
+        transform: scale(1.4);
     }
 
-    .bg-white {
-        background-color: white;
-        z-index: 1;
-    }
-
-    .fade-leave-active {
-        transition: all .5s ease;
-    }
-
-    .fade-leave-to {
-        opacity: 0;
+    img.loaded {
+        animation: unblur .5s ease;
     }
 </style>

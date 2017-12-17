@@ -1,6 +1,7 @@
 <template>
     <div>
-        <masonry v-if="this.busy || this.cards.length > 0" :cards="cards" :component="component"
+        <masonry v-if="this.requestBusy || this.cards.length > 0" :cards="cards" :component="component"
+                 @ready="masonryBusy = false"
                  v-infinite-scroll="request" infinite-scroll-disabled="busy"
                  infinite-scroll-distance="200">
             <template slot="below">
@@ -44,36 +45,39 @@
         computed: {
             hasMore() {
                 return this.nextUrl !== undefined && this.nextUrl !== false && this.nextUrl !== null;
+            },
+            busy() {
+                return this.requestBusy || this.masonryBusy;
             }
         },
         data: () => ({
             cards: [],
-            busy: false,
+            requestBusy: false,
+            masonryBusy: true,
             nextUrl: null,
             active: true
         }),
         methods: {
             request() {
-                if (this.active === false)
+                if (this.active === false || this.requestBusy === true)
                     return;
 
                 if (!this.hasMore)
                     return false;
 
-                this.busy = true;
+                this.requestBusy = true;
 
                 api.URLRequest(this.nextUrl)
                     .success(result => {
                         this.addCards(result.data);
                         this.nextUrl = result['next_page_url'];
-                        this.busy = false;
+                        this.requestBusy = false;
+                        this.masonryBusy = true;
                     })
                     .fire();
             },
             addCards(cards) {
-                for (let card of cards) {
-                    this.cards.push(card);
-                }
+                this.cards = [...this.cards, ...cards];
             }
         },
         created() {
