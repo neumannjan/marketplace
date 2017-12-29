@@ -9,6 +9,7 @@
     import Blur from 'stackblur-canvas';
     import Velocity from 'velocity-animate';
     import Pool from '../../tools/pool';
+    import throttle from 'lodash/throttle';
 
     const isInViewport = (el) => {
         const rect = el.getBoundingClientRect();
@@ -71,6 +72,7 @@
         },
         data: () => ({
             loadingBegan: false,
+            loadThrottled: null
         }),
         computed: {
             aspectRatio() {
@@ -172,19 +174,21 @@
 
             await this.load();
 
+            this.loadThrottled = throttle(this.load, 200);
+
             if (!this.loadingBegan) {
-                window.addEventListener('scroll', this.load);
+                window.addEventListener('scroll', this.loadThrottled);
             }
         },
         destroyed() {
-            window.removeEventListener('scroll', this.load);
+            window.removeEventListener('scroll', this.loadThrottled);
         },
         deactivated() {
-            window.removeEventListener('scroll', this.load);
+            window.removeEventListener('scroll', this.loadThrottled);
         },
         activated() {
             if (!this.loadingBegan)
-                window.addEventListener('scroll', this.load);
+                window.addEventListener('scroll', this.loadThrottled);
         }
     }
 </script>
