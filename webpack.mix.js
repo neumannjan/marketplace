@@ -1,4 +1,5 @@
 let mix = require('laravel-mix');
+let LodashPlugin = require('lodash-webpack-plugin');
 
 /*
  |--------------------------------------------------------------------------
@@ -16,4 +17,9 @@ mix
     .js('resources/assets/js/app.jsx', 'public/js')
     .sass('resources/assets/css/app.scss', 'public/css')
     .sourceMaps()
-    .version();
+    .version()
+    .webpackConfig({
+        plugins: [
+            new LodashPlugin()
+        ]
+    });

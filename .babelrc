@@ -1,0 +1,27 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "modules": false,
+        "targets": {
+          "browsers": [
+            "> 2%"
+          ],
+          "uglify": true
+        }
+      }
+    ]
+  ],
+  "plugins": [
+    "transform-object-rest-spread",
+    [
+      "transform-runtime",
+      {
+        "polyfill": false,
+        "helpers": false
+      }
+    ],
+    "lodash"
+  ]
+}

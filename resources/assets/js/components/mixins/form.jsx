@@ -1,5 +1,23 @@
 import Api from '../../api';
 import helpers from '../../helpers';
+import debounce from 'lodash/debounce';
+
+let doSubmitForm = debounce((vm, requestName, selectorKey, onSuccess) => {
+    vm.$v.$reset();
+    if (!vm.$v.$invalid) {
+        vm.$set(vm.validation, selectorKey, {});
+        Api.requestSingle(requestName, vm[selectorKey])
+            .then(onSuccess)
+            .catch((result) => {
+                if (result.api && result.api.validation) {
+                    vm.$set(vm.validation, selectorKey, result.api.validation);
+                }
+            })
+            .finally(() => vm.$v.$touch());
+    } else {
+        vm.$v.$touch();
+    }
+}, 1000, {leading: true, trailing: false});
 
 export default {
     data: () => ({
@@ -14,21 +32,7 @@ export default {
             return helpers.safeGet(this.validation, key);
         },
         $submitForm(requestName, selectorKey, onSuccess) {
-            //TODO ensure that you cannot just hold the enter key and call the same request a sh*t ton of times.
-            this.$v.$reset();
-            if (!this.$v.$invalid) {
-                this.$set(this.validation, selectorKey, {});
-                Api.requestSingle(requestName, this[selectorKey])
-                    .then(onSuccess)
-                    .catch((result) => {
-                        if (result.api && result.api.validation) {
-                            this.$set(this.validation, selectorKey, result.api.validation);
-                        }
-                    })
-                    .finally(() => this.$v.$touch());
-            } else {
-                this.$v.$touch();
-            }
-        },
-    }
+            doSubmitForm(this, requestName, selectorKey, onSuccess);
+        }
+    },
 }
