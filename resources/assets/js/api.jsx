@@ -26,7 +26,6 @@ let defaultReject = (reject, isHttp) => {
         };
 
         result[isHttp ? 'http' : 'api'] = error;
-        console.log(result);
         reject(result);
     };
 };
