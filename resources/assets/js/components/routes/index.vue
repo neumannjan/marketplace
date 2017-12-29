@@ -19,6 +19,7 @@
     import LoadingOfferCard from '../widgets/cards/data-aware/offer/loading-offer-card';
 
     export default {
+        name: 'index-route',
         mixins: [route],
         components: {
             infiniteScrollMasonry: InfiniteScrollMasonry,

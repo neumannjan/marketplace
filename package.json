@@ -18,10 +18,11 @@
     "lodash": "^4.17.4",
     "lodash-webpack-plugin": "^0.11.4",
     "masonry-layout": "^4.2.0",
+    "stackblur-canvas": "^1.4.0",
+    "velocity-animate": "^1.5.0",
     "vue": "^2.5.13",
     "vue-awesome": "^2.3.4",
     "vue-infinite-scroll": "^2.0.2",
-    "vue-lazyload": "^1.1.4",
     "vue-router": "^3.0.1",
     "vuelidate": "^0.6.1",
     "vuex": "^3.0.1"

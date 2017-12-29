@@ -5,9 +5,9 @@
         </div>
         <slot name="post-header"></slot>
         <a href="#">
-            <progressive-img v-if="img" img-class="card-img-top" :src="img" :placeholder="thumb" :alt="alt"
-                             :aspect-ratio="height / width">
-            </progressive-img>
+            <lazy-img v-if="img" img-class="card-img-top" :src="img" :thumb="thumb" :alt="alt"
+                      :height="height" :width="width">
+            </lazy-img>
         </a>
         <div class="card-body">
             <slot></slot>
@@ -20,12 +20,12 @@
 </template>
 
 <script>
-    import ProgressiveImg from '../progressive-img';
+    import LazyImg from '../lazy-img';
 
     export default {
         name: "card",
         components: {
-            ProgressiveImg
+            LazyImg
         },
         props: {
             img: String,
