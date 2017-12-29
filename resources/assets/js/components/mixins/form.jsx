@@ -18,15 +18,14 @@ export default {
             this.$v.$reset();
             if (!this.$v.$invalid) {
                 this.$set(this.validation, selectorKey, {});
-                Api.SingleRequest(requestName, this[selectorKey])
-                    .then(() => this.$v.$touch())
-                    .success(onSuccess)
-                    .error((result) => {
-                        if (result.validation) {
-                            this.$set(this.validation, selectorKey, result.validation);
+                Api.requestSingle(requestName, this[selectorKey])
+                    .then(onSuccess)
+                    .catch((result) => {
+                        if (result.api && result.api.validation) {
+                            this.$set(this.validation, selectorKey, result.api.validation);
                         }
                     })
-                    .fire();
+                    .finally(() => this.$v.$touch());
             } else {
                 this.$v.$touch();
             }

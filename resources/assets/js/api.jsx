@@ -8,266 +8,118 @@ let config = () => ({
     }
 });
 
-/**
- * Request object base
- * @param params Request parameters
- * @param thenCallback Callback for what to do with the result
- * @constructor
- */
-let Request = (params, thenCallback) => ({
-    fire(includeGlobal = true) {
-        let _params = params;
+let defaultReject = (reject, isHttp) => {
+    return (error) => {
+        if (process.env.NODE_ENV === 'development') {
 
-        if (includeGlobal)
-            _params['global'] = {};
+            if (isHttp) {
 
-        let data = {
-            api: JSON.stringify(_params)
+                if (error.response.status) {
+                    alert(JSON.stringify(error.message, null, 2));
+                }
+            }
+        }
+
+        let result = {
+            http: null,
+            api: null
         };
 
-        let _then = response => {
+        result[isHttp ? 'http' : 'api'] = error;
+        console.log(result);
+        reject(result);
+    };
+};
+
+/**
+ * @param allParams Parameters of all requests
+ * @param includeGlobal Whether the 'global' request should be included
+ * @returns {Promise<Object>}
+ */
+let requestMultiple = (allParams, includeGlobal = true) => {
+    return new Promise((resolve, reject) => {
+        if (includeGlobal && !allParams.global)
+            allParams.global = {};
+
+        let data = {
+            api: JSON.stringify(allParams)
+        };
+
+        let then = response => {
             if (includeGlobal) {
-                let global = response.data['global'].result;
+                let global = response.data.global.result;
                 store.commit('global', global);
             }
 
-            thenCallback(response);
+            resolve(response.data);
         };
 
-        axios.post('/api', data, config()).then(_then).catch(error => {
-            alert(JSON.stringify(error.response.data.message, null, 2));
-        });
-    }
-});
-
-let URLRequest = (url) => {
-    let successCallbacks = [];
-    let errorCallbacks = [];
-    let thenCallbacks = [];
-
-    /**
-     * Define a callback for what to do when the request results with a success
-     * @param callback
-     * @returns {SingleRequest} this, for chaining
-     */
-    function success(callback) {
-        successCallbacks.push(callback);
-        return this;
-    }
-
-    /**
-     * Define a callback for what to do when the request results with an error
-     * @param callback
-     * @returns {SingleRequest} this, for chaining
-     */
-    function error(callback) {
-        errorCallbacks.push(callback);
-        return this;
-    }
-
-    /**
-     * Define a callback for what to do after the whole API call is made
-     * @param callback
-     * @returns {SingleRequest} this, for chaining
-     */
-    function then(callback) {
-        thenCallbacks.push(callback);
-        return this;
-    }
-
-    let _then = response => {
-
-        let globalDone = false;
-        let localDone = false;
-        for (let [key, value] of Object.entries(response.data)) {
-            if (key === 'global') {
-                store.commit('global', value.result);
-                globalDone = true;
-            } else {
-                if (globalDone && localDone) break;
-                else if (localDone) continue;
-
-                let callbacks = value.success ? successCallbacks : errorCallbacks;
-
-                for (let c of callbacks)
-                    c(value.result);
-
-                for (let c of thenCallbacks)
-                    c(response.data);
-
-                localDone = true;
-            }
-        }
-    };
-
-    function fire() {
-        axios.post(url, {}, config()).then(_then).catch(error => {
-            if (error.response === undefined) {
-                alert('Unknown POST request error');
-                return;
-            }
-            alert(JSON.stringify(error.response.data.message, null, 2));
-        });
-    }
-
-    return {
-        success: success,
-        error: error,
-        then: then,
-        fire: fire,
-    }
+        axios.post('/api', data, config())
+            .then(then)
+            .catch(defaultReject(reject, true));
+    });
 };
 
 /**
- * A single request for the API
  * @param name Request name
  * @param params Request parameters
- * @constructor
+ * @param includeGlobal Whether the 'global' request should be included
+ * @returns {Promise<Object>}
  */
-let SingleRequest = (name, params) => {
-    let successCallbacks = [];
-    let errorCallbacks = [];
-    let thenCallbacks = [];
+let requestSingle = (name, params = {}, includeGlobal = true) => {
+    return new Promise((resolve, reject) => {
 
-    /**
-     * Define a callback for what to do when the request results with a success
-     * @param callback
-     * @returns {SingleRequest} this, for chaining
-     */
-    function success(callback) {
-        successCallbacks.push(callback);
-        return this;
-    }
+        let then = response => {
+            let data = response[name];
 
-    /**
-     * Define a callback for what to do when the request results with an error
-     * @param callback
-     * @returns {SingleRequest} this, for chaining
-     */
-    function error(callback) {
-        errorCallbacks.push(callback);
-        return this;
-    }
+            if (data.success)
+                resolve(data.result);
+            else
+                defaultReject(reject, false)(data.result);
+        };
 
-    /**
-     * Define a callback for what to do after the whole API call is made
-     * @param callback
-     * @returns {SingleRequest} this, for chaining
-     */
-    function then(callback) {
-        thenCallbacks.push(callback);
-        return this;
-    }
+        let data = {
+            [name]: params
+        };
 
-    let _then = (response) => {
-        let data = response.data[name];
-        let callbacks = data.success ? successCallbacks : errorCallbacks;
-
-        for (let c of callbacks)
-            c(data.result);
-
-        for (let c of thenCallbacks)
-            c(response.data);
-    };
-
-    if (!params)
-        params = {};
-
-    let fullParams = {};
-    fullParams[name] = params;
-
-    let request = Request(fullParams, _then);
-
-    return {
-        ...request,
-        success: success,
-        error: error,
-        then: then,
-        getName: () => name,
-        getParams: () => params,
-        getSuccessCallbacks: () => successCallbacks,
-        getErrorCallbacks: () => errorCallbacks,
-        getThenCallbacks: () => thenCallbacks,
-    };
+        requestMultiple(data, includeGlobal)
+            .then(then)
+            .catch(reject);
+    });
 };
 
 /**
- * A combination of requests executed with a single API call
- * @constructor
+ * @param url
+ * @returns {Promise<Object>}
  */
-let CompositeRequest = () => {
-    let requests = [];
-    let params = {};
-    let thenCallbacks = [];
-    let errorCallbacks = [];
+let requestByURL = (url) => {
+    return new Promise((resolve, reject) => {
 
-    /**
-     * Add a single request to this composite request
-     * @param {SingleRequest} request
-     * @returns {CompositeRequest} this, for chaining
-     */
-    function ask(request) {
-        requests.push(request);
-        params[request.getName()] = request.getParams();
-
-        return this;
-    }
-
-    /**
-     * Define a callback for what to do after the whole API call is made
-     * @param callback
-     * @returns {CompositeRequest} this, for chaining
-     */
-    function then(callback) {
-        thenCallbacks.push(callback);
-        return this;
-    }
-
-    /**
-     * Define an error callback that will be called individually for every request that returns an error.
-     * @param callback
-     * @returns {CompositeRequest} this, for chaining
-     */
-    function error(callback) {
-        errorCallbacks.push(callback);
-        return this;
-    }
-
-    let _then = (response) => {
-        for (let request of requests) {
-            let name = request.getName();
-            let data = response.data[name];
-            let callbacks = data.success ? request.getSuccessCallbacks() : request.getErrorCallbacks();
-            let childThenCallbacks = request.getThenCallbacks();
-
-            for (let c of callbacks)
-                c(data.result);
-
-            if (!data.success) {
-                for (let c of errorCallbacks)
-                    c(name, data.result);
+        let then = response => {
+            let name = null;
+            for (let [key, data] of Object.entries(response.data)) {
+                if (key === 'global') {
+                    store.commit('global', data.result);
+                } else {
+                    name = key;
+                }
             }
 
-            for (let c of childThenCallbacks)
-                c(response.data);
-        }
+            let data = response.data[name];
+            if (data.success)
+                resolve(data.result);
+            else
+                defaultReject(reject, false)(data.result);
+        };
 
-        for (let c of thenCallbacks)
-            c(response.data);
-    };
-
-    let request = Request(params, _then);
-
-    return {
-        ...request,
-        ask: ask,
-        then: then,
-        error: error
-    };
+        axios.post(url, {}, config())
+            .then(then)
+            .catch(defaultReject(reject, true));
+    });
 };
 
 export default {
-    CompositeRequest: CompositeRequest,
-    SingleRequest: SingleRequest,
-    URLRequest: URLRequest,
+    requestMultiple,
+    requestSingle,
+    requestByURL
 };

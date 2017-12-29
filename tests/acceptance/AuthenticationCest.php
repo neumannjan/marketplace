@@ -82,7 +82,7 @@ class AuthenticationCest
             'username' => $user->username
         ]);
 
-        $I->see(__('flash.danger.activate-link-invalid'));
+        $I->dontSee(__('flash.success.activate'));
 
         $user = \App\User::first();
         $I->assertEquals(\App\User::STATUS_INACTIVE, $user->status);
@@ -97,7 +97,7 @@ class AuthenticationCest
             'username' => 'wrong'
         ]);
 
-        $I->see(__('flash.danger.activate-link-invalid'));
+        $I->dontSee(__('flash.success.activate'));
 
         $user = \App\User::first();
         $I->assertEquals(\App\User::STATUS_INACTIVE, $user->status);
@@ -112,7 +112,7 @@ class AuthenticationCest
             'username' => $user->username
         ]);
 
-        $I->see(__('flash.danger.activate-link-invalid'));
+        $I->dontSee(__('flash.success.activate'));
 
         $user = \App\User::first();
         $I->assertEquals(\App\User::STATUS_ACTIVE, $user->status);
@@ -127,7 +127,7 @@ class AuthenticationCest
             'username' => $user->username
         ]);
 
-        $I->see(__('flash.danger.activate-link-invalid'));
+        $I->dontSee(__('flash.success.activate'));
 
         $user = \App\User::first();
         $I->assertEquals(\App\User::STATUS_BANNED, $user->status);
@@ -144,7 +144,7 @@ class AuthenticationCest
 
         $I->click('#submit');
 
-        $I->waitForElement('.fa-sign-out', 5);
+        $I->waitForElement('#logout a', 5);
         $I->dontSeeElement('input', ['name' => 'password']);
     }
 
@@ -159,7 +159,7 @@ class AuthenticationCest
 
         $I->click('#submit');
 
-        $I->waitForElement('.fa-sign-out', 5);
+        $I->waitForElement('#logout a', 5);
         $I->dontSeeElement('input', ['name' => 'password']);
     }
 
@@ -177,7 +177,7 @@ class AuthenticationCest
         $I->waitForElement('.invalid-feedback', 5);
         $I->seeElement('input', ['name' => 'login']);
         $I->see(__('auth.failed'));
-        $I->dontSeeElement('.fa-sign-out');
+        $I->dontSeeElement('#logout a');
     }
 
     public function inactiveUserLoginRejection(AcceptanceTester $I)
@@ -194,7 +194,7 @@ class AuthenticationCest
         $I->waitForElement('.invalid-feedback', 5);
         $I->seeElement('input', ['name' => 'login']);
         $I->see(__('auth.inactive'));
-        $I->dontSeeElement('.fa-sign-out');
+        $I->dontSeeElement('#logout a');
     }
 
     public function bannedUserLoginRejection(AcceptanceTester $I)
@@ -211,7 +211,18 @@ class AuthenticationCest
         $I->waitForElement('.invalid-feedback', 5);
         $I->seeElement('input', ['name' => 'login']);
         $I->see(__('auth.banned'));
-        $I->dontSeeElement('.fa-sign-out');
+        $I->dontSeeElement('#logout a');
+    }
+
+    public function logout(AcceptanceTester $I)
+    {
+        $user = $this->_register(\App\User::STATUS_ACTIVE);
+
+        $I->loginAsUser($user);
+        $I->waitForElement('#logout a', 5);
+        $I->click('#logout a');
+        $I->wait(1);
+        $I->dontSeeElement('#logout a');
     }
 
     public function bannedUserSessionExpiration(AcceptanceTester $I)
@@ -221,14 +232,14 @@ class AuthenticationCest
         $I->loginAsUser($user);
 
         $I->amOnPage('/');
-        $I->seeElement('.fa-sign-out');
+        $I->seeElement('#logout a');
 
         $user->status = \App\User::STATUS_BANNED;
         $user->save();
 
         $I->amOnPage('/');
         $I->see(__('flash.warning.session-expired'));
-        $I->dontSeeElement('.fa-sign-out');
+        $I->dontSeeElement('#logout a');
     }
 
     public function passwordResetRequest(AcceptanceTester $I)
@@ -249,7 +260,6 @@ class AuthenticationCest
 
         $newPassword = 'newPassword999';
 
-        /** @var \Illuminate\Auth\Passwords\TokenRepositoryInterface $tokens */
         $tokens = app(\Illuminate\Auth\Passwords\DatabaseTokenRepository::class, [
             'table' => 'password_resets',
             'hashKey' => 'hashkey'
@@ -271,7 +281,7 @@ class AuthenticationCest
         $I->fillField(['name' => 'password'], $newPassword);
         $I->click('#submit');
 
-        $I->waitForElement('.fa-sign-out', 5);
+        $I->waitForElement('#logout a', 5);
         $I->dontSeeElement('input', ['name' => 'password']);
     }
 }

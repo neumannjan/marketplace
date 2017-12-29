@@ -28,6 +28,7 @@
         {
             label: 'Log out',
             icon: 'sign-out',
+            id: 'logout',
             callback: () => store.dispatch('logout')
         },
     ];

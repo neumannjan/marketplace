@@ -67,14 +67,13 @@
 
                 this.requestBusy = true;
 
-                api.URLRequest(this.nextUrl)
-                    .success(result => {
+                api.requestByURL(this.nextUrl)
+                    .then(result => {
                         this.addCards(result.data);
                         this.nextUrl = result['next_page_url'];
                         this.requestBusy = false;
                         this.masonryBusy = true;
-                    })
-                    .fire();
+                    });
             },
             addCards(cards) {
                 this.cards = [...this.cards, ...cards];

@@ -5,6 +5,7 @@ import api from '../api';
 Vue.use(Vuex);
 
 let store = new Vuex.Store({
+    strict: true,
     state: {
         is_authenticated: false,
         token: false,
@@ -41,11 +42,10 @@ let store = new Vuex.Store({
     },
     actions: {
         logout(context) {
-            api.SingleRequest('logout')
-                .success(() => {
+            api.requestSingle('logout')
+                .then(() => {
                     context.commit('logout');
-                })
-                .fire();
+                });
         }
     },
     modules: {}
