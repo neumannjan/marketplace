@@ -3,7 +3,7 @@
         <div class="navbar navbar-expand navbar-dark bg-dark navbar-vertical">
             <a class="navbar-brand" href="#">Nav</a> <!--TODO replace-->
             <top-nav class="navbar-nav"></top-nav>
-            <bottom-nav class="navbar-nav mt-auto"></bottom-nav>
+            <bottom-nav class="navbar-nav navbar-nav-fixed-bottom bg-dark"></bottom-nav>
         </div>
         <div class="main-content">
             <main role="main" class="main container">

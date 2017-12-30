@@ -15,6 +15,14 @@
     flex-direction: column;
   }
 
+  .navbar-nav-fixed-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: $v-nav-width;
+    padding: $navbar-padding-y $navbar-padding-x;
+  }
+
   .fa {
     font-size: $v-nav-icon-size;
   }
