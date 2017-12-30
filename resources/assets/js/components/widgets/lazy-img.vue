@@ -80,6 +80,7 @@
         data: () => ({
             wasInViewport: false,
             loadingBegan: false,
+            inDOM: false,
 
             shown: false,
             error: false,
@@ -101,7 +102,7 @@
             inViewportCheck() {
                 const el = this.$refs.wrapper;
 
-                if (!el) {
+                if (!el || !this.inDOM) {
                     return false;
                 }
 
@@ -212,6 +213,7 @@
                 }
 
                 if (!this.inViewportCheck()) {
+                    console.log('skip');
                     this.shown = true;
                     return;
                 }
@@ -283,6 +285,8 @@
             }
         },
         async mounted() {
+            this.inDOM = true;
+
             const thumbRequest = new Promise((resolve, reject) => {
                 axios.get(this.thumb, {responseType: 'blob'})
                     .then(response => {
@@ -309,9 +313,11 @@
             bitmap.close();
         },
         activated() {
+            this.inDOM = true;
             this.$emit('activated');
         },
         deactivated() {
+            this.inDOM = false;
             this.$emit('deactivated');
         },
         destroyed() {
