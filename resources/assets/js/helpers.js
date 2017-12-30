@@ -17,4 +17,14 @@ export default {
                 return null;
         }, object);
     },
+
+    awaitEvent(target, type) {
+        return new Promise(resolve => {
+            target.addEventListener(type, (event) => {
+                resolve(event);
+            }, {
+                once: true
+            });
+        });
+    },
 }

@@ -1,6 +1,12 @@
 <template>
-    <div class="img-wrapper" :style="wrapperStyle">
-        <canvas :class="imgClass" :alt="alt" ref="canvas" :width="width" :height="height"></canvas>
+    <div class="img-wrapper" ref="wrapper" :style="wrapperStyle">
+        <canvas v-if="!shown && !error" :class="imgClass" :alt="alt" ref="canvas" :width="width"
+                :height="height"></canvas>
+        <img v-if="inViewport && !error" v-show="shown" :src="src" :class="imgClass" :alt="alt" ref="img"
+             :crossorigin="crossOrigin">
+        <div class="error" v-if="error">
+            <icon name="chain-broken" label="Error" :scale="3"></icon> <!-- TODO translate label -->
+        </div>
     </div>
 </template>
 
@@ -10,18 +16,9 @@
     import Velocity from 'velocity-animate';
     import Pool from '../../tools/pool';
     import throttle from 'lodash/throttle';
+    import helpers from '../../helpers';
 
-    const isInViewport = (el) => {
-        const rect = el.getBoundingClientRect();
-
-        const windowHeight = (window.innerHeight || document.documentElement.clientHeight);
-        const windowWidth = (window.innerWidth || document.documentElement.clientWidth);
-
-        const vertInView = (rect.top <= windowHeight) && ((rect.top + rect.height) >= 0);
-        const horInView = (rect.left <= windowWidth) && ((rect.left + rect.width) >= 0);
-
-        return (vertInView && horInView);
-    };
+    import 'vue-awesome/icons/chain-broken';
 
     const canvasPool = new Pool(() => {
         return document.createElement('canvas');
@@ -29,6 +26,16 @@
         canvas.width = width;
         canvas.height = height;
     }, 5);
+
+    const loadImagePromise = (img) => {
+        if (img.complete || img.naturalWidth > 0)
+            return Promise.resolve(img);
+
+        return new Promise((resolve, reject) => {
+            helpers.awaitEvent(img, 'load').then(e => resolve(img));
+            helpers.awaitEvent(img, 'error').then(e => reject(e));
+        });
+    };
 
     export default {
         name: "lazy-img",
@@ -59,7 +66,7 @@
             },
             blur: {
                 type: Number,
-                default: 60
+                default: 120
             },
             duration: {
                 type: Number,
@@ -71,8 +78,11 @@
             }
         },
         data: () => ({
+            inViewport: false,
             loadingBegan: false,
-            loadThrottled: null
+
+            shown: false,
+            error: false,
         }),
         computed: {
             aspectRatio() {
@@ -82,28 +92,121 @@
                 return {
                     'padding-bottom': `${this.aspectRatio * 100}%`
                 }
+            },
+            crossOrigin() {
+                return process.env.NODE_ENV === 'development' ? 'anonymous' : 'use-credentials';
             }
         },
         methods: {
-            async load() {
+            onViewportEnter() {
+                const check = () => {
+                    const el = this.$refs.wrapper;
+
+                    if (!el) {
+                        this.inViewport = false;
+                        return false;
+                    }
+
+                    const rect = el.getBoundingClientRect();
+
+                    const windowHeight = (window.innerHeight || document.documentElement.clientHeight);
+                    const windowWidth = (window.innerWidth || document.documentElement.clientWidth);
+
+                    const vertInView = (rect.top <= windowHeight) && ((rect.top + rect.height) >= 0);
+                    const horInView = (rect.left <= windowWidth) && ((rect.left + rect.width) >= 0);
+
+                    return this.inViewport = (vertInView && horInView);
+                };
+
+                const p1 = new Promise(resolve => {
+                    if (check())
+                        resolve();
+                    else
+                        this.$nextTick(() => {
+                            if (check()) resolve();
+                        });
+                });
+
+
+                const p2 = new Promise(resolve => {
+                    let func;
+
+                    const activate = () => window.addEventListener('scroll', func);
+                    const deactivate = () => window.removeEventListener('scroll', func);
+
+                    const c = () => {
+                        if (check()) {
+                            this.$off('activated', activate);
+                            this.$off('deactivated', deactivate);
+                            this.$off('destroyed', deactivate);
+                            window.removeEventListener('scroll', func);
+                            resolve();
+                            return true;
+                        }
+
+                        return false;
+                    };
+
+                    func = throttle(c, 200);
+
+                    if (!c()) {
+                        window.addEventListener('scroll', func);
+                        this.$on('activated', activate);
+                        this.$on('deactivated', deactivate);
+                        this.$on('destroyed', deactivate);
+                    }
+                });
+
+                return Promise.race([p1, p2]);
+            },
+            async load(thumbRequest) {
                 if (this.loadingBegan)
-                    return;
-
-                const canvas = this.$refs.canvas;
-
-                if (!canvas || !isInViewport(canvas))
                     return;
 
                 this.loadingBegan = true;
 
+                const fullImage = this.$refs.img;
+
+                let thumbFailed = false;
+
+                const loadedImage = await Promise.race([
+                    loadImagePromise(fullImage).catch(() => {
+                        this.error = true;
+                    }),
+                    thumbRequest.catch(() => {
+                        thumbFailed = true;
+                    }),
+                ]);
+
+                if (loadedImage === fullImage) {
+                    this.shown = true;
+                    console.log('full image');
+                    return;
+                }
+
+                console.log('thumb');
+
+                const thumbImage = loadedImage;
+
+                const canvas = this.$refs.canvas;
+                const ctx = canvas.getContext('2d');
+
+                if (!thumbFailed) {
+                    ctx.drawImage(thumbImage, 0, 0, this.width, this.height);
+                    Blur.canvasRGB(canvas, 0, 0, this.width, this.height, this.blur);
+                }
+
+                try {
+                    await loadImagePromise(fullImage);
+                }
+                catch (error) {
+                    this.error = true;
+                    return;
+                }
+
                 const dimensions = canvas.getBoundingClientRect();
                 const width = Math.min(this.width, dimensions.width);
                 const height = Math.min(this.height, dimensions.height);
-
-                const ctx = canvas.getContext('2d');
-
-                const response = await axios.get(this.src, {responseType: 'blob'});
-                const bitmap = await createImageBitmap(response.data);
 
                 let canvases = [];
 
@@ -113,17 +216,23 @@
                     canvases.push(c);
 
                     if (i > 0) {
-                        let blur = ((this.blurIterations - i) / this.blurIterations) * this.blur;
+                        let blur = ((this.blurIterations - i) / this.blurIterations) * this.blur * 0.5;
 
-                        cctx.drawImage(bitmap, 0, 0, this.width, this.height, 0, 0, width, height);
+                        cctx.drawImage(fullImage, 0, 0, fullImage.width, fullImage.height, 0, 0, width, height);
 
-                        if (blur > 0) Blur.canvasRGB(c, 0, 0, c.width, c.height, blur, 2);
+                        if (blur > 0) {
+                            try {
+                                Blur.canvasRGB(c, 0, 0, c.width, c.height, blur);
+                            }
+                            catch (e) {
+                            }
+                        }
                     } else {
-                        cctx.drawImage(canvas, 0, 0, this.width, this.height, 0, 0, width, height);
+                        cctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, width, height);
                     }
                 }
 
-                canvases.push(bitmap);
+                canvases.push(fullImage);
 
                 await Velocity(canvas, {
                     tween: 1
@@ -148,6 +257,8 @@
                             } else if (iteration < this.blurIterations - 1) {
                                 const c2 = canvases[iteration + 1];
                                 ctx.drawImage(c2, 0, 0, c2.width, c2.height, 0, 0, this.width, this.height);
+                            } else {
+                                ctx.drawImage(fullImage, 0, 0, fullImage.width, fullImage.height, 0, 0, this.width, this.height);
                             }
                         }
                     }
@@ -156,55 +267,74 @@
                 canvases.pop();
                 canvasPool.release(...canvases);
 
-                ctx.drawImage(bitmap, 0, 0);
-
-                bitmap.close();
+                this.shown = true;
             }
         },
         async mounted() {
-            const canvas = this.$refs.canvas;
-            const ctx = canvas.getContext('2d');
+            const thumbRequest = new Promise((resolve, reject) => {
+                axios.get(this.thumb, {responseType: 'blob'})
+                    .then(response => {
+                        createImageBitmap(response.data)
+                            .then(bitmap => resolve(bitmap))
+                            .catch(reject);
+                    })
+                    .catch(error => {
+                        if (error.response === undefined)
+                            this.$store.commit('connection', false);
 
-            const response = await axios.get(this.thumb, {responseType: 'blob'});
-            const bitmap = await createImageBitmap(response.data);
+                        this.error = true;
 
-            ctx.drawImage(bitmap, 0, 0, this.width, this.height);
-            Blur.canvasRGB(canvas, 0, 0, this.width, this.height, this.blur, 2);
+                        reject();
+                    });
+            });
+
+            await this.onViewportEnter();
+            await new Promise(resolve => this.$nextTick(resolve));
+
+            await this.load(thumbRequest);
+
+            const bitmap = await thumbRequest;
             bitmap.close();
-
-            await this.load();
-
-            this.loadThrottled = throttle(this.load, 200);
-
-            if (!this.loadingBegan) {
-                window.addEventListener('scroll', this.loadThrottled);
-            }
-        },
-        destroyed() {
-            window.removeEventListener('scroll', this.loadThrottled);
-        },
-        deactivated() {
-            window.removeEventListener('scroll', this.loadThrottled);
         },
         activated() {
-            if (!this.loadingBegan)
-                window.addEventListener('scroll', this.loadThrottled);
+            this.$emit('activated');
+        },
+        deactivated() {
+            this.$emit('deactivated');
+        },
+        destroyed() {
+            this.$emit('destroyed');
         }
     }
 </script>
 
-<style scoped>
+<style scoped lang="scss" type="text/scss">
+    @import "../../../css/includes";
+
     .img-wrapper {
         position: relative;
         overflow: hidden;
         z-index: 0;
     }
 
-    img, canvas {
+    img, canvas, .error {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: auto;
+    }
+
+    .error {
+        height: 100%;
+        background-color: theme-color-level('danger', -5);
+    }
+
+    .error > * {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: $danger;
     }
 </style>

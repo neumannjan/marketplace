@@ -10,13 +10,9 @@ let config = () => ({
 
 let defaultReject = (reject, isHttp) => {
     return (error) => {
-        if (process.env.NODE_ENV === 'development') {
-
-            if (isHttp) {
-
-                if (error.response.status) {
-                    alert(JSON.stringify(error.message, null, 2));
-                }
+        if (isHttp) {
+            if (error.response === undefined) {
+                store.commit('connection', false);
             }
         }
 

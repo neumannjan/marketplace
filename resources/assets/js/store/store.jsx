@@ -8,6 +8,7 @@ let store = new Vuex.Store({
     strict: true,
     state: {
         is_authenticated: false,
+        connection_lost: false,
         token: false,
         flash: {},
         messages: [],
@@ -38,6 +39,9 @@ let store = new Vuex.Store({
         },
         addFlash(state, flash) {
             Vue.set(state.flash, flash.key, flash);
+        },
+        connection(state, value) {
+            state.connection_lost = !value;
         }
     },
     actions: {
