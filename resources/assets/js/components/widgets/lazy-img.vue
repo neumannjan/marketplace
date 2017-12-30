@@ -2,7 +2,7 @@
     <div class="img-wrapper" ref="wrapper" :style="wrapperStyle">
         <canvas v-if="!shown && !error" :class="imgClass" :alt="alt" ref="canvas" :width="width"
                 :height="height"></canvas>
-        <img v-if="inViewport && !error" v-show="shown" :src="src" :class="imgClass" :alt="alt" ref="img"
+        <img v-if="wasInViewport && !error" v-show="shown" :src="src" :class="imgClass" :alt="alt" ref="img"
              :crossorigin="crossOrigin">
         <div class="error" v-if="error">
             <icon name="chain-broken" label="Error" :scale="3"/> <!-- TODO translate label -->
@@ -78,7 +78,7 @@
             }
         },
         data: () => ({
-            inViewport: false,
+            wasInViewport: false,
             loadingBegan: false,
 
             shown: false,
@@ -98,32 +98,35 @@
             }
         },
         methods: {
+            inViewportCheck() {
+                const el = this.$refs.wrapper;
+
+                if (!el) {
+                    return false;
+                }
+
+                const rect = el.getBoundingClientRect();
+
+                const windowHeight = (window.innerHeight || document.documentElement.clientHeight);
+                const windowWidth = (window.innerWidth || document.documentElement.clientWidth);
+
+                const vertInView = (rect.top <= windowHeight) && ((rect.top + rect.height) >= 0);
+                const horInView = (rect.left <= windowWidth) && ((rect.left + rect.width) >= 0);
+
+                const result = (vertInView && horInView);
+
+                if (result)
+                    this.wasInViewport = true;
+
+                return result;
+            },
             onViewportEnter() {
-                const check = () => {
-                    const el = this.$refs.wrapper;
-
-                    if (!el) {
-                        this.inViewport = false;
-                        return false;
-                    }
-
-                    const rect = el.getBoundingClientRect();
-
-                    const windowHeight = (window.innerHeight || document.documentElement.clientHeight);
-                    const windowWidth = (window.innerWidth || document.documentElement.clientWidth);
-
-                    const vertInView = (rect.top <= windowHeight) && ((rect.top + rect.height) >= 0);
-                    const horInView = (rect.left <= windowWidth) && ((rect.left + rect.width) >= 0);
-
-                    return this.inViewport = (vertInView && horInView);
-                };
-
                 const p1 = new Promise(resolve => {
-                    if (check())
+                    if (this.inViewportCheck())
                         resolve();
                     else
                         this.$nextTick(() => {
-                            if (check()) resolve();
+                            if (this.inViewportCheck()) resolve();
                         });
                 });
 
@@ -135,7 +138,7 @@
                     const deactivate = () => window.removeEventListener('scroll', func);
 
                     const c = () => {
-                        if (check()) {
+                        if (this.inViewportCheck()) {
                             this.$off('activated', activate);
                             this.$off('deactivated', deactivate);
                             this.$off('destroyed', deactivate);
@@ -205,6 +208,11 @@
                 }
                 catch (error) {
                     this.error = true;
+                    return;
+                }
+
+                if (!this.inViewportCheck()) {
+                    this.shown = true;
                     return;
                 }
 
