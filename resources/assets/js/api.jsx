@@ -1,14 +1,14 @@
 import axios from 'axios';
 import store from './store/store';
 
-let config = () => ({
+const config = () => ({
     headers: {
         'X-CSRF-TOKEN': store.state.token,
         'X-Requested-With': 'XMLHttpRequest'
     }
 });
 
-let defaultReject = (reject, isHttp) => {
+const defaultReject = (reject, isHttp) => {
     return (error) => {
         if (isHttp) {
             if (error.response === undefined) {
@@ -26,23 +26,29 @@ let defaultReject = (reject, isHttp) => {
     };
 };
 
+const reportConnection = () => {
+    store.commit('connection', true);
+};
+
 /**
  * @param allParams Parameters of all requests
  * @param includeGlobal Whether the 'global' request should be included
  * @returns {Promise<Object>}
  */
-let requestMultiple = (allParams, includeGlobal = true) => {
+const requestMultiple = (allParams, includeGlobal = true) => {
     return new Promise((resolve, reject) => {
         if (includeGlobal && !allParams.global)
             allParams.global = {};
 
-        let data = {
+        const data = {
             api: JSON.stringify(allParams)
         };
 
-        let then = response => {
+        const then = response => {
+            reportConnection();
+
             if (includeGlobal) {
-                let global = response.data.global.result;
+                const global = response.data.global.result;
                 store.commit('global', global);
             }
 
@@ -61,10 +67,12 @@ let requestMultiple = (allParams, includeGlobal = true) => {
  * @param includeGlobal Whether the 'global' request should be included
  * @returns {Promise<Object>}
  */
-let requestSingle = (name, params = {}, includeGlobal = true) => {
+const requestSingle = (name, params = {}, includeGlobal = true) => {
     return new Promise((resolve, reject) => {
 
-        let then = response => {
+        const then = response => {
+            reportConnection();
+
             let data = response[name];
 
             if (data.success)
@@ -73,7 +81,7 @@ let requestSingle = (name, params = {}, includeGlobal = true) => {
                 defaultReject(reject, false)(data.result);
         };
 
-        let data = {
+        const data = {
             [name]: params
         };
 
@@ -87,10 +95,12 @@ let requestSingle = (name, params = {}, includeGlobal = true) => {
  * @param url
  * @returns {Promise<Object>}
  */
-let requestByURL = (url) => {
+const requestByURL = (url) => {
     return new Promise((resolve, reject) => {
 
-        let then = response => {
+        const then = response => {
+            reportConnection();
+
             let name = null;
             for (let [key, data] of Object.entries(response.data)) {
                 if (key === 'global') {
@@ -100,7 +110,7 @@ let requestByURL = (url) => {
                 }
             }
 
-            let data = response.data[name];
+            const data = response.data[name];
             if (data.success)
                 resolve(data.result);
             else

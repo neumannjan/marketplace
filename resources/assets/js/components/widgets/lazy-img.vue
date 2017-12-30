@@ -5,7 +5,7 @@
         <img v-if="inViewport && !error" v-show="shown" :src="src" :class="imgClass" :alt="alt" ref="img"
              :crossorigin="crossOrigin">
         <div class="error" v-if="error">
-            <icon name="chain-broken" label="Error" :scale="3"></icon> <!-- TODO translate label -->
+            <icon name="chain-broken" label="Error" :scale="3"/> <!-- TODO translate label -->
         </div>
     </div>
 </template>
@@ -167,11 +167,15 @@
 
                 const fullImage = this.$refs.img;
 
+                if (this.error)
+                    return;
+
                 let thumbFailed = false;
 
                 const loadedImage = await Promise.race([
-                    loadImagePromise(fullImage).catch(() => {
+                    loadImagePromise(fullImage).catch((e) => {
                         this.error = true;
+                        console.log(e.error);
                     }),
                     thumbRequest.catch(() => {
                         thumbFailed = true;
@@ -180,11 +184,11 @@
 
                 if (loadedImage === fullImage) {
                     this.shown = true;
-                    console.log('full image');
                     return;
                 }
 
-                console.log('thumb');
+                if (this.error)
+                    return;
 
                 const thumbImage = loadedImage;
 
