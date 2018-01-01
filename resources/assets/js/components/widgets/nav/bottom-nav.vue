@@ -1,5 +1,5 @@
 <template>
-    <base-nav :items="items"></base-nav>
+    <base-nav :items="items"/>
 </template>
 
 <script>

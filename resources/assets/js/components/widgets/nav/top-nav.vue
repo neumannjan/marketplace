@@ -1,5 +1,5 @@
 <template>
-    <base-nav :items="items"></base-nav>
+    <base-nav :items="items"/>
 </template>
 
 <script>
@@ -17,10 +17,7 @@
         {
             label: 'Admin',
             icon: 'cog',
-            route: 'user',
-            params: {
-                name: 'admin'
-            }
+            route: 'test'
         }
     ];
 

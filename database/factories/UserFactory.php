@@ -22,8 +22,8 @@ $factory->define(App\User::class, function (Faker $faker) {
         'username' => $faker->unique()->userName,
         'email' => $faker->unique()->safeEmail,
         'password' => $password ?: $password = bcrypt('secret999'),
-        'description' => $faker->realText(),
-        'display_name' => $faker->name,
+        'description' => $faker->boolean ? $faker->realText($faker->numberBetween(100, 200)) : '',
+        'display_name' => $faker->boolean ? $faker->name : '',
         'remember_token' => str_random(10),
         'status' => $faker->biasedNumberBetween(0, 2, function ($i) {
             return sin($i * M_PI);

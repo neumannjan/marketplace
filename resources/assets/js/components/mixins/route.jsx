@@ -1,12 +1,19 @@
+import debounce from 'lodash/debounce';
+
 let changeTitle = (instance, to) => {
     document.title = (instance.title !== undefined) ? instance.title : to.meta.title;
 };
 
 export default {
     data: () => ({
-        scrollX: 0,
-        scrollY: 0,
+        scrollX: null,
+        scrollY: null,
     }),
+    watch: {
+        title(to) {
+            changeTitle(this, to);
+        }
+    },
     beforeRouteEnter(to, from, next) {
         next(vm => {
             changeTitle(vm, to);
@@ -16,12 +23,24 @@ export default {
         changeTitle(this, to);
         next();
     },
-    beforeRouteLeave(to, from, next) {
+    activated() {
+        const scrollX = this.scrollX;
+        const scrollY = this.scrollY;
+
+        if (scrollX === null || scrollY === null)
+            return;
+
+        const onScroll = debounce(() => {
+            window.scroll(scrollX, scrollY);
+            console.log(`wanted: ${scrollY}, got: ${window.scrollY}`);
+
+            window.removeEventListener('scroll', onScroll);
+        }, 100);
+
+        window.addEventListener('scroll', onScroll);
+    },
+    deactivated() {
         this.scrollX = window.scrollX;
         this.scrollY = window.scrollY;
-        next();
-    },
-    activated() {
-        window.scroll(this.scrollX, this.scrollY);
     }
 }

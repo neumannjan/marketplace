@@ -19,6 +19,7 @@ class CreateOffersTable extends Migration
         Schema::create(self::TABLE, function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
+            $table->timestamp('listed_at')->useCurrent();
             $table->string('name');
             $table->text('description');
             $table->unsignedInteger('author_user_id');

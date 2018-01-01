@@ -4,6 +4,7 @@ import VueRouter from 'vue-router';
 import IndexRoute from '../components/routes/index.vue';
 import TestRoute from '../components/routes/test.vue';
 import ErrorRoute from '../components/routes/404.vue';
+import UserRoute from '../components/routes/user.vue';
 
 import LoginRoute from '../components/routes/auth/login.vue';
 import RegisterRoute from '../components/routes/auth/register.vue';
@@ -27,8 +28,8 @@ export default new VueRouter({
             component: IndexRoute
         },
         {
-            path: '/user/:name',
-            name: 'user',
+            path: '/test',
+            name: 'test',
             component: TestRoute,
             props: true
         },
@@ -58,8 +59,18 @@ export default new VueRouter({
             ...GuestGuard
         },
         {
-            path: '*',
+            path: '/user/:username',
+            name: 'user',
+            component: UserRoute,
+            props: true,
+        },
+        {
+            path: '/404',
             name: 'error',
+            component: ErrorRoute
+        },
+        {
+            path: '*',
             component: ErrorRoute
         },
     ]

@@ -3,6 +3,7 @@
 namespace App\Api\Request;
 
 
+use App\Api\Response\ExceptionSerializer;
 use App\Api\Response\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
@@ -74,6 +75,14 @@ abstract class Request
         } catch (ValidationException $e) {
             $response = new Response(false, [
                 'validation' => $e->errors()
+            ]);
+
+            $response->setName($name);
+
+            return $response;
+        } catch (\Exception $e) {
+            $response = new Response(false, [
+                'exception' => (new ExceptionSerializer($e))->toArray()
             ]);
 
             $response->setName($name);

@@ -6,11 +6,37 @@
     * edit, delete ability
     * bump (max twice)
 * chat & notifications
-    * separate conversation for each offer
     * email notifications
     * web notifications
     * browser notifications
 * admin
+
+## Todo
+
+### Mandatory
+* User page
+* Offer page
+* Offer:
+    * Tags / categories
+    * Bump
+    * Offer create / edit / delete
+    * Mark as sold
+    * Autodelete old
+* Chat
+* Notifications
+    * E-mail
+    * In-App
+    * Browser
+* 
+
+### Optional
+* JS DB entry cache
+* Paginator by last item
+* Liked offers page
+* User settings
+    * Change settings
+    * Change password
+    * Upload profile picture
 
 ## Project
 

@@ -9,6 +9,7 @@ use App\Api\Request\Auth\PasswordEmailRequest;
 use App\Api\Request\Auth\PasswordResetRequest;
 use App\Api\Request\Auth\RegisterRequest;
 use App\Api\Request\DB\OfferRequest;
+use App\Api\Request\DB\SingleRequest;
 use App\Api\Request\GlobalRequest;
 use App\Api\Request\Request as ApiRequest;
 use App\Api\Response\CompositeResponse as CompositeApiResponse;
@@ -40,6 +41,7 @@ class PrivateApiController extends Controller
             'password-reset' => PasswordResetRequest::class,
 
             //DB
+            'single' => SingleRequest::class,
             'offers' => OfferRequest::class
         ];
     }

@@ -2,9 +2,14 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import api from '../api';
 
+import cache from './modules/cache';
+
 Vue.use(Vuex);
 
-let store = new Vuex.Store({
+const store = new Vuex.Store({
+    modules: {
+        cache
+    },
     strict: true,
     state: {
         is_authenticated: false,
@@ -51,15 +56,14 @@ let store = new Vuex.Store({
                     context.commit('logout');
                 });
         }
-    },
-    modules: {}
+    }
 });
 
 if (data) {
     store.commit('global', JSON.parse(atob(data)));
 }
 
-export let helpers = {
+export const helpers = {
     trans(key, parameters) {
         if (!store.state.messages)
             return key;

@@ -3,6 +3,7 @@
 namespace App;
 
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Money\Money;
 
@@ -44,5 +45,14 @@ class Offer extends Model
     public function getPriceAttribute()
     {
         return \Money::getFormatter()->format($this->money);
+    }
+
+    public function scopeActive(Builder $query)
+    {
+        return $query
+            ->where(['status' => self::STATUS_AVAILABLE])
+            ->whereHas('author', function (Builder $query) {
+                $query->where(['status' => User::STATUS_ACTIVE]);
+            });
     }
 }

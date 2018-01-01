@@ -7,6 +7,7 @@ use App\Notifications\ResetPassword;
 use App\Rules\ContainsNonNumericRule;
 use App\Rules\ContainsNumericRule;
 use App\Rules\SlugRule;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -121,5 +122,10 @@ class User extends Authenticatable
     public function profile_image()
     {
         return $this->belongsTo(Image::class, 'profile_image_id');
+    }
+
+    public function scopeActive(Builder $query)
+    {
+        return $query->where(['status' => self::STATUS_ACTIVE]);
     }
 }

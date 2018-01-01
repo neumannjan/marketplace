@@ -1,6 +1,6 @@
 <template>
     <ul>
-        <nav-item v-for="item in items" v-bind="item" :key="item.label"></nav-item>
+        <nav-item v-for="item in items" v-bind="item" :key="item.label"/>
     </ul>
 </template>
 

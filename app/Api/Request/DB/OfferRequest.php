@@ -5,7 +5,6 @@ namespace App\Api\Request\DB;
 
 use App\Api\Request\PaginatedRequest;
 use App\Offer;
-use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
@@ -22,8 +21,7 @@ class OfferRequest extends PaginatedRequest
     protected function rules()
     {
         return [
-            'status' => ['integer', Rule::in([Offer::STATUS_INACTIVE, Offer::STATUS_AVAILABLE, Offer::STATUS_SOLD])],
-            'author_status' => ['integer', Rule::in([User::STATUS_INACTIVE, User::STATUS_ACTIVE, User::STATUS_BANNED])],
+            'author_username' => 'string',
             'order_by' => ['string'],
             'order' => ['string', Rule::in([self::ORDER_ASC, self::ORDER_DESC])]
         ];
@@ -34,7 +32,7 @@ class OfferRequest extends PaginatedRequest
      */
     protected function urlParameters()
     {
-        return ['status', 'author_status', 'order_by', 'order'];
+        return ['author_username', 'order_by', 'order'];
     }
 
     /**
@@ -42,10 +40,13 @@ class OfferRequest extends PaginatedRequest
      */
     protected function getPaginator(Collection $parameters, $perPage, $page)
     {
+        /** @var Builder $query */
         $query = Offer::query();
 
+        $query->active(); // Required so that users cannot see banned users or inactive offers
+
         // offer
-        foreach (['status'] as $key) {
+        foreach ([] as $key) {
             if (($value = $parameters->get($key)) !== null) {
                 $query->where([$key => $value]);
             }
@@ -53,7 +54,7 @@ class OfferRequest extends PaginatedRequest
 
         // author
         $query->whereHas('author', function (Builder $query) use ($parameters) {
-            foreach (['status'] as $key) {
+            foreach (['username'] as $key) {
                 if (($value = $parameters->get("author_$key")) !== null) {
                     $query->where([$key => $value]);
                 }
@@ -61,7 +62,7 @@ class OfferRequest extends PaginatedRequest
         });
 
         // order
-        $orderBy = $parameters->get('order_by', 'created_at'); //TODO add bumpable timestamp
+        $orderBy = $parameters->get('order_by', 'listed_at');
         $order = $parameters->get('order', self::ORDER_DESC);
 
         $query->orderBy($orderBy, $order);

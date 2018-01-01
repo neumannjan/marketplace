@@ -1,20 +1,23 @@
 <template>
     <div>
-        <masonry v-if="this.requestBusy || this.cards.length > 0" :cards="cards" :component="component"
+        <masonry v-if="this.requestBusy || this.cards.length > 0" :cards="cards"
                  @ready="masonryBusy = false"
                  v-infinite-scroll="request" infinite-scroll-disabled="busy"
                  infinite-scroll-distance="200">
+            <template slot-scope="props">
+                <slot :data="props.data"></slot>
+            </template>
             <template slot="below">
                 <template v-if="hasMore">
-                    <slot name="loading"></slot>
+                    <slot name="loading"/>
                 </template>
             </template>
         </masonry>
         <template v-if="hasMore">
-            <slot name="loading-after"></slot>
+            <slot name="loading-after"/>
         </template>
         <template v-else="">
-            <slot name="loaded"></slot>
+            <slot name="loaded"/>
         </template>
     </div>
 </template>
@@ -28,12 +31,11 @@
     export default {
         props: {
             url: {
-                type: String,
                 required: true
             },
-            component: {
-                required: true
-            }
+            startCards: {
+                type: Array,
+            },
         },
         components: {
             masonry: MasonryComponent,
@@ -73,6 +75,7 @@
                         this.nextUrl = result['next_page_url'];
                         this.requestBusy = false;
                         this.masonryBusy = true;
+                        this.$emit('request', result);
                     });
             },
             addCards(cards) {
@@ -81,7 +84,11 @@
         },
         created() {
             this.nextUrl = this.url;
-            this.request();
+            if (!this.startCards) {
+                this.request();
+            } else {
+                this.cards = this.startCards;
+            }
         },
         activated() {
             this.active = true;

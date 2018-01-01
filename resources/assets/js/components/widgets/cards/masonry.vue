@@ -1,9 +1,9 @@
 <template>
     <div class="masonry" ref="masonry">
         <div class="masonry-card col-md-4 col-sm-6 col-xs-12" v-for="card in cards">
-            <component :is="component" :data="card" :key="card.key"></component>
+            <slot :data="card"></slot>
         </div>
-        <slot name="below"></slot>
+        <slot name="below"/>
     </div>
 </template>
 
@@ -25,9 +25,6 @@
                 type: Array,
                 required: true
             },
-            component: {
-                required: true,
-            }
         },
         watch: {
             cards(val, oldVal) {

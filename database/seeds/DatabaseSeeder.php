@@ -12,17 +12,20 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         factory(\App\User::class, 20)->make()->each(function (\App\User $u) {
+            $faker = app(\Faker\Generator::class);
 
             //set profile image
-            /** @var \App\Image $image */
-            $image = factory(\App\Image::class)->create();
+            if ($faker->boolean) {
+                /** @var \App\Image $image */
+                $image = factory(\App\Image::class)->create();
+                $u->profile_image_id = $image->id;
+            }
 
-            $u->profile_image_id = $image->id;
 
             //save user
             $u->save();
 
-            factory(\App\Offer::class, 10)->make()->each(function (\App\Offer $o) use ($u) {
+            factory(\App\Offer::class, 10)->make()->each(function (\App\Offer $o) use ($u, $faker) {
                 //set author id
                 $o->author_user_id = $u->id;
 
@@ -42,7 +45,7 @@ class DatabaseSeeder extends Seeder
                 $o->save();
 
                 //fetch images
-                factory(\App\Image::class, mt_rand(1, 3))->create([
+                factory(\App\Image::class, $faker->numberBetween(1, 3))->create([
                     'offer_id' => $o->id
                 ]);
             });

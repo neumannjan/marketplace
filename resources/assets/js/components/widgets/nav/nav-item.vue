@@ -1,14 +1,14 @@
 <template>
     <li :class="['nav-item', {active: this.active}]">
         <router-link v-if="isToRoute" class="nav-link" :to="routeDefinition" :aria-label="labelFull">
-            <icon v-if="icon" :name="icon" :label="label" :scale="1.125"></icon>
+            <icon v-if="icon" :name="icon" :label="label" :scale="1.125"/>
             <template v-else>
                 {{ label }}
                 <span class="sr-only">&nbsp;(current)</span> <!-- TODO translate the "current" word -->
             </template>
         </router-link>
         <a v-else="" href="#" class="nav-link" @click.prevent="callback">
-            <icon v-if="icon" :name="icon" :label="label" :scale="1.125"></icon>
+            <icon v-if="icon" :name="icon" :label="label" :scale="1.125"/>
             <template v-else>
                 {{ label }}
                 <span class="sr-only">&nbsp;(current)</span> <!-- TODO translate the "current" word -->
