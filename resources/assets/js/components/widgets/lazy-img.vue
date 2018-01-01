@@ -179,7 +179,6 @@
                 const loadedImage = await Promise.race([
                     loadImagePromise(fullImage).catch((e) => {
                         this.error = true;
-                        console.log(e.error);
                     }),
                     thumbRequest.catch(() => {
                         thumbFailed = true;
@@ -213,7 +212,6 @@
                 }
 
                 if (!this.inViewportCheck()) {
-                    console.log('skip');
                     this.shown = true;
                     return;
                 }
