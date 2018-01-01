@@ -18,6 +18,7 @@
 * Offer page
 * Offer:
     * Tags / categories
+    * Search
     * Bump
     * Offer create / edit / delete
     * Mark as sold
@@ -30,7 +31,6 @@
 * 
 
 ### Optional
-* JS DB entry cache
 * Paginator by last item
 * Liked offers page
 * User settings
