@@ -9,7 +9,7 @@
         <div class="loading loading-short"></div>
 
         <card-icon-footer :buttons="buttons" slot="footer" class="bg-white border-light" button-class="text-muted"
-                          :gray="false"></card-icon-footer>
+                          :gray="false"/>
     </card>
 </template>
 

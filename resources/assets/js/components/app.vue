@@ -2,14 +2,14 @@
     <div class="wrapper" v-if="shown">
         <div class="navbar navbar-expand navbar-dark bg-dark navbar-vertical">
             <a class="navbar-brand" href="#">Nav</a> <!--TODO replace-->
-            <top-nav class="navbar-nav"></top-nav>
-            <bottom-nav class="navbar-nav navbar-nav-fixed-bottom bg-dark"></bottom-nav>
+            <top-nav class="navbar-nav"/>
+            <bottom-nav class="navbar-nav navbar-nav-fixed-bottom bg-dark"/>
         </div>
         <div class="main-content">
             <main role="main" class="main container">
-                <flash-messages></flash-messages>
+                <flash-messages/>
                 <keep-alive :include="keepAlive">
-                    <router-view></router-view>
+                    <router-view/>
                 </keep-alive>
             </main>
 

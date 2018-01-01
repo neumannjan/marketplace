@@ -1,20 +1,20 @@
 <template>
     <div class="card">
         <div v-if="$slots.header" :class="['card-header', headerClass]">
-            <slot name="header"></slot>
+            <slot name="header"/>
         </div>
-        <slot name="post-header"></slot>
+        <slot name="post-header"/>
         <a href="#">
             <lazy-img v-if="img" img-class="card-img-top" :src="img" :thumb="thumb" :alt="alt"
                       :height="height" :width="width">
             </lazy-img>
         </a>
         <div class="card-body">
-            <slot></slot>
+            <slot/>
         </div>
-        <slot name="pre-footer"></slot>
+        <slot name="pre-footer"/>
         <div v-if="$slots.footer" :class="['card-footer', footerClass]">
-            <slot name="footer"></slot>
+            <slot name="footer"/>
         </div>
     </div>
 </template>

@@ -2,7 +2,7 @@
     <div class="row">
         <button v-for="button in buttons" type="button" @click="button.callback ? button.callback() : null"
                 :class="['col btn btn-link', buttonClass, {gray: gray}]">
-            <icon :name="button.icon" :label="button.label"></icon>
+            <icon :name="button.icon" :label="button.label"/>
         </button>
     </div>
 </template>

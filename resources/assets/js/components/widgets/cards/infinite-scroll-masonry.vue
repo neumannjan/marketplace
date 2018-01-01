@@ -5,7 +5,7 @@
                  v-infinite-scroll="request" infinite-scroll-disabled="busy"
                  infinite-scroll-distance="200">
             <template slot-scope="props">
-                <slot :data="props.data"></slot>
+                <slot :data="props.data"/>
             </template>
             <template slot="below">
                 <template v-if="hasMore">

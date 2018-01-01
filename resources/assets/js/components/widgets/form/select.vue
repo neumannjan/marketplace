@@ -4,7 +4,7 @@
             <label class="form-check-label">
                 <input class="form-check-input" :type="type" :value="value"
                        @change="$emit('input', $event.target.checked)" :disabled="disabled">
-                <slot></slot>
+                <slot/>
             </label>
         </div>
     </div>

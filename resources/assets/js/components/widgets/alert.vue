@@ -1,6 +1,6 @@
 <template>
     <div v-if="shown" v-bind:class="['alert', 'alert-' + type]" role="alert">
-        <slot></slot>
+        <slot/>
         <button type="button" class="close" v-on:click="close()" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>

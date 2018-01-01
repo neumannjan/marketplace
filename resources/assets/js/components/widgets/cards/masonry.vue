@@ -1,7 +1,7 @@
 <template>
     <div class="masonry" ref="masonry">
         <div class="masonry-card col-md-4 col-sm-6 col-xs-12" v-for="card in cards">
-            <slot :data="card"></slot>
+            <slot :data="card"/>
         </div>
         <slot name="below"/>
     </div>
