@@ -1,6 +1,6 @@
 <template>
     <div class="card">
-        <div v-if="$slots.header" class="card-header">
+        <div v-if="$slots.header" :class="['card-header', headerClass]">
             <slot name="header"></slot>
         </div>
         <slot name="post-header"></slot>
@@ -13,7 +13,7 @@
             <slot></slot>
         </div>
         <slot name="pre-footer"></slot>
-        <div v-if="$slots.footer" class="card-footer">
+        <div v-if="$slots.footer" :class="['card-footer', footerClass]">
             <slot name="footer"></slot>
         </div>
     </div>
@@ -33,6 +33,8 @@
             thumb: String,
             width: Number,
             height: Number,
+            headerClass: String,
+            footerClass: String,
         }
     }
 </script>

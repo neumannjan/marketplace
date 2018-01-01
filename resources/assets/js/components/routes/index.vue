@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1>{{ title }}</h1>
-        <infinite-scroll-masonry url="/api/offers?status=1" :component="component">
+        <infinite-scroll-masonry url="/api/offers?status=1&author_status=1" :component="component">
             <div slot="loading" class="masonry-card col-md-4 col-sm-6 col-xs-12">
                 <loading-offer-card></loading-offer-card>
             </div>

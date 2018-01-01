@@ -1,5 +1,10 @@
 <template>
     <card v-bind="cardData">
+        <a href="#" slot="header" class="text-dark">
+            <img class="rounded-circle mr-2" width="32" height="32" :src="data.author.profile_image.size_icon"/>
+            <span>{{ data.author.display_name }}</span>
+        </a>
+
         <a href="#" class="text-dark"><h4 class="card-title">{{ data.name }}</h4></a>
         <p class="card-text">{{ shortDesc }}</p>
         <p class="h5 card-text">{{ data.price }}</p>
