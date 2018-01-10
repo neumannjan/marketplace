@@ -26,7 +26,7 @@
     import TopNavComponent from './widgets/nav/top-nav.vue';
     import BottomNavComponent from './widgets/nav/bottom-nav.vue';
     import FlashMessagesComponent from './widgets/flash-messages.vue';
-    import {cached} from '../routes/router';
+    import {cached} from 'JS/router';
     import {mapState} from 'vuex';
 
     export default {

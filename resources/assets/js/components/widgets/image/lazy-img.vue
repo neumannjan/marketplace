@@ -14,9 +14,9 @@
     import axios from 'axios';
     import Blur from 'stackblur-canvas';
     import Velocity from 'velocity-animate';
-    import Pool from '../../tools/pool';
+    import Pool from 'JS/tools/pool';
     import throttle from 'lodash/throttle';
-    import helpers from '../../helpers';
+    import helpers from 'JS/helpers';
 
     import 'vue-awesome/icons/chain-broken';
 
@@ -325,7 +325,7 @@
 </script>
 
 <style scoped lang="scss" type="text/scss">
-    @import "../../../css/includes";
+    @import "~CSS/includes";
 
     .img-wrapper {
         position: relative;

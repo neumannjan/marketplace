@@ -37,7 +37,7 @@
 </script>
 
 <style scoped lang="scss" type="text/scss">
-    @import "../../../../../../css/includes";
+    @import "~CSS/includes";
 
     .img-dummy {
         height: 200px;

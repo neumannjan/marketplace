@@ -1,4 +1,4 @@
-import store from "../../store/store";
+import store from "JS/store";
 
 export default {
     beforeEnter: (to, from, next) => {

@@ -25,7 +25,7 @@
 </script>
 
 <style scoped type="text/scss" lang="scss">
-    @import '../../../../css/includes';
+    @import '~CSS/includes';
 
     button {
         cursor: pointer;

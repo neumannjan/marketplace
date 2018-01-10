@@ -13,7 +13,7 @@
 </template>
 
 <script>
-    import {helpers as storeHelpers} from '../../../store/store';
+    import {helpers as storeHelpers} from 'JS/store';
 
     export default {
         data: () => ({

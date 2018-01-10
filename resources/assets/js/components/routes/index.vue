@@ -6,8 +6,8 @@
 </template>
 
 <script>
-    import route from '../mixins/route';
-    import OfferMasonry from '../widgets/cards/data-aware/offer/offer-masonry';
+    import route from 'JS/components/mixins/route';
+    import OfferMasonry from 'JS/components/widgets/cards/data-aware/offer/offer-masonry';
 
     export default {
         name: 'index-route',

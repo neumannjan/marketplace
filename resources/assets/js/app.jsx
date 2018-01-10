@@ -2,8 +2,8 @@ import Vue from 'vue';
 import Vuelidate from 'vuelidate';
 import IconComponent from 'vue-awesome/components/Icon';
 
-import store from './store/store';
-import router from './routes/router';
+import store from 'JS/store';
+import router from 'JS/router';
 import AppComponent from './components/app.vue';
 
 // setup

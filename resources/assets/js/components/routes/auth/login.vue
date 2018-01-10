@@ -10,14 +10,14 @@
                         :validation="$v.form.login"
                         v-model="form.login"
                         hint="Username or email"
-                        required autofocus></form-input>
+                        required autofocus/>
             <form-input class="form-group"
                         label="Password"
                         name="password"
                         :serverValidation="$serverValidationOn('form.password')"
                         :validation="$v.form.password"
                         v-model="form.password"
-                        type="password" required></form-input>
+                        type="password" required/>
 
             <form-select class="form-group" v-model="form.remember">Remember Me</form-select>
 
@@ -31,13 +31,13 @@
 </template>
 
 <script>
-    import InputComponent from '../../widgets/form/input.vue';
-    import SelectComponent from '../../widgets/form/select.vue';
+    import InputComponent from 'JS/components/widgets/form/input.vue';
+    import SelectComponent from 'JS/components/widgets/form/select.vue';
 
-    import { required, minLength } from 'vuelidate/lib/validators';
+    import {minLength, required} from 'vuelidate/lib/validators';
 
-    import route from '../../mixins/route';
-    import form from './../../mixins/form';
+    import route from 'JS/components/mixins/route';
+    import form from 'JS/components/mixins/form';
 
     export default {
         mixins: [route, form],

@@ -20,7 +20,7 @@
 </template>
 
 <script>
-    import LazyImg from '../lazy-img';
+    import LazyImg from 'JS/components/widgets/image/lazy-img';
 
     export default {
         name: "card",

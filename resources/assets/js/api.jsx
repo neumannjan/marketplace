@@ -1,5 +1,5 @@
 import axios from 'axios';
-import store from './store/store';
+import store from 'JS/store';
 
 const config = () => ({
     headers: {

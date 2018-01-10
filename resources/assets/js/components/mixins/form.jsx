@@ -1,5 +1,5 @@
-import Api from '../../api';
-import helpers from '../../helpers';
+import Api from 'JS/api';
+import helpers from 'JS/helpers';
 import debounce from 'lodash/debounce';
 
 let doSubmitForm = debounce((vm, requestName, selectorKey, onSuccess) => {

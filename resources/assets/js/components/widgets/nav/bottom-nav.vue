@@ -5,7 +5,7 @@
 <script>
     import NavComponent from './nav.vue';
     import {mapState} from 'vuex';
-    import store from '../../../store/store';
+    import store from 'JS/store';
 
     import 'vue-awesome/icons/sign-in';
     import 'vue-awesome/icons/user-plus';

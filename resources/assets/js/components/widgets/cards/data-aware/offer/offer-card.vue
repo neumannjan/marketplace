@@ -108,7 +108,7 @@
 </script>
 
 <style scoped lang="scss" type="text/scss">
-    @import '../../../../../../css/includes';
+    @import '~CSS/includes';
 
     a {
         text-decoration: none;

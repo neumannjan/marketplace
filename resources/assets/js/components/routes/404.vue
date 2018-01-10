@@ -5,7 +5,7 @@
 </template>
 
 <script>
-    import route from '../mixins/route';
+    import route from 'JS/components/mixins/route';
 
     export default {
         mixins: [route],

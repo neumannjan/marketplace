@@ -9,7 +9,7 @@
                         :serverValidation="$serverValidationOn('form.email')"
                         :validation="$v.form.email"
                         v-model="form.email"
-                        type="email" required autofocus></form-input>
+                        type="email" required autofocus/>
 
             <div class="form-group">
                 <button type="submit" id="submit" class="btn btn-primary" @click.prevent="submit">Send Password Reset
@@ -22,13 +22,13 @@
 </template>
 
 <script>
-    import InputComponent from '../../widgets/form/input.vue';
-    import SelectComponent from '../../widgets/form/select.vue';
+    import InputComponent from 'JS/components/widgets/form/input.vue';
+    import SelectComponent from 'JS/components/widgets/form/select.vue';
 
-    import {required, minLength, email, sameAs} from 'vuelidate/lib/validators';
+    import {email, required} from 'vuelidate/lib/validators';
 
-    import route from '../../mixins/route';
-    import form from './../../mixins/form';
+    import route from 'JS/components/mixins/route';
+    import form from 'JS/components/mixins/form';
 
     export default {
         mixins: [route, form],
