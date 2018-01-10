@@ -1,3 +1,39 @@
+html {
+  height: 100%;
+}
+
+body, .wrapper, .main {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+body {
+  min-height: 100%;
+}
+
+.aside-navbar-vertical, .wrapper {
+  position: relative;
+}
+
 .main {
+  flex-direction: row;
+}
+
+.main-container {
+  @extend .container;
   @extend .py-4;
+}
+
+.col-flexible {
+  .navigation-shown & {
+    @extend .col-xs-navbar-vert-12;
+    @extend .col-sm-navbar-vert-6;
+    @extend .col-md-navbar-vert-4;
+  }
+
+  .navigation-not-shown & {
+    @extend .col-sm-6;
+    @extend .col-md-4;
+  }
 }

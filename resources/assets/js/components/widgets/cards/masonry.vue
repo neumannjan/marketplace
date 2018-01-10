@@ -1,6 +1,6 @@
 <template>
     <div class="masonry" ref="masonry">
-        <div class="masonry-card col-md-4 col-sm-6 col-xs-12" v-for="card in cards">
+        <div class="masonry-card col-flexible" v-for="card in cards">
             <slot :data="card"/>
         </div>
         <slot name="below"/>

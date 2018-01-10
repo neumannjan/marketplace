@@ -3,7 +3,7 @@
 </template>
 
 <script>
-    import NavComponent from './nav.vue';
+    import NavComponent from '../nav.vue';
     import {mapState} from 'vuex';
     import store from 'JS/store';
 
@@ -11,7 +11,7 @@
     import 'vue-awesome/icons/user-plus';
     import 'vue-awesome/icons/sign-out';
 
-    let guestItems = [
+    const guestItems = [
         {
             label: 'Log in',
             icon: 'sign-in',
@@ -24,7 +24,7 @@
         },
     ];
 
-    let authItems = [
+    const authItems = [
         {
             label: 'Log out',
             icon: 'sign-out',
@@ -34,6 +34,7 @@
     ];
 
     export default {
+        name: 'bottom-nav',
         components: {
             'base-nav': NavComponent
         },

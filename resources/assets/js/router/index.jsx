@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import store from 'JS/store';
 
 import IndexRoute from '../components/routes/index.vue';
 import TestRoute from '../components/routes/test.vue';
@@ -11,15 +12,21 @@ import RegisterRoute from '../components/routes/auth/register.vue';
 import PasswordEmailRoute from '../components/routes/auth/password-email.vue';
 import PasswordResetRoute from '../components/routes/auth/password-reset.vue';
 
+import UserNavigation from 'JS/components/routes/navigation/user-navigation';
+
 import GuestGuard from './guards/guest';
 
 Vue.use(VueRouter);
 
-export let cached = [
+const cachedRoutes = [
     'index-route'
 ];
 
-export default new VueRouter({
+export const cached = (suffix = '') => suffix ? cachedRoutes.map((route) => `${route}-${suffix}`) : cachedRoutes;
+
+export const events = new Vue();
+
+const router = new VueRouter({
     mode: 'history',
     routes: [
         {
@@ -61,8 +68,13 @@ export default new VueRouter({
         {
             path: '/user/:username',
             name: 'user',
-            component: UserRoute,
-            props: true,
+            components: {
+                default: UserRoute,
+                navigation: UserNavigation,
+            },
+            props: {
+                default: true
+            },
         },
         {
             path: '/404',
@@ -75,3 +87,9 @@ export default new VueRouter({
         },
     ]
 });
+
+router.afterEach(to => {
+    store.commit('routeHasNavigation', !!to.matched[0].components.navigation);
+});
+
+export default router;

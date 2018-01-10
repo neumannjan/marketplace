@@ -1,6 +1,5 @@
 <template>
     <div>
-        <h1>{{ title }}</h1>
         <offer-masonry v-if="startOffers" :url="nextUrl" :start-cards="startOffers" :show-author="false"/>
     </div>
 </template>
@@ -9,6 +8,7 @@
     import route from 'JS/components/mixins/route';
     import api from 'JS/api';
     import OfferMasonry from 'JS/components/widgets/cards/data-aware/offer/offer-masonry';
+    import {events as routeEvents} from 'JS/router';
 
     export default {
         name: 'user-route',
@@ -16,7 +16,12 @@
         components: {
             OfferMasonry
         },
-        props: ['username'],
+        props: {
+            username: {
+                type: String,
+                required: true
+            }
+        },
         data: () => ({
             user: null,
             startOffers: null,
@@ -44,6 +49,8 @@
                         this.$router.replace({name: 'error'});
                         return;
                     }
+
+                    routeEvents.$emit('has-user', this.user);
 
                     this.startOffers = result.offers.result.data;
                     this.nextUrl = result.offers.result.next_page_url;

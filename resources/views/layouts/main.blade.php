@@ -63,7 +63,7 @@
             @endauth
         </div>
 
-        <div class="main-content">
+        <div class="aside-navbar-vertical">
             <main role="main" class="main container">
                 @component('components.flash')
                 @endcomponent

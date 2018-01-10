@@ -58,9 +58,3 @@
         },
     };
 </script>
-
-<style scoped>
-    .nav-link {
-
-    }
-</style>

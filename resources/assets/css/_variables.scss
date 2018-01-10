@@ -1,8 +1,29 @@
 // Footer
 $footer-height: 60px;
-$footer-color: rgba($black, .5) !default;
+$footer-color: rgba($black, .5);
 $footer-background: $light;
 
-//Vertical navigation
-$v-nav-width: 62px;
-$v-nav-icon-size: 1.2rem;
+// Vertical navigation
+$v-nav-width: 60px;
+
+$v-nav-broad-width: $v-nav-width*5;
+
+// Grid
+$grid-breakpoints: (
+        xs: 0,
+        sm: 576px,
+        md: 768px,
+        lg: 992px,
+        xl: 1200px,
+);
+
+$grid-breakpoints: map-merge-all(
+                $grid-breakpoints,
+                _grid-breakpoints-offset('navbar-vert', $v-nav-broad-width, $grid-breakpoints)
+);
+
+@include _assert-starts-at-zero($grid-breakpoints);
+
+// Navbar
+$navbar-padding-y: $spacer * .75;
+$navbar-icon-scale: 1.125rem;

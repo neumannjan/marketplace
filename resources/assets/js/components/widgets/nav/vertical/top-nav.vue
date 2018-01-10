@@ -3,12 +3,12 @@
 </template>
 
 <script>
-    import NavComponent from './nav.vue';
+    import NavComponent from '../nav.vue';
 
     import 'vue-awesome/icons/home';
     import 'vue-awesome/icons/cog';
 
-    let items = [
+    const items = [
         {
             label: 'Dashboard',
             icon: 'home',
@@ -22,6 +22,7 @@
     ];
 
     export default {
+        name: 'top-nav',
         components: {
             'base-nav': NavComponent
         },

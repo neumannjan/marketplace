@@ -14,6 +14,7 @@ const store = new Vuex.Store({
     state: {
         is_authenticated: false,
         connection_lost: false,
+        route_has_navigation: false,
         token: false,
         flash: {},
         messages: [],
@@ -47,6 +48,9 @@ const store = new Vuex.Store({
         },
         connection(state, value) {
             state.connection_lost = !value;
+        },
+        routeHasNavigation(state, value) {
+            state.route_has_navigation = value;
         }
     },
     actions: {

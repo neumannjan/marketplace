@@ -1,5 +1,5 @@
 <template>
-    <div class="col-sm-8 col-md-6 col-lg-4">
+    <div class="col-flexible">
         <h1>{{ title }}</h1>
 
         <form id="form-login">

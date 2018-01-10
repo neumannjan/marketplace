@@ -1,6 +1,6 @@
 <template>
     <div>
-        <masonry v-if="this.requestBusy || this.cards.length > 0" :cards="cards"
+        <masonry :class="masonryClass" v-if="this.requestBusy || this.cards.length > 0" :cards="cards"
                  @ready="masonryBusy = false"
                  v-infinite-scroll="request" infinite-scroll-disabled="busy"
                  infinite-scroll-distance="200">
@@ -36,6 +36,9 @@
             startCards: {
                 type: Array,
             },
+            masonryClass: {
+                default: []
+            }
         },
         components: {
             masonry: MasonryComponent,

@@ -1,10 +1,16 @@
+// navbar icons
+.navbar a svg {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+// vertical navbar
 .navbar-vertical {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: $v-nav-width;
   flex-direction: column;
+  flex-shrink: 0;
+  width: $v-nav-width;
+  padding: $navbar-padding-y $navbar-padding-x;
 
   .navbar-brand {
     margin-right: 0;
@@ -15,19 +21,49 @@
     flex-direction: column;
   }
 
-  .navbar-nav-fixed-bottom {
+  .navbar-nav-fixed-bottom, .navbar-nav-fixed-top {
     position: fixed;
-    bottom: 0;
     left: 0;
     width: $v-nav-width;
     padding: $navbar-padding-y $navbar-padding-x;
+
+    a, .nav-link {
+      padding-left: 0;
+      padding-right: 0;
+    }
   }
 
-  .fa {
-    font-size: $v-nav-icon-size;
+  .navbar-nav-fixed-top {
+    top: 0;
+  }
+
+  .navbar-nav-fixed-bottom {
+    bottom: 0;
   }
 }
 
-.main-content {
+.aside-navbar-vertical {
+  margin-left: $v-nav-width;
+}
+
+// vertical sub navigation
+.content-navigation {
+  @extend .bg-light;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: $v-nav-broad-width;
+
+  .content-navigation-inner {
+    position: fixed;
+    @extend .mx-auto;
+  }
+}
+
+// margins to not overlap navbar
+.avoid-navbar-top {
+  margin-top: $navbar-padding-y*2 + $nav-link-padding-y*2 + $navbar-icon-scale;
+}
+
+.avoid-navbar-left {
   margin-left: $v-nav-width;
 }

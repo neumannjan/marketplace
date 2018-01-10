@@ -1,21 +1,33 @@
 <template>
-    <div class="wrapper" v-if="shown">
+    <div class="wrapper flex-row" v-if="shown">
         <div class="navbar navbar-expand navbar-dark bg-dark navbar-vertical">
-            <a class="navbar-brand" href="#">Nav</a> <!--TODO replace-->
-            <top-nav class="navbar-nav"/>
-            <bottom-nav class="navbar-nav navbar-nav-fixed-bottom bg-dark"/>
+            <top-nav class="navbar-nav navbar-nav-fixed-top"/>
+            <bottom-nav class="navbar-nav navbar-nav-fixed-bottom"/>
         </div>
-        <div class="main-content">
-            <main role="main" class="main container">
-                <flash-messages/>
-                <keep-alive :include="keepAlive">
-                    <router-view/>
-                </keep-alive>
+        <div class="wrapper">
+            <main role="main"
+                  :class="['main', {'navigation-shown': hasNavigation, 'navigation-not-shown': !hasNavigation}]">
+                <!-- NAVIGATION -->
+                <div v-if="hasNavigation" class="content-navigation">
+                    <keep-alive :include="keepAlive('navigation')">
+                        <router-view class="content-navigation-inner" name="navigation"/>
+                    </keep-alive>
+                </div>
+
+                <div class="main-container">
+                    <!-- FLASH MESSAGES -->
+                    <flash-messages class="container"/>
+
+                    <!-- CONTENT -->
+                    <keep-alive :include="keepAlive()">
+                        <router-view/>
+                    </keep-alive>
+                </div>
             </main>
 
             <footer class="footer">
                 <div class="footer-inner">
-                    <span class="ml-auto">&copy; Company 2017</span> <!--TODO replace-->
+                    <span class="ml-auto">&copy; Company 2018</span> <!--TODO replace-->
                 </div>
             </footer>
         </div>
@@ -23,17 +35,19 @@
 </template>
 
 <script>
-    import TopNavComponent from './widgets/nav/top-nav.vue';
-    import BottomNavComponent from './widgets/nav/bottom-nav.vue';
-    import FlashMessagesComponent from './widgets/flash-messages.vue';
+    import TopNav from './widgets/nav/vertical/top-nav';
+    import BottomNav from './widgets/nav/vertical/bottom-nav';
+    import RightNav from './widgets/nav/horizontal/right-nav';
+    import FlashMessages from './widgets/flash-messages';
     import {cached} from 'JS/router';
     import {mapState} from 'vuex';
 
     export default {
         components: {
-            'top-nav': TopNavComponent,
-            'bottom-nav': BottomNavComponent,
-            'flash-messages': FlashMessagesComponent,
+            TopNav,
+            BottomNav,
+            RightNav,
+            'flash-messages': FlashMessages
         },
         data: () => ({
             keepAlive: cached,
@@ -42,6 +56,7 @@
         computed: {
             ...mapState({
                 connection: state => !state.connection_lost, //TODO show notification if connection lost
+                hasNavigation: state => state.route_has_navigation
             })
         },
         methods: {
