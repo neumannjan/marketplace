@@ -1,0 +1,18 @@
+.btn-floating {
+  @extend .rounded-circle;
+  margin: 0 $btn-floating-margin $btn-floating-margin 0;
+  width: $btn-floating-size;
+  height: $btn-floating-size;
+  overflow: hidden;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1020;
+  box-shadow: $btn-floating-shadow;
+}
+
+.fixed-bottom-right {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}

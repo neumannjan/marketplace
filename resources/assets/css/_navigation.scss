@@ -52,6 +52,7 @@
   flex-direction: column;
   flex-shrink: 0;
   width: $v-nav-broad-width;
+  border-right: $content-navigation-border;
 
   .content-navigation-inner {
     position: fixed;
