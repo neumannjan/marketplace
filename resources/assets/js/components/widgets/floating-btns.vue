@@ -2,18 +2,23 @@
     <transition-group
             name="tr"
             tag="div"
-            @enter="trEnter"
-            class="fixed-bottom-right mb-4 flex flex-column">
-        <button v-for="(button, index) in buttonsReversed" :key="index"
-                :class="['btn btn-floating btn-dark', button.class]">
+            v-bind:css="false"
+            v-on:enter="enter"
+            v-on:leave="leave"
+            class="fixed-bottom-right d-flex flex-column-reverse">
+        <button v-for="(button, index) in buttons" :key="button.id ? button.id : button.icon"
+                :data-index="index"
+                @click="$emit('click', button)"
+                :class="['btn btn-floating', button.class ? button.class : 'btn-dark']">
             <icon :name="button.icon" :label="button.label"/>
         </button>
     </transition-group>
 </template>
 
 <script>
-
     import Velocity from 'velocity-animate';
+
+    const ANIM_DURATION = 300;
 
     export default {
         name: 'floating-btns',
@@ -21,31 +26,56 @@
             buttons: {
                 type: Array,
                 required: true
-            }
+            },
         },
-        computed: {
-            buttonsReversed() {
-                return this.buttons.reverse();
-            }
-        },
+        data: () => ({
+            prevLength: 0,
+        }),
         methods: {
-            trEnter(el, done) {
-                const rect = el.getBoundingClientRect();
-                el.style.position = 'float';
-                el.style.right = rect.right + 'px';
-                el.style.bottom = (this.buttons.length - 1) * rect.height + 'px';
+            anim(enter, el, done) {
+                const style = getComputedStyle(el);
+                const height = parseFloat(style.marginTop) + parseFloat(style.marginBottom) + parseFloat(style.height);
 
-                Velocity(el, {
-                    bottom: (this.buttons.length) * rect.height + 'px'
-                }, {
-                    duration: 500,
-                    complete: () => {
-                        el.style.position = 'relative';
-                        done();
+                const gone = -height;
+                const shown = el.dataset.index * height;
+
+                el.style.opacity = (enter ? 0 : 1);
+                el.style.position = 'fixed';
+                el.style.right = 0;
+                el.style.bottom = (enter ? gone : shown) + 'px';
+                el.style.zIndex = (enter ? 1000 : 800) - el.dataset.index;
+
+                Velocity(el, 'stop');
+
+                Velocity(
+                    el,
+                    {opacity: (enter ? 1 : 0), bottom: (enter ? shown : gone)},
+                    {
+                        duration: ANIM_DURATION,
+                        easing: `ease${enter ? 'Out' : 'In'}Quad`,
+                        complete: () => {
+                            el.style.opacity = null;
+                            el.style.position = null;
+                            el.style.right = null;
+                            el.style.bottom = null;
+                            el.style.zIndex = null;
+                            done();
+                        },
+                        delay: (enter ? ANIM_DURATION / 2 : 0)
                     }
-                });
+                );
+            },
+            enter(el, done) {
+                this.anim(true, el, done);
+            },
+            leave(el, done) {
+                this.anim(false, el, done);
             }
         }
     }
 
 </script>
+
+<style>
+
+</style>

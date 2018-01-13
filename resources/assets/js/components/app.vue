@@ -32,44 +32,30 @@
             </footer>
         </div>
 
-        <floating-btns :buttons="buttons"/>
+        <main-floating-btns/>
     </div>
 </template>
 
 <script>
     import TopNav from './widgets/nav/vertical/top-nav';
     import BottomNav from './widgets/nav/vertical/bottom-nav';
-    import RightNav from './widgets/nav/horizontal/right-nav';
     import FlashMessages from './widgets/flash-messages';
     import {cached} from 'JS/router';
     import {mapState} from 'vuex';
     import Icon from "../../../../node_modules/vue-awesome/components/Icon.vue";
-    import FloatingBtns from './widgets/floating-btns';
-
-    //TODO remove
-    import 'vue-awesome/icons/plus';
-    import 'vue-awesome/icons/comment-o';
-    import 'vue-awesome/icons/bell';
-    import 'vue-awesome/icons/angle-left';
+    import MainFloatingBtns from './widgets/main-floating-btns';
 
     export default {
         components: {
             Icon,
             TopNav,
             BottomNav,
-            RightNav,
-            'flash-messages': FlashMessages,
-            FloatingBtns
+            FlashMessages,
+            MainFloatingBtns
         },
         data: () => ({
             keepAlive: cached,
             shown: true,
-            buttons: [
-                {icon: 'plus', class: 'btn-primary'},
-                {icon: 'comment-o'},
-                {icon: 'bell'},
-                {icon: 'angle-left'},
-            ]
         }),
         computed: {
             ...mapState({

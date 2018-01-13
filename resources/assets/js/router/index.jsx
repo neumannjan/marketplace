@@ -18,11 +18,17 @@ import GuestGuard from './guards/guest';
 
 Vue.use(VueRouter);
 
-const cachedRoutes = [
+const cachedRouteComponents = [
     'index-route'
 ];
 
-export const cached = (suffix = '') => suffix ? cachedRoutes.map((route) => `${route}-${suffix}`) : cachedRoutes;
+export const cached = (suffix = '') => suffix ? cachedRouteComponents.map((route) => `${route}-${suffix}`) : cachedRouteComponents;
+
+const topLevelRouteNames = [
+    'index', 'test', 'login', 'register'
+];
+
+export const topLevel = topLevelRouteNames;
 
 export const events = new Vue();
 

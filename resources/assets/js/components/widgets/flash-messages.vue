@@ -9,6 +9,7 @@
     import AlertComponent from './alert.vue';
 
     export default {
+        name: 'flash-messages',
         components: {
             alert: AlertComponent
         },
