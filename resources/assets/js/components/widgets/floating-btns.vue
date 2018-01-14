@@ -2,24 +2,16 @@
     <transition-group
             name="tr"
             tag="div"
-            v-bind:css="false"
-            v-on:enter="enter"
-            v-on:leave="leave"
             class="fixed-bottom-right d-flex flex-column-reverse">
         <button v-for="(button, index) in buttons" :key="button.id ? button.id : button.icon"
-                :data-index="index"
                 @click="$emit('click', button)"
-                :class="['btn btn-floating', button.class ? button.class : 'btn-dark']">
+                :class="['btn btn-floating', `btn-floating-${index}`, button.class ? button.class : 'btn-dark']">
             <icon :name="button.icon" :label="button.label"/>
         </button>
     </transition-group>
 </template>
 
 <script>
-    import Velocity from 'velocity-animate';
-
-    const ANIM_DURATION = 300;
-
     export default {
         name: 'floating-btns',
         props: {
@@ -28,54 +20,48 @@
                 required: true
             },
         },
-        data: () => ({
-            prevLength: 0,
-        }),
-        methods: {
-            anim(enter, el, done) {
-                const style = getComputedStyle(el);
-                const height = parseFloat(style.marginTop) + parseFloat(style.marginBottom) + parseFloat(style.height);
-
-                const gone = -height;
-                const shown = el.dataset.index * height;
-
-                el.style.opacity = (enter ? 0 : 1);
-                el.style.position = 'fixed';
-                el.style.right = 0;
-                el.style.bottom = (enter ? gone : shown) + 'px';
-                el.style.zIndex = (enter ? 1000 : 800) - el.dataset.index;
-
-                Velocity(el, 'stop');
-
-                Velocity(
-                    el,
-                    {opacity: (enter ? 1 : 0), bottom: (enter ? shown : gone)},
-                    {
-                        duration: ANIM_DURATION,
-                        easing: `ease${enter ? 'Out' : 'In'}Quad`,
-                        complete: () => {
-                            el.style.opacity = null;
-                            el.style.position = null;
-                            el.style.right = null;
-                            el.style.bottom = null;
-                            el.style.zIndex = null;
-                            done();
-                        },
-                        delay: (enter ? ANIM_DURATION / 2 : 0)
-                    }
-                );
-            },
-            enter(el, done) {
-                this.anim(true, el, done);
-            },
-            leave(el, done) {
-                this.anim(false, el, done);
-            }
-        }
     }
 
 </script>
 
-<style>
+<style scoped lang="scss" type="text/scss">
+    @import "~CSS/includes";
 
+    $height: $btn-floating-margin + $btn-floating-size;
+    $duration: 300ms;
+    $ease-in-quad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    $ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+    .btn-floating {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+    }
+
+    .tr-enter, .tr-leave-to {
+        position: absolute;
+        transform: translateY($height) !important;
+    }
+
+    @for $i from 0 through 10 {
+        .btn-floating-#{$i} {
+            transform: translateY(-$height*$i);
+            z-index: 1000 - $i;
+
+            &.tr-leave-to {
+                z-index: 900 - $i !important;
+            }
+        }
+    }
+
+    .tr-enter-active {
+        position: absolute;
+        transition: transform $duration $ease-out-quad, opacity $duration $ease-out-quad;
+        transition-delay: $duration/2;
+    }
+
+    .tr-leave-active {
+        position: absolute;
+        transition: transform $duration $ease-in-quad, opacity $duration $ease-in-quad;
+    }
 </style>

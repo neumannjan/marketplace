@@ -19,7 +19,7 @@ mix
     .sass('resources/assets/css/app.scss', 'public/css')
     .sourceMaps()
     .version()
-    //.browserSync({proxy: 'localhost:8080'})
+    .browserSync({proxy: 'localhost:8080'})
     .webpackConfig({
         plugins: [
             new LodashPlugin()
