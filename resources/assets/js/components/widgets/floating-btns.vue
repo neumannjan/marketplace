@@ -39,7 +39,6 @@
     }
 
     .tr-enter, .tr-leave-to {
-        position: absolute;
         transform: translateY($height) !important;
     }
 
@@ -55,13 +54,11 @@
     }
 
     .tr-enter-active {
-        position: absolute;
-        transition: transform $duration $ease-out-quad, opacity $duration $ease-out-quad;
+        transition: transform $duration $ease-out-quad;
         transition-delay: $duration/2;
     }
 
     .tr-leave-active {
-        position: absolute;
-        transition: transform $duration $ease-in-quad, opacity $duration $ease-in-quad;
+        transition: transform $duration $ease-in-quad;
     }
 </style>
