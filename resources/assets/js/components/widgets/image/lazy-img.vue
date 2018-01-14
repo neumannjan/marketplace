@@ -17,6 +17,7 @@
     import Pool from 'JS/tools/pool';
     import throttle from 'lodash/throttle';
     import helpers from 'JS/helpers';
+    import main from 'JS/app';
 
     import 'vue-awesome/icons/chain-broken';
 
@@ -161,7 +162,18 @@
                     }
                 });
 
-                return Promise.race([p1, p2]);
+                const p3 = new Promise(resolve => {
+                    const func = () => {
+                        if (this.inViewportCheck()) {
+                            main.app.$off(main.events.VIEWPORT_CHANGE, func);
+                            resolve();
+                        }
+                    };
+
+                    main.app.$on(main.events.VIEWPORT_CHANGE, func);
+                });
+
+                return Promise.race([p1, p2, p3]);
             },
             async load(thumbRequest) {
                 if (this.loadingBegan)

@@ -1,5 +1,4 @@
-const add = (e) => e.target.addEventListener(e.event, e.listener);
-const remove = (e) => e.target.removeEventListener(e.event, e.listener);
+import ResizeSensor from 'css-element-queries/src/ResizeSensor';
 
 export default {
     data: () => ({
@@ -7,30 +6,39 @@ export default {
         vueActive: true,
     }),
     methods: {
+        $attachEvent(add, remove) {
+            if (this.vueActive)
+                add();
+
+            this.events.push([add, remove]);
+        },
         $onJS(target, event, listener) {
-            const e = {target, event, listener};
-
-            if (this.vueActive) {
-                add(e);
-            }
-
-            this.events.push(e);
+            this.$attachEvent(
+                () => target.addEventListener(event, listener),
+                () => target.removeEventListener(event, listener)
+            );
+        },
+        $onElResize(el, listener) {
+            this.$attachEvent(
+                () => el ? new ResizeSensor(el, listener) : false,
+                () => el ? ResizeSensor.detach(el, listener) : false
+            );
         }
     },
     activated() {
         this.vueActive = true;
-        for (let event of this.events)
-            add(event);
+        for (let [add, remove] of this.events)
+            add();
     },
     deactivated() {
         this.vueActive = false;
-        for (let event of this.events)
-            remove(event);
+        for (let [add, remove] of this.events)
+            remove();
     },
     destroyed() {
         this.vueActive = false;
-        for (let event of this.events)
-            remove(event);
+        for (let [add, remove] of this.events)
+            remove();
         this.events = null;
     }
 }

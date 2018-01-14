@@ -27,14 +27,17 @@ body {
 }
 
 .col-flexible {
-  .navigation-shown & {
-    @extend .col-xs-navbar-vert-12;
-    @extend .col-sm-navbar-vert-6;
-    @extend .col-md-navbar-vert-4;
+  .main-container & {
+    @extend .col-12;
   }
 
-  .navigation-not-shown & {
-    @extend .col-sm-6;
-    @extend .col-md-4;
+  .main-container[min-width~="#{breakpoint-min('sm')}"] & {
+    @extend %grid-column;
+    @include make-col(6);
+  }
+
+  .main-container[min-width~="#{breakpoint-min('md')}"] & {
+    @extend %grid-column;
+    @include make-col(4);
   }
 }
