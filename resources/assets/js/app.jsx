@@ -21,7 +21,6 @@ Vue.component('lazy-img', LazyImgComponent);
 
 Vue.directive('sticky', {
     inserted(el) {
-        console.log('ctickyyy');
         stickyfill.add(el);
     }
 });

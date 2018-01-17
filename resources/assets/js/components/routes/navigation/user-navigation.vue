@@ -1,8 +1,12 @@
 <template>
     <div>
-        <template v-if="user">
+        <div :class="['collapsible', {collapsed: collapse}]" :style="{height: collapsibleHeight}" v-if="user"
+             ref="collapsible">
             <blurred-img v-if="userHasImg" class="user-nav-bg" :data="img" :modify-callback="modifyBG"/>
-            <div class="user-nav-content px-3" :style="{transform: `translateY(${- (borderSize + imgSize)/2}px)`}">
+            <div class="user-nav-content px-3" :style="{
+                transform: `translateY(${- (borderSize + imgSize)/2}px)`,
+                marginBottom: `${- (borderSize + imgSize)/2}px`
+            }">
                 <div v-if="userHasImg" class="img-border" :style="{
                     width: `${imgSize + borderSize}px`,
                     height: `${imgSize + borderSize}px`}">
@@ -15,19 +19,19 @@
                          :srcset="`${user.profile_image.size_icon}, ${user.profile_image.size_icon_2x} 2x`">
                 </div>
                 <h1 class="h2 text-center">{{ user.display_name }}</h1>
-                <ul class="nav nav-pills nav-fill">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">Active</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
-                </ul>
             </div>
-        </template>
+        </div>
+        <ul class="nav nav-pills justify-content-center py-2">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">Active</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+            </li>
+        </ul>
     </div>
 </template>
 
@@ -61,7 +65,9 @@
         data: () => ({
             img: null,
             user: null,
-            userImgSrc: null
+            userImgSrc: null,
+            collapse: false,
+            collapsibleHeight: undefined,
         }),
         methods: {
             modifyBG(imageData) {
@@ -96,14 +102,32 @@
         created() {
             routeEvents.$once('has-user', user => {
                 this.user = user;
+
+
+                this.$nextTick(() => {
+                    const collapsible = this.$refs.collapsible;
+                    this.collapsibleHeight = getComputedStyle(collapsible).height;
+                });
                 this.$nextTick(this.requestImg);
             });
         },
+        mounted() {
+
+        }
     };
 </script>
 
 <style lang="scss" type="text/scss" scoped>
     @import "~CSS/includes";
+
+    .collapsible {
+        transition: height .5s ease;
+        overflow: hidden;
+
+        .collapsed {
+            height: 0 !important;
+        }
+    }
 
     .user-nav-bg {
         position: absolute;
