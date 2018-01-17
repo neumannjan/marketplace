@@ -96,7 +96,7 @@
                 }
             },
             crossOrigin() {
-                return process.env.NODE_ENV === 'development' ? 'anonymous' : 'use-credentials';
+                return process.env.NODE_ENV === 'development' ? 'anonymous' : undefined;
             }
         },
         methods: {

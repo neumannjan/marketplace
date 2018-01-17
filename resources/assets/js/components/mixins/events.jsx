@@ -27,7 +27,7 @@ export default {
     },
     activated() {
         this.vueActive = true;
-        for (let [add, remove] of this.events)
+        for (let [add] of this.events)
             add();
     },
     deactivated() {

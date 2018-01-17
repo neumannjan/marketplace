@@ -20,13 +20,8 @@
 </template>
 
 <script>
-    import LazyImg from 'JS/components/widgets/image/lazy-img';
-
     export default {
         name: "card",
-        components: {
-            LazyImg
-        },
         props: {
             img: String,
             alt: String,

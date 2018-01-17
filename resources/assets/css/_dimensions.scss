@@ -8,8 +8,11 @@ body, .wrapper, .main {
   flex-grow: 1;
 }
 
-body {
+body, .wrapper {
   min-height: 100%;
+}
+
+body {
   overflow-y: scroll;
 }
 
@@ -40,4 +43,10 @@ body {
     @extend %grid-column;
     @include make-col(4);
   }
+}
+
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: $zindex-sticky;
 }

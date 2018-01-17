@@ -8,9 +8,9 @@
             <main role="main"
                   :class="['main', {'navigation-shown': hasNavigation, 'navigation-not-shown': !hasNavigation}]">
                 <!-- NAVIGATION -->
-                <div v-if="hasNavigation" class="content-navigation">
+                <div v-if="hasNavigation" class="content-navigation" v-sticky>
                     <keep-alive :include="keepAlive('navigation')">
-                        <router-view class="content-navigation-inner" name="navigation"/>
+                        <router-view class="content-navigation-inner" name="navigation" v-sticky/>
                     </keep-alive>
                 </div>
 
@@ -56,11 +56,11 @@
         data: () => ({
             keepAlive: cached,
             shown: true,
+            hasNavigation: false,
         }),
         computed: {
             ...mapState({
                 connection: state => !state.connection_lost, //TODO show notification if connection lost
-                hasNavigation: state => state.route_has_navigation
             })
         },
         methods: {
@@ -74,6 +74,26 @@
                 this.shown = true;
                 await new Promise(resolve => this.$nextTick(resolve));
             }
+        },
+        mounted() {
+            // set hasNavigation
+
+            function setNav(vm) {
+                vm.$once('before-destroy', () => vm = undefined);
+
+                return to => {
+                    if (vm) {
+                        vm.hasNavigation = to.matched[0].components.navigation;
+                    }
+                }
+            }
+
+            const func = setNav(this);
+            func(this.$route);
+            this.$router.afterEach(func);
+        },
+        beforeDestroy() {
+            this.$emit('before-destroy');
         }
     };
 </script>

@@ -68,8 +68,4 @@
     .masonry-card {
         margin-bottom: 30px;
     }
-
-    .masonry {
-        max-width: 100%;
-    }
 </style>

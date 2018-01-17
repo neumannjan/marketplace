@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import store from 'JS/store';
 
 import IndexRoute from '../components/routes/index.vue';
 import TestRoute from '../components/routes/test.vue';
@@ -92,10 +91,6 @@ const router = new VueRouter({
             component: ErrorRoute
         },
     ]
-});
-
-router.afterEach(to => {
-    store.commit('routeHasNavigation', !!to.matched[0].components.navigation);
 });
 
 export default router;

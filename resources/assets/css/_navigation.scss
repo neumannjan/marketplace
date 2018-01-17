@@ -48,15 +48,47 @@
 
 // vertical sub navigation
 .content-navigation {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 100;
   @extend .bg-light;
   flex-direction: column;
-  flex-shrink: 0;
   width: $v-nav-broad-width;
   border-right: $content-navigation-border;
+}
+
+.content-navigation-inner {
+  position: sticky;
+  top: 0;
+
+  & > * {
+    position: relative;
+  }
+}
+
+@include media-breakpoint-down('sm') {
+
+  .navigation-shown {
+    flex-direction: column;
+  }
+
+  .content-navigation-container {
+    overflow: visible;
+    width: 100%;
+  }
+
+  .content-navigation {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    border: none;
+    border-bottom: $content-navigation-border;
+    height: auto;
+  }
 
   .content-navigation-inner {
-    position: fixed;
-    @extend .mx-auto;
+    position: relative;
+    width: 100%;
   }
 }
 
