@@ -5,6 +5,7 @@ namespace App\Api\Request;
 
 use App\Api\Data\FlashMessages;
 use App\Api\Response\Response;
+use App\Http\Resources\User;
 use Illuminate\Support\Collection;
 
 /**
@@ -33,6 +34,10 @@ class GlobalRequest extends Request
         // authentication
 
         $is_authenticated = \Auth::check();
+        $user = $is_authenticated ? new User(\Auth::user()) : null;
+
+        // is admin
+        $is_admin = $is_authenticated && \Auth::user()->is_admin ? true : false;
 
         // flash messages
 
@@ -44,6 +49,8 @@ class GlobalRequest extends Request
         return compact(
             'token',
             'is_authenticated',
+            'user',
+            'is_admin',
             'flash'
         );
     }

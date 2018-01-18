@@ -23,6 +23,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('activation_token');
             $table->string('display_name')->nullable();
+            $table->boolean('is_admin')->default(false);
             $table->string('options')->nullable();
             $table->tinyInteger('status')->comment('0 == inactive, 1 == active, 2 == banned');
             $table->text('description')->nullable();

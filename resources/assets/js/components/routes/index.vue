@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1>{{ title }}</h1>
-        <offer-masonry url="/api/offers?status=1&author_status=1"/>
+        <offer-masonry url="/api/offers?scope=public"/>
     </div>
 </template>
 

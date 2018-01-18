@@ -14,10 +14,17 @@ use Illuminate\Validation\ValidationException;
  */
 class CreateUser extends Command
 {
-    protected $signature = 'user:create {username} {email} {password} {--d|display-name=} {--s|status=active}';
+    protected $signature = 'user:create {username} {email} '
+    . '{password} '
+    . '{--d|display-name= : The user\'s display name} '
+    . '{--s|status=active : active, banned, inactive} '
+    . '{--a|admin : Give the user admin privileges}';
 
     protected $description = 'Create a new user';
 
+    /**
+     * @throws ValidationException
+     */
     public function handle()
     {
         $data = [
@@ -27,6 +34,8 @@ class CreateUser extends Command
             'display_name' => $this->option('display-name'),
             'status' => $this->option('status'),
         ];
+
+        $is_admin = $this->option('admin');
 
         // set validation rules
         $rules = User::getValidationRules();
@@ -49,6 +58,7 @@ class CreateUser extends Command
 
         // create the user
         $u = new User($data);
+        $u->is_admin = $is_admin;
         $u->save();
     }
 

@@ -3,18 +3,25 @@
 namespace App;
 
 
+use App\Eloquent\AuthorizationAwareModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Money\Money;
 
 /**
  * App\Offer
  */
-class Offer extends Model
+class Offer extends Model implements AuthorizationAwareModel
 {
     const STATUS_INACTIVE = 0;
     const STATUS_AVAILABLE = 1;
     const STATUS_SOLD = 2;
+
+    const SCOPE_PUBLIC = 'public';
+    const SCOPE_OWNED = 'owned';
+    const SCOPE_UNLIMITED = 'unlimited';
 
     public function images()
     {
@@ -47,12 +54,106 @@ class Offer extends Model
         return \Money::getFormatter()->format($this->money);
     }
 
-    public function scopeActive(Builder $query)
+    /**
+     * Limits the query to only return items that are accessible publicly
+     * @param Builder $query
+     * @return Builder
+     */
+    public function scopePublic(Builder $query)
     {
-        return $query
-            ->where(['status' => self::STATUS_AVAILABLE])
-            ->whereHas('author', function (Builder $query) {
-                $query->where(['status' => User::STATUS_ACTIVE]);
-            });
+        // ensure availability
+        $query->where(['status' => self::STATUS_AVAILABLE]);
+
+        // ensure that the author is an active user
+        $query->whereHas('author', function (Builder $query) {
+            $query->where(['status' => User::STATUS_ACTIVE]);
+        });
+
+        // return only offers newer than 2 months
+        // TODO is it a good idea ?
+        $query->whereDate('listed_at', '>=', Carbon::now()->subMonths(2));
+
+        return $query;
+    }
+
+    /**
+     * Does not limit the query
+     * @param Builder $query
+     * @return Builder
+     */
+    public function scopeUnlimited(Builder $query)
+    {
+        return $query;
+    }
+
+    /**
+     * Limits the query to only return items that the current user owns
+     * @param Builder $query
+     * @return Builder
+     */
+    public function scopeOwned(Builder $query)
+    {
+        return $query->where(['author_user_id' => \Auth::user()->id]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPublicScopes()
+    {
+        return [self::SCOPE_PUBLIC, self::SCOPE_OWNED, self::SCOPE_UNLIMITED];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function canUsePublicScope($scopeName, User $user = null)
+    {
+        switch ($scopeName) {
+            case self::SCOPE_PUBLIC:
+                return true;
+            case self::SCOPE_OWNED:
+                return $user && \Auth::check() && $user->id === \Auth::id();
+            case self::SCOPE_UNLIMITED:
+                return $user && $user->is_admin ? true : false;
+        }
+
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function validatePublicScopeParams($scopeName, $columnNames)
+    {
+        switch ($scopeName) {
+            case self::SCOPE_PUBLIC:
+                return Collection::wrap($columnNames)
+                    ->diff(Collection::make([
+                        'id',
+                        'name',
+                        'listed_at',
+                        'author_user_id',
+                        'price_value',
+                        'currency_code'
+                    ]))
+                    ->isEmpty();
+            case self::SCOPE_OWNED:
+                return Collection::wrap($columnNames)
+                    ->diff(Collection::make([
+                        'id',
+                        'name',
+                        'listed_at',
+                        'author_user_id',
+                        'price_value',
+                        'currency_code',
+                        'status'
+                    ]))
+                    ->isEmpty();
+            case self::SCOPE_UNLIMITED:
+                return true;
+        }
+
+        return false;
     }
 }

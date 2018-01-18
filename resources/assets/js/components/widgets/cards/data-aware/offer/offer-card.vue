@@ -12,7 +12,11 @@
             </span>
         </router-link>
 
-        <a href="#" class="text-dark"><h4 class="card-title">{{ data.name }}</h4></a>
+        <a href="#" class="text-dark">
+            <h4 class="card-title">{{ data.name }}
+                <badge v-if="badge" v-bind="badge"/>
+            </h4>
+        </a>
         <p class="card-text">{{ shortDesc }}</p>
         <p class="h5 card-text">{{ data.price }}</p>
 
@@ -23,6 +27,7 @@
 <script>
     import Card from "../../card";
     import CardIconFooter from "../../card-icon-footer";
+    import Badge from 'JS/components/widgets/badge'
 
     import 'vue-awesome/icons/heart';
     import 'vue-awesome/icons/shopping-cart';
@@ -33,7 +38,8 @@
         name: "offer-card",
         components: {
             Card,
-            CardIconFooter
+            CardIconFooter,
+            Badge
         },
         data: () => ({
             buttons: [
@@ -102,6 +108,21 @@
                         username: this.data.author.username
                     }
                 }
+            },
+            badge() {
+                // TODO translate
+
+                if (!this.data)
+                    return null;
+
+                switch (this.data.status) {
+                    case 0:
+                        return {message: 'Draft', type: 'warning'};
+                    case 2:
+                        return {message: 'Sold', type: 'info'};
+                }
+
+                return null;
             }
         }
     }

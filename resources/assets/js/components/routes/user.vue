@@ -33,12 +33,23 @@
             }
         },
         created() {
+            let offersScope;
+
+            if (this.$store.state.is_admin)
+                offersScope = 'unlimited';
+            else if (this.$store.state.user && this.$store.state.user.username === this.username)
+                offersScope = 'owned';
+            else
+                offersScope = 'public';
+
             api.requestMultiple({
                 single: {
                     type: 'user',
+                    scope: this.$store.state.is_admin ? 'unlimited' : 'public',
                     username: this.username,
                 },
                 offers: {
+                    scope: offersScope,
                     author_username: this.username,
                 }
             })

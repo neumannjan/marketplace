@@ -5,6 +5,7 @@ namespace App\Api\Request;
 
 use App\Api\Response\ExceptionSerializer;
 use App\Api\Response\Response;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -99,5 +100,13 @@ abstract class Request
     {
         $validator = Validator::make($parameters->all(), $this->rules());
         $validator->validate();
+    }
+
+    /**
+     * @throws AuthorizationException
+     */
+    protected function authorizationError()
+    {
+        throw new AuthorizationException("User not authorized.", 403);
     }
 }

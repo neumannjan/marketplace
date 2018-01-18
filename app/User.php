@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Eloquent\AuthorizationAwareModel;
 use App\Notifications\ActivateRegistration;
 use App\Notifications\ResetPassword;
 use App\Rules\ContainsNonNumericRule;
@@ -10,11 +11,12 @@ use App\Rules\SlugRule;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 
 /**
  * User model. Manages users in the database.
  */
-class User extends Authenticatable
+class User extends Authenticatable implements AuthorizationAwareModel
 {
     use Notifiable;
 
@@ -23,6 +25,9 @@ class User extends Authenticatable
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const STATUS_BANNED = 2;
+
+    const SCOPE_PUBLIC = 'public';
+    const SCOPE_UNLIMITED = 'unlimited';
 
     /**
      * The attributes that are mass assignable.
@@ -124,8 +129,66 @@ class User extends Authenticatable
         return $this->belongsTo(Image::class, 'profile_image_id');
     }
 
-    public function scopeActive(Builder $query)
+    /**
+     * Limits the query to only return users that are active
+     * @param Builder $query
+     * @return Builder
+     */
+    public function scopePublic(Builder $query)
     {
-        return $query->where(['status' => self::STATUS_ACTIVE]);
+        return $query
+            ->where(['status' => self::STATUS_ACTIVE]);
     }
+
+    /**
+     * Does not limit the query
+     * @param Builder $query
+     * @return Builder
+     */
+    public function scopeUnlimited(Builder $query)
+    {
+        return $query;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPublicScopes()
+    {
+        return [self::SCOPE_PUBLIC, self::SCOPE_UNLIMITED];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function canUsePublicScope($scopeName, User $user = null)
+    {
+        switch ($scopeName) {
+            case self::SCOPE_PUBLIC:
+                return true;
+            case self::SCOPE_UNLIMITED:
+                return $user->is_admin ? true : false;
+        }
+
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function validatePublicScopeParams($scopeName, $columnNames)
+    {
+        switch ($scopeName) {
+            case self::SCOPE_PUBLIC:
+                return Collection::wrap($columnNames)
+                    ->diff(Collection::make(['id', 'username', 'email']))
+                    ->isEmpty();
+            case self::SCOPE_UNLIMITED:
+                return true;
+        }
+
+        return false;
+    }
+
+
 }

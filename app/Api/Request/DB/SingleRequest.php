@@ -5,9 +5,10 @@ namespace App\Api\Request\DB;
 
 use App\Api\Request\Request;
 use App\Api\Response\Response;
+use App\Eloquent\AuthorizationAwareModel;
 use App\Offer;
 use App\User;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 
@@ -31,6 +32,7 @@ class SingleRequest extends Request
     {
         return [
             'type' => ['string', 'required', Rule::in(array_keys(self::TYPE_MODEL_MAP))],
+            'scope' => ['string', 'required']
         ];
     }
 
@@ -41,16 +43,45 @@ class SingleRequest extends Request
     {
         $params = $parameters->all();
         $type = $params['type'];
+        $scope = $params['scope'];
         unset($params['type']);
+        unset($params['scope']);
 
-        $model = self::TYPE_MODEL_MAP[$type];
+        $modelClass = self::TYPE_MODEL_MAP[$type];
+        /** @var AuthorizationAwareModel|Model $model */
+        $model = new $modelClass;
 
-        /** @var Builder $query */
-        $query = $model::query();
+        // Validate passed data
+        \Validator::validate([
+            'scope' => $scope,
+            'params' => $params
+        ], [
+            'scope' => Rule::in($model->getPublicScopes()),
+            'params' => 'required'
+        ], [
+            'required' => 'An identifier such as ID is required'
+        ]);
 
-        $query->active(); // Required so that users cannot see banned users or inactive offers
+        // Check if the user can access this scope
+        if (!$model->canUsePublicScope($scope, \Auth::user())) {
+            $this->authorizationError();
+        }
 
-        $model = $query->where($params)->first();
+        // Validate passed query parameters
+        if (!$model->validatePublicScopeParams($scope, array_keys($params))) {
+            $this->authorizationError();
+        }
+
+        $query = $model->newQuery();
+
+        // Set the scope
+        $query->scopes([$scope]);
+
+        // Limit the model further
+        $query->where($params);
+
+        // Retrieve model
+        $model = $query->first();
 
         if (!$model) {
             return new Response(true, null);

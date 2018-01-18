@@ -13,6 +13,8 @@ const store = new Vuex.Store({
     strict: true,
     state: {
         is_authenticated: false,
+        user: null,
+        is_admin: false,
         connection_lost: false,
         token: false,
         flash: {},

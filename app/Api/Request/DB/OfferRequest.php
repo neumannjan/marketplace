@@ -21,6 +21,7 @@ class OfferRequest extends PaginatedRequest
     protected function rules()
     {
         return [
+            'scope' => ['string', 'required'],
             'author_username' => 'string',
             'order_by' => ['string'],
             'order' => ['string', Rule::in([self::ORDER_ASC, self::ORDER_DESC])]
@@ -32,7 +33,12 @@ class OfferRequest extends PaginatedRequest
      */
     protected function urlParameters()
     {
-        return ['author_username', 'order_by', 'order'];
+        return [
+            'scope',
+            'author_username',
+            'order_by',
+            'order',
+        ];
     }
 
     /**
@@ -40,10 +46,18 @@ class OfferRequest extends PaginatedRequest
      */
     protected function getPaginator(Collection $parameters, $perPage, $page)
     {
-        /** @var Builder $query */
-        $query = Offer::query();
+        $scope = $parameters['scope'];
+        $model = new Offer();
 
-        $query->active(); // Required so that users cannot see banned users or inactive offers
+        if (!$model->canUsePublicScope($scope, \Auth::user())) {
+            $this->authorizationError();
+        }
+
+        /** @var Builder $query */
+        $query = $model->newQuery();
+
+        // limit the query to a scope
+        $query->scopes([$scope]);
 
         // offer
         foreach ([] as $key) {
