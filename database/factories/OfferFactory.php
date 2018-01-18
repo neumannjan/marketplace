@@ -22,5 +22,5 @@ $factory->state(\App\Offer::class, 'available', [
 ]);
 
 $factory->state(\App\Offer::class, 'inactive', [
-    'status' => \App\Offer::STATUS_INACTIVE
+    'status' => \App\Offer::STATUS_DRAFT
 ]);

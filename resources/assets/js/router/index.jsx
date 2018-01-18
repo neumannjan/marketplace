@@ -1,19 +1,21 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
-import IndexRoute from '../components/routes/index.vue';
-import TestRoute from '../components/routes/test.vue';
-import ErrorRoute from '../components/routes/404.vue';
-import UserRoute from '../components/routes/user.vue';
+import IndexRoute from '../components/routes/index';
+import TestRoute from '../components/routes/test';
+import ErrorRoute from '../components/routes/404';
+import UserRoute from '../components/routes/user';
+import MeRoute from '../components/routes/me';
 
-import LoginRoute from '../components/routes/auth/login.vue';
-import RegisterRoute from '../components/routes/auth/register.vue';
-import PasswordEmailRoute from '../components/routes/auth/password-email.vue';
-import PasswordResetRoute from '../components/routes/auth/password-reset.vue';
+import LoginRoute from '../components/routes/auth/login';
+import RegisterRoute from '../components/routes/auth/register';
+import PasswordEmailRoute from '../components/routes/auth/password-email';
+import PasswordResetRoute from '../components/routes/auth/password-reset';
 
 import UserNavigation from 'JS/components/routes/navigation/user-navigation';
 
 import GuestGuard from './guards/guest';
+import AuthGuard from './guards/auth';
 
 Vue.use(VueRouter);
 
@@ -24,7 +26,7 @@ const cachedRouteComponents = [
 export const cached = (suffix = '') => suffix ? cachedRouteComponents.map((route) => `${route}-${suffix}`) : cachedRouteComponents;
 
 const topLevelRouteNames = [
-    'index', 'test', 'login', 'register'
+    'index', 'test', 'login', 'register', 'me'
 ];
 
 export const topLevel = topLevelRouteNames;
@@ -80,6 +82,15 @@ const router = new VueRouter({
             props: {
                 default: true
             },
+        },
+        {
+            path: '/me',
+            name: 'me',
+            components: {
+                default: MeRoute,
+                navigation: UserNavigation,
+            },
+            ...AuthGuard
         },
         {
             path: '/404',

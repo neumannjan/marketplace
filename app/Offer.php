@@ -15,13 +15,19 @@ use Money\Money;
  */
 class Offer extends Model implements AuthorizationAwareModel
 {
-    const STATUS_INACTIVE = 0;
+    const STATUS_DRAFT = 0;
     const STATUS_AVAILABLE = 1;
     const STATUS_SOLD = 2;
 
     const SCOPE_PUBLIC = 'public';
     const SCOPE_OWNED = 'owned';
     const SCOPE_UNLIMITED = 'unlimited';
+
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'listed_at'
+    ];
 
     public function images()
     {
@@ -55,6 +61,25 @@ class Offer extends Model implements AuthorizationAwareModel
     }
 
     /**
+     * Determines the threshold of when orders are considered expired
+     * @return Carbon
+     */
+    protected function expiredFromTimestamp()
+    {
+        //TODO is 2 months too soon?
+        return Carbon::now()->subMonths(2);
+    }
+
+    /**
+     * Whether this offer is expired
+     * @return bool
+     */
+    public function getExpiredAttribute()
+    {
+        return $this->listed_at->lessThan($this->expiredFromTimestamp());
+    }
+
+    /**
      * Limits the query to only return items that are accessible publicly
      * @param Builder $query
      * @return Builder
@@ -69,9 +94,8 @@ class Offer extends Model implements AuthorizationAwareModel
             $query->where(['status' => User::STATUS_ACTIVE]);
         });
 
-        // return only offers newer than 2 months
-        // TODO is it a good idea ?
-        $query->whereDate('listed_at', '>=', Carbon::now()->subMonths(2));
+        // return only offers that are not expired
+        $query->whereDate('listed_at', '>=', $this->expiredFromTimestamp());
 
         return $query;
     }

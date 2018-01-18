@@ -21,6 +21,7 @@ class Offer extends Resource
             'price' => $this->price,
             'description' => $this->description,
             'status' => $this->status,
+            'expired' => $this->expired,
             'images' => Image::collection($this->images),
         ];
     }

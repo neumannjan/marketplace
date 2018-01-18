@@ -1,5 +1,5 @@
 <template>
-    <card v-bind="cardData">
+    <card v-bind="cardData" :class="[color('border-')]">
         <router-link :to="toAuthor" v-if="showAuthor" slot="header" class="offer-card-header text-dark">
             <img v-if="profileImage" class="profile-img rounded-circle"
                  :src="profileImage['1x']"
@@ -12,9 +12,9 @@
             </span>
         </router-link>
 
-        <a href="#" class="text-dark">
+        <a href="#" :class="[color('text-', 'dark')]">
             <h4 class="card-title">{{ data.name }}
-                <badge v-if="badge" v-bind="badge"/>
+                <badge v-for="(badge, index) in badges" :key="index" v-bind="badge"/>
             </h4>
         </a>
         <p class="card-text">{{ shortDesc }}</p>
@@ -70,6 +70,30 @@
                 default: true,
             }
         },
+        methods: {
+            color(prefix = '', defaultColor = null) {
+                const doReturn = (value = defaultColor) => {
+                    if (!value)
+                        return undefined;
+                    return prefix + value;
+                };
+
+                if (!this.data)
+                    return doReturn();
+
+                let badges = [];
+
+                switch (this.data.status) {
+                    case 0: // draft
+                        return doReturn('warning');
+                }
+
+                if (this.data.expired)
+                    return doReturn('danger');
+
+                return doReturn();
+            }
+        },
         computed: {
             cardData() {
                 let image = this.data.images[0];
@@ -109,20 +133,27 @@
                     }
                 }
             },
-            badge() {
+            badges() {
                 // TODO translate
 
                 if (!this.data)
                     return null;
 
+                let badges = [];
+
                 switch (this.data.status) {
                     case 0:
-                        return {message: 'Draft', type: 'warning'};
+                        badges.push({message: 'Draft', type: 'warning'});
+                        break;
                     case 2:
-                        return {message: 'Sold', type: 'info'};
+                        badges.push({message: 'Sold', type: 'info'});
+                        break;
                 }
 
-                return null;
+                if (this.data.expired)
+                    badges.push({message: 'Expired', type: 'danger'});
+
+                return badges;
             }
         }
     }
