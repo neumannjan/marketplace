@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 /**
- * API request class
+ * API request base class
  */
 abstract class Request
 {
@@ -33,6 +33,16 @@ abstract class Request
     protected function rules()
     {
         return [];
+    }
+
+    /**
+     * Returns validation rules for the request parameters. Should be used by abstract classes and should always
+     * concatenate result with parent implementation
+     * @return array
+     */
+    protected function _rules()
+    {
+        return $this->rules();
     }
 
     /**
@@ -67,7 +77,8 @@ abstract class Request
                 return $response;
             }
 
-            $this->validateRules($parameters);
+            $validator = Validator::make($parameters->all(), $this->_rules());
+            $validator->validate();
 
             $response = $this->doResolve($name, $parameters);
             $response->setName($name);
@@ -90,16 +101,6 @@ abstract class Request
 
             return $response;
         }
-    }
-
-    /**
-     * @param Collection $parameters
-     * @throws ValidationException
-     */
-    protected function validateRules($parameters)
-    {
-        $validator = Validator::make($parameters->all(), $this->rules());
-        $validator->validate();
     }
 
     /**

@@ -8,12 +8,14 @@ use App\Api\Request\Auth\LogoutRequest;
 use App\Api\Request\Auth\PasswordEmailRequest;
 use App\Api\Request\Auth\PasswordResetRequest;
 use App\Api\Request\Auth\RegisterRequest;
-use App\Api\Request\DB\OfferRequest;
-use App\Api\Request\DB\SingleRequest;
+use App\Api\Request\DB\BasicMultiRequest;
+use App\Api\Request\DB\BasicSingleRequest;
 use App\Api\Request\GlobalRequest;
 use App\Api\Request\Request as ApiRequest;
 use App\Api\Response\CompositeResponse as CompositeApiResponse;
 use App\Api\Response\Response as ApiResponse;
+use App\Offer;
+use App\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -41,8 +43,9 @@ class PrivateApiController extends Controller
             'password-reset' => PasswordResetRequest::class,
 
             //DB
-            'single' => SingleRequest::class,
-            'offers' => OfferRequest::class
+            'offers' => [BasicMultiRequest::class, Offer::class, \App\Http\Resources\Offer::class],
+            'offer' => [BasicSingleRequest::class, Offer::class, \App\Http\Resources\Offer::class],
+            'user' => [BasicSingleRequest::class, User::class, \App\Http\Resources\User::class],
         ];
     }
 
@@ -57,10 +60,17 @@ class PrivateApiController extends Controller
             foreach ($data as $name => $parameters) {
 
                 if (isset($this->requests[$name])) {
-                    $class = $this->requests[$name];
+                    $requestDefinition = $this->requests[$name];
 
                     /** @var ApiRequest $apiRequest */
-                    $apiRequest = new $class();
+                    $apiRequest = null;
+
+                    if (is_array($requestDefinition)) {
+                        $class = array_shift($requestDefinition);
+                        $apiRequest = new $class(...$requestDefinition);
+                    } else {
+                        $apiRequest = new $requestDefinition();
+                    }
 
                     if ($parameters instanceof \stdClass) {
                         $parameters = (array)$parameters;

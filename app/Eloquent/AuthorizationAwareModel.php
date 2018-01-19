@@ -5,8 +5,6 @@ namespace App\Eloquent;
 
 use App\User;
 use Illuminate\Support\Collection;
-use Illuminate\Validation\Rules\In;
-use Illuminate\Validation\Rules\NotIn;
 
 interface AuthorizationAwareModel
 {
@@ -29,7 +27,7 @@ interface AuthorizationAwareModel
      * a particular scope
      * @param string $scopeName
      * @param string[]|Collection $columnNames
-     * @return In|NotIn
+     * @return bool
      */
     public function validatePublicScopeParams($scopeName, $columnNames);
 }

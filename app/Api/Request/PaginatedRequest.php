@@ -8,7 +8,6 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Validator;
 
 /**
  * TODO documentation
@@ -24,15 +23,12 @@ abstract class PaginatedRequest extends Request
     /**
      * @inheritDoc
      */
-    protected function validateRules($parameters)
+    protected function _rules()
     {
-        $rules = [
+        return [
             'per_page' => ($this->perPageDefault === null ? 'required|' : '') . 'integer',
             'page' => 'integer',
-        ] + $this->rules();
-
-        $validator = Validator::make($parameters->all(), $rules);
-        $validator->validate();
+            ] + parent::_rules();
     }
 
 
@@ -44,7 +40,7 @@ abstract class PaginatedRequest extends Request
         $perPage = $parameters->get('per_page', $this->perPageDefault);
         $page = $parameters->get('page', 1);
 
-        $urlParameters = $this->urlParameters();
+        $urlParameters = $this->_urlParameters($parameters);
         $query = [
             'per_page' => $perPage
         ];
@@ -55,11 +51,11 @@ abstract class PaginatedRequest extends Request
             }
         }
 
-        $paginator = $this->getPaginator($parameters, $perPage, $page);
+        $paginator = $this->paginator($parameters, $perPage, $page);
         $paginator->appends($query);
         $paginator->setPath(route('api.single', ['name' => $name], false));
 
-        $resource = $this->getResourceClass();
+        $resource = $this->resourceClass();
         $result = null;
 
         if ($resource) {
@@ -82,9 +78,21 @@ abstract class PaginatedRequest extends Request
 
     /**
      * Returns an array of parameters that should be present in the URL get query in next/previous URLs
+     * @param Collection $parameters
      * @return array
      */
-    protected abstract function urlParameters();
+    protected abstract function urlParameters(Collection $parameters);
+
+    /**
+     * Returns an array of parameters that should be present in the URL get query in next/previous URLs.
+     * Should be used by abstract classes and should always concatenate result with parent implementation.
+     * @param Collection $parameters
+     * @return array
+     */
+    protected function _urlParameters(Collection $parameters)
+    {
+        return $this->urlParameters($parameters);
+    }
 
     /**
      * Returns a Paginator instance to be used
@@ -93,13 +101,13 @@ abstract class PaginatedRequest extends Request
      * @param integer $page
      * @return Paginator
      */
-    protected abstract function getPaginator(Collection $parameters, $perPage, $page);
+    protected abstract function paginator(Collection $parameters, $perPage, $page);
 
     /**
      * Returns name of a Resource class to be used. If false, no Resource class used
      * @return string|false
      */
-    protected function getResourceClass()
+    protected function resourceClass()
     {
         return false;
     }

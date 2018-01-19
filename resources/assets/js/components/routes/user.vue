@@ -45,18 +45,17 @@
             routeEvents.$emit('user-navigation', null);
 
             api.requestMultiple({
-                single: {
-                    type: 'user',
+                user: {
                     scope: this.$store.state.is_admin ? 'unlimited' : 'public',
                     username: this.username,
                 },
                 offers: {
                     scope: offersScope,
-                    author_username: this.username,
+                    'author/username': this.username,
                 }
             })
                 .then(result => {
-                    this.user = result.single.result;
+                    this.user = result.user.result;
 
                     if (this.user === null) {
                         this.$router.replace({name: 'error'});

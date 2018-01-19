@@ -45,6 +45,18 @@ class Offer extends Model implements AuthorizationAwareModel
     }
 
     /**
+     * @inheritDoc
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope('sort', function (Builder $query) {
+            $query->orderBy('listed_at', 'desc');
+        });
+    }
+
+    /**
      * @return Money
      */
     public function getMoneyAttribute()
@@ -158,6 +170,9 @@ class Offer extends Model implements AuthorizationAwareModel
                         'name',
                         'listed_at',
                         'author_user_id',
+                        'author/username',
+                        'author/id',
+                        'author/email',
                         'price_value',
                         'currency_code'
                     ]))
@@ -169,6 +184,9 @@ class Offer extends Model implements AuthorizationAwareModel
                         'name',
                         'listed_at',
                         'author_user_id',
+                        'author/username',
+                        'author/id',
+                        'author/email',
                         'price_value',
                         'currency_code',
                         'status'
