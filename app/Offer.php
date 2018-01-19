@@ -76,7 +76,7 @@ class Offer extends Model implements AuthorizationAwareModel
      */
     public function getExpiredAttribute()
     {
-        return $this->listed_at->lessThan($this->expiredFromTimestamp());
+        return $this->status === self::STATUS_AVAILABLE && $this->listed_at->lessThan($this->expiredFromTimestamp());
     }
 
     /**

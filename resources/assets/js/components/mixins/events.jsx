@@ -23,6 +23,12 @@ export default {
                 () => el ? new ResizeSensor(el, listener) : false,
                 () => el ? ResizeSensor.detach(el, listener) : false
             );
+        },
+        $onVue(vm, event, listener) {
+            this.$attachEvent(
+                () => vm.$on(event, listener),
+                () => vm.$off(event, listener)
+            );
         }
     },
     activated() {

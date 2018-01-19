@@ -42,6 +42,8 @@
             else
                 offersScope = 'public';
 
+            routeEvents.$emit('user-navigation', null);
+
             api.requestMultiple({
                 single: {
                     type: 'user',
@@ -61,7 +63,7 @@
                         return;
                     }
 
-                    routeEvents.$emit('has-user', this.user);
+                    routeEvents.$emit('user-navigation', this.user);
 
                     this.startOffers = result.offers.result.data;
                     this.nextUrl = result.offers.result.next_page_url;

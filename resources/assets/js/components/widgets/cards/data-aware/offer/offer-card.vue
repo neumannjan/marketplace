@@ -13,8 +13,9 @@
         </router-link>
 
         <a href="#" :class="[color('text-', 'dark')]">
-            <h4 class="card-title">{{ data.name }}
-                <badge v-for="(badge, index) in badges" :key="index" v-bind="badge"/>
+            <h4 class="card-title">
+                <span>{{ data.name }} </span>
+                <badge class="ml-1 badge" v-for="(badge, index) in badges" :key="index" v-bind="badge"/>
             </h4>
         </a>
         <p class="card-text">{{ shortDesc }}</p>
@@ -166,6 +167,10 @@
         text-decoration: none;
     }
 
+    .badge {
+        vertical-align: bottom;
+    }
+
     .offer-card-header {
         line-height: 1em;
         display: flex;
@@ -180,7 +185,7 @@
     }
 
     .profile-img-placeholder {
-        color: $gray-400;
+        color: $placeholder-color;
     }
 
     .author-info {

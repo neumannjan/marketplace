@@ -1,25 +1,30 @@
 <template>
-    <div>
-        <div :style="{height: collapsibleHeight}" v-if="user"
-             ref="collapsible">
-            <blurred-img v-if="userHasImg" class="user-nav-bg" :data="img" :modify-callback="modifyBG"/>
-            <div class="user-nav-content px-3" :style="{
-                transform: `translateY(${- (borderSize + imgSize)/2}px)`,
-                marginBottom: `${- (borderSize + imgSize)/2}px`
-            }">
-                <div v-if="userHasImg" class="img-border" :style="{
-                    width: `${imgSize + borderSize}px`,
-                    height: `${imgSize + borderSize}px`}">
-                    <img ref="profileImg"
-                         :src="userImgSrc"
-                         :width="imgSize"
-                         :height="imgSize"
-                         class="rounded-circle"
-                         :crossorigin="crossOrigin"
-                         :srcset="`${user.profile_image.size_icon}, ${user.profile_image.size_icon_2x} 2x`">
-                </div>
-                <h1 class="h2 text-center">{{ user.display_name }}</h1>
+    <div v-if="user">
+        <blurred-img v-if="userHasImg" class="user-nav-bg" :data="img" :modify-callback="modifyBG"/>
+        <div v-else class="user-nav-bg"></div>
+        <div class="user-nav-content px-3" :style="{
+            transform: `translateY(${- (borderSize + imgSize)/2}px)`,
+            marginBottom: `${- (borderSize + imgSize)/2}px`
+        }">
+            <div class="img-border" :style="{
+                width: `${imgSize + borderSize}px`,
+                height: `${imgSize + borderSize}px`}">
+                <!-- TODO img alt -->
+                <img ref="profileImg"
+                     v-if="userHasImg"
+                     :src="userImgSrc"
+                     :width="imgSize"
+                     :height="imgSize"
+                     class="rounded-circle"
+                     :crossorigin="crossOrigin"
+                     :srcset="`${user.profile_image.size_icon}, ${user.profile_image.size_icon_2x} 2x`">
+                <icon class="profile-img-placeholder"
+                      v-else
+                      name="user-circle"
+                      label="user"
+                      :scale="imgSize/16"/> <!-- TODO translate label -->
             </div>
+            <h1 class="h2 text-center">{{ user.display_name }}</h1>
         </div>
     </div>
 </template>
@@ -27,9 +32,13 @@
 <script>
     import {events as routeEvents} from 'JS/router';
     import BlurredImg from 'JS/components/widgets/image/blurred-img';
+    import events from 'JS/components/mixins/events';
+
+    import 'vue-awesome/icons/user-circle';
 
     export default {
         name: 'user-route-navigation',
+        mixins: [events],
         props: {
             imgSize: {
                 type: Number,
@@ -55,8 +64,6 @@
             img: null,
             user: null,
             userImgSrc: null,
-            collapse: false,
-            collapsibleHeight: undefined,
         }),
         methods: {
             modifyBG(imageData) {
@@ -91,7 +98,12 @@
             }
         },
         created() {
-            routeEvents.$once('has-user', user => {
+            this.$onVue(routeEvents, 'user-navigation', async user => {
+                if (this.user && user) {
+                    this.user = null;
+                    await new Promise(resolve => this.$nextTick(resolve));
+                }
+
                 this.user = user;
                 this.$nextTick(this.requestImg);
             });
@@ -103,11 +115,9 @@
     @import "~CSS/includes";
 
     .user-nav-bg {
-        position: absolute;
         width: 100%;
         height: 100px;
-        top: 0;
-        left: 0;
+        background: $placeholder-color;
 
         /*&:after {
             content: ' ';
@@ -125,6 +135,10 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+    }
+
+    .profile-img-placeholder {
+        color: $placeholder-color;
     }
 
     img {
