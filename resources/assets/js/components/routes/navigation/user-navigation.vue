@@ -99,6 +99,8 @@
         },
         created() {
             this.$onVue(routeEvents, 'user-navigation', async user => {
+                if (this.user && this.user === user) return;
+
                 if (this.user && user) {
                     this.user = null;
                     await new Promise(resolve => this.$nextTick(resolve));

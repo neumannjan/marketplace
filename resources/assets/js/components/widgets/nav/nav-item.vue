@@ -18,6 +18,8 @@
 </template>
 
 <script>
+    import router from 'JS/router';
+
     export default {
         props: {
             route: {
@@ -40,7 +42,7 @@
         },
         computed: {
             active() {
-                return this.route === this.$route.name || this.path === this.$route.path;
+                return router.routesMatch(this.routeDefinition, this.$route);
             },
             labelFull() {
                 return this.label + (this.active ? ' (current)' : ''); // TODO translate the "current" word

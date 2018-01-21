@@ -1,16 +1,20 @@
 <template>
     <card :class="[color('border-')]">
-        <router-link :to="toAuthor" v-if="showAuthor" slot="header" class="offer-card-header text-dark">
-            <img v-if="profileImage" class="profile-img rounded-circle"
-                 :src="profileImage['1x']"
-                 :srcset="`${profileImage['1x']}, ${profileImage['2x']} 2x`"/>
-            <div v-else="" class="profile-img profile-img-placeholder">
-                <icon name="user-circle" scale="2"/>
-            </div>
-            <span class="ml-2 author-info">
-                {{ data.author.display_name }} <small class="text-muted">{{ `@${data.author.username}` }}</small>
-            </span>
-        </router-link>
+        <div v-if="showAuthor" slot="header" class="offer-card-header">
+            <router-link :to="toAuthor" class="offer-card-header text-dark">
+                <img v-if="profileImage" class="profile-img rounded-circle"
+                     :src="profileImage['1x']"
+                     :srcset="`${profileImage['1x']}, ${profileImage['2x']} 2x`"/>
+                <div v-else="" class="profile-img profile-img-placeholder">
+                    <icon name="user-circle" scale="2"/>
+                </div>
+                <span class="ml-2 author-info">
+                        {{ data.author.display_name }} <small
+                        class="text-muted">{{ `@${data.author.username}` }}</small>
+                    </span>
+            </router-link>
+            <slot name="header-end"/>
+        </div>
 
         <template v-if="!large">
 
@@ -31,7 +35,7 @@
         </template>
         <div v-else class="row">
 
-            <div class="col-4">
+            <div class="col-md-5 mb-3">
                 <carousel :items="this.data.images">
                     <template slot-scope="props">
                         <lazy-img :width="props.item.width" :height="props.item.height"
@@ -42,15 +46,15 @@
                 </carousel>
             </div>
 
-            <div class="col-8 d-flex flex-column">
-                <h1 :class="['card-title', color('text-', 'dark')]">
+            <div class="col-md-7 d-flex flex-column">
+                <h1 :class="['card-title heading-resp', color('text-', 'dark')]">
                     <span>{{ data.name }} </span>
                     <badge class="ml-1 badge" v-for="(badge, index) in badges" :key="index" v-bind="badge"/>
                 </h1>
 
                 <p v-if="data.description" class="card-text">{{ data.description }}</p>
 
-                <p class="h2 card-text mt-auto">{{ data.price }}</p>
+                <p class="price-resp card-text mt-auto">{{ data.price }}</p>
                 <div class="btn-group btn-group-lg" role="group" aria-label="Basic example">
                     <button type="button"
                             v-for="button in buttons"
@@ -74,6 +78,8 @@
     import CardIconFooter from "../../card-icon-footer";
     import Badge from 'JS/components/widgets/badge'
     import Carousel from 'JS/components/widgets/carousel';
+
+    import router from 'JS/router';
 
     import 'vue-awesome/icons/heart';
     import 'vue-awesome/icons/shopping-cart';
@@ -153,7 +159,7 @@
                         icon: 'expand',
                         label: 'Expand',
                         disabled: this.isThisUser,
-                        callback: null
+                        callback: () => router.push(this.toOffer)
                     },
                 ];
 
@@ -204,9 +210,8 @@
             },
             toOffer() {
                 return {
-                    name: 'offer',
-                    params: {
-                        id: this.data.id
+                    query: {
+                        offer: this.data.id
                     }
                 }
             },
@@ -268,5 +273,19 @@
         word-wrap: normal;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    .heading-resp {
+        font-size: $h3-font-size;
+        @include media-breakpoint-up('sm') {
+            font-size: $h1-font-size;
+        }
+    }
+
+    .price-resp {
+        font-size: $h4-font-size;
+        @include media-breakpoint-up('sm') {
+            font-size: $h2-font-size;
+        }
     }
 </style>

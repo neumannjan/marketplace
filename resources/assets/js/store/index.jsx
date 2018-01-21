@@ -19,6 +19,7 @@ const store = new Vuex.Store({
         token: false,
         flash: {},
         messages: [],
+        reRoutedTimes: -1
     },
     mutations: {
         global(state, data) {
@@ -49,6 +50,9 @@ const store = new Vuex.Store({
         },
         connection(state, value) {
             state.connection_lost = !value;
+        },
+        addReRoute(state) {
+            ++state.reRoutedTimes;
         }
     },
     actions: {

@@ -8,7 +8,7 @@
     import route from 'JS/components/mixins/route';
     import api from 'JS/api';
     import OfferMasonry from 'JS/components/widgets/cards/data-aware/offer/offer-masonry';
-    import {events as routeEvents} from 'JS/router';
+    import router, {events as routeEvents} from 'JS/router';
 
     export default {
         name: 'user-route',
@@ -78,7 +78,8 @@
             this.begin();
         },
         beforeRouteUpdate(to, from, next) {
-            this.begin();
+            if (!router.routesMatch(to, from))
+                this.begin();
             next();
         },
     };

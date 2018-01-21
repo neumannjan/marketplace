@@ -6,9 +6,9 @@
         </div>
         <div class="wrapper">
             <main role="main"
-                  :class="['main', {'navigation-shown': hasNavigation, 'navigation-not-shown': !hasNavigation}]">
+                  :class="['main', {'navigation-shown': has.navigation, 'navigation-not-shown': !has.navigation}]">
                 <!-- NAVIGATION -->
-                <div v-if="hasNavigation" class="content-navigation" v-sticky>
+                <div v-if="has.navigation" class="content-navigation" v-sticky>
                     <keep-alive :include="keepAlive('navigation')">
                         <router-view class="content-navigation-inner" name="navigation" v-sticky/>
                     </keep-alive>
@@ -33,6 +33,8 @@
         </div>
 
         <main-floating-btns/>
+
+        <modal-router :data="modals"/>
     </div>
 </template>
 
@@ -40,23 +42,33 @@
     import TopNav from './widgets/nav/vertical/top-nav';
     import BottomNav from './widgets/nav/vertical/bottom-nav';
     import FlashMessages from './widgets/flash-messages';
-    import {cached} from 'JS/router';
+    import {cached, queryRouter} from 'JS/router';
     import {mapState} from 'vuex';
     import Icon from "../../../../node_modules/vue-awesome/components/Icon.vue";
     import MainFloatingBtns from './widgets/main-floating-btns';
+    import Modal from './widgets/modal';
+    import OfferRoute from "JS/components/routes/offer";
+
+    import 'vue-awesome/icons/expand';
+    import 'vue-awesome/icons/times';
+    import ModalRouter from "JS/components/widgets/modal-router";
 
     export default {
         components: {
+            ModalRouter,
+            OfferRoute,
             Icon,
             TopNav,
             BottomNav,
             FlashMessages,
-            MainFloatingBtns
+            MainFloatingBtns,
+            Modal
         },
         data: () => ({
             keepAlive: cached,
             shown: true,
-            hasNavigation: false,
+            has: {},
+            modals: queryRouter
         }),
         computed: {
             ...mapState({
@@ -73,22 +85,27 @@
                 await new Promise(resolve => this.$nextTick(resolve));
                 this.shown = true;
                 await new Promise(resolve => this.$nextTick(resolve));
-            }
+            },
         },
         mounted() {
             // set hasNavigation
 
-            function setNav(vm) {
+            function setRouterViews(vm) {
                 vm.$once('before-destroy', () => vm = undefined);
 
                 return to => {
                     if (vm) {
-                        vm.hasNavigation = to.matched[0].components.navigation;
+                        let has = {};
+                        for (let view of ['navigation']) {
+                            has[view] = !!to.matched[0].components[view];
+                        }
+
+                        vm.has = has;
                     }
                 }
             }
 
-            const func = setNav(this);
+            const func = setRouterViews(this);
             func(this.$route);
             this.$router.afterEach(func);
         },

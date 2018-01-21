@@ -17,6 +17,8 @@ import UserNavigation from 'JS/components/routes/navigation/user-navigation';
 import GuestGuard from './guards/guest';
 import AuthGuard from './guards/auth';
 
+import OfferModal from '../components/routes/modal/offer-modal';
+
 import store from 'JS/store';
 
 Vue.use(VueRouter);
@@ -28,6 +30,10 @@ const cachedRouteComponents = [
 export const cached = (suffix = '') => suffix ? cachedRouteComponents.map((route) => `${route}-${suffix}`) : cachedRouteComponents;
 
 export const events = new Vue();
+
+export const queryRouter = {
+    offer: OfferModal
+};
 
 const router = new VueRouter({
     mode: 'history',
@@ -93,13 +99,8 @@ const router = new VueRouter({
         {
             path: '/offer/:id',
             name: 'offer',
-            components: {
-                default: OfferRoute,
-                //navigation: UserNavigation,
-            },
-            props: {
-                default: route => ({id: parseInt(route.params.id)})
-            },
+            component: OfferRoute,
+            props: route => ({id: parseInt(route.params.id)}),
         },
         {
             path: '/404',
@@ -113,9 +114,29 @@ const router = new VueRouter({
     ]
 });
 
+router.afterEach(() => {
+    store.commit('addReRoute');
+});
+
 router.getCurrentRouteMainComponent = () => {
     const matched = router.currentRoute.matched;
     return matched[matched.length - 1].instances.default;
+};
+
+router.routesMatch = (route1, route2 = router.currentRoute) => {
+    if (route1.path === route2.path)
+        return true;
+
+    if (route1.name !== route2.name)
+        return false;
+
+    let match = true;
+    for (let [key, param] of Object.entries(route2.params)) {
+        match = match && route1.params[key] === param;
+        if (!match) break;
+    }
+
+    return match;
 };
 
 export default router;

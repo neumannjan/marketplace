@@ -34,24 +34,47 @@
             items: {
                 type: Array,
                 required: true
+            },
+            timer: {
+                type: Number,
+                default: 5000,
             }
         },
         data: () => ({
-            activeIndex: 0
+            activeIndex: 0,
+            timerRunning: true
         }),
         methods: {
-            next() {
+            next(runByUser = true) {
+                if (runByUser)
+                    this.timerRunning = false;
+
                 if (this.activeIndex < this.items.length - 1)
                     ++this.activeIndex;
                 else
                     this.activeIndex = 0;
             },
-            prev() {
+            prev(runByUser = true) {
+                if (runByUser)
+                    this.timerRunning = false;
+
                 if (this.activeIndex > 0)
                     --this.activeIndex;
                 else
                     this.activeIndex = this.items.length - 1;
+            },
+            handleTimer() {
+                setTimeout(() => {
+                    if (!this.timerRunning || this.timer <= 0)
+                        return;
+
+                    this.next(false);
+                    this.handleTimer();
+                }, this.timer);
             }
+        },
+        mounted() {
+            this.handleTimer();
         }
     }
 </script>
