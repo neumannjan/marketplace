@@ -20,7 +20,7 @@ class Offer extends Model implements AuthorizationAwareModel
     const STATUS_SOLD = 2;
 
     const SCOPE_PUBLIC = 'public';
-    const SCOPE_OWNED = 'owned';
+    const SCOPE_AUTH = 'auth';
     const SCOPE_UNLIMITED = 'unlimited';
 
     protected $dates = [
@@ -123,13 +123,15 @@ class Offer extends Model implements AuthorizationAwareModel
     }
 
     /**
-     * Limits the query to only return items that the current user owns
+     * Limits the query to only return items that are accessible publicly and items that the current user owns.
      * @param Builder $query
      * @return Builder
      */
-    public function scopeOwned(Builder $query)
+    public function scopeAuth(Builder $query)
     {
-        return $query->where(['author_user_id' => \Auth::user()->id]);
+        return $query
+            ->addNestedWhereQuery($this->scopePublic($this->newQuery())->getQuery())
+            ->orWhere(['author_user_id' => \Auth::user()->id]);
     }
 
     /**
@@ -137,7 +139,7 @@ class Offer extends Model implements AuthorizationAwareModel
      */
     public function getPublicScopes()
     {
-        return [self::SCOPE_PUBLIC, self::SCOPE_OWNED, self::SCOPE_UNLIMITED];
+        return [self::SCOPE_PUBLIC, self::SCOPE_AUTH, self::SCOPE_UNLIMITED];
     }
 
     /**
@@ -148,7 +150,7 @@ class Offer extends Model implements AuthorizationAwareModel
         switch ($scopeName) {
             case self::SCOPE_PUBLIC:
                 return true;
-            case self::SCOPE_OWNED:
+            case self::SCOPE_AUTH:
                 return $user && \Auth::check() && $user->id === \Auth::id();
             case self::SCOPE_UNLIMITED:
                 return $user && $user->is_admin ? true : false;
@@ -177,7 +179,7 @@ class Offer extends Model implements AuthorizationAwareModel
                         'currency_code'
                     ]))
                     ->isEmpty();
-            case self::SCOPE_OWNED:
+            case self::SCOPE_AUTH:
                 return Collection::wrap($columnNames)
                     ->diff(Collection::make([
                         'id',

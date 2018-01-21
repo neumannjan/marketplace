@@ -1,7 +1,8 @@
 <template>
-    <div class="row">
+    <div :class="['card-footer-icons d-flex', `justify-content-${justifyContent}`]">
         <button v-for="button in buttons" type="button" @click="button.callback ? button.callback() : null"
-                :class="['col btn btn-link', buttonClass, {gray: gray}]">
+                :disabled="button.disabled ? true : undefined"
+                :class="['btn btn-link', buttonClass, {gray: gray}]">
             <icon :name="button.icon" :label="button.label"/>
         </button>
     </div>
@@ -19,6 +20,10 @@
             buttons: {
                 type: Array,
                 required: true,
+            },
+            justifyContent: {
+                type: String,
+                default: 'center'
             }
         }
     }
@@ -31,6 +36,8 @@
         cursor: pointer;
         line-height: 14px;
         padding: 12px;
+        flex-grow: 1;
+        max-width: 150px;
 
         &.gray {
             color: $gray-700;
@@ -41,7 +48,7 @@
         }
     }
 
-    .row {
+    .card-footer-icons {
         margin: #{-$card-spacer-y} #{-$card-spacer-x};
     }
 </style>

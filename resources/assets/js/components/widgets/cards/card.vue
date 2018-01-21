@@ -4,11 +4,6 @@
             <slot name="header"/>
         </div>
         <slot name="post-header"/>
-        <a href="#">
-            <lazy-img v-if="img" img-class="card-img-top" :src="img" :thumb="thumb" :alt="alt"
-                      :height="height" :width="width">
-            </lazy-img>
-        </a>
         <div class="card-body">
             <slot/>
         </div>
@@ -23,11 +18,6 @@
     export default {
         name: "card",
         props: {
-            img: String,
-            alt: String,
-            thumb: String,
-            width: Number,
-            height: Number,
             headerClass: String,
             footerClass: String,
         }

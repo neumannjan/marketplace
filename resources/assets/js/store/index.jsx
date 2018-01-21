@@ -58,6 +58,17 @@ const store = new Vuex.Store({
                     context.commit('logout');
                 });
         }
+    },
+    getters: {
+        scope: state => {
+            const considerAdmin = (scope) => state.is_admin ? 'unlimited' : scope;
+
+            return {
+                user: considerAdmin('public'),
+                publicOffer: considerAdmin('public'),
+                offer: considerAdmin(state.is_authenticated ? 'auth' : 'public'),
+            };
+        }
     }
 });
 

@@ -38,41 +38,48 @@
                 return this.isThisUser;
             }
         },
-        created() {
-            let offersScope;
-
-            if (this.$store.state.is_admin)
-                offersScope = 'unlimited';
-            else if (this.isThisUser)
-                offersScope = 'owned';
-            else
-                offersScope = 'public';
-
-            routeEvents.$emit('user-navigation', null);
-
-            api.requestMultiple({
-                user: {
-                    scope: this.$store.state.is_admin ? 'unlimited' : 'public',
-                    username: this.username,
-                },
-                offers: {
-                    scope: offersScope,
-                    'author/username': this.username,
+        methods: {
+            async begin() {
+                if (this.startOffers) {
+                    this.startOffers = null;
+                    await new Promise(resolve => this.$nextTick(resolve));
                 }
-            })
-                .then(result => {
-                    this.user = result.user.result;
 
-                    if (this.user === null) {
-                        this.$router.replace({name: 'error'});
-                        return;
+                routeEvents.$emit('user-navigation', null);
+
+                const scopes = this.$store.getters.scope;
+
+                const result = await api.requestMultiple({
+                    user: {
+                        scope: scopes.user,
+                        username: this.username,
+                    },
+                    offers: {
+                        scope: scopes.offer,
+                        'author/username': this.username,
                     }
-
-                    routeEvents.$emit('user-navigation', this.user);
-
-                    this.startOffers = result.offers.result.data;
-                    this.nextUrl = result.offers.result.next_page_url;
                 });
-        }
+
+                this.user = result.user.result;
+
+                if (this.user === null) {
+                    this.$router.replace({name: 'error'});
+                    return;
+                }
+
+                routeEvents.$emit('user-navigation', this.user);
+
+                this.startOffers = result.offers.result.data;
+                this.nextUrl = result.offers.result.next_page_url;
+            }
+
+        },
+        created() {
+            this.begin();
+        },
+        beforeRouteUpdate(to, from, next) {
+            this.begin();
+            next();
+        },
     };
 </script>

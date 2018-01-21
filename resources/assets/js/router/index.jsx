@@ -5,6 +5,7 @@ import IndexRoute from '../components/routes/index';
 import TestRoute from '../components/routes/test';
 import ErrorRoute from '../components/routes/404';
 import UserRoute from '../components/routes/user';
+import OfferRoute from '../components/routes/offer';
 
 import LoginRoute from '../components/routes/auth/login';
 import RegisterRoute from '../components/routes/auth/register';
@@ -88,6 +89,17 @@ const router = new VueRouter({
                     return {name: 'login'}
             },
             ...AuthGuard
+        },
+        {
+            path: '/offer/:id',
+            name: 'offer',
+            components: {
+                default: OfferRoute,
+                //navigation: UserNavigation,
+            },
+            props: {
+                default: route => ({id: parseInt(route.params.id)})
+            },
         },
         {
             path: '/404',

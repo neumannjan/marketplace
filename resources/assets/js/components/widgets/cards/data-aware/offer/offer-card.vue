@@ -1,5 +1,5 @@
 <template>
-    <card v-bind="cardData" :class="[color('border-')]">
+    <card :class="[color('border-')]">
         <router-link :to="toAuthor" v-if="showAuthor" slot="header" class="offer-card-header text-dark">
             <img v-if="profileImage" class="profile-img rounded-circle"
                  :src="profileImage['1x']"
@@ -12,16 +12,60 @@
             </span>
         </router-link>
 
-        <a href="#" :class="[color('text-', 'dark')]">
-            <h4 class="card-title">
-                <span>{{ data.name }} </span>
-                <badge class="ml-1 badge" v-for="(badge, index) in badges" :key="index" v-bind="badge"/>
-            </h4>
-        </a>
-        <p class="card-text">{{ shortDesc }}</p>
-        <p class="h5 card-text">{{ data.price }}</p>
+        <template v-if="!large">
 
-        <card-icon-footer slot="footer" :buttons="buttons" :gray="true"/>
+            <router-link v-if="imgData" :to="toOffer" slot="post-header">
+                <lazy-img img-class="card-img-top" v-bind="imgData"/>
+            </router-link>
+
+            <router-link :to="toOffer" :class="[color('text-', 'dark')]">
+                <h4 class="card-title">
+                    <span>{{ data.name }} </span>
+                    <badge class="ml-1 badge" v-for="(badge, index) in badges" :key="index" v-bind="badge"/>
+                </h4>
+            </router-link>
+
+            <p class="card-text">{{ shortDesc }}</p>
+            <p class="h5 card-text">{{ data.price }}</p>
+
+        </template>
+        <div v-else class="row">
+
+            <div class="col-4">
+                <carousel :items="this.data.images">
+                    <template slot-scope="props">
+                        <lazy-img :width="props.item.width" :height="props.item.height"
+                                  :src="props.item.size_original"
+                                  :thumb="props.item.size_tiny"
+                                  alt="Image"/> <!-- TODO alt -->
+                    </template>
+                </carousel>
+            </div>
+
+            <div class="col-8 d-flex flex-column">
+                <h1 :class="['card-title', color('text-', 'dark')]">
+                    <span>{{ data.name }} </span>
+                    <badge class="ml-1 badge" v-for="(badge, index) in badges" :key="index" v-bind="badge"/>
+                </h1>
+
+                <p v-if="data.description" class="card-text">{{ data.description }}</p>
+
+                <p class="h2 card-text mt-auto">{{ data.price }}</p>
+                <div class="btn-group btn-group-lg" role="group" aria-label="Basic example">
+                    <button type="button"
+                            v-for="button in buttons"
+                            :key="button.icon"
+                            @click="button.callback ? button.callback() : null"
+                            :disabled="isThisUser ? true : undefined"
+                            :class="['btn', color('btn-', 'primary', true)]">
+                        <icon :name="button.icon" :label="button.label"/>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <card-icon-footer v-if="!large" slot="footer" :buttons="buttons" :gray="true"/>
     </card>
 </template>
 
@@ -29,6 +73,7 @@
     import Card from "../../card";
     import CardIconFooter from "../../card-icon-footer";
     import Badge from 'JS/components/widgets/badge'
+    import Carousel from 'JS/components/widgets/carousel';
 
     import 'vue-awesome/icons/heart';
     import 'vue-awesome/icons/shopping-cart';
@@ -40,27 +85,9 @@
         components: {
             Card,
             CardIconFooter,
-            Badge
+            Badge,
+            Carousel
         },
-        data: () => ({
-            buttons: [
-                {
-                    icon: 'heart',
-                    label: 'Like',
-                    callback: null
-                },
-                {
-                    icon: 'shopping-cart',
-                    label: 'Buy',
-                    callback: null
-                },
-                {
-                    icon: 'expand',
-                    label: 'Expand',
-                    callback: null
-                }
-            ]
-        }),
         props: {
             data: {
                 type: Object,
@@ -69,10 +96,14 @@
             showAuthor: {
                 type: Boolean,
                 default: true,
+            },
+            large: {
+                type: Boolean,
+                default: false,
             }
         },
         methods: {
-            color(prefix = '', defaultColor = null) {
+            color(prefix = '', defaultColor = null, important = false) {
                 const doReturn = (value = defaultColor) => {
                     if (!value)
                         return undefined;
@@ -87,6 +118,8 @@
                 switch (this.data.status) {
                     case 0: // draft
                         return doReturn('warning');
+                    case 2: // sold
+                        return doReturn(important ? 'info' : defaultColor)
                 }
 
                 if (this.data.expired)
@@ -96,13 +129,48 @@
             }
         },
         computed: {
-            cardData() {
+            isThisUser() {
+                return this.$store.state.user && this.$store.state.user.username === this.data.author.username;
+            },
+            buttons() {
+                const ubiquitous = [
+                    {
+                        icon: 'heart',
+                        label: 'Like',
+                        disabled: this.isThisUser,
+                        callback: null
+                    },
+                    {
+                        icon: 'shopping-cart',
+                        label: 'Buy',
+                        disabled: this.isThisUser,
+                        callback: null
+                    },
+                ];
+
+                const nonLarge = [
+                    {
+                        icon: 'expand',
+                        label: 'Expand',
+                        disabled: this.isThisUser,
+                        callback: null
+                    },
+                ];
+
+                if (this.large)
+                    return ubiquitous;
+                else
+                    return [...ubiquitous, ...nonLarge];
+            },
+            imgData() {
+                if (!this.data || this.data.images.length === 0)
+                    return null;
+
                 let image = this.data.images[0];
 
                 return {
-                    key: this.data.id,
                     alt: this.data.name,
-                    img: image['size_original'],
+                    src: image['size_original'],
                     thumb: image['size_tiny'],
                     width: image['width'],
                     height: image['height'],
@@ -131,6 +199,14 @@
                     name: 'user',
                     params: {
                         username: this.data.author.username
+                    }
+                }
+            },
+            toOffer() {
+                return {
+                    name: 'offer',
+                    params: {
+                        id: this.data.id
                     }
                 }
             },
