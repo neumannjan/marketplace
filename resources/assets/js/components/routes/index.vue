@@ -17,6 +17,7 @@
         },
         data: () => ({
             title: "Index page",
+            isTopLevelRoute: true
         })
     };
 </script>

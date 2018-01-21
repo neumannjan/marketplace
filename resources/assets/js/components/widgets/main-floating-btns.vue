@@ -5,7 +5,7 @@
 <script>
     import FloatingBtns from './floating-btns';
     import events from 'JS/components/mixins/events';
-    import router, {topLevel as topLevelRouteNames} from 'JS/router';
+    import router from 'JS/router';
 
     import 'vue-awesome/icons/plus';
     import 'vue-awesome/icons/comment';
@@ -44,7 +44,7 @@
         watch: {
             '$route'(route) {
                 this.scrollY = window.scrollY;
-                this.backShown = topLevelRouteNames.indexOf(route.name) === -1;
+                this.backShown = !router.getCurrentRouteMainComponent().isTopLevelRoute;
                 this.buttons = this.aButtons;
             }
         },

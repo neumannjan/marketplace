@@ -30,6 +30,12 @@
         computed: {
             title() {
                 return this.user ? this.user.display_name : this.username;
+            },
+            isThisUser() {
+                return this.$store.state.user && this.$store.state.user.username === this.username;
+            },
+            isTopLevelRoute() {
+                return this.isThisUser;
             }
         },
         created() {
@@ -37,7 +43,7 @@
 
             if (this.$store.state.is_admin)
                 offersScope = 'unlimited';
-            else if (this.$store.state.user && this.$store.state.user.username === this.username)
+            else if (this.isThisUser)
                 offersScope = 'owned';
             else
                 offersScope = 'public';

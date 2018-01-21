@@ -62,6 +62,7 @@
             'form-select': SelectComponent
         },
         data: () => ({
+            isTopLevelRoute: true,
             form: {
                 username: "",
                 email: "",

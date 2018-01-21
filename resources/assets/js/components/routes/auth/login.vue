@@ -46,6 +46,7 @@
             'form-select': SelectComponent
         },
         data: () => ({
+            isTopLevelRoute: true,
             form: {
                 login: "",
                 password: "",

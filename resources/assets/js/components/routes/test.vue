@@ -11,6 +11,9 @@
             title() {
                 return "Test page";
             }
-        }
+        },
+        data: () => ({
+            isTopLevelRoute: true
+        }),
     };
 </script>

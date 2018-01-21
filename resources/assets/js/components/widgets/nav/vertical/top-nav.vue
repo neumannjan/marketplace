@@ -10,29 +10,6 @@
     import 'vue-awesome/icons/cog';
     import 'vue-awesome/icons/user';
 
-    const items = [
-        {
-            label: 'Dashboard',
-            icon: 'home',
-            route: 'index'
-        },
-        {
-            label: 'Test',
-            icon: 'cog',
-            route: 'test'
-        }
-    ];
-
-    const authItems = [
-        {
-            label: 'Admin',
-            icon: 'user',
-            route: 'me'
-        }
-    ];
-
-    const adminItems = [];
-
     export default {
         name: 'top-nav',
         components: {
@@ -41,11 +18,33 @@
         computed: {
             ...mapState({
                 items: state => {
-                    const i1 = items;
-                    const i2 = state.is_authenticated ? authItems : [];
-                    const i3 = state.is_admin ? adminItems : [];
+                    const items = [
+                        {
+                            label: 'Dashboard',
+                            icon: 'home',
+                            route: 'index'
+                        },
+                        {
+                            label: 'Test',
+                            icon: 'cog',
+                            route: 'test'
+                        }
+                    ];
 
-                    return [...i1, ...i2, ...i3];
+                    const authItems = state.is_authenticated ? [
+                        {
+                            label: 'Admin',
+                            icon: 'user',
+                            route: 'user',
+                            params: {
+                                username: state.user.username
+                            }
+                        }
+                    ] : [];
+
+                    const adminItems = state.is_admin ? [] : [];
+
+                    return [...items, ...authItems, ...adminItems];
                 }
             })
         }

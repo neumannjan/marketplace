@@ -5,7 +5,6 @@ import IndexRoute from '../components/routes/index';
 import TestRoute from '../components/routes/test';
 import ErrorRoute from '../components/routes/404';
 import UserRoute from '../components/routes/user';
-import MeRoute from '../components/routes/me';
 
 import LoginRoute from '../components/routes/auth/login';
 import RegisterRoute from '../components/routes/auth/register';
@@ -17,6 +16,8 @@ import UserNavigation from 'JS/components/routes/navigation/user-navigation';
 import GuestGuard from './guards/guest';
 import AuthGuard from './guards/auth';
 
+import store from 'JS/store';
+
 Vue.use(VueRouter);
 
 const cachedRouteComponents = [
@@ -24,12 +25,6 @@ const cachedRouteComponents = [
 ];
 
 export const cached = (suffix = '') => suffix ? cachedRouteComponents.map((route) => `${route}-${suffix}`) : cachedRouteComponents;
-
-const topLevelRouteNames = [
-    'index', 'test', 'login', 'register', 'me'
-];
-
-export const topLevel = topLevelRouteNames;
 
 export const events = new Vue();
 
@@ -86,9 +81,11 @@ const router = new VueRouter({
         {
             path: '/me',
             name: 'me',
-            components: {
-                default: MeRoute,
-                navigation: UserNavigation,
+            redirect: to => {
+                if (store.state.is_authenticated && store.state.user)
+                    return {name: 'user', params: {username: store.state.user.username}};
+                else
+                    return {name: 'login'}
             },
             ...AuthGuard
         },
@@ -103,5 +100,10 @@ const router = new VueRouter({
         },
     ]
 });
+
+router.getCurrentRouteMainComponent = () => {
+    const matched = router.currentRoute.matched;
+    return matched[matched.length - 1].instances.default;
+};
 
 export default router;

@@ -1,5 +1,7 @@
+import router from 'JS/router';
+
 let determineActive = (instance, to) => {
-    return instance === to.matched[to.matched.length - 1].instances.default;
+    return instance === router.getCurrentRouteMainComponent();
 };
 
 let changeTitle = (instance, to = null) => {
@@ -11,7 +13,7 @@ export default {
     data: () => ({
         scrollX: 0,
         scrollY: 0,
-        isMainRoute: false
+        isMainRoute: false,
     }),
     watch: {
         title() {
@@ -30,11 +32,15 @@ export default {
         next();
     },
     beforeRouteLeave(to, from, next) {
-        this.scrollX = window.scrollX;
-        this.scrollY = window.scrollY;
+        if (this.isMainRoute) {
+            this.scrollX = window.scrollX;
+            this.scrollY = window.scrollY;
+        }
         next();
     },
     activated() {
-        window.scroll(this.scrollX, this.scrollY);
+        if (this.isMainRoute) {
+            window.scroll(this.scrollX, this.scrollY);
+        }
     }
 }
