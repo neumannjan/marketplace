@@ -1,19 +1,32 @@
 import router from 'JS/router';
 
-let determineActive = (instance, to) => {
-    return instance === router.getCurrentRouteMainComponent();
+const determineActive = (instance, to) => {
+    return instance === router.getRouteMainComponent();
 };
 
-let changeTitle = (instance, to = null) => {
-    if (instance.isMainRoute)
+const changeTitle = (instance, to = null) => {
+    if (instance.$data._isMainRoute)
         document.title = (instance.title !== undefined) ? instance.title : to.meta.title;
+};
+
+const putScroll = (instance) => {
+    if (instance.$data._isMainRoute) {
+        instance.$data._scrollX = window.scrollX;
+        instance.$data._scrollY = window.scrollY;
+    }
+};
+
+const retrieveScroll = (instance) => {
+    if (instance.$data._isMainRoute) {
+        window.scroll(instance.$data._scrollX, instance.$data._scrollY);
+    }
 };
 
 export default {
     data: () => ({
-        scrollX: 0,
-        scrollY: 0,
-        isMainRoute: false,
+        _scrollX: 0,
+        _scrollY: 0,
+        _isMainRoute: false,
     }),
     watch: {
         title() {
@@ -22,25 +35,21 @@ export default {
     },
     beforeRouteEnter(to, from, next) {
         next(vm => {
-            vm.isMainRoute = determineActive(vm, to);
+            vm.$data._isMainRoute = determineActive(vm, to);
             changeTitle(vm, to);
         });
     },
     beforeRouteUpdate(to, from, next) {
-        this.isMainRoute = determineActive(this, to);
+        this.$data._isMainRoute = determineActive(this, to);
+        putScroll(this);
         changeTitle(this, to);
         next();
     },
     beforeRouteLeave(to, from, next) {
-        if (this.isMainRoute) {
-            this.scrollX = window.scrollX;
-            this.scrollY = window.scrollY;
-        }
+        putScroll(this);
         next();
     },
     activated() {
-        if (this.isMainRoute) {
-            window.scroll(this.scrollX, this.scrollY);
-        }
+        this.$nextTick(() => retrieveScroll(this));
     }
 }

@@ -11,7 +11,7 @@
     import CardComponent from './card';
     import Masonry from 'masonry-layout';
     import events from 'JS/components/mixins/events';
-    import main from 'JS/app';
+    import {events as appEvents} from 'JS/app';
 
     export default {
         name: "masonry",
@@ -40,13 +40,17 @@
         mounted() {
             this.masonry = new Masonry(this.$refs.masonry, {
                 itemSelector: '.masonry-card',
+                initLayout: false,
+                resize: false
             });
 
-            this.$onElResize(this.$refs.masonry, () => this.redraw());
+            this.$onElResize(this.$refs.masonry, (size) => this.redraw());
 
             this.masonry._positionItem = this.positionItem;
 
             this.masonry.on('layoutComplete', () => this.$emit('ready'));
+
+            this.masonry.layout();
         },
         methods: {
             redraw(reloadItems = false) {
@@ -54,7 +58,8 @@
                     if (reloadItems)
                         this.masonry.reloadItems();
                     this.masonry.layout();
-                    main.app.$emit(main.events.VIEWPORT_CHANGE);
+
+                    appEvents.$emit('viewport_change');
                 }
             },
             positionItem(item, x, y, isInstant, i) {

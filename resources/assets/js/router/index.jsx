@@ -37,6 +37,18 @@ export const queryRouter = {
 
 const router = new VueRouter({
     mode: 'history',
+    scrollBehavior(to, from, savedPosition) {
+
+        const promise = to.meta.async ?
+            new Promise(resolve => events.$once('loaded', resolve))
+            : Promise.resolve();
+
+        if (savedPosition) {
+            return promise.then(() => savedPosition);
+        }
+
+        return undefined;
+    },
     routes: [
         {
             path: '/',
@@ -84,6 +96,9 @@ const router = new VueRouter({
             props: {
                 default: true
             },
+            meta: {
+                async: true
+            }
         },
         {
             path: '/me',
@@ -101,6 +116,9 @@ const router = new VueRouter({
             name: 'offer',
             component: OfferRoute,
             props: route => ({id: parseInt(route.params.id)}),
+            meta: {
+                async: true
+            }
         },
         {
             path: '/404',
@@ -118,8 +136,8 @@ router.afterEach(() => {
     store.commit('addReRoute');
 });
 
-router.getCurrentRouteMainComponent = () => {
-    const matched = router.currentRoute.matched;
+router.getRouteMainComponent = (route = router.currentRoute) => {
+    const matched = route.matched;
     return matched[matched.length - 1].instances.default;
 };
 

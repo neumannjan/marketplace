@@ -26,9 +26,7 @@ Vue.directive('sticky', {
 });
 
 // Event constants
-const events = {
-    VIEWPORT_CHANGE: 'viewport_change'
-};
+export const events = new Vue();
 
 // Vue app
 
@@ -40,8 +38,3 @@ export const app = new Vue({
         app: AppComponent,
     }
 });
-
-export default {
-    app,
-    events
-}

@@ -6,6 +6,7 @@
         </div>
         <div class="wrapper">
             <main role="main"
+                  :style="loadingStyle"
                   :class="['main', {'navigation-shown': has.navigation, 'navigation-not-shown': !has.navigation}]">
                 <!-- NAVIGATION -->
                 <div v-if="has.navigation" class="content-navigation" v-sticky>
@@ -42,21 +43,19 @@
     import TopNav from './widgets/nav/vertical/top-nav';
     import BottomNav from './widgets/nav/vertical/bottom-nav';
     import FlashMessages from './widgets/flash-messages';
-    import {cached, queryRouter} from 'JS/router';
+    import {cached, events as routeEvents, queryRouter} from 'JS/router';
     import {mapState} from 'vuex';
     import Icon from "../../../../node_modules/vue-awesome/components/Icon.vue";
     import MainFloatingBtns from './widgets/main-floating-btns';
     import Modal from './widgets/modal';
-    import OfferRoute from "JS/components/routes/offer";
 
-    import 'vue-awesome/icons/expand';
-    import 'vue-awesome/icons/times';
     import ModalRouter from "JS/components/widgets/modal-router";
+
+    import events from 'JS/components/mixins/events';
 
     export default {
         components: {
             ModalRouter,
-            OfferRoute,
             Icon,
             TopNav,
             BottomNav,
@@ -64,16 +63,21 @@
             MainFloatingBtns,
             Modal
         },
+        mixins: [events],
         data: () => ({
             keepAlive: cached,
             shown: true,
             has: {},
-            modals: queryRouter
+            modals: queryRouter,
+            loading: false,
         }),
         computed: {
             ...mapState({
                 connection: state => !state.connection_lost, //TODO show notification if connection lost
-            })
+            }),
+            loadingStyle() {
+                return this.loading ? {visibility: 'hidden'} : {};
+            }
         },
         methods: {
             async restoreConnection() { //TODO call when 'try for connection' pressed
@@ -87,30 +91,21 @@
                 await new Promise(resolve => this.$nextTick(resolve));
             },
         },
-        mounted() {
-            // set hasNavigation
+        watch: {
+            '$route'(to) {
+                if (!to.matched) return;
 
-            function setRouterViews(vm) {
-                vm.$once('before-destroy', () => vm = undefined);
-
-                return to => {
-                    if (vm) {
-                        let has = {};
-                        for (let view of ['navigation']) {
-                            has[view] = !!to.matched[0].components[view];
-                        }
-
-                        vm.has = has;
-                    }
+                let has = {};
+                for (let view of ['navigation']) {
+                    has[view] = !!to.matched[0].components[view];
                 }
-            }
 
-            const func = setRouterViews(this);
-            func(this.$route);
-            this.$router.afterEach(func);
+                this.has = has;
+            }
         },
-        beforeDestroy() {
-            this.$emit('before-destroy');
+        mounted() {
+            this.$onVue(routeEvents, 'loading', () => this.loading = true);
+            this.$onVue(routeEvents, 'loaded', () => this.loading = false);
         }
     };
 </script>

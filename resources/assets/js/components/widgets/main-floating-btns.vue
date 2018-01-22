@@ -44,7 +44,7 @@
         watch: {
             '$route'(route) {
                 this.scrollY = window.scrollY;
-                this.backShown = !router.getCurrentRouteMainComponent().isTopLevelRoute;
+                this.backShown = !router.getRouteMainComponent().isTopLevelRoute;
                 this.buttons = this.aButtons;
             }
         },

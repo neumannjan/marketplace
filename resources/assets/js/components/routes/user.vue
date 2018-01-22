@@ -6,13 +6,51 @@
 
 <script>
     import route from 'JS/components/mixins/route';
+    import routeFetch from 'JS/components/mixins/route-fetch';
     import api from 'JS/api';
     import OfferMasonry from 'JS/components/widgets/cards/data-aware/offer/offer-masonry';
     import router, {events as routeEvents} from 'JS/router';
+    import store from 'JS/store';
+
+    async function fetch(params) {
+        let result = {};
+
+        const scopes = store.getters.scope;
+
+        const response = await api.requestMultiple({
+            user: {
+                scope: scopes.user,
+                username: params.username,
+            },
+            offers: {
+                scope: scopes.offer,
+                'author/username': params.username,
+            }
+        });
+
+        result.user = response.user.result;
+
+        if (result.user === null) {
+            router.replace({name: 'error'});
+            return;
+        }
+
+        result.startOffers = response.offers.result.data;
+        result.nextUrl = response.offers.result.next_page_url;
+
+        return result;
+    }
+
+    const dataDef = {
+        user: null,
+        startOffers: null,
+        nextUrl: null,
+        shown: true
+    };
 
     export default {
         name: 'user-route',
-        mixins: [route],
+        mixins: [route, routeFetch(fetch, dataDef)],
         components: {
             OfferMasonry
         },
@@ -22,11 +60,12 @@
                 required: true
             }
         },
-        data: () => ({
-            user: null,
-            startOffers: null,
-            nextUrl: null
-        }),
+        data: () => ({...dataDef}),
+        watch: {
+            user(val) {
+                routeEvents.$emit('user-navigation', val);
+            }
+        },
         computed: {
             title() {
                 return this.user ? this.user.display_name : this.username;
@@ -37,50 +76,6 @@
             isTopLevelRoute() {
                 return this.isThisUser;
             }
-        },
-        methods: {
-            async begin() {
-                if (this.startOffers) {
-                    this.startOffers = null;
-                    await new Promise(resolve => this.$nextTick(resolve));
-                }
-
-                routeEvents.$emit('user-navigation', null);
-
-                const scopes = this.$store.getters.scope;
-
-                const result = await api.requestMultiple({
-                    user: {
-                        scope: scopes.user,
-                        username: this.username,
-                    },
-                    offers: {
-                        scope: scopes.offer,
-                        'author/username': this.username,
-                    }
-                });
-
-                this.user = result.user.result;
-
-                if (this.user === null) {
-                    this.$router.replace({name: 'error'});
-                    return;
-                }
-
-                routeEvents.$emit('user-navigation', this.user);
-
-                this.startOffers = result.offers.result.data;
-                this.nextUrl = result.offers.result.next_page_url;
-            }
-
-        },
-        created() {
-            this.begin();
-        },
-        beforeRouteUpdate(to, from, next) {
-            if (!router.routesMatch(to, from))
-                this.begin();
-            next();
         },
     };
 </script>

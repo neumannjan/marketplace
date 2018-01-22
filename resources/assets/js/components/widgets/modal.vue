@@ -37,11 +37,13 @@
         mounted() {
             ++modals;
 
-            this.scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-            document.body.style.paddingRight = `${this.scrollbarWidth}px`;
-            document.body.style.overflowY = 'hidden';
+            this.$nextTick(() => {
+                this.scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+                document.body.style.paddingRight = `${this.scrollbarWidth}px`;
+                document.body.style.overflowY = 'hidden';
 
-            this.append(document.body);
+                this.append(document.body);
+            });
         },
         beforeDestroy() {
             --modals;

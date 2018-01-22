@@ -18,6 +18,9 @@
 
     import router from 'JS/router';
 
+    import 'vue-awesome/icons/expand';
+    import 'vue-awesome/icons/times';
+
     export default {
         components: {OfferRoute},
         name: "offer-modal",

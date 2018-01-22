@@ -17,7 +17,7 @@
     import Pool from 'JS/tools/pool';
     import throttle from 'lodash/throttle';
     import helpers from 'JS/helpers';
-    import main from 'JS/app';
+    import {events as appEvents} from 'JS/app';
 
     import 'vue-awesome/icons/chain-broken';
 
@@ -165,12 +165,12 @@
                 const p3 = new Promise(resolve => {
                     const func = () => {
                         if (this.inViewportCheck()) {
-                            main.app.$off(main.events.VIEWPORT_CHANGE, func);
+                            appEvents.$off('viewport_change', func);
                             resolve();
                         }
                     };
 
-                    main.app.$on(main.events.VIEWPORT_CHANGE, func);
+                    appEvents.$on('viewport_change', func);
                 });
 
                 return Promise.race([p1, p2, p3]);
@@ -207,10 +207,11 @@
 
                 const thumbImage = loadedImage;
 
-                const canvas = this.$refs.canvas;
-                const ctx = canvas.getContext('2d');
+                let canvas = this.$refs.canvas;
+                let ctx;
 
-                if (!thumbFailed) {
+                if (canvas && !thumbFailed) {
+                    ctx = canvas.getContext('2d');
                     ctx.drawImage(thumbImage, 0, 0, this.width, this.height);
                     Blur.canvasRGB(canvas, 0, 0, this.width, this.height, this.blur);
                 }
@@ -227,6 +228,9 @@
                     this.shown = true;
                     return;
                 }
+
+                canvas = this.$refs.canvas;
+                ctx = canvas.getContext('2d');
 
                 const dimensions = canvas.getBoundingClientRect();
                 const width = Math.min(this.width, dimensions.width);
