@@ -32,7 +32,7 @@
             }
         },
         methods: {
-            async begin() {
+            async fetch() {
                 if (this.offer) {
                     this.offer = null;
                     await new Promise(resolve => this.$nextTick(resolve));
@@ -46,10 +46,10 @@
 
         },
         created() {
-            this.begin();
+            this.fetch();
         },
         beforeRouteUpdate(to, from, next) {
-            this.begin();
+            this.fetch();
             next();
         },
     }

@@ -86,9 +86,9 @@
                 this.$store.commit('connection', true);
 
                 this.shown = false;
-                await new Promise(resolve => this.$nextTick(resolve));
+                await this.$nextTick();
                 this.shown = true;
-                await new Promise(resolve => this.$nextTick(resolve));
+                await this.$nextTick();
             },
         },
         watch: {

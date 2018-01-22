@@ -103,7 +103,7 @@
 
                 if (this.user && user) {
                     this.user = null;
-                    await new Promise(resolve => this.$nextTick(resolve));
+                    await this.$nextTick();
                 }
 
                 this.user = user;

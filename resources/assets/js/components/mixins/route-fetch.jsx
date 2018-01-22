@@ -1,62 +1,73 @@
 import router, {events} from 'JS/router';
 
-async function handleResult(vm, result, nullObj) {
-    function setValues(from) {
-        for (let [key, value] of Object.entries(from))
-            vm.$data[key] = value;
-    }
+export default (fetchAsyncFunction, nullObj, before = true) => {
 
-    setValues(nullObj);
-    await vm.$nextTick();
-
-    if (result !== undefined) {
-        setValues(result);
-        await vm.$nextTick();
-    }
-
-    events.$emit('loaded');
-}
-
-function preFetch() {
-    events.$emit('loading');
-}
-
-export default (fetchAsyncFunction, nullObj) => ({
-    beforeRouteEnter(to, from, next) {
-        preFetch();
-        fetchAsyncFunction(to.params).then(result => {
-            next(vm => {
-                handleResult(vm, result, nullObj);
-            });
-        });
-
-    },
-    beforeRouteUpdate(to, from, next) {
-        if (router.routesMatch(to, from)) {
-            next();
-            return;
+    async function handleResult(vm, result) {
+        function setValues(from) {
+            for (let [key, value] of Object.entries(from))
+                vm.$data[key] = value;
         }
 
-        preFetch();
-        fetchAsyncFunction(to.params).then(result => {
-            handleResult(this, result, nullObj);
-            next();
-        });
-    },
-    created() {
-        let willExecuteRouteEvent = false;
-        for (let matched of this.$route.matched) {
-            for (let instance of Object.values(matched.instances)) {
-                if (instance === this) {
-                    willExecuteRouteEvent = true;
-                    break;
+        setValues(nullObj);
+        await vm.$nextTick();
+
+        if (result !== undefined) {
+            setValues(result);
+            await vm.$nextTick();
+        }
+
+        events.$emit('loaded');
+    }
+
+    function notifyLoading() {
+        if (before)
+            events.$emit('loading');
+    }
+
+    return {
+        beforeRouteEnter(to, from, next) {
+            if (before) {
+                notifyLoading();
+                fetchAsyncFunction(to.params).then(result => {
+                    next(vm => {
+                        handleResult(vm, result);
+                    });
+                });
+            } else {
+                next();
+            }
+        },
+        beforeRouteUpdate(to, from, next) {
+            if (router.routesMatch(to, from)) {
+                next();
+                return;
+            }
+
+            notifyLoading();
+            fetchAsyncFunction(to.params).then(result => {
+                if (!before) next();
+                handleResult(this, result);
+                if (before) next();
+            });
+        },
+        created() {
+            let fetchLater = false;
+
+            if (before) {
+                for (let matched of this.$route.matched) {
+                    for (let instance of Object.values(matched.instances)) {
+                        if (instance === this) {
+                            fetchLater = true;
+                            break;
+                        }
+                    }
                 }
             }
-        }
 
-        if (!willExecuteRouteEvent) {
-            preFetch();
-            fetchAsyncFunction(this.$route.params).then(result => handleResult(this, result, nullObj));
+            if (!fetchLater) {
+                notifyLoading();
+                fetchAsyncFunction(this.$data).then(result => handleResult(this, result));
+            }
         }
-    }
-})
+    };
+}

@@ -116,9 +116,6 @@ const router = new VueRouter({
             name: 'offer',
             component: OfferRoute,
             props: route => ({id: parseInt(route.params.id)}),
-            meta: {
-                async: true
-            }
         },
         {
             path: '/404',

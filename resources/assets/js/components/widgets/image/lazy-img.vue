@@ -319,7 +319,7 @@
             });
 
             await this.onViewportEnter();
-            await new Promise(resolve => this.$nextTick(resolve));
+            await this.$nextTick();
 
             await this.load(thumbRequest);
 
