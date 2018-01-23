@@ -79,7 +79,7 @@ abstract class PaginatedRequest extends Request
     /**
      * Returns an array of parameters that should be present in the URL get query in next/previous URLs
      * @param Collection $parameters
-     * @return array
+     * @return string[]
      */
     protected abstract function urlParameters(Collection $parameters);
 
@@ -87,7 +87,7 @@ abstract class PaginatedRequest extends Request
      * Returns an array of parameters that should be present in the URL get query in next/previous URLs.
      * Should be used by abstract classes and should always concatenate result with parent implementation.
      * @param Collection $parameters
-     * @return array
+     * @return string[]
      */
     protected function _urlParameters(Collection $parameters)
     {

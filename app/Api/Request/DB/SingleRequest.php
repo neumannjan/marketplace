@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 /**
  * An API request to retrieve a single DB entry
  */
-abstract class SingleRequest extends Request
+class SingleRequest extends Request
 {
     use DBRequest;
 

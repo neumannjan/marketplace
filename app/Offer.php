@@ -6,8 +6,10 @@ namespace App;
 use App\Eloquent\AuthorizationAwareModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Laravel\Scout\Searchable;
 use Money\Money;
 
 /**
@@ -15,6 +17,8 @@ use Money\Money;
  */
 class Offer extends Model implements AuthorizationAwareModel
 {
+    use Searchable;
+
     const STATUS_DRAFT = 0;
     const STATUS_AVAILABLE = 1;
     const STATUS_SOLD = 2;
@@ -89,6 +93,17 @@ class Offer extends Model implements AuthorizationAwareModel
     public function getExpiredAttribute()
     {
         return $this->status === self::STATUS_AVAILABLE && $this->listed_at->lessThan($this->expiredFromTimestamp());
+    }
+
+    /**
+     * Whether this offer can be displayed
+     * @return bool
+     */
+    public function getDisplayableAttribute()
+    {
+        return !$this->expired
+            && $this->status === self::STATUS_AVAILABLE
+            && $this->author->status === User::STATUS_ACTIVE;
     }
 
     /**
@@ -199,5 +214,13 @@ class Offer extends Model implements AuthorizationAwareModel
         }
 
         return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function toSearchableArray()
+    {
+        return Arr::only($this->toArray(), ['name', 'description']);
     }
 }

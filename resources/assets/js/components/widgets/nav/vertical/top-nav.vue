@@ -7,7 +7,7 @@
     import {mapState} from 'vuex';
 
     import 'vue-awesome/icons/home';
-    import 'vue-awesome/icons/cog';
+    import 'vue-awesome/icons/search';
     import 'vue-awesome/icons/user';
 
     export default {
@@ -25,9 +25,9 @@
                             route: 'index'
                         },
                         {
-                            label: 'Test',
-                            icon: 'cog',
-                            route: 'test'
+                            label: 'Search',
+                            icon: 'search',
+                            route: 'search'
                         }
                     ];
 

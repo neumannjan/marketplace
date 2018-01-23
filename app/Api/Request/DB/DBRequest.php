@@ -14,29 +14,7 @@ use Illuminate\Validation\Rule;
  */
 trait DBRequest
 {
-
-    /**
-     * Returns name of a Model class to be used.
-     * @return string
-     */
-    protected abstract function modelClass();
-
-    /**
-     * Returns name of a Resource class to be used. If false, no Resource class used
-     * @return string|false
-     */
-    protected function resourceClass()
-    {
-        return false;
-    }
-
-    /**
-     * Used to add additional parameters to the query
-     * @param Builder $query
-     * @param Collection $parameters
-     * @return Builder
-     */
-    protected abstract function additionalQuery(Builder $query, Collection $parameters);
+    use BasicDBRequest;
 
     /**
      * @inheritDoc
@@ -54,16 +32,6 @@ trait DBRequest
                     Rule::in($model->getPublicScopes())
                 ]
             ] + parent::_rules();
-    }
-
-    /**
-     * Get a Collection of parameters related to the database
-     * @param Collection $parameters
-     * @return Collection
-     */
-    protected function getDBParameters(Collection $parameters)
-    {
-        return $parameters->except(array_keys(self::_rules()));
     }
 
     /**
@@ -90,6 +58,21 @@ trait DBRequest
         $query->whereHas($parts[0], function (Builder $query) use ($parts, $param, $operator, $value, $boolean) {
             $query->where($parts[1], $operator, $value, $boolean);
         });
+    }
+
+    /**
+     * Used to add additional parameters to the query
+     * @param Builder|\Laravel\Scout\Builder $query
+     * @param Collection $parameters
+     * @return Builder|\Laravel\Scout\Builder
+     */
+    protected function additionalQuery($query, Collection $parameters)
+    {
+        foreach ($this->getDBParameters($parameters) as $key => $value) {
+            $this->addWhere($query, $key, '=', $value);
+        }
+
+        return $query;
     }
 
     /**

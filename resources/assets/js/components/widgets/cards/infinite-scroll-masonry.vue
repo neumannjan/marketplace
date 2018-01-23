@@ -37,7 +37,7 @@
                 type: Array,
             },
             masonryClass: {
-                default: []
+                default: () => []
             }
         },
         components: {

@@ -8,8 +8,9 @@ use App\Api\Request\Auth\LogoutRequest;
 use App\Api\Request\Auth\PasswordEmailRequest;
 use App\Api\Request\Auth\PasswordResetRequest;
 use App\Api\Request\Auth\RegisterRequest;
-use App\Api\Request\DB\BasicMultiRequest;
-use App\Api\Request\DB\BasicSingleRequest;
+use App\Api\Request\DB\MultiRequest;
+use App\Api\Request\DB\OfferSearchRequest;
+use App\Api\Request\DB\SingleRequest;
 use App\Api\Request\GlobalRequest;
 use App\Api\Request\Request as ApiRequest;
 use App\Api\Response\CompositeResponse as CompositeApiResponse;
@@ -43,9 +44,10 @@ class PrivateApiController extends Controller
             'password-reset' => PasswordResetRequest::class,
 
             //DB
-            'offers' => [BasicMultiRequest::class, Offer::class, \App\Http\Resources\Offer::class],
-            'offer' => [BasicSingleRequest::class, Offer::class, \App\Http\Resources\Offer::class],
-            'user' => [BasicSingleRequest::class, User::class, \App\Http\Resources\User::class],
+            'offers' => [MultiRequest::class, Offer::class, \App\Http\Resources\Offer::class],
+            'offer' => [SingleRequest::class, Offer::class, \App\Http\Resources\Offer::class],
+            'user' => [SingleRequest::class, User::class, \App\Http\Resources\User::class],
+            'search' => OfferSearchRequest::class,
         ];
     }
 

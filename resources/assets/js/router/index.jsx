@@ -6,6 +6,7 @@ import TestRoute from '../components/routes/test';
 import ErrorRoute from '../components/routes/404';
 import UserRoute from '../components/routes/user';
 import OfferRoute from '../components/routes/offer';
+import SearchRoute from '../components/routes/search';
 
 import LoginRoute from '../components/routes/auth/login';
 import RegisterRoute from '../components/routes/auth/register';
@@ -119,6 +120,11 @@ const router = new VueRouter({
             name: 'offer',
             component: OfferRoute,
             props: route => ({id: parseInt(route.params.id)}),
+        },
+        {
+            path: '/search',
+            name: 'search',
+            component: SearchRoute
         },
         {
             path: '/404',

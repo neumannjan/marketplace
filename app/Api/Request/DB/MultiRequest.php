@@ -9,7 +9,7 @@ use Illuminate\Support\Collection;
 /**
  * An API request to retrieve a list of DB entries
  */
-abstract class MultiRequest extends PaginatedRequest
+class MultiRequest extends PaginatedRequest
 {
     use DBRequest;
 

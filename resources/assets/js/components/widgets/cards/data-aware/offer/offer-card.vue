@@ -211,6 +211,7 @@
             toOffer() {
                 return {
                     query: {
+                        ...this.$route.query,
                         offer: this.data.id
                     }
                 }
