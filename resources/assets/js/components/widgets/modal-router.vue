@@ -1,10 +1,11 @@
 <template>
     <div>
-        <modal lg v-for="(component, key) in data"
+        <modal v-for="(modal, key) in data"
                v-if="$route.query[key]"
                :key="key"
+               :size="modal.size"
                @close="close(key)">
-            <component :is="component" v-bind="{[key]: $route.query[key]}" @close="close(key)"/>
+            <component :is="modal.component" v-bind="{[key]: $route.query[key]}" @close="close(key)"/>
         </modal>
     </div>
 </template>
@@ -33,7 +34,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>

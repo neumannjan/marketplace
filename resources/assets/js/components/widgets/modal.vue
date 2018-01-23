@@ -3,8 +3,8 @@
         <div class="modal-backdrop fade show" ref="backdrop"></div>
         <div class="modal fade show" role="dialog" ref="content"
              @click.self="$emit('close')"
-             :style="{display: 'block', overflowX: 'hidden', overflowY: 'auto', marginRight: `-${scrollbarWidth}px`}">
-            <div :class="['modal-dialog', {'modal-lg': lg, 'modal-sm': sm}]"
+             :style="{display: 'block', overflowX: 'hidden', overflowY: 'auto'}">
+            <div :class="['modal-dialog', {[`modal-${size}`]: size}]"
                  :style="{pointerEvents: 'auto'}" role="document">
                 <slot/>
             </div>
@@ -19,8 +19,7 @@
     export default {
         name: "modal",
         props: {
-            lg: Boolean,
-            sm: Boolean,
+            size: String,
         },
         data: () => ({
             scrollbarWidth: 0

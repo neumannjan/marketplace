@@ -32,7 +32,10 @@ export const cached = (suffix = '') => suffix ? cachedRouteComponents.map((route
 export const events = new Vue();
 
 export const queryRouter = {
-    offer: OfferModal
+    offer: {
+        component: OfferModal,
+        size: 'xl'
+    }
 };
 
 const router = new VueRouter({

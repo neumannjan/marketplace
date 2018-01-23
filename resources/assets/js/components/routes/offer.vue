@@ -11,6 +11,8 @@
     import api from 'JS/api';
     import OfferCard from 'JS/components/widgets/cards/data-aware/offer/offer-card';
 
+    import router from 'JS/router';
+
     export default {
         name: "offer-route",
         mixins: [route],
@@ -42,6 +44,10 @@
                     scope: this.$store.getters.scope.offer,
                     id: this.id
                 });
+
+                if (!this.offer) {
+                    router.replace({name: 'error'});
+                }
             }
 
         },
@@ -54,7 +60,3 @@
         },
     }
 </script>
-
-<style scoped>
-
-</style>
