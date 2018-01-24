@@ -1,5 +1,5 @@
 <template>
-    <infinite-scroll-masonry masonry-class="row" @request="cache" :url="url" :start-cards="startCards">
+    <infinite-scroll-masonry masonry-class="row" :url="url" :start-cards="startCards">
         <offer-card slot-scope="props" :data="props.data" :show-author="showAuthor"/>
         <div slot="loading" class="masonry-card col-flexible">
             <loading-offer-card/>
@@ -33,11 +33,6 @@
             InfiniteScrollMasonry,
             LoadingOfferCard,
             OfferCard
-        },
-        methods: {
-            cache(result) {
-                this.$store.commit('cache/putOffers', result.data);
-            }
         }
     };
 </script>

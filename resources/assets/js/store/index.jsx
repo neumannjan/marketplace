@@ -2,14 +2,9 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import api from 'JS/api';
 
-import cache from './modules/cache';
-
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
-    modules: {
-        cache
-    },
     strict: true,
     state: {
         is_authenticated: false,
