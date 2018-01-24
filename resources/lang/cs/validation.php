@@ -13,6 +13,8 @@ return [
     |
     */
 
+    'default' => ':attribute je neplatný.',
+
     'accepted' => ':attribute musí být přijat.',
     'active_url' => ':attribute není platnou URL adresou.',
     'after' => ':attribute musí být datum po :date.',

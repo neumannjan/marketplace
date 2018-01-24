@@ -9,7 +9,7 @@ $factory->define(\App\Offer::class, function (Faker $faker) {
         'name' => $faker->words(3, true),
         'description' => $faker->boolean ? $faker->realText($faker->numberBetween(100, 400)) : '',
         'listed_at' => $faker->dateTimeBetween('-3 months'),
-        'price_value' => $faker->randomFloat(3, 0, 10000),
+        'price' => $faker->randomFloat(3, 0, 1000),
         'currency_code' => $faker->currencyCode,
         'status' => $faker->biasedNumberBetween(0, 2, function ($i) {
             return sin($i * M_PI);

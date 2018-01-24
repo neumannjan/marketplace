@@ -8,6 +8,8 @@ import UserRoute from '../components/routes/user';
 import OfferRoute from '../components/routes/offer';
 import SearchRoute from '../components/routes/search';
 
+import OfferFormRoute from '../components/routes/offer-form';
+
 import LoginRoute from '../components/routes/auth/login';
 import RegisterRoute from '../components/routes/auth/register';
 import PasswordEmailRoute from '../components/routes/auth/password-email';
@@ -26,7 +28,8 @@ Vue.use(VueRouter);
 
 const cachedRouteComponents = [
     'index-route',
-    'search-route'
+    'search-route',
+    'offer-form-route'
 ];
 
 export const cached = (suffix = '') => suffix ? cachedRouteComponents.map((route) => `${route}-${suffix}`) : cachedRouteComponents;
@@ -55,17 +58,22 @@ const router = new VueRouter({
         return undefined;
     },
     routes: [
+        // Index page
         {
             path: '/',
             name: 'index',
             component: IndexRoute
         },
+
+        // Test page TODO remove
         {
             path: '/test',
             name: 'test',
             component: TestRoute,
             props: true
         },
+
+        // Auth pages
         {
             path: '/login',
             name: 'login',
@@ -91,6 +99,8 @@ const router = new VueRouter({
             props: true,
             ...GuestGuard
         },
+
+        // Display pages
         {
             path: '/user/:username',
             name: 'user',
@@ -117,7 +127,7 @@ const router = new VueRouter({
             ...AuthGuard
         },
         {
-            path: '/offer/:id',
+            path: '/offer/:id(\\d+)',
             name: 'offer',
             component: OfferRoute,
             props: route => ({id: parseInt(route.params.id)}),
@@ -128,6 +138,16 @@ const router = new VueRouter({
             component: SearchRoute,
             props: true
         },
+
+        // Modify pages
+        {
+            path: '/offer/create',
+            name: 'offer-create',
+            component: OfferFormRoute,
+            ...AuthGuard
+        },
+
+        // error
         {
             path: '/404',
             name: 'error',
@@ -150,6 +170,9 @@ router.getRouteMainComponent = (route = router.currentRoute) => {
 };
 
 router.routesMatch = (route1, route2 = router.currentRoute, ignoreParams = false) => {
+    if (!route1 || !route2)
+        return false;
+
     if (route1.path === route2.path)
         return true;
 

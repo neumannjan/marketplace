@@ -13,6 +13,8 @@ return [
     |
     */
 
+    'default' => ':attribute is invalid.',
+
     'accepted' => ':attribute must be accepted.',
     'active_url' => ':attribute is not a valid URL.',
     'after' => ':attribute must be a date after :date.',

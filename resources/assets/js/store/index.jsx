@@ -14,6 +14,7 @@ const store = new Vuex.Store({
         token: false,
         flash: {},
         messages: [],
+        currencies: [],
         reRoutedTimes: -1
     },
     mutations: {

@@ -4,6 +4,8 @@ namespace App;
 
 
 use App\Eloquent\AuthorizationAwareModel;
+use App\Rules\CurrencyRule;
+use App\Rules\MoneyRule;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -74,6 +76,16 @@ class Offer extends Model implements AuthorizationAwareModel
     public function getPriceAttribute()
     {
         return \Money::getFormatter()->format($this->money);
+    }
+
+    public function setPriceAttribute($price)
+    {
+        $this->price_value = $price;
+    }
+
+    public function setCurrencyAttribute($currency)
+    {
+        $this->currency_code = $currency;
     }
 
     /**
@@ -222,5 +234,19 @@ class Offer extends Model implements AuthorizationAwareModel
     public function toSearchableArray()
     {
         return Arr::only($this->toArray(), ['name', 'description']);
+    }
+
+    /**
+     * Get validation rules for a creation request.
+     * @return array
+     */
+    public static function getValidationRules()
+    {
+        return [
+            'name' => 'required|string|min:3|max:255',
+            'description' => 'string|min:5',
+            'currency' => ['required', resolve(CurrencyRule::class)],
+            'price' => ['required', new MoneyRule()]
+        ];
     }
 }

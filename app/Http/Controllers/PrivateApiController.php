@@ -9,7 +9,8 @@ use App\Api\Request\Auth\PasswordEmailRequest;
 use App\Api\Request\Auth\PasswordResetRequest;
 use App\Api\Request\Auth\RegisterRequest;
 use App\Api\Request\DB\MultiRequest;
-use App\Api\Request\DB\OfferSearchRequest;
+use App\Api\Request\DB\Offer\OfferCreateRequest;
+use App\Api\Request\DB\Offer\OfferSearchRequest;
 use App\Api\Request\DB\SingleRequest;
 use App\Api\Request\GlobalRequest;
 use App\Api\Request\Request as ApiRequest;
@@ -17,6 +18,7 @@ use App\Api\Response\CompositeResponse as CompositeApiResponse;
 use App\Api\Response\Response as ApiResponse;
 use App\Offer;
 use App\User;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -33,29 +35,49 @@ class PrivateApiController extends Controller
     public function __construct()
     {
         $this->requests = [
-            //Global
+            // Global
             'global' => GlobalRequest::class,
 
-            //Auth
+            // Auth
             'login' => LoginRequest::class,
             'logout' => LogoutRequest::class,
             'register' => RegisterRequest::class,
             'password-email' => PasswordEmailRequest::class,
             'password-reset' => PasswordResetRequest::class,
 
-            //DB
-            'offers' => [MultiRequest::class, Offer::class, \App\Http\Resources\Offer::class],
-            'offer' => [SingleRequest::class, Offer::class, \App\Http\Resources\Offer::class],
-            'user' => [SingleRequest::class, User::class, \App\Http\Resources\User::class],
+            // DB get
+            'offers' => [
+                MultiRequest::class,
+                'modelClass' => Offer::class,
+                'resourceClass' => \App\Http\Resources\Offer::class
+            ],
+
+            'offer' => [
+                SingleRequest::class,
+                'modelClass' => Offer::class,
+                'resourceClass' => \App\Http\Resources\Offer::class
+            ],
+
+            'user' => [
+                SingleRequest::class,
+                'modelClass' => User::class,
+                'resourceClass' => \App\Http\Resources\User::class
+            ],
+
             'search' => OfferSearchRequest::class,
+
+            // DB set
+            'offer-create' => OfferCreateRequest::class
         ];
     }
 
     /**
      * @param array $data
+     * @param Request $request
+     * @param Application $app
      * @return JsonResponse
      */
-    protected function resolve($data)
+    protected function resolve($data, Request $request, Application $app)
     {
         $responses = [];
         if ($data != null) {
@@ -69,10 +91,12 @@ class PrivateApiController extends Controller
 
                     if (is_array($requestDefinition)) {
                         $class = array_shift($requestDefinition);
-                        $apiRequest = new $class(...$requestDefinition);
+                        $apiRequest = $app->make($class, $requestDefinition);
                     } else {
-                        $apiRequest = new $requestDefinition();
+                        $apiRequest = $app->make($requestDefinition);
                     }
+
+                    $apiRequest->setHttpRequest($request);
 
                     if ($parameters instanceof \stdClass) {
                         $parameters = (array)$parameters;
@@ -95,16 +119,16 @@ class PrivateApiController extends Controller
         return new JsonResponse($compositeResponse);
     }
 
-    public function index(Request $request)
+    public function index(Request $request, Application $app)
     {
-        return $this->resolve(json_decode($request->input("api"), true));
+        return $this->resolve(json_decode($request->input("api"), true), $request, $app);
     }
 
-    public function single($name, Request $request)
+    public function single($name, Request $request, Application $app)
     {
         return $this->resolve([
             $name => $request->input(),
             'global' => '' //add global request automatically for single requests
-        ]);
+        ], $request, $app);
     }
 }

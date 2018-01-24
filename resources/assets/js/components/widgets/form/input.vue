@@ -1,10 +1,20 @@
 <template>
     <div>
-        <label :for="id">
+        <label v-if="showLabel" :for="id">
             <slot>{{ label }}</slot>
         </label>
-        <input :id="id" :name="name" :type="type" :class="['form-control', {'is-invalid': error, 'is-valid': valid}]"
+        <textarea v-if="textarea"
+                  :rows="textarea"
+                  :id="id" :name="name" :class="['form-control', {'is-invalid': error, 'is-valid': valid}]"
+                  :placeholder="placeholder"
+                  :title="label"
+                  @input="onInput" @blur="touch()" :autofocus="autofocus"
+                  :required="required" :aria-describedby="hint ? hintId : false">{{ value }}</textarea>
+        <input v-else
+               :id="id" :name="name" :type="type" :class="['form-control', {'is-invalid': error, 'is-valid': valid}]"
                :value="value"
+               :placeholder="placeholder"
+               :title="label"
                @input="onInput" @blur="touch()" :autofocus="autofocus"
                :required="required" :aria-describedby="hint ? hintId : false">
         <span v-if="error" class="invalid-feedback"><strong>{{ error }}</strong></span>
@@ -22,11 +32,17 @@
         }),
         props: {
             validation: Object,
+            textarea: Number,
             serverValidation: Array,
             label: {
                 type: String,
                 required: true
             },
+            showLabel: {
+                type: Boolean,
+                default: true
+            },
+            placeholder: String,
             hint: String,
             type: {
                 type: String,
@@ -36,6 +52,7 @@
                 type: String,
                 required: true
             },
+            errorLabel: String,
             value: String,
             autofocus: Boolean,
             required: Boolean,
@@ -78,7 +95,7 @@
                 for (let key of params) {
                     if (!this.validation[key]) {
                         return storeHelpers.trans('validation.' + key, {
-                            attribute: this.label,
+                            attribute: this.errorLabel ? this.errorLabel : this.label,
                             ...this.validation.$params[key]
                         });
                     }

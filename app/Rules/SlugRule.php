@@ -2,7 +2,6 @@
 
 namespace App\Rules;
 
-use http\Exception\RuntimeException;
 use Illuminate\Contracts\Validation\Rule;
 
 /**
@@ -24,7 +23,7 @@ class SlugRule implements Rule
         $result = preg_match('/^[a-zA-Z0-9-_]+$/', $value);
 
         if ($result === false) {
-            throw new RuntimeException();
+            throw new \RuntimeException();
         }
 
         return $result ? true : false;

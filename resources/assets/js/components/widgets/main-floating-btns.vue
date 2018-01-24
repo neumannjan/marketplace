@@ -12,21 +12,18 @@
     import 'vue-awesome/icons/bell';
     import 'vue-awesome/icons/angle-left';
     import 'vue-awesome/icons/angle-up';
-    import 'vue-awesome/icons/search';
 
     const BTN_ADD = 'add';
     const BTN_CHAT = 'chat';
     const BTN_NOTIFICATIONS = 'notifications';
     const BTN_BACK = 'back';
     const BTN_UP = 'up';
-    const BTN_SEARCH = 'search';
 
     //TODO labels
     const buttons = [
-        {id: BTN_ADD, icon: 'plus', class: 'btn-primary'},
+        {id: BTN_ADD, icon: 'plus', class: 'btn-primary', show: () => router.currentRoute.name !== 'offer-create'},
         {id: BTN_CHAT, icon: 'comment'},
         {id: BTN_NOTIFICATIONS, icon: 'bell'},
-        {id: BTN_SEARCH, icon: 'search', class: 'btn-info'},
     ];
 
     const backButton = {id: BTN_BACK, icon: 'angle-left'};
@@ -60,6 +57,7 @@
             click(button) {
                 switch (button.id) {
                     case BTN_ADD:
+                        router.push({name: 'offer-create'});
                         break;
                     case BTN_CHAT:
                         break;

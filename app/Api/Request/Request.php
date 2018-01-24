@@ -6,6 +6,7 @@ namespace App\Api\Request;
 use App\Api\Response\ExceptionSerializer;
 use App\Api\Response\Response;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -15,6 +16,12 @@ use Illuminate\Validation\ValidationException;
  */
 abstract class Request
 {
+
+    /**
+     * HTTP request
+     * @var \Illuminate\Http\Request
+     */
+    protected $httpRequest;
 
     /**
      * Decides whether the request will be resolved.
@@ -43,6 +50,14 @@ abstract class Request
     protected function _rules()
     {
         return $this->rules();
+    }
+
+    /**
+     * @param \Illuminate\Http\Request $httpRequest
+     */
+    public function setHttpRequest(HttpRequest $httpRequest)
+    {
+        $this->httpRequest = $httpRequest;
     }
 
     /**

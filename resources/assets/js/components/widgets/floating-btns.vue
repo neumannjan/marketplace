@@ -3,7 +3,8 @@
             name="tr"
             tag="div"
             class="fixed-bottom-right d-flex flex-column-reverse">
-        <button v-for="(button, index) in buttons" :key="button.id ? button.id : button.icon"
+        <button v-for="(button, index) in $data._buttons"
+                :key="button.id ? button.id : button.icon"
                 @click="$emit('click', button)"
                 :class="['btn btn-floating', `btn-floating-${index}`, button.class ? button.class : 'btn-dark']">
             <icon :name="button.icon" :label="button.label"/>
@@ -20,6 +21,29 @@
                 required: true
             },
         },
+        data: () => ({
+            _buttons: []
+        }),
+        watch: {
+            $route() {
+                this.setButtons();
+            },
+            buttons(b) {
+                this.setButtons();
+            }
+        },
+        methods: {
+            setButtons() {
+                let buttons = [];
+
+                for (let button of this.buttons) {
+                    if (!button.show || button.show() !== false)
+                        buttons.push(button);
+                }
+
+                this.$data._buttons = buttons;
+            }
+        }
     }
 
 </script>
@@ -31,11 +55,13 @@
     $duration: 300ms;
     $ease-in-quad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
     $ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    $ease-quad: cubic-bezier(0.455, 0.03, 0.515, 0.955);
 
     .btn-floating {
         position: absolute;
         right: 0;
         bottom: 0;
+        transition: transform $duration $ease-quad;
     }
 
     .tr-enter, .tr-leave-to {

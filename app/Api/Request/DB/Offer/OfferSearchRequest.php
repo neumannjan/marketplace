@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Api\Request\DB;
+namespace App\Api\Request\DB\Offer;
 
 
+use App\Api\Request\DB\SearchRequest;
 use App\Offer;
 use Laravel\Scout\Builder;
 

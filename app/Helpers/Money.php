@@ -20,6 +20,8 @@ class Money
     protected $decimalParser;
     /** @var \Money\MoneyFormatter */
     protected $formatter;
+    /** @var AggregateCurrencies */
+    protected $currencies;
 
     /**
      * Money constructor.
@@ -29,7 +31,7 @@ class Money
     {
         $bitcoinCurrencies = new BitcoinCurrencies();
         $isoCurrencies = new ISOCurrencies();
-        $allCurrencies = new AggregateCurrencies([
+        $this->currencies = $allCurrencies = new AggregateCurrencies([
             $bitcoinCurrencies,
             $isoCurrencies
         ]);
@@ -61,5 +63,13 @@ class Money
     public function getFormatter()
     {
         return $this->formatter;
+    }
+
+    /**
+     * @return \Money\Currencies\AggregateCurrencies
+     */
+    public function getCurrencies()
+    {
+        return $this->currencies;
     }
 }
