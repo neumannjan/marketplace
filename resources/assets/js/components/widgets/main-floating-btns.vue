@@ -47,7 +47,11 @@
         },
         computed: {
             aButtons() {
-                return this.backShown ? [...buttons, backButton] : buttons;
+                if (this.$store.state.is_authenticated)
+                    return this.backShown ? [...buttons, backButton] : buttons;
+                else
+                    return this.backShown ? [backButton] : [];
+
             },
             bButtons() {
                 return [upButton];
