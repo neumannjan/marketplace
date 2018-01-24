@@ -25,7 +25,8 @@ import store from 'JS/store';
 Vue.use(VueRouter);
 
 const cachedRouteComponents = [
-    'index-route'
+    'index-route',
+    'search-route'
 ];
 
 export const cached = (suffix = '') => suffix ? cachedRouteComponents.map((route) => `${route}-${suffix}`) : cachedRouteComponents;
@@ -122,9 +123,10 @@ const router = new VueRouter({
             props: route => ({id: parseInt(route.params.id)}),
         },
         {
-            path: '/search',
+            path: '/search/:query?',
             name: 'search',
-            component: SearchRoute
+            component: SearchRoute,
+            props: true
         },
         {
             path: '/404',
@@ -147,17 +149,26 @@ router.getRouteMainComponent = (route = router.currentRoute) => {
     return matched[matched.length - 1].instances.default;
 };
 
-router.routesMatch = (route1, route2 = router.currentRoute) => {
+router.routesMatch = (route1, route2 = router.currentRoute, ignoreParams = false) => {
     if (route1.path === route2.path)
         return true;
 
     if (route1.name !== route2.name)
         return false;
 
+    if (ignoreParams)
+        return true;
+
     let match = true;
-    for (let [key, param] of Object.entries(route2.params)) {
-        match = match && route1.params[key] === param;
-        if (!match) break;
+    if (route1.params !== route2.params) {
+        if (!route1.params || !route2.params) {
+            match = false;
+        } else {
+            for (let [key, param] of Object.entries(route2.params)) {
+                match = match && route1.params[key] === param;
+                if (!match) break;
+            }
+        }
     }
 
     return match;

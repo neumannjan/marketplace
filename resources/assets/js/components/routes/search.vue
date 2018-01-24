@@ -1,6 +1,6 @@
 <template>
-    <div class="container">
-        <search class="mb-4" @search="requestSearch"/>
+    <div>
+        <search class="mb-4" v-model="input" @submit="requestSearch"/>
         <template v-if="!loading">
             <offer-masonry v-if="results" :start-cards="results.data" :url="results.next_page_url"/>
             <div v-else class="h1 text-muted text-center">Enter to search</div>
@@ -16,13 +16,16 @@
 
     export default {
         name: "search-route",
+        props: {
+            query: String
+        },
         mixins: [route],
         components: {
             OfferMasonry,
             Search
         },
         data: () => ({
-            query: '', //TODO validate length
+            input: '',
             loading: false,
             results: null,
             isTopLevelRoute: true
@@ -33,18 +36,29 @@
             }
         },
         watch: {
-            $route() {
-                this.query = this.$route.query.q;
+            query(newQuery, oldQuery) {
+                this.performSearch(newQuery, oldQuery);
+            }
+        },
+        methods: {
+            requestSearch() {
+                this.$router.push({
+                    name: 'search',
+                    params: {
+                        query: this.input ? this.input : undefined
+                    }
+                });
             },
-            async query(newQuery, oldQuery) {
-                // search performed here
-
-                if (!newQuery) {
+            async performSearch(query, oldQuery = null) {
+                if (!query) {
                     this.results = null;
+                    this.input = '';
                     return;
                 }
 
-                if (newQuery === oldQuery)
+                this.input = query;
+
+                if (query === oldQuery)
                     return;
 
                 if (this.results) {
@@ -55,19 +69,14 @@
                 this.loading = true;
 
                 this.results = await api.requestSingle('search', {
-                    query: newQuery
+                    query: query
                 });
 
                 this.loading = false;
             }
         },
-        methods: {
-            requestSearch(query) {
-                this.$router.push({query: {q: query ? query : undefined}});
-            }
-        },
         mounted() {
-            this.query = this.$route.query.q;
+            this.performSearch(this.query);
         }
     }
 </script>

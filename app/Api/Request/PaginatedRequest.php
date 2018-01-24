@@ -51,6 +51,7 @@ abstract class PaginatedRequest extends Request
             }
         }
 
+        /** @var Paginator $paginator */
         $paginator = $this->paginator($parameters, $perPage, $page);
         $paginator->appends($query);
         $paginator->setPath(route('api.single', ['name' => $name], false));
@@ -70,8 +71,11 @@ abstract class PaginatedRequest extends Request
             $array['data'] = $resource->toArray(null);
             $result = $array;
         } else {
-            $result = $paginator;
+            $result = $paginator->toArray();
         }
+
+        //ensure that data will be encoded as an array
+        $result['data'] = array_values($result['data']);
 
         return new Response(true, $result);
     }

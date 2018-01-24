@@ -38,11 +38,15 @@
             icon: {
                 type: String
             },
+            activeAnyParams: {
+                type: Boolean,
+                default: false
+            },
             callback: {}
         },
         computed: {
             active() {
-                return router.routesMatch(this.routeDefinition, this.$route);
+                return router.routesMatch(this.routeDefinition, this.$route, this.activeAnyParams);
             },
             labelFull() {
                 return this.label + (this.active ? ' (current)' : ''); // TODO translate the "current" word

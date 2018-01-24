@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div>
         <offer-card v-if="offer" :data="offer" :large="true">
             <slot name="header-end" slot="header-end"/>
         </offer-card>

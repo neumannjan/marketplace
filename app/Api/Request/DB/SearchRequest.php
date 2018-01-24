@@ -5,7 +5,6 @@ namespace App\Api\Request\DB;
 
 use App\Api\Request\PaginatedRequest;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Searchable;
@@ -53,13 +52,6 @@ abstract class SearchRequest extends PaginatedRequest
     protected abstract function filterQuery(Builder $query);
 
     /**
-     * Filters the query results
-     * @param \Illuminate\Database\Eloquent\Collection $results
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    protected abstract function filterResults(\Illuminate\Database\Eloquent\Collection $results);
-
-    /**
      * @inheritDoc
      */
     protected function paginator(Collection $parameters, $perPage, $page)
@@ -70,11 +62,7 @@ abstract class SearchRequest extends PaginatedRequest
         $query = $modelClass::search($parameters['query']);
         $query = $this->filterQuery($query);
 
-        $results = $query->get();
-        $results = $this->filterResults($results);
-
-        return new LengthAwarePaginator($results->forPage($page, $perPage)->values(),
-            $results->count(), $perPage, $page);
+        return $query->paginate($perPage, 'page', $page);
     }
 
 }

@@ -16,16 +16,6 @@ class OfferSearchRequest extends SearchRequest
      */
     protected function filterQuery(Builder $query)
     {
-        return $query
-            ->where('status', Offer::STATUS_AVAILABLE);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function filterResults(\Illuminate\Database\Eloquent\Collection $results)
-    {
-        return $results
-            ->where('displayable', '=', true);
+        return $query->where('displayable', true);
     }
 }

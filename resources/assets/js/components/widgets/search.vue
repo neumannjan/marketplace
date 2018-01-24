@@ -12,7 +12,9 @@
                    class="search-form form-control"
                    type="text"
                    placeholder="Search"
-                   v-model="input">
+                   ref="input"
+                   :value="value"
+                   @input="e => input(e.target.value)">
         </div>
     </form>
 </template>
@@ -22,12 +24,15 @@
 
     export default {
         name: "search",
-        data: () => ({
-            input: '',
-        }),
+        props: {
+            value: String,
+        },
         methods: {
+            input(value) {
+                this.$emit('input', value);
+            },
             submit() {
-                this.$emit('search', this.input);
+                this.$emit('submit', this.$refs.input.value);
             }
         }
     }

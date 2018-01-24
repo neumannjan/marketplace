@@ -27,7 +27,8 @@
                         {
                             label: 'Search',
                             icon: 'search',
-                            route: 'search'
+                            route: 'search',
+                            activeAnyParams: true,
                         }
                     ];
 
