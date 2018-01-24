@@ -160,15 +160,9 @@ router.routesMatch = (route1, route2 = router.currentRoute, ignoreParams = false
         return true;
 
     let match = true;
-    if (route1.params !== route2.params) {
-        if (!route1.params || !route2.params) {
-            match = false;
-        } else {
-            for (let [key, param] of Object.entries(route2.params)) {
-                match = match && route1.params[key] === param;
-                if (!match) break;
-            }
-        }
+    for (let [key, param] of Object.entries(route2.params)) {
+        match = match && route1.params[key] === param;
+        if (!match) break;
     }
 
     return match;
