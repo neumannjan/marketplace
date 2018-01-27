@@ -31,6 +31,9 @@ class GlobalDataRequest extends Request
             $token = csrf_token();
         }
 
+        // locale
+        $locale = \App::getLocale();
+
         // authentication
 
         $is_authenticated = \Auth::check();
@@ -48,6 +51,7 @@ class GlobalDataRequest extends Request
 
         return compact(
             'token',
+            'locale',
             'is_authenticated',
             'user',
             'is_admin',

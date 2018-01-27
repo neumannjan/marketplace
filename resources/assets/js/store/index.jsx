@@ -27,6 +27,7 @@ const store = new Vuex.Store({
     strict: true,
     state: {
         is_authenticated: false,
+        locale: 'en',
         user: null,
         is_admin: false,
         connection_lost: false,

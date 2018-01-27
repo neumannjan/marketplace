@@ -30,17 +30,11 @@
                        type="text"
                        name="price"
                        v-model="form.price"/>
-                <select class="custom-select"
-                        id="currency"
-                        name="currency"
-                        title="Currency"
-                        v-model="form.currency">
-                    <option value="0">Currency</option>
-                    <option v-for="(subunit, currency) in currencies" :key="currency" :value="currency">
-                        {{currency}}
-                    </option>
-                </select>
+                <choices :items="choicesCurrencies"
+                         v-model="form.currency">
+                </choices>
             </div>
+            <div class="h3 my-3 price">{{ price }}</div>
         </form>
     </div>
 </template>
@@ -55,16 +49,18 @@
     import form from 'JS/components/mixins/form';
 
     import {cached} from 'JS/store';
+    import Choices from "JS/components/widgets/form/choices";
 
     export default {
         name: 'offer-form-route',
         mixins: [route, form],
         components: {
+            Choices,
             'form-input': InputComponent,
             'form-select': SelectComponent
         },
         data: () => ({
-            currencies: [],
+            currencies: {},
             form: {
                 name: "",
                 description: "",
@@ -82,6 +78,31 @@
                 //TODO
                 return 'Create offer';
             },
+            price() {
+                if (typeof this.form.currency !== "string" || (this.form.price !== 0 && !this.form.price))
+                    return '';
+
+                const val = new Intl.NumberFormat(this.$store.state.locale,
+                    {style: 'currency', currency: this.form.currency}).format(this.form.price);
+
+                return val.substr(0, 3) !== 'NaN' ? val : '';
+            },
+            choicesCurrencies() {
+                const currencies = Object.keys(this.currencies).map((currency, index) => ({
+                    value: currency,
+                    label: currency,
+                    id: index
+                }));
+
+                currencies.push({
+                    value: 0,
+                    label: 'Currency', //TODO translate
+                    selected: true,
+                    placeholder: true,
+                });
+
+                return currencies;
+            }
         },
         validations: {
             form: {
@@ -107,4 +128,9 @@
         flex-shrink: 0;
         width: auto;
     }
+
+    .price {
+        word-wrap: break-word;
+    }
+
 </style>
