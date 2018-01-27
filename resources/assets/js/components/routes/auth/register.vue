@@ -102,12 +102,12 @@
                 password: {
                     required,
                     min: minLength(8),
-                    nonNumeric(value) {
+                    containsNonNumeric(value) {
                         if (value === '') return true;
 
                         return value.match(/[^0-9]/) !== null;
                     },
-                    numeric(value) {
+                    containsNumeric(value) {
                         if (value === '') return true;
 
                         return value.match(/[0-9]/) !== null;

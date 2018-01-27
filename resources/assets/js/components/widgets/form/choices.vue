@@ -1,5 +1,5 @@
 <template>
-    <div ref="wrapper" class="form-control">
+    <div ref="wrapper" :class="['form-control', elemClass]">
         <select ref="select"></select>
     </div>
 </template>
@@ -20,9 +20,24 @@
                 type: Object,
                 default: () => ({})
             },
-            value: undefined
+            value: undefined,
+            elemClass: {}
         },
         watch: {
+            async elemClass() {
+                const wrapper = this.$refs.wrapper;
+                const el = this.el;
+
+                if (!el) return;
+
+                const oldClass = wrapper.className.split(' ');
+                await this.$nextTick();
+                const newClass = wrapper.className.split(' ');
+
+                el.className = [...el.className.split(' '), ...newClass]
+                    .filter((v, i, a) => a.indexOf(v) === i && (newClass.indexOf(v) >= 0 || oldClass.indexOf(v) < 0))
+                    .join(' ');
+            },
             items(val) {
                 this.choices.setChoices(val, 'value', 'label', true);
             },
@@ -32,7 +47,8 @@
             }
         },
         data: () => ({
-            choices: null
+            choices: null,
+            el: null
         }),
         mounted() {
             const wrapper = this.$refs.wrapper;
@@ -128,7 +144,8 @@
                 ...options
             });
 
-            wrapper.parentNode.insertBefore(wrapper.children[0], wrapper.nextSibling);
+            this.el = wrapper.children[0];
+            wrapper.parentNode.insertBefore(this.el, wrapper.nextSibling);
             wrapper.style.display = 'none';
 
             this.$onJS(choices.passedElement, 'choice', e => {
@@ -165,12 +182,16 @@
 
     .choices.form-control {
         padding: 0;
+        padding-right: 20px;
 
         .input-group & {
             flex-shrink: 0;
             flex-grow: 0;
             width: auto;
-            min-width: 200px;
+
+            @media (min-width: 640px) {
+                min-width: 200px;
+            }
         }
     }
 

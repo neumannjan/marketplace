@@ -25,15 +25,30 @@
             </label>
             <div class="input-group">
                 <input id="price"
-                       class="form-control"
-                       @blur="$v.form.price.$touch()"
+                       autocomplete="off"
+                       ref="price"
+                       :class="['form-control', {'is-invalid': errors.price, 'is-valid': valids.price}]"
+                       @input="onPriceInput"
                        type="text"
-                       name="price"
-                       v-model="form.price"/>
+                       name="price"/>
                 <choices :items="choicesCurrencies"
+                         :elem-class="{'is-invalid': errors.currency, 'is-valid': valids.currency}"
+                         @input="touchPrice"
                          v-model="form.currency">
                 </choices>
             </div>
+            <validation-message label="Price"
+                                :input="form.price"
+                                :server-validation="$serverValidationOn('form.price')"
+                                @error="e => setObjArg('errors', 'price', e)"
+                                @valid="v => setObjArg('valids', 'price', v)"
+                                :validation="$v.form.price"/>
+            <validation-message label="Currency"
+                                :input="form.currency"
+                                :server-validation="$serverValidationOn('form.currency')"
+                                @error="e => setObjArg('errors', 'currency', e)"
+                                @valid="v => setObjArg('valids', 'currency', v)"
+                                :validation="$v.form.currency"/>
             <div class="h3 my-3 price">{{ price }}</div>
         </form>
     </div>
@@ -50,17 +65,24 @@
 
     import {cached} from 'JS/store';
     import Choices from "JS/components/widgets/form/choices";
+    import ValidationMessage from "JS/components/widgets/form/validation-message";
+
+    import Cleave from 'cleave.js';
 
     export default {
         name: 'offer-form-route',
         mixins: [route, form],
         components: {
+            ValidationMessage,
             Choices,
             'form-input': InputComponent,
             'form-select': SelectComponent
         },
         data: () => ({
             currencies: {},
+            errors: {},
+            valids: {},
+            priceCleave: null,
             form: {
                 name: "",
                 description: "",
@@ -69,9 +91,21 @@
             }
         }),
         methods: {
+            touchPrice() {
+                this.$v.form.price.$touch();
+                this.$v.form.currency.$touch();
+            },
+            onPriceInput($event) {
+                this.touchPrice();
+                this.form.price = parseFloat(this.priceCleave.getRawValue());
+            },
             submit() {
                 this.$submitForm('login', 'form', () => this.$router.push({name: 'index'}));
             },
+            setObjArg(objName, key, value) {
+                const obj = this[objName];
+                this[objName] = {...obj, [key]: value};
+            }
         },
         computed: {
             title() {
@@ -113,11 +147,34 @@
                 description: {
                     min: minLength(5),
                 },
-                price: {},
+                price: {
+                    required(val) {
+                        return (val || val === 0) && !isNaN(val);
+                    },
+                    numeric(val) {
+                        return typeof val === "number";
+                    }
+                },
+                currency: {
+                    required(value) {
+                        return (value && value.match(/[a-zA-Z]/) !== null) || (this.form.price === 0);
+                    },
+                },
             }
         },
         async mounted() {
+            this.priceCleave = new Cleave(this.$refs.price, {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand',
+                numeralIntegerScale: 30,
+                numeralDecimalScale: 8,
+                numeralPositiveOnly: true,
+
+            });
             this.currencies = (await cached()).currencies;
+        },
+        beforeDestroy() {
+            this.priceCleave.destroy();
         }
     };
 </script>

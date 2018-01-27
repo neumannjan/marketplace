@@ -17,18 +17,24 @@
                :title="label"
                @input="onInput" @blur="touch()" :autofocus="autofocus"
                :required="required" :aria-describedby="hint ? hintId : false">
-        <span v-if="error" class="invalid-feedback"><strong>{{ error }}</strong></span>
+        <validation-message :validation="validation" :server-validation="serverValidation"
+                            :label="errorLabel ? errorLabel : label" :input="input"
+                            @valid="v => valid = v"
+                            @error="e => error = e"/>
         <small v-if="!!hint" :id="hintId" class="form-text text-muted">{{ hint }}</small>
     </div>
 </template>
 
 <script>
-    import {helpers as storeHelpers} from 'JS/store';
+    import ValidationMessage from "JS/components/widgets/form/validation-message";
 
     export default {
+        components: {ValidationMessage},
         data: () => ({
             id: null,
-            serverDirty: false,
+            valid: false,
+            error: null,
+            input: '',
         }),
         props: {
             validation: Object,
@@ -57,52 +63,21 @@
             autofocus: Boolean,
             required: Boolean,
         },
-        watch: {
-            serverValidation() {
-                this.serverDirty = (this.serverValidation && this.serverValidation.length > 0);
-            }
-        },
         methods: {
             touch() {
                 if (this.validation)
                     this.validation.$touch();
             },
             onInput(event) {
+                this.input = event.target.value;
                 this.$emit('input', event.target.value);
                 this.touch();
-                this.serverDirty = false;
-            }
+            },
         },
         computed: {
             hintId() {
                 return this.id + '-hint';
             },
-            valid() {
-                return (this.serverDirty && (!this.serverValidation || this.serverValidation.length === 0)) || (this.validation && this.validation.$dirty && !this.validation.$invalid);
-            },
-            error() {
-                if (this.serverDirty && this.serverValidation && this.serverValidation.length > 0) {
-                    return this.serverValidation[0];
-                }
-
-                if (!this.validation || !this.validation.$dirty || this.valid) {
-                    return null;
-                }
-
-                let params = Object.keys(this.validation)
-                    .filter(key => key[0] !== '$');
-
-                for (let key of params) {
-                    if (!this.validation[key]) {
-                        return storeHelpers.trans('validation.' + key, {
-                            attribute: this.errorLabel ? this.errorLabel : this.label,
-                            ...this.validation.$params[key]
-                        });
-                    }
-                }
-
-                return null;
-            }
         },
         mounted() {
             this.id = 'input-' + this._uid;

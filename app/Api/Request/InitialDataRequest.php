@@ -18,8 +18,9 @@ class InitialDataRequest extends GlobalDataRequest
                 'max' => trans('validation.max.string'),
                 'required' => trans('validation.required'),
                 'slug' => trans('validation.slug'),
-                'numeric' => trans('validation.contains.numeric'),
-                'nonNumeric' => trans('validation.contains.non_numeric'),
+                'numeric' => trans('validation.numeric'),
+                'containsNumeric' => trans('validation.contains.numeric'),
+                'containsNonNumeric' => trans('validation.contains.non_numeric'),
                 'confirmed' => trans('validation.confirmed'),
                 'email' => trans('validation.email'),
             ]
