@@ -27,12 +27,12 @@
                 <input id="price"
                        autocomplete="off"
                        ref="price"
-                       :class="['form-control', {'is-invalid': errors.price, 'is-valid': valids.price}]"
+                       :class="['form-control', {'is-invalid': priceError, 'is-valid': priceValid}]"
                        @input="onPriceInput"
                        type="text"
                        name="price"/>
                 <choices :items="choicesCurrencies"
-                         :elem-class="{'is-invalid': errors.currency, 'is-valid': valids.currency}"
+                         :elem-class="{'is-invalid': priceError, 'is-valid': priceValid}"
                          @input="touchPrice"
                          v-model="form.currency">
                 </choices>
@@ -136,6 +136,12 @@
                 });
 
                 return currencies;
+            },
+            priceValid() {
+                return this.valids.price && this.valids.currency;
+            },
+            priceError() {
+                return this.errors.price || this.errors.currency;
             }
         },
         validations: {
