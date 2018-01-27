@@ -19,7 +19,7 @@ class Response implements ResponseInterface
     protected $success;
 
     /** @var mixed */
-    private $content;
+    protected $content;
 
     /**
      * @param bool $success
@@ -60,13 +60,22 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Get response content
+     * @return mixed
+     */
+    protected function getContent()
+    {
+        return $this->content;
+    }
+
+    /**
      * @inheritdoc
      */
     public function toArray()
     {
         $this->assertHasName();
 
-        $raw = $this->content;
+        $raw = $this->getContent();
 
         if ($raw instanceof Arrayable) {
             $result = $raw->toArray();
@@ -89,7 +98,7 @@ class Response implements ResponseInterface
     {
         $this->assertHasName();
 
-        $raw = $this->content;
+        $raw = $this->getContent();
 
         if ($raw instanceof Jsonable) {
             $result = $raw->toJson($options);

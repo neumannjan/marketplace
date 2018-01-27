@@ -35,8 +35,9 @@
                         name="currency"
                         title="Currency"
                         v-model="form.currency">
-                    <option value="0" selected>Currency</option>
-                    <option v-for="(currency, key) in currencies" :key="key" :value="currency[0]">{{currency[0]}}
+                    <option value="0">Currency</option>
+                    <option v-for="(subunit, currency) in currencies" :key="currency" :value="currency">
+                        {{currency}}
                     </option>
                 </select>
             </div>
@@ -53,6 +54,8 @@
     import route from 'JS/components/mixins/route';
     import form from 'JS/components/mixins/form';
 
+    import {cached} from 'JS/store';
+
     export default {
         name: 'offer-form-route',
         mixins: [route, form],
@@ -61,6 +64,7 @@
             'form-select': SelectComponent
         },
         data: () => ({
+            currencies: [],
             form: {
                 name: "",
                 description: "",
@@ -78,13 +82,6 @@
                 //TODO
                 return 'Create offer';
             },
-            currencies() {
-                return this.$store.state.currencies.sort((c1, c2) => {
-                    const a = c1[0];
-                    const b = c2[0];
-                    return (a < b) ? -1 : (a > b) ? 1 : 0;
-                })
-            }
         },
         validations: {
             form: {
@@ -97,6 +94,9 @@
                 },
                 price: {},
             }
+        },
+        async mounted() {
+            this.currencies = (await cached()).currencies;
         }
     };
 </script>

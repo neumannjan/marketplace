@@ -1,10 +1,29 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import api from 'JS/api';
+import persistedState from 'vuex-persistedstate';
 
 Vue.use(Vuex);
 
+function setGlobal(of, data, createNew = false) {
+    let to = createNew ? {} : of;
+    for (let [key, value] of Object.entries(data)) {
+        if (of[key] !== undefined) {
+            if (of[key] instanceof Array && value instanceof Array) {
+                to[key] = [].concat(of[key], value);
+            } else if (of[key] instanceof Object && value instanceof Object) {
+                to[key] = Object.assign({}, of[key], value);
+            } else {
+                to[key] = value;
+            }
+        }
+    }
+
+    return to;
+}
+
 const store = new Vuex.Store({
+    plugins: [persistedState({paths: ['cached', '_cached_loaded', 'persisted']})],
     strict: true,
     state: {
         is_authenticated: false,
@@ -15,22 +34,16 @@ const store = new Vuex.Store({
         flash: {},
         messages: [],
         currencies: [],
-        reRoutedTimes: -1
+        reRoutedTimes: -1,
+        cached: {
+            currencies: []
+        },
+        _cached_loaded: false,
+        persisted: {}
     },
     mutations: {
         global(state, data) {
-            for (let [key, value] of Object.entries(data)) {
-                if (state[key] !== undefined) {
-
-                    if (state[key] instanceof Array && value instanceof Array) {
-                        state[key] = [].concat(state[key], value);
-                    } else if (state[key] instanceof Object && value instanceof Object) {
-                        state[key] = Object.assign({}, state[key], value);
-                    } else {
-                        state[key] = value;
-                    }
-                }
-            }
+            setGlobal(state, data);
         },
         logout(state) {
             state.is_authenticated = false;
@@ -49,14 +62,28 @@ const store = new Vuex.Store({
         },
         addReRoute(state) {
             ++state.reRoutedTimes;
+        },
+        cached(state, data) {
+            state._cached_loaded = true;
+            state.cached = setGlobal(state.cached, data, true);
+        },
+        persist(state, object) {
+            if (typeof object !== "object")
+                throw new Error('persist() has to be called with an object');
+
+            state.persisted = {...state.persisted, ...object};
         }
     },
     actions: {
         logout(context) {
-            api.requestSingle('logout')
-                .then(() => {
-                    context.commit('logout');
-                });
+            return api.requestSingle('logout')
+                .then(() => context.commit('logout'));
+        },
+        requestCached(context) {
+            if (context.state._cached_loaded) return;
+
+            return api.requestSingle('cached')
+                .then(data => context.commit('cached', data));
         }
     },
     getters: {
@@ -101,5 +128,10 @@ export const helpers = {
         return value;
     }
 };
+
+export async function cached() {
+    await store.dispatch('requestCached');
+    return store.state.cached;
+}
 
 export default store;

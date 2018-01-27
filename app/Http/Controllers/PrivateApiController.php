@@ -8,11 +8,12 @@ use App\Api\Request\Auth\LogoutRequest;
 use App\Api\Request\Auth\PasswordEmailRequest;
 use App\Api\Request\Auth\PasswordResetRequest;
 use App\Api\Request\Auth\RegisterRequest;
+use App\Api\Request\CachedDataRequest;
 use App\Api\Request\DB\MultiRequest;
 use App\Api\Request\DB\Offer\OfferCreateRequest;
 use App\Api\Request\DB\Offer\OfferSearchRequest;
 use App\Api\Request\DB\SingleRequest;
-use App\Api\Request\GlobalRequest;
+use App\Api\Request\GlobalDataRequest;
 use App\Api\Request\Request as ApiRequest;
 use App\Api\Response\CompositeResponse as CompositeApiResponse;
 use App\Api\Response\Response as ApiResponse;
@@ -36,7 +37,8 @@ class PrivateApiController extends Controller
     {
         $this->requests = [
             // Global
-            'global' => GlobalRequest::class,
+            'global' => GlobalDataRequest::class,
+            'cached' => CachedDataRequest::class,
 
             // Auth
             'login' => LoginRequest::class,

@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 /**
  * Request that contains global variables that the frontend might request repeatedly.
  */
-class GlobalRequest extends Request
+class GlobalDataRequest extends Request
 {
     /**
      * @inheritDoc
