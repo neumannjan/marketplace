@@ -8,6 +8,7 @@
 
 <script>
     import route from 'JS/components/mixins/route';
+    import routeGuard from 'JS/components/mixins/route-guard';
     import api from 'JS/api';
     import OfferCard from 'JS/components/widgets/cards/data-aware/offer/offer-card';
 
@@ -15,7 +16,10 @@
 
     export default {
         name: "offer-route",
-        mixins: [route],
+        mixins: [
+            route,
+            routeGuard('auth', vm => (vm.$store.state.is_authenticated || !vm.offer || (vm.offer.status === 1 && !vm.offer.expired)))
+        ],
         components: {
             OfferCard
         },
@@ -37,7 +41,7 @@
             async fetch() {
                 if (this.offer) {
                     this.offer = null;
-                    await new Promise(resolve => this.$nextTick(resolve));
+                    await this.$nextTick();
                 }
 
                 this.offer = await api.requestSingle('offer', {

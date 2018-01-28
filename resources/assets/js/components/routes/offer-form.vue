@@ -61,6 +61,7 @@
     import {minLength, required} from 'vuelidate/lib/validators';
 
     import route from 'JS/components/mixins/route';
+    import routeGuard from 'JS/components/mixins/route-guard';
     import form from 'JS/components/mixins/form';
 
     import {cached} from 'JS/store';
@@ -71,7 +72,11 @@
 
     export default {
         name: 'offer-form-route',
-        mixins: [route, form],
+        mixins: [
+            route,
+            routeGuard('auth', vm => vm.$store.state.is_authenticated),
+            form
+        ],
         components: {
             ValidationMessage,
             Choices,

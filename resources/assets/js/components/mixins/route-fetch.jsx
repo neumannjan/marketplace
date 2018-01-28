@@ -66,7 +66,12 @@ export default (fetchAsyncFunction, nullObj, before = true) => {
 
             if (!fetchLater) {
                 notifyLoading();
-                fetchAsyncFunction(this.$data).then(result => handleResult(this, result));
+                this.doFetch();
+            }
+        },
+        methods: {
+            doFetch() {
+                fetchAsyncFunction(this).then(result => handleResult(this, result));
             }
         }
     };

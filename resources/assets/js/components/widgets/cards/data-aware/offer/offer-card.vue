@@ -60,7 +60,7 @@
                             v-for="button in buttons"
                             :key="button.icon"
                             @click="button.callback ? button.callback() : null"
-                            :disabled="isThisUser ? true : undefined"
+                            :disabled="button.disabled"
                             :class="['btn', color('btn-', 'primary', true)]">
                         <icon :name="button.icon" :label="button.label"/>
                     </button>
@@ -143,13 +143,13 @@
                     {
                         icon: 'heart',
                         label: 'Like',
-                        disabled: this.isThisUser,
+                        disabled: this.isThisUser || !this.$store.state.is_authenticated,
                         callback: null
                     },
                     {
                         icon: 'shopping-cart',
                         label: 'Buy',
-                        disabled: this.isThisUser,
+                        disabled: this.isThisUser || !this.$store.state.is_authenticated,
                         callback: null
                     },
                 ];
@@ -158,7 +158,6 @@
                     {
                         icon: 'expand',
                         label: 'Expand',
-                        disabled: this.isThisUser,
                         callback: () => router.push(this.toOffer)
                     },
                 ];

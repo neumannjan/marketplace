@@ -11,6 +11,7 @@
     import OfferMasonry from 'JS/components/widgets/cards/data-aware/offer/offer-masonry';
     import router, {events as routeEvents} from 'JS/router';
     import store from 'JS/store';
+    import {mapState} from 'vuex';
 
     async function fetch(params) {
         let result = {};
@@ -64,6 +65,11 @@
         watch: {
             user(val) {
                 routeEvents.$emit('user-navigation', val);
+            },
+            authenticated(auth, oldAuth) {
+                if (auth !== oldAuth) {
+                    this.doFetch();
+                }
             }
         },
         computed: {
@@ -75,7 +81,10 @@
             },
             isTopLevelRoute() {
                 return this.isThisUser;
-            }
+            },
+            ...mapState({
+                authenticated: state => state.is_authenticated
+            })
         },
     };
 </script>
