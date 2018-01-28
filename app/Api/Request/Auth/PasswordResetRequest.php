@@ -11,6 +11,7 @@ use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Validator;
 
 /**
  * TODO documentation
@@ -28,7 +29,7 @@ class PasswordResetRequest extends Request
     /**
      * @inheritdoc
      */
-    protected function rules()
+    protected function rules(Validator $validator = null)
     {
         $baseRules = User::getValidationRules();
 

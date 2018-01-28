@@ -106,6 +106,7 @@ class PrivateApiController extends Controller
                         $parameters = [];
                     }
 
+                    $parameters = $parameters + $request->allFiles();
                     $responses[] = $apiRequest->resolve($name, $parameters);
                 } else {
                     $response = new ApiResponse(false, "Unknown request.");

@@ -73,7 +73,6 @@
         },
         mounted() {
             this.id = 'input-' + this._uid;
-            console.log([this.$refs.file]);
         }
     }
 </script>

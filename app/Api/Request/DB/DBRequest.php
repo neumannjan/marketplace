@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 /**
  * Enables PHP classes to convert API request parameters to their query counterparts. Supports relations.
@@ -19,7 +20,7 @@ trait DBRequest
     /**
      * @inheritDoc
      */
-    protected function _rules()
+    protected function _rules(Validator $validator = null)
     {
         $modelClass = $this->modelClass();
 
@@ -31,7 +32,7 @@ trait DBRequest
                     'required',
                     Rule::in($model->getPublicScopes())
                 ]
-            ] + parent::_rules();
+            ] + parent::_rules($validator);
     }
 
     /**

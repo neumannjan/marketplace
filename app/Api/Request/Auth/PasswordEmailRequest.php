@@ -8,6 +8,7 @@ use App\Api\Response\Response;
 use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Validator;
 
 /**
  * TODO documentation
@@ -26,7 +27,7 @@ class PasswordEmailRequest extends Request
     /**
      * @inheritDoc
      */
-    protected function rules()
+    protected function rules(Validator $validator = null)
     {
         return [
             'email' => 'required|email'

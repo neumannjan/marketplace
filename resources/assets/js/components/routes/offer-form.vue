@@ -2,7 +2,7 @@
     <div>
         <h1>{{ title }}</h1>
 
-        <form id="form-offer">
+        <form id="form-offer" ref="form">
             <form-input class="form-group"
                         label="What are you selling?"
                         error-label="Offer name"
@@ -37,6 +37,7 @@
                 <choices :items="choicesCurrencies"
                          :elem-class="{'is-invalid': priceError, 'is-valid': priceValid}"
                          @input="touchPrice"
+                         name="currency"
                          v-model="form.currency">
                 </choices>
             </div>
@@ -54,11 +55,21 @@
                                 :validation="$v.form.currency"/>
             <div class="h3 my-3 price">{{ price }}</div>
 
-            <file-select name="images" multiple label="Add some images"
+            <file-select name="images"
+                         multiple
+                         label="Add some images"
                          error-label="Image select"
-                         :server-validation="$serverValidationOn('form.files')"
-                         :validation="$v.form.files"
-                         @input="f => form.files = f"/>
+                         :server-validation="$serverValidationOn('form.images')"
+                         :validation="$v.form.images"
+                         @input="f => form.images = f"/>
+
+
+            <div class="form-group">
+                <button id="submit" type="submit" class="btn btn-primary" @click.prevent="submit(false)">Publish
+                </button>
+                <!--TODO draft editing, existing image editing (drag / drop existing and new)
+                <button id="submit-draft" type="submit" class="btn btn-warning" @click.prevent="submit(true)">Save as draft</button>-->
+            </div>
         </form>
     </div>
 </template>
@@ -104,7 +115,7 @@
                 description: "",
                 price: "",
                 currency: false,
-                files: []
+                images: false
             }
         }),
         methods: {
@@ -116,8 +127,19 @@
                 this.touchPrice();
                 this.form.price = parseFloat(this.priceCleave.getRawValue());
             },
-            submit() {
-                this.$submitForm('login', 'form', () => this.$router.push({name: 'index'}));
+            submit(asDraft = false) {
+                const formData = new FormData(this.$refs.form);
+                formData.set('price', this.form.price);
+                formData.set('status', asDraft ? 0 : 1);
+
+                this.$submitForm('offer-create', 'form', result => {
+                    this.form = {};
+
+                    if (result && result.id)
+                        this.$router.replace({name: 'offer', params: {id: result.id}});
+                    else
+                        this.$router.replace({name: 'index'});
+                }, formData, asDraft);
             },
             setObjArg(objName, key, value) {
                 const obj = this[objName];
@@ -190,7 +212,7 @@
                         return (value && value.match(/[a-zA-Z]/) !== null) || (this.form.price === 0);
                     },
                 },
-                files: {
+                images: {
                     required(value) {
                         return value && value.length > 0;
                     }

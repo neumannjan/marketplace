@@ -2,11 +2,23 @@ import Api from 'JS/api';
 import helpers from 'JS/helpers';
 import debounce from 'lodash/debounce';
 
-let doSubmitForm = debounce((vm, requestName, selectorKey, onSuccess) => {
+let doSubmitForm = debounce((vm, requestName, selectorKey, onSuccess, formData, bypassValidation) => {
     vm.$v.$reset();
-    if (!vm.$v.$invalid) {
+    if (bypassValidation || !vm.$v.$invalid) {
         vm.$set(vm.validation, selectorKey, {});
-        Api.requestSingle(requestName, vm[selectorKey])
+
+        let data;
+
+        if (formData) {
+            if (!(formData instanceof FormData))
+                data = new FormData(formData);
+            else
+                data = formData;
+        } else {
+            data = vm[selectorKey];
+        }
+
+        Api.requestSingle(requestName, data)
             .then(onSuccess)
             .catch((result) => {
                 if (result.api && result.api.validation) {
@@ -31,8 +43,15 @@ export default {
 
             return helpers.safeGet(this.validation, key);
         },
-        $submitForm(requestName, selectorKey, onSuccess) {
-            doSubmitForm(this, requestName, selectorKey, onSuccess);
+        /**
+         * @param {string} requestName
+         * @param {string} selectorKey
+         * @param {function} onSuccess
+         * @param {HTMLFormElement|FormData} data
+         * @param {boolean} bypassValidation
+         */
+        $submitForm(requestName, selectorKey, onSuccess, data = false, bypassValidation = false) {
+            doSubmitForm(this, requestName, selectorKey, onSuccess, data, bypassValidation);
         }
     },
 }

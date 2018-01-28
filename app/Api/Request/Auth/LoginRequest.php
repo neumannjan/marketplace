@@ -7,6 +7,7 @@ use App\Api\Request\Request as ApiRequest;
 use App\Api\Response\Response as ApiResponse;
 use App\Auth\AuthenticatesUsers;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Validator;
 
 /**
  * API login request
@@ -41,7 +42,7 @@ class LoginRequest extends ApiRequest
         return $response;
     }
 
-    protected function rules()
+    protected function rules(Validator $validator = null)
     {
         return [
             'login' => 'required|string',

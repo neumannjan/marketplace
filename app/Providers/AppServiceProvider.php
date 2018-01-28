@@ -30,5 +30,7 @@ class AppServiceProvider extends ServiceProvider
 
             return new Money($app->getLocale());
         });
+
+        $this->app->alias('money', Money::class);
     }
 }

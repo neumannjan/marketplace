@@ -8,6 +8,7 @@ use App\Api\Response\Response;
 use App\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Validator;
 
 /**
  * TODO documentation
@@ -25,7 +26,7 @@ class RegisterRequest extends Request
     /**
      * @inheritdoc
      */
-    protected function rules()
+    protected function rules(Validator $validator = null)
     {
         $rules = User::getValidationRules();
 

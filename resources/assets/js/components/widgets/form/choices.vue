@@ -1,6 +1,6 @@
 <template>
     <div ref="wrapper" :class="['form-control', elemClass]">
-        <select ref="select"></select>
+        <select ref="select" :name="name"></select>
     </div>
 </template>
 
@@ -21,7 +21,8 @@
                 default: () => ({})
             },
             value: undefined,
-            elemClass: {}
+            elemClass: {},
+            name: String
         },
         watch: {
             async elemClass() {
@@ -54,7 +55,6 @@
             const wrapper = this.$refs.wrapper;
 
             const options = this.options;
-            console.log(options);
             const clss = wrapper.className;
             const choices = this.choices = new Choices(this.$refs.select, {
                 loadingText: 'Loading...',

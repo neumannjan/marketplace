@@ -8,6 +8,7 @@ use App\Api\Response\Response;
 use App\Offer;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Validator;
 
 class OfferCreateRequest extends Request
 {
@@ -35,9 +36,9 @@ class OfferCreateRequest extends Request
     /**
      * @inheritDoc
      */
-    protected function rules()
+    protected function rules(Validator $validator = null)
     {
-        return Offer::getValidationRules();
+        return Offer::getValidationRules($validator);
     }
 
     /**
@@ -45,7 +46,20 @@ class OfferCreateRequest extends Request
      */
     protected function doResolve($name, Collection $parameters)
     {
-        return new Response(true, []);
+        $offer = new Offer([
+            'name' => $parameters['name'],
+            'description' => $parameters->get('description'),
+            'price_value' => $parameters->get('price', 0),
+            'currency' => $parameters->get('currency'),
+            'status' => $parameters->get('status', Offer::STATUS_AVAILABLE),
+            'author_user_id' => $this->guard->id()
+        ]);
+
+        //TODO add images
+
+        $offer->save();
+
+        return new Response(true, ['id' => $offer->id]);
     }
 
 }

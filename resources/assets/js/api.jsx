@@ -68,6 +68,10 @@ const requestMultiple = (allParams, includeGlobal = true) => {
  * @returns {Promise<Object>}
  */
 const requestSingle = (name, params = {}, includeGlobal = true) => {
+    if (params instanceof FormData) {
+        return requestByURL(`/api/${name}`, params);
+    }
+
     return new Promise((resolve, reject) => {
 
         const then = response => {
@@ -93,9 +97,10 @@ const requestSingle = (name, params = {}, includeGlobal = true) => {
 
 /**
  * @param url
+ * @param data
  * @returns {Promise<Object>}
  */
-const requestByURL = (url) => {
+const requestByURL = (url, data = {}) => {
     return new Promise((resolve, reject) => {
 
         const then = response => {
@@ -117,7 +122,7 @@ const requestByURL = (url) => {
                 defaultReject(reject, false)(data.result);
         };
 
-        axios.post(url, {}, config())
+        axios.post(url, data, config())
             .then(then)
             .catch(defaultReject(reject, true));
     });

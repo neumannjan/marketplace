@@ -6,6 +6,7 @@ namespace App\Api\Request\DB;
 use App\Api\Request\PaginatedRequest;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Validator;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Searchable;
 
@@ -25,7 +26,7 @@ abstract class SearchRequest extends PaginatedRequest
     /**
      * @inheritDoc
      */
-    protected function rules()
+    protected function rules(Validator $validator = null)
     {
         return [
             'query' => 'required|string'

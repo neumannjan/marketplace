@@ -8,8 +8,8 @@ use App\Api\Response\Response;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Validator;
 
 /**
  * API request base class
@@ -35,9 +35,10 @@ abstract class Request
 
     /**
      * Returns validation rules for the request parameters
+     * @param Validator $validator
      * @return array
      */
-    protected function rules()
+    protected function rules(Validator $validator = null)
     {
         return [];
     }
@@ -45,11 +46,12 @@ abstract class Request
     /**
      * Returns validation rules for the request parameters. Should be used by abstract classes and should always
      * concatenate result with parent implementation
+     * @param Validator $validator
      * @return array
      */
-    protected function _rules()
+    protected function _rules(Validator $validator = null)
     {
-        return $this->rules();
+        return $this->rules($validator);
     }
 
     /**
@@ -92,7 +94,8 @@ abstract class Request
                 return $response;
             }
 
-            $validator = Validator::make($parameters->all(), $this->_rules());
+            $validator = \Validator::make($parameters->all(), []);
+            $validator->addRules($this->_rules($validator));
             $validator->validate();
 
             $response = $this->doResolve($name, $parameters);

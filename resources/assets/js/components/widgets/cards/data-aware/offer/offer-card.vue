@@ -182,8 +182,15 @@
                 };
             },
             shortDesc() {
-                let desc = this.data.description.substr(0, 300);
-                desc = desc.substr(0, Math.min(desc.length, desc.lastIndexOf(" ")));
+                if (!this.data.description)
+                    return '';
+
+                let desc = this.data.description;
+
+                if (desc.length < 300)
+                    return desc;
+
+                desc = desc.substr(0, 300).substr(0, Math.min(desc.length, desc.lastIndexOf(" ")));
 
                 if (desc)
                     desc += '...';

@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 use Laravel\Scout\Searchable;
 use Money\Money;
 
@@ -33,6 +35,18 @@ class Offer extends Model implements AuthorizationAwareModel
         'created_at',
         'updated_at',
         'listed_at'
+    ];
+
+    protected $fillable = [
+        'name',
+        'description',
+        'price',
+        'price_value',
+        'currency',
+        'currency_code',
+        'status',
+        'author_user_id',
+        'sold_to_user_id',
     ];
 
     public function images()
@@ -63,10 +77,14 @@ class Offer extends Model implements AuthorizationAwareModel
     }
 
     /**
-     * @return Money
+     * @return Money|null
      */
     public function getMoneyAttribute()
     {
+        if (!$this->price_value || $this->price_value <= 0 || !is_string($this->currency_code)) {
+            return null;
+        }
+
         return \Money::getDecimalParser()->parse((string)$this->price_value, $this->currency_code);
     }
 
@@ -75,6 +93,10 @@ class Offer extends Model implements AuthorizationAwareModel
      */
     public function getPriceAttribute()
     {
+        if (!$this->money) {
+            return 'FREE';
+        } //TODO
+
         return \Money::getFormatter()->format($this->money);
     }
 
@@ -233,20 +255,37 @@ class Offer extends Model implements AuthorizationAwareModel
      */
     public function toSearchableArray()
     {
-        return Arr::only($this->toArray(), ['name', 'description']);
+        return Arr::only($this->toArray(), ['id', 'name', 'description']);
     }
 
     /**
      * Get validation rules for a creation request.
+     * @param Validator $validator
      * @return array
      */
-    public static function getValidationRules()
+    public static function getValidationRules(Validator $validator = null)
     {
+        if ($validator) {
+            $validator->sometimes('currency', resolve(CurrencyRule::class), function ($input) {
+                return $input->price && $input->price > 0;
+            });
+
+            $validator->sometimes('price', ['required', new MoneyRule()], function ($input) {
+                return $input->status === Offer::STATUS_AVAILABLE;
+            });
+
+            $validator->sometimes('images', 'required|file', function ($input) {
+                return $input->status === Offer::STATUS_AVAILABLE;
+            });
+        }
+
         return [
             'name' => 'required|string|min:3|max:255',
-            'description' => 'string|min:5',
-            'currency' => ['required', resolve(CurrencyRule::class)],
-            'price' => ['required', new MoneyRule()]
+            'description' => 'nullable|string|min:5',
+            'currency' => '',
+            'price' => '',
+            'images' => '',
+            'status' => Rule::in([Offer::STATUS_DRAFT, Offer::STATUS_AVAILABLE]),
         ];
     }
 }

@@ -8,6 +8,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Validator;
 
 /**
  * TODO documentation
@@ -23,12 +24,12 @@ abstract class PaginatedRequest extends Request
     /**
      * @inheritDoc
      */
-    protected function _rules()
+    protected function _rules(Validator $validator = null)
     {
         return [
             'per_page' => ($this->perPageDefault === null ? 'required|' : '') . 'integer',
             'page' => 'integer',
-            ] + parent::_rules();
+            ] + parent::_rules($validator);
     }
 
 
