@@ -28,8 +28,7 @@ Vue.use(VueRouter);
 
 const cachedRouteComponents = [
     'index-route',
-    'search-route',
-    'offer-form-route'
+    'search-route'
 ];
 
 export const cached = (suffix = '') => suffix ? cachedRouteComponents.map((route) => `${route}-${suffix}`) : cachedRouteComponents;

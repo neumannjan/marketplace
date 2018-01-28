@@ -14,7 +14,7 @@ import LazyImgComponent from './components/widgets/image/lazy-img';
 Vue.use(Vuelidate);
 ElementQueries.listen();
 
-// Global Vue components
+// Global Vue components and directives
 
 Vue.component('icon', IconComponent);
 Vue.component('lazy-img', LazyImgComponent);
@@ -22,6 +22,21 @@ Vue.component('lazy-img', LazyImgComponent);
 Vue.directive('sticky', {
     inserted(el) {
         stickyfill.add(el);
+    }
+});
+
+Vue.directive('focus', {
+    bind(el, binding) {
+        if (binding.value)
+            el.focus();
+    },
+    inserted(el, binding) {
+        if (binding.value)
+            el.focus();
+    },
+    update(el, binding) {
+        if (binding.value)
+            el.focus();
     }
 });
 

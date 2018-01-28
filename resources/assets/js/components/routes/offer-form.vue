@@ -92,7 +92,7 @@
                 name: "",
                 description: "",
                 price: "",
-                currency: 0,
+                currency: false,
             }
         }),
         methods: {
@@ -147,6 +147,13 @@
             },
             priceError() {
                 return this.errors.price || this.errors.currency;
+            },
+            formEmpty() {
+                for (let field of Object.values(this.form)) {
+                    if (field) return false;
+                }
+
+                return true;
             }
         },
         validations: {
@@ -186,6 +193,13 @@
         },
         beforeDestroy() {
             this.priceCleave.destroy();
+        },
+        beforeRouteLeave(to, from, next) {
+            if (this.formEmpty || window.confirm('Are you sure you want to leave? You have unsaved changes!')) {
+                next()
+            } else {
+                next(false)
+            }
         }
     };
 </script>

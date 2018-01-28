@@ -8,14 +8,14 @@
                   :id="id" :name="name" :class="['form-control', {'is-invalid': error, 'is-valid': valid}]"
                   :placeholder="placeholder"
                   :title="label"
-                  @input="onInput" @blur="touch()" :autofocus="autofocus"
+                  @input="onInput" @blur="touch()" v-focus="autofocus"
                   :required="required" :aria-describedby="hint ? hintId : false">{{ value }}</textarea>
         <input v-else
                :id="id" :name="name" :type="type" :class="['form-control', {'is-invalid': error, 'is-valid': valid}]"
                :value="value"
                :placeholder="placeholder"
                :title="label"
-               @input="onInput" @blur="touch()" :autofocus="autofocus"
+               @input="onInput" @blur="touch()" v-focus="autofocus"
                :required="required" :aria-describedby="hint ? hintId : false">
         <validation-message :validation="validation" :server-validation="serverValidation"
                             :label="errorLabel ? errorLabel : label" :input="input"
