@@ -29,7 +29,10 @@
                        ref="price"
                        :class="['form-control', {'is-invalid': priceError, 'is-valid': priceValid}]"
                        @input="onPriceInput"
-                       type="text"
+                       type="tel"
+                       inputmode="numeric"
+                       pattern="[0-9]*"
+                       formnovalidate
                        name="price"/>
                 <choices :items="choicesCurrencies"
                          :elem-class="{'is-invalid': priceError, 'is-valid': priceValid}"
@@ -39,17 +42,23 @@
             </div>
             <validation-message label="Price"
                                 :input="form.price"
-                                :server-validation="$serverValidationOn('form.price')"
                                 @error="e => setObjArg('errors', 'price', e)"
                                 @valid="v => setObjArg('valids', 'price', v)"
+                                :server-validation="$serverValidationOn('form.price')"
                                 :validation="$v.form.price"/>
             <validation-message label="Currency"
                                 :input="form.currency"
-                                :server-validation="$serverValidationOn('form.currency')"
                                 @error="e => setObjArg('errors', 'currency', e)"
                                 @valid="v => setObjArg('valids', 'currency', v)"
+                                :server-validation="$serverValidationOn('form.currency')"
                                 :validation="$v.form.currency"/>
             <div class="h3 my-3 price">{{ price }}</div>
+
+            <file-select name="images" multiple label="Add some images"
+                         error-label="Image select"
+                         :server-validation="$serverValidationOn('form.files')"
+                         :validation="$v.form.files"
+                         @input="f => form.files = f"/>
         </form>
     </div>
 </template>
@@ -69,6 +78,7 @@
     import ValidationMessage from "JS/components/widgets/form/validation-message";
 
     import Cleave from 'cleave.js';
+    import FileSelect from "JS/components/widgets/form/file-select";
 
     export default {
         name: 'offer-form-route',
@@ -78,6 +88,7 @@
             form
         ],
         components: {
+            FileSelect,
             ValidationMessage,
             Choices,
             'form-input': InputComponent,
@@ -93,6 +104,7 @@
                 description: "",
                 price: "",
                 currency: false,
+                files: []
             }
         }),
         methods: {
@@ -178,6 +190,11 @@
                         return (value && value.match(/[a-zA-Z]/) !== null) || (this.form.price === 0);
                     },
                 },
+                files: {
+                    required(value) {
+                        return value && value.length > 0;
+                    }
+                }
             }
         },
         async mounted() {

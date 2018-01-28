@@ -161,7 +161,7 @@
 <style lang="scss" type="text/scss">
     $choices-selector: 'choices';
     $choices-font-size-lg: 16px;
-    $choices-font-size-md: 14px;
+    $choices-font-size-md: .8rem;
     $choices-font-size-sm: 12px;
     $choices-guttering: 24px;
     $choices-border-radius: 2.5px;
@@ -180,23 +180,39 @@
 
     @import '~choices.js/assets/styles/scss/choices.scss';
 
-    .choices.form-control {
-        padding: 0;
-        padding-right: 20px;
+    .form-control {
+        &.choices {
+            padding: 0;
+            padding-right: 20px;
 
-        .input-group & {
-            flex-shrink: 0;
-            flex-grow: 0;
-            width: auto;
+            .input-group & {
+                flex-shrink: 0;
+                flex-grow: 0;
+                width: auto;
 
-            @media (min-width: 640px) {
-                min-width: 200px;
+                @media (min-width: 640px) {
+                    min-width: 200px;
+                }
             }
         }
-    }
 
-    .choices__inner {
-        background: none;
-        border: none;
+        .choices__inner {
+            background: none;
+            border: none;
+            padding: 0.375rem 0.75rem !important;
+            min-height: 38px;
+            margin: -1px;
+            min-width: 100px;
+        }
+
+        .choices__list--single {
+            padding: 0;
+            vertical-align: #{-1* $choices-font-size-md / 4};
+        }
+
+        .choices__list--dropdown {
+            z-index: 1200;
+        }
+
     }
 </style>

@@ -30,6 +30,8 @@
                 this.$emit('error', val);
             },
             input() {
+                if (this.validation)
+                    this.validation.$touch();
                 this.serverDirty = false;
             }
         },
