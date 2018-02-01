@@ -17,7 +17,7 @@
 
                 <div class="main-container">
                     <!-- FLASH MESSAGES -->
-                    <flash-messages class="container"/>
+                    <flash-messages/>
 
                     <!-- CONTENT -->
                     <keep-alive :include="keepAlive()">
