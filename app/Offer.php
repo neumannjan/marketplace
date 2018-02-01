@@ -274,11 +274,22 @@ class Offer extends Model implements AuthorizationAwareModel
             });
 
             $validator->sometimes('price', ['required', new MoneyRule()], function ($input) {
-                return $input->status === Offer::STATUS_AVAILABLE;
+                return intval($input->status) === Offer::STATUS_AVAILABLE;
             });
 
-            $validator->sometimes('images', 'required|file', function ($input) {
-                return $input->status === Offer::STATUS_AVAILABLE;
+            $validator->sometimes('images', 'required', function ($input) {
+                $val = intval($input->status) === Offer::STATUS_AVAILABLE;
+                return $val;
+            });
+
+            $validator->sometimes('images', 'file|image', function ($input) {
+                $val = intval($input->status) === Offer::STATUS_AVAILABLE && !is_array($input->images);
+                return $val;
+            });
+
+            $validator->sometimes('images.*', 'file|image', function ($input) {
+                $val = intval($input->status) === Offer::STATUS_AVAILABLE && is_array($input->images);
+                return $val;
             });
         }
 
