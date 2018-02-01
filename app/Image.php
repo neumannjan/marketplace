@@ -23,11 +23,18 @@ class Image extends Model
     const ORIGINAL_SIZE = 'original';
 
     protected $casts = [
-        'sizes' => 'array'
+        'sizes' => 'array',
+        'available_sizes' => 'array'
     ];
 
     protected $fillable = [
-        'sizes', 'original', 'ready', 'width', 'height', 'offer_id'
+        'sizes',
+        'original',
+        'ready',
+        'width',
+        'height',
+        'offer_id',
+        'available_sizes'
     ];
 
     /**

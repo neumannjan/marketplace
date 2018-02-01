@@ -73,7 +73,8 @@ class OfferCreateRequest extends Request
 
             $image = new Image([
                 'original' => $originalFile,
-                'offer_id' => $offer->id
+                'offer_id' => $offer->id,
+                'available_sizes' => ['tiny']
             ]);
 
             $image->save();

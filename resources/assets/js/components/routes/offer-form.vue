@@ -55,7 +55,7 @@
                                 :validation="$v.form.currency"/>
             <div class="h3 my-3 price">{{ price }}</div>
 
-            <file-select name="images"
+            <file-select name="images[]"
                          multiple
                          label="Add some images"
                          error-label="Image select"
