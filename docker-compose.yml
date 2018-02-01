@@ -1,11 +1,13 @@
 version: '3'
 services:
   web:
-    image: webdevops/php-apache-dev:alpine-php7
+    image: marketplace
     depends_on:
       - db
+      - redis
     links:
       - db
+      - redis
     ports:
       - "8080:80"
       - "8443:443"
@@ -29,6 +31,14 @@ services:
       - databasevol:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
+  redis:
+    image: bitnami/redis:4.0
+    ports:
+      - "6378:6379"
+    volumes:
+      - cachevol:/bitnami
+    environment:
+      REDIS_PASSWORD: root
   selenium:
     image: selenium/standalone-chrome-debug:3.8.1
     #image: selenium/standalone-firefox-debug:3.8.1
@@ -40,3 +50,4 @@ services:
     network_mode: "host"
 volumes:
   databasevol:
+  cachevol:

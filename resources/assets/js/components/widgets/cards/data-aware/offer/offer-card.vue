@@ -36,9 +36,14 @@
         <div v-else class="row">
 
             <div class="col-md-5 mb-3">
-                <carousel :items="this.data.images">
+                <alert v-if="isAwaitingImages" type="warning">
+                    Not all images have appeared yet.
+                    <a href="#" @click.prevent="refreshImages" class="alert-link">Check again if they are ready?</a>
+                </alert>
+                <carousel v-if="this.data.images" :items="this.data.images">
                     <template slot-scope="props">
                         <lazy-img :width="props.item.width" :height="props.item.height"
+                                  v-if="props.item.ready"
                                   :src="props.item.urls.original"
                                   :thumb="props.item.urls.tiny"
                                   alt="Image"/> <!-- TODO alt -->
@@ -80,15 +85,18 @@
     import Carousel from 'JS/components/widgets/carousel';
 
     import router from 'JS/router';
+    import api from 'JS/api';
 
     import 'vue-awesome/icons/heart';
     import 'vue-awesome/icons/shopping-cart';
     import 'vue-awesome/icons/expand';
     import 'vue-awesome/icons/user-circle';
+    import Alert from "JS/components/widgets/alert";
 
     export default {
         name: "offer-card",
         components: {
+            Alert,
             Card,
             CardIconFooter,
             Badge,
@@ -132,6 +140,16 @@
                     return doReturn('danger');
 
                 return doReturn();
+            },
+            refreshImages() {
+                if (!this.data) return;
+
+                api.requestSingle('offer', {
+                    id: this.data.id,
+                    scope: this.$store.getters.scope.offer
+                }).then(result => {
+                    this.data = result;
+                });
             }
         },
         computed: {
@@ -180,6 +198,17 @@
                     width: image['width'],
                     height: image['height'],
                 };
+            },
+            isAwaitingImages() {
+                if (!this.data || this.data.images.length === 0)
+                    return false;
+
+                for (let img of this.data.images) {
+                    if (img.ready === false)
+                        return true;
+                }
+
+                return false;
             },
             shortDesc() {
                 if (!this.data.description)

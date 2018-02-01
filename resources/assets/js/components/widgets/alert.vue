@@ -8,7 +8,13 @@
 </template>
 <script>
     export default {
-        props: ['type'],
+        name: 'alert',
+        props: {
+            type: {
+                type: String,
+                required: true
+            }
+        },
         data: () => ({
             shown: true
         }),

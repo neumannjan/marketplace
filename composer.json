@@ -16,6 +16,7 @@
     "laravel/scout": "^3.0",
     "laravel/tinker": "~1.0",
     "moneyphp/money": "^3.0",
+    "predis/predis": "^1.1",
     "symfony/polyfill-intl-icu": "^1.6",
     "teamtnt/laravel-scout-tntsearch-driver": "^3.0",
     "teamtnt/tntsearch": "^1.3"

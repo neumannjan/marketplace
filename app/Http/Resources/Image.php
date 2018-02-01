@@ -18,7 +18,8 @@ class Image extends Resource
             'id' => $this->id,
             'width' => $this->width,
             'height' => $this->height,
-            'urls' => $this->urls
+            'urls' => $this->urls,
+            'ready' => $this->ready
         ];
 
         return $array;

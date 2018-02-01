@@ -24,7 +24,8 @@ class Image extends Model
 
     protected $casts = [
         'sizes' => 'array',
-        'available_sizes' => 'array'
+        'available_sizes' => 'array',
+        'ready' => 'boolean'
     ];
 
     protected $fillable = [
