@@ -27,7 +27,7 @@ class CreateImagesTable extends Migration
             $table->unsignedInteger('height')->default(0);
 
             $table->unsignedInteger('offer_id')->nullable();
-            $table->foreign('offer_id')->references('id')->on('offers')->onDelete('cascade');
+            $table->foreign('offer_id')->references('id')->on('offers')->onDelete('set null');
         });
     }
 

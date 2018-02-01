@@ -17,13 +17,9 @@ class Image extends Resource
         $array = [
             'id' => $this->id,
             'width' => $this->width,
-            'height' => $this->height
+            'height' => $this->height,
+            'urls' => $this->urls
         ];
-
-        foreach (\App\Image::SIZES as $size) {
-            $size = "size_$size";
-            $array[$size] = $this->$size;
-        }
 
         return $array;
     }

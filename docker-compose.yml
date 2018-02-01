@@ -11,12 +11,13 @@ services:
       - "8443:443"
     volumes:
       - .:/app:z
+      - ./storage/app/public:/app/public/storage
     environment:
       PHP_DEBUGGER: xdebug
       PHP_DISPLAY_ERRORS: 1
       XDEBUG_REMOTE_AUTOSTART: 0
       XDEBUG_REMOTE_HOST: 172.19.0.1
-      WEB_DOCUMENT_ROOT: "/app"
+      WEB_DOCUMENT_ROOT: "/app/public"
   db:
     #image: mysql:5.7
     #image: mariadb:10.2

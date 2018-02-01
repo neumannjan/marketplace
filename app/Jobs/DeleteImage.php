@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Jobs;
+
+use App\Image;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+
+class DeleteImage implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    /**
+     * @var Image[]
+     */
+    protected $images;
+
+    /**
+     * Create a new job instance.
+     *
+     * @param Image|Image[] $images
+     */
+    public function __construct($images)
+    {
+        if ((array)$images !== $images) {
+            $images = [$images];
+        }
+
+        $this->images = $images;
+    }
+
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
+    public function handle()
+    {
+        $images = $this->images;
+
+        if (!$images) {
+            return;
+        }
+
+        foreach ($images as $image) {
+            $paths = $image->absolute_paths;
+            foreach ($paths as $path) {
+                unlink($path);
+            }
+        }
+    }
+}

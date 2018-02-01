@@ -2,9 +2,7 @@
 
 namespace App\Providers;
 
-use App\Observers\UserObserver;
 use App\Tests\UnsplashImageFakerProvider;
-use App\User;
 use Faker\Factory as FakerFactory;
 use Faker\Generator as FakerGenerator;
 use Illuminate\Support\ServiceProvider;
@@ -21,7 +19,7 @@ class DatabaseServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        User::observe(UserObserver::class);
+
     }
 
     /**

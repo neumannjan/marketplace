@@ -17,7 +17,7 @@
                      :height="imgSize"
                      class="rounded-circle"
                      :crossorigin="crossOrigin"
-                     :srcset="`${user.profile_image.size_icon}, ${user.profile_image.size_icon_2x} 2x`">
+                     :srcset="`${user.profile_image.urls.icon}, ${user.profile_image.urls.icon_2x} 2x`">
                 <icon class="profile-img-placeholder"
                       v-else
                       name="user-circle"
@@ -94,7 +94,7 @@
 
                 profileImg.addEventListener('load', setImg);
 
-                this.userImgSrc = this.user.profile_image.size_icon;
+                this.userImgSrc = this.user.profile_image.urls.icon;
             }
         },
         created() {

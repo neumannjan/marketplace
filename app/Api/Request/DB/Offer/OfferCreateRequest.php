@@ -6,6 +6,7 @@ namespace App\Api\Request\DB\Offer;
 use App\Api\Request\Request;
 use App\Api\Response\Response;
 use App\Image;
+use App\Jobs\ProcessImage;
 use App\Offer;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\UploadedFile;
@@ -68,17 +69,17 @@ class OfferCreateRequest extends Request
 
         /** @var UploadedFile $uploadedFile */
         foreach ($images as $uploadedFile) {
-            $originalFile = $uploadedFile->storePublicly(Image::SUBDIR);
+            $originalFile = $uploadedFile->storePublicly(Image::STORAGE_DIR);
 
             $image = new Image([
                 'original' => $originalFile,
-                'ready' => false,
                 'offer_id' => $offer->id
             ]);
 
             $image->save();
-        }
 
+            ProcessImage::dispatch($image);
+        }
 
         return new Response(true, ['id' => $offer->id]);
     }

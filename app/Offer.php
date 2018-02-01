@@ -4,6 +4,7 @@ namespace App;
 
 
 use App\Eloquent\AuthorizationAwareModel;
+use App\Observers\OfferObserver;
 use App\Rules\CurrencyRule;
 use App\Rules\MoneyRule;
 use Illuminate\Database\Eloquent\Builder;
@@ -70,6 +71,8 @@ class Offer extends Model implements AuthorizationAwareModel
     protected static function boot()
     {
         parent::boot();
+
+        self::observe(OfferObserver::class);
 
         static::addGlobalScope('sort', function (Builder $query) {
             $query->orderBy('listed_at', 'desc');

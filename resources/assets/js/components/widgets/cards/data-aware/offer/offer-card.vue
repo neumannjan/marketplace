@@ -39,8 +39,8 @@
                 <carousel :items="this.data.images">
                     <template slot-scope="props">
                         <lazy-img :width="props.item.width" :height="props.item.height"
-                                  :src="props.item.size_original"
-                                  :thumb="props.item.size_tiny"
+                                  :src="props.item.urls.original"
+                                  :thumb="props.item.urls.tiny"
                                   alt="Image"/> <!-- TODO alt -->
                     </template>
                 </carousel>
@@ -175,8 +175,8 @@
 
                 return {
                     alt: this.data.name,
-                    src: image['size_original'],
-                    thumb: image['size_tiny'],
+                    src: image.urls.original,
+                    thumb: image.urls.tiny,
                     width: image['width'],
                     height: image['height'],
                 };
@@ -199,8 +199,8 @@
             profileImage() {
                 if (this.data.author.profile_image) {
                     return {
-                        '1x': this.data.author.profile_image.size_icon,
-                        '2x': this.data.author.profile_image.size_icon_2x,
+                        '1x': this.data.author.profile_image.urls.icon,
+                        '2x': this.data.author.profile_image.urls.icon_2x,
                     }
                 }
 

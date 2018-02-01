@@ -5,6 +5,7 @@ namespace App;
 use App\Eloquent\AuthorizationAwareModel;
 use App\Notifications\ActivateRegistration;
 use App\Notifications\ResetPassword;
+use App\Observers\UserObserver;
 use App\Rules\ContainsNonNumericRule;
 use App\Rules\ContainsNumericRule;
 use App\Rules\SlugRule;
@@ -56,6 +57,16 @@ class User extends Authenticatable implements AuthorizationAwareModel
     protected $casts = [
         'options' => 'array'
     ];
+
+    /**
+     * @inheritDoc
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::observe(UserObserver::class);
+    }
 
     public function getDisplayNameAttribute()
     {
