@@ -26,14 +26,20 @@ class UnitTester extends \Codeception\Actor
 
     /**
      * @param array $data
+     * @param \Illuminate\Http\UploadedFile[]|null $files
+     * @return \Illuminate\Http\JsonResponse
      */
-    function sendPrivateApiRequest(array $data)
+    function sendPrivateApiRequest(array $data, $files = null)
     {
         $request = new \Illuminate\Http\Request();
         $request->setMethod('POST');
         $request->request->set('api', json_encode($data));
 
+        if ($files) {
+            $request->files->add($files);
+        }
+
         $controller = new \App\Http\Controllers\PrivateApiController();
-        $controller->index($request);
+        return $controller->index($request, app());
     }
 }
