@@ -5,8 +5,10 @@ namespace App\Api\Request\DB\Offer;
 
 use App\Api\Request\Request;
 use App\Api\Response\Response;
+use App\Image;
 use App\Offer;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Validator;
 
@@ -55,9 +57,28 @@ class OfferCreateRequest extends Request
             'author_user_id' => $this->guard->id()
         ]);
 
-        //TODO add images
-
         $offer->save();
+
+        // TODO add images
+        $images = $parameters['images'];
+
+        if ((array)$images !== $images)
+            $images = [$images];
+
+
+        /** @var UploadedFile $uploadedFile */
+        foreach ($images as $uploadedFile) {
+            $originalFile = $uploadedFile->storePublicly(Image::SUBDIR);
+
+            $image = new Image([
+                'original' => $originalFile,
+                'ready' => false,
+                'offer_id' => $offer->id
+            ]);
+
+            $image->save();
+        }
+
 
         return new Response(true, ['id' => $offer->id]);
     }

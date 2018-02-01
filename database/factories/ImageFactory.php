@@ -16,11 +16,14 @@ $factory->define(\App\Image::class, function (Faker $faker) {
     $icon_2x = $faker->unsplashUrl(80, 80, $id);
 
     return [
-        'size_original' => $original,
-        'size_tiny' => $tiny,
-        'size_icon' => $icon,
-        'size_icon_2x' => $icon_2x,
+        'original' => $original,
+        'sizes' => [
+            'tiny' => $tiny,
+            'icon' => $icon,
+            'icon_2x' => $icon_2x,
+        ],
         'width' => $width,
-        'height' => $height
+        'height' => $height,
+        'ready' => true
     ];
 });

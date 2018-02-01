@@ -19,12 +19,12 @@ class CreateImagesTable extends Migration
         Schema::create(self::TABLE, function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
-            $table->string('size_original');
-            $table->string('size_tiny')->nullable();
-            $table->string('size_icon')->nullable();
-            $table->string('size_icon_2x')->nullable();
-            $table->unsignedInteger('width');
-            $table->unsignedInteger('height');
+            $table->string('original')->nullable();
+            $table->json('sizes')->nullable();
+            $table->json('available_sizes')->nullable()->comment('If null, all sizes will be created');
+            $table->boolean('ready')->default(false);
+            $table->unsignedInteger('width')->default(0);
+            $table->unsignedInteger('height')->default(0);
 
             $table->unsignedInteger('offer_id')->nullable();
             $table->foreign('offer_id')->references('id')->on('offers')->onDelete('cascade');
