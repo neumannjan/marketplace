@@ -20,40 +20,42 @@
                         :validation="$v.form.description"
                         v-model="form.description"/>
 
-            <label for="price">
-                <slot>Price</slot>
-            </label>
-            <div class="input-group">
-                <input id="price"
-                       autocomplete="off"
-                       ref="price"
-                       :class="['form-control', {'is-invalid': priceError, 'is-valid': priceValid}]"
-                       @input="onPriceInput"
-                       type="tel"
-                       inputmode="numeric"
-                       pattern="[0-9]*"
-                       formnovalidate
-                       name="price"/>
-                <choices :items="choicesCurrencies"
-                         :elem-class="{'is-invalid': priceError, 'is-valid': priceValid}"
-                         @input="touchPrice"
-                         name="currency"
-                         v-model="form.currency">
-                </choices>
+            <div class="form-group">
+                <label for="price">
+                    <slot>Price</slot>
+                </label>
+                <div class="input-group">
+                    <input id="price"
+                           autocomplete="off"
+                           ref="price"
+                           :class="['form-control', {'is-invalid': priceError, 'is-valid': priceValid}]"
+                           @input="onPriceInput"
+                           type="tel"
+                           inputmode="numeric"
+                           pattern="[0-9]*"
+                           formnovalidate
+                           name="price"/>
+                    <choices :items="choicesCurrencies"
+                             :elem-class="{'is-invalid': priceError, 'is-valid': priceValid}"
+                             @input="touchPrice"
+                             name="currency"
+                             v-model="form.currency">
+                    </choices>
+                </div>
+                <validation-message label="Price"
+                                    :input="form.price"
+                                    @error="e => setObjArg('errors', 'price', e)"
+                                    @valid="v => setObjArg('valids', 'price', v)"
+                                    :server-validation="$serverValidationOn('form.price')"
+                                    :validation="$v.form.price"/>
+                <validation-message label="Currency"
+                                    :input="form.currency"
+                                    @error="e => setObjArg('errors', 'currency', e)"
+                                    @valid="v => setObjArg('valids', 'currency', v)"
+                                    :server-validation="$serverValidationOn('form.currency')"
+                                    :validation="$v.form.currency"/>
+                <div class="h3 my-3 price" v-if="price">{{ price }}</div>
             </div>
-            <validation-message label="Price"
-                                :input="form.price"
-                                @error="e => setObjArg('errors', 'price', e)"
-                                @valid="v => setObjArg('valids', 'price', v)"
-                                :server-validation="$serverValidationOn('form.price')"
-                                :validation="$v.form.price"/>
-            <validation-message label="Currency"
-                                :input="form.currency"
-                                @error="e => setObjArg('errors', 'currency', e)"
-                                @valid="v => setObjArg('valids', 'currency', v)"
-                                :server-validation="$serverValidationOn('form.currency')"
-                                :validation="$v.form.currency"/>
-            <div class="h3 my-3 price">{{ price }}</div>
 
             <file-select name="images[]"
                          accept="image/*"
@@ -64,6 +66,14 @@
                          :validation="$v.form.images"
                          @input="f => form.images = f"/>
 
+            <div v-if="images" class="form-group">
+                <div class="mb-2">Reorder the images (use drag & drop)</div>
+                <draggable class="d-flex flex-wrap thumbnail-container">
+                    <div v-for="(image, index) of images" :key="index" class="thumbnail-wrapper p-2">
+                        <placeholder-img :src="srcs[index]" class="w-100 h-100"/>
+                    </div>
+                </draggable>
+            </div>
 
             <div class="form-group">
                 <button id="submit" type="submit" class="btn btn-primary" @click.prevent="submit(false)">Publish
@@ -92,6 +102,9 @@
     import Cleave from 'cleave.js';
     import FileSelect from "JS/components/widgets/form/file-select";
 
+    import Draggable from 'vuedraggable';
+    import PlaceholderImg from "JS/components/widgets/image/placeholder-img";
+
     export default {
         name: 'offer-form-route',
         mixins: [
@@ -100,9 +113,11 @@
             form
         ],
         components: {
+            PlaceholderImg,
             FileSelect,
             ValidationMessage,
             Choices,
+            Draggable,
             'form-input': InputComponent,
             'form-select': SelectComponent
         },
@@ -117,8 +132,22 @@
                 price: "",
                 currency: false,
                 images: false
-            }
+            },
+            srcs: {}
         }),
+        watch: {
+            images(images) {
+                this.srcs = {};
+
+                for (let [index, image] of images.entries()) {
+                    const reader = new FileReader();
+                    reader.addEventListener("load", () => {
+                        this.srcs = {...this.srcs, [index]: reader.result};
+                    });
+                    reader.readAsDataURL(image);
+                }
+            }
+        },
         methods: {
             touchPrice() {
                 this.$v.form.price.$touch();
@@ -148,6 +177,9 @@
             }
         },
         computed: {
+            images() {
+                return Array.from(this.form.images);
+            },
             title() {
                 //TODO
                 return 'Create offer';
@@ -252,7 +284,9 @@
     };
 </script>
 
-<style scoped>
+<style scoped lang="scss" type="text/scss">
+    @import "~CSS/includes";
+
     .custom-select {
         flex-grow: 0;
         flex-shrink: 0;
@@ -261,6 +295,24 @@
 
     .price {
         word-wrap: break-word;
+    }
+
+    .thumbnail-container {
+        margin: #{-1*map_get($spacers, 2)};
+    }
+
+    .thumbnail-wrapper {
+        width: 150px;
+        height: 150px;
+        overflow: hidden;
+        position: relative;
+
+        img {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
     }
 
 </style>
