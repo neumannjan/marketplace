@@ -1,5 +1,10 @@
+#!/usr/bin/env node
 const dotenv = require('dotenv');
 const EchoServer = require('laravel-echo-server');
+
+/**
+ * Script that runs
+ */
 
 /**
  * Parsed process arguments
