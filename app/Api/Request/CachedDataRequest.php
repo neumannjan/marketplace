@@ -34,7 +34,8 @@ class CachedDataRequest extends Request
         return new CachedResponse(true, 'mainCachedData', function () {
             $array = [];
 
-            //currencies
+            // Currencies
+
             $currencyContainer = Money::getCurrencies();
             $iterator = $currencyContainer->getIterator();
 

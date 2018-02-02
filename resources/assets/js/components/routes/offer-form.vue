@@ -56,9 +56,10 @@
             <div class="h3 my-3 price">{{ price }}</div>
 
             <file-select name="images[]"
+                         accept="image/*"
                          multiple
                          label="Add some images"
-                         error-label="Image select"
+                         error-label="File"
                          :server-validation="$serverValidationOn('form.images')"
                          :validation="$v.form.images"
                          @input="f => form.images = f"/>
@@ -215,6 +216,14 @@
                 images: {
                     required(value) {
                         return value && value.length > 0;
+                    },
+                    image(images) {
+                        for (let image of images) {
+                            if (!image.type.startsWith('image/'))
+                                return false;
+                        }
+
+                        return true;
                     }
                 }
             }

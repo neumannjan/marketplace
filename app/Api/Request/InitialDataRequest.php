@@ -23,6 +23,7 @@ class InitialDataRequest extends GlobalDataRequest
                 'containsNonNumeric' => trans('validation.contains.non_numeric'),
                 'confirmed' => trans('validation.confirmed'),
                 'email' => trans('validation.email'),
+                'image' => trans('validation.image'),
             ]
         ];
 

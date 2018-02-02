@@ -5,6 +5,7 @@
         </label>
         <div class="custom-file">
             <input type="file" :name="name" :multiple="multiple" @change="onFileChange"
+                   :accept="accept"
                    :class="['custom-file-input', {'is-invalid': error, 'is-valid': valid}]"
                    :id="id" ref="file">
             <!-- TODO -->
@@ -39,6 +40,7 @@
             validation: Object,
             serverValidation: Array,
             errorLabel: String,
+            accept: String
         },
         computed: {
             fileInfo() {
