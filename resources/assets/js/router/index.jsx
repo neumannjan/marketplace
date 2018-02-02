@@ -27,7 +27,6 @@ import store from 'JS/store';
 Vue.use(VueRouter);
 
 const cachedRouteComponents = [
-    'index-route',
     'search-route'
 ];
 
