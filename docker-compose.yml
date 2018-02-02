@@ -1,25 +1,27 @@
 version: '3'
 services:
   web:
-    image: marketplace
+    image: marketplace-php-apache
     depends_on:
       - db
       - redis
     links:
       - db
       - redis
+      - nodejs
     ports:
       - "8080:80"
       - "8443:443"
     volumes:
       - .:/app:z
-      - ./storage/app/public:/app/public/storage
+      - ./storage/app/public:/app/public/storage:z
     environment:
       PHP_DEBUGGER: xdebug
       PHP_DISPLAY_ERRORS: 1
       XDEBUG_REMOTE_AUTOSTART: 0
       XDEBUG_REMOTE_HOST: 172.19.0.1
       WEB_DOCUMENT_ROOT: "/app/public"
+      APP_ROOT: "/app"
   db:
     #image: mysql:5.7
     #image: mariadb:10.2
@@ -39,6 +41,14 @@ services:
       - cachevol:/bitnami
     environment:
       REDIS_PASSWORD: root
+  nodejs:
+    image: marketplace-nodejs
+    ports:
+      - "6001:6001"
+    volumes:
+      - .:/app:z
+    environment:
+      APP_ROOT: "/app"
   selenium:
     image: selenium/standalone-chrome-debug:3.8.1
     #image: selenium/standalone-firefox-debug:3.8.1

@@ -26,7 +26,7 @@ const args = (() => {
  * `.env` file environment variables
  */
 const env = (() => {
-    const result = dotenv.config({path: '.env' + (args.env && args.env !== true ? `.${args.env}` : '')});
+    const result = dotenv.config({path: __dirname + '/.env' + (args.env && args.env !== true ? `.${args.env}` : '')});
 
     if (result.error)
         throw result.error;
