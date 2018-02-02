@@ -1,0 +1,75 @@
+const dotenv = require('dotenv');
+const EchoServer = require('laravel-echo-server');
+
+/**
+ * Parsed process arguments
+ */
+const args = (() => {
+    const argv = process.argv.slice(2);
+    let args = {};
+    let argLast = null;
+
+    for (let arg of argv) {
+        if (arg.substr(0, 2) === "--") {
+            argLast = arg.substr(2);
+            args[argLast] = true;
+        } else if (argLast) {
+            args[argLast] = arg;
+            argLast = null;
+        }
+    }
+
+    return args;
+})();
+
+/**
+ * `.env` file environment variables
+ */
+const env = (() => {
+    const result = dotenv.config({path: '.env' + (args.env && args.env !== true ? `.${args.env}` : '')});
+
+    if (result.error)
+        throw result.error;
+
+    return result.parsed;
+})();
+
+/**
+ * Return either an environment variable or a default value
+ * @param {function} func
+ * @param defaultValue
+ * @returns {*}
+ */
+function optional(func, defaultValue) {
+    const result = func(env);
+    return result !== undefined ? result : defaultValue;
+}
+
+/**
+ * Either return an environment variable or throw an error if missing
+ * @param {function} func
+ * @returns {*}
+ */
+function required(func) {
+    const result = func(env);
+    if (result === undefined)
+        throw "Missing required environment variable";
+    return result;
+}
+
+/**
+ * Laravel echo server options
+ */
+const options = {
+    authHost: required(e => e.APP_URL),
+    devMode: optional(e => e.APP_DEBUG === "true" || e.APP_DEBUG === true, false),
+    port: optional(e => e.WEBSOCKET_PORT, 6001),
+    protocol: optional(e => e.WEBSOCKET_PROTOCOL, "http"),
+    sslCertPath: optional(e => e.SSL_CERT_PATH, ''),
+    sslKeyPath: optional(e => e.SSL_KEY_PATH, ''),
+    sslCertChainPath: optional(e => e.SSL_CERT_CHAIN_PATH, ''),
+    sslPassphrase: optional(e => e.SSL_PASSPHRASE, ''),
+};
+
+// Run the server
+EchoServer.run(options);
