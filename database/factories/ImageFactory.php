@@ -24,6 +24,7 @@ $factory->define(\App\Image::class, function (Faker $faker) {
         ],
         'width' => $width,
         'height' => $height,
-        'ready' => true
+        'ready' => true,
+        'order' => 0
     ];
 });

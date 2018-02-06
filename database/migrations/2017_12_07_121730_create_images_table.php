@@ -25,6 +25,7 @@ class CreateImagesTable extends Migration
             $table->boolean('ready')->default(false);
             $table->unsignedInteger('width')->default(0);
             $table->unsignedInteger('height')->default(0);
+            $table->unsignedInteger('order');
 
             $table->unsignedInteger('offer_id')->nullable();
             $table->foreign('offer_id')->references('id')->on('offers')->onDelete('set null');

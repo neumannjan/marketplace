@@ -41,7 +41,19 @@ class OfferCreateRequest extends Request
      */
     protected function rules(Validator $validator = null)
     {
-        return Offer::getValidationRules($validator);
+        return [
+                'imageOrder' => 'required|array',
+                'imageOrder.*.new' => 'required|boolean',
+                'imageOrder.*.index' => 'required|integer',
+            ] + Offer::getValidationRules($validator);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function jsonParameters()
+    {
+        return ['imageOrder'];
     }
 
     /**
@@ -66,20 +78,33 @@ class OfferCreateRequest extends Request
         if ((array)$images !== $images)
             $images = [$images];
 
+        $images = Collection::make($images);
 
-        /** @var UploadedFile $uploadedFile */
-        foreach ($images as $uploadedFile) {
-            $originalFile = $uploadedFile->storePublicly(Image::STORAGE_DIR);
+        $imageOrder = $parameters['imageOrder'];
 
-            $image = new Image([
-                'original' => $originalFile,
-                'offer_id' => $offer->id,
-                'available_sizes' => ['tiny']
-            ]);
 
-            $image->save();
+        /** @var Collection $imageDesc */
+        foreach ($imageOrder as $key => $imageDesc) {
+            if ($imageDesc['new']) {
+                $uploadedFile = $images->get($imageDesc['index'], null);
 
-            ProcessImage::dispatch($image);
+                if (!$uploadedFile)
+                    continue;
+
+                /** @var UploadedFile $uploadedFile */
+                $originalFile = $uploadedFile->storePublicly(Image::STORAGE_DIR);
+
+                $image = new Image([
+                    'original' => $originalFile,
+                    'offer_id' => $offer->id,
+                    'available_sizes' => ['tiny'],
+                    'order' => $key
+                ]);
+
+                $image->save();
+
+                ProcessImage::dispatch($image);
+            }
         }
 
         return new Response(true, ['id' => $offer->id]);

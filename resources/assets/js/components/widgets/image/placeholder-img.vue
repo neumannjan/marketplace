@@ -1,6 +1,6 @@
 <template>
     <div>
-        <img v-if="displayed" v-show="ready" ref="img">
+        <img v-if="displayed" v-show="ready" ref="img" :style="imgStyle" :class="imgClass">
         <slot v-if="!displayed || !ready">
             <div :class="['img-placeholder w-100 h-100', placeholderClass]">
                 <icon name="image" scale="2.5"/>
@@ -21,7 +21,13 @@
             placeholderClass: {
                 type: String,
                 default: ''
-            }
+            },
+            imgStyle: {
+                default: ''
+            },
+            imgClass: {
+                default: ''
+            },
         },
         data: () => ({
             ready: false
@@ -40,7 +46,6 @@
                 await this.$nextTick();
 
                 const img = this.$refs.img;
-                console.log("src changed");
 
                 const enable = () => {
                     this.ready = true;

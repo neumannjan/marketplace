@@ -55,6 +55,15 @@ abstract class Request
     }
 
     /**
+     * Returns an array of parameters that are JSON and should be converted to an array
+     * @return string[]
+     */
+    protected function jsonParameters()
+    {
+        return [];
+    }
+
+    /**
      * @param \Illuminate\Http\Request $httpRequest
      */
     public function setHttpRequest(HttpRequest $httpRequest)
@@ -83,6 +92,11 @@ abstract class Request
      */
     public final function resolve($name, $parameters)
     {
+        $jsonParameters = $this->jsonParameters();
+        foreach ($jsonParameters as $key) {
+            $parameters[$key] = json_decode($parameters[$key], true);
+        }
+
         if(!$parameters instanceof Collection)
             $parameters = Collection::make($parameters);
 

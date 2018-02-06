@@ -68,7 +68,9 @@
             }
         },
         methods: {
-            onFileChange(e) {
+            async onFileChange(e) {
+                this.files = null;
+                await this.$nextTick();
                 this.files = e.target.files || e.dataTransfer.files;
                 this.$emit('input', this.files);
             }

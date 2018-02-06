@@ -64,14 +64,17 @@
                          error-label="File"
                          :server-validation="$serverValidationOn('form.images')"
                          :validation="$v.form.images"
-                         @input="f => form.images = f"/>
+                         @input="onFileInput"/>
 
-            <div v-if="images" class="form-group">
+            <div v-if="imageOrder && imageOrder.length > 0" class="form-group">
                 <div class="mb-2">Reorder the images (use drag & drop)</div>
-                <draggable class="d-flex flex-wrap thumbnail-container">
-                    <div v-for="(image, index) of images" :key="index" class="thumbnail-wrapper p-2">
-                        <placeholder-img :src="srcs[index]" class="w-100 h-100"/>
-                    </div>
+                <draggable class="d-flex flex-wrap thumbnail-container" v-model="imageOrder">
+                    <placeholder-img v-for="(image, index) of imageOrder"
+                                     :src="image.src"
+                                     :key="image.key"
+                                     class="thumbnail-wrapper p-2"
+                                     img-class="w-100 h-100 rounded"
+                                     :img-style="{objectFit: 'cover'}"/>
                 </draggable>
             </div>
 
@@ -131,36 +134,57 @@
                 description: "",
                 price: "",
                 currency: false,
-                images: false
+                images: [],
             },
-            srcs: {}
+            imageOrder: []
         }),
-        watch: {
-            images(images) {
-                this.srcs = {};
-
-                for (let [index, image] of images.entries()) {
-                    const reader = new FileReader();
-                    reader.addEventListener("load", () => {
-                        this.srcs = {...this.srcs, [index]: reader.result};
-                    });
-                    reader.readAsDataURL(image);
-                }
-            }
-        },
         methods: {
             touchPrice() {
                 this.$v.form.price.$touch();
                 this.$v.form.currency.$touch();
             },
-            onPriceInput($event) {
+            onPriceInput() {
                 this.touchPrice();
-                this.form.price = parseFloat(this.priceCleave.getRawValue());
+                this.form = {...this.form, price: parseFloat(this.priceCleave.getRawValue())};
+            },
+            onFileInput(f) {
+                this.form = {...this.form, images: f};
+
+                let imageOrder = [];
+
+                for (let [index, image] of Array.from(f).entries()) {
+                    const entry = {src: null, new: true, index: index, key: `new|${index}`};
+                    imageOrder.push(entry);
+
+                    const reader = new FileReader();
+                    reader.addEventListener("load", () => {
+                        const is = imageOrder === this.imageOrder;
+                        const i = imageOrder.indexOf(entry);
+
+                        if (i >= 0) {
+                            imageOrder[i].src = reader.result;
+                        }
+
+                        if (is) {
+                            this.imageOrder = imageOrder;
+                        }
+                    });
+                    reader.readAsDataURL(image);
+                }
+
+                this.imageOrder = imageOrder;
             },
             submit(asDraft = false) {
                 const formData = new FormData(this.$refs.form);
                 formData.set('price', this.form.price);
                 formData.set('status', asDraft ? 0 : 1);
+
+                const imageOrder = Object.values(this.imageOrder).map(val => ({
+                    new: val.new,
+                    index: val.index
+                }));
+
+                formData.set('imageOrder', JSON.stringify(imageOrder));
 
                 this.$submitForm('offer-create', 'form', result => {
                     this.form = {};
@@ -177,9 +201,6 @@
             }
         },
         computed: {
-            images() {
-                return Array.from(this.form.images);
-            },
             title() {
                 //TODO
                 return 'Create offer';
@@ -304,15 +325,6 @@
     .thumbnail-wrapper {
         width: 150px;
         height: 150px;
-        overflow: hidden;
         position: relative;
-
-        img {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-        }
     }
-
 </style>

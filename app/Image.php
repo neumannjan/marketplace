@@ -35,7 +35,8 @@ class Image extends Model
         'width',
         'height',
         'offer_id',
-        'available_sizes'
+        'available_sizes',
+        'order'
     ];
 
     /**
@@ -46,6 +47,11 @@ class Image extends Model
         parent::boot();
 
         self::observe(ImageObserver::class);
+
+        self::addGlobalScope('ordered', function ($query) {
+            /** @var Builder $query */
+            return $query->orderBy('order');
+        });
     }
 
     public function offer()
