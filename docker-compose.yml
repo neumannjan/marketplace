@@ -1,6 +1,7 @@
 version: '3'
 services:
   web:
+    build: ./docker/marketplace-php-apache
     image: marketplace-php-apache
     depends_on:
       - db
@@ -42,6 +43,7 @@ services:
     environment:
       REDIS_PASSWORD: root
   nodejs:
+    build: ./docker/marketplace-nodejs
     image: marketplace-nodejs
     ports:
       - "6001:6001"
