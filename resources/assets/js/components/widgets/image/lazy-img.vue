@@ -236,6 +236,11 @@
                 const width = Math.min(this.width, dimensions.width);
                 const height = Math.min(this.height, dimensions.height);
 
+                if (width === 0 || height === 0) {
+                    this.shown = true;
+                    return;
+                }
+
                 let canvases = [];
 
                 for (let i = 0; i < this.blurIterations; ++i) {
