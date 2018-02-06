@@ -25,7 +25,7 @@ let doSubmitForm = debounce((vm, requestName, selectorKey, onSuccess, formData, 
                     vm.$set(vm.validation, selectorKey, result.api.validation);
                 }
             })
-            .finally(() => vm.$v.$touch());
+            .then(() => vm.$v.$touch());
     } else {
         vm.$v.$touch();
     }
