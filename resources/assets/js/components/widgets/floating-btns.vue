@@ -4,8 +4,9 @@
             tag="div"
             class="fixed-bottom-right d-flex flex-column-reverse">
         <button v-for="(button, index) in $data._buttons"
+                ref="button"
                 :key="button.id ? button.id : button.icon"
-                @click="$emit('click', button)"
+                @click="onClick(button, index)"
                 :class="['btn btn-floating', `btn-floating-${index}`, button.class ? button.class : 'btn-dark']">
             <icon :name="button.icon" :label="button.label"/>
         </button>
@@ -13,38 +14,41 @@
 </template>
 
 <script>
-    export default {
-        name: 'floating-btns',
-        props: {
-            buttons: {
-                type: Array,
-                required: true
-            },
+export default {
+    name: 'floating-btns',
+    props: {
+        buttons: {
+            type: Array,
+            required: true
         },
-        data: () => ({
-            _buttons: []
-        }),
-        watch: {
-            $route() {
-                this.setButtons();
-            },
-            buttons(b) {
-                this.setButtons();
-            }
+    },
+    data: () => ({
+        _buttons: []
+    }),
+    watch: {
+        $route() {
+            this.setButtons();
         },
-        methods: {
-            setButtons() {
-                let buttons = [];
+        buttons() {
+            this.setButtons();
+        }
+    },
+    methods: {
+        setButtons() {
+            let buttons = [];
 
-                for (let button of this.buttons) {
-                    if (!button.show || button.show() !== false)
-                        buttons.push(button);
-                }
-
-                this.$data._buttons = buttons;
+            for (let button of this.buttons) {
+                if (!button.show || button.show() !== false)
+                    buttons.push(button);
             }
+
+            this.$data._buttons = buttons;
+        },
+        onClick(button, index) {
+            this.$emit('click', button, this.$refs.button[index]);
         }
     }
+};
 
 </script>
 

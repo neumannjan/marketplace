@@ -21,3 +21,4 @@ _ide_helper_models.php
 package-lock.json
 composer.lock
 webpack.config.js
+.phpcd

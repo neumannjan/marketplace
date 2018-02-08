@@ -24,6 +24,7 @@
     "lodash": "^4.17.4",
     "lodash-webpack-plugin": "^0.11.4",
     "masonry-layout": "^4.2.0",
+    "popper.js": "^1.12.9",
     "stackblur-canvas": "^1.4.0",
     "stickyfilljs": "^2.0.3",
     "velocity-animate": "^1.5.0",

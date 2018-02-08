@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "target": "ES6",
+        "paths": {
+            "*": [
+                "node_modules/*",
+                "vendor/*"
+            ],
+            "JS": [
+                "resources/assets/js/*"
+            ],
+            "CSS": [
+                "resources/assets/css/*"
+            ],
+        },
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}
