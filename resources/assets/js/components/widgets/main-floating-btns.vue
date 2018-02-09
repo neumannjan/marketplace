@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="fixed-bottom-right">
         <floating-btns :buttons="buttons" @click="click"/>
         <popper v-if="popperEl" :element="popperEl" placement="left-start">
             <div class="card mr-3 mb-1" :style="{ width: '300px', height: '400px' }">
@@ -19,18 +19,18 @@
 </template>
 
 <script>
-import FloatingBtns from './floating-btns';
-import Popper from './popper';
-import events from 'JS/components/mixins/events';
-import router from 'JS/router';
+    import FloatingBtns from './floating-btns';
+    import Popper from './popper';
+    import events from 'JS/components/mixins/events';
+    import router from 'JS/router';
 
-import 'vue-awesome/icons/plus';
-import 'vue-awesome/icons/comment';
-import 'vue-awesome/icons/bell';
-import 'vue-awesome/icons/angle-left';
-import 'vue-awesome/icons/angle-up';
+    import 'vue-awesome/icons/plus';
+    import 'vue-awesome/icons/comment';
+    import 'vue-awesome/icons/bell';
+    import 'vue-awesome/icons/angle-left';
+    import 'vue-awesome/icons/angle-up';
 
-const BTN_ADD = 'add';
+    const BTN_ADD = 'add';
 const BTN_CHAT = 'chat';
 const BTN_NOTIFICATIONS = 'notifications';
 const BTN_BACK = 'back';
@@ -127,3 +127,9 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+    .fixed-bottom-right {
+        z-index: 1020;
+    }
+</style>

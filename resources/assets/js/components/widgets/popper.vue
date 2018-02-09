@@ -7,10 +7,10 @@
 </template>
 
 <script>
-import Popper from 'popper.js';
-import DomRoot from 'JS/components/helpers/dom-root';
+    import Popper from 'popper.js';
+    import DomRoot from 'JS/components/helpers/dom-root';
 
-export default {
+    export default {
     name: 'popper',
     components: {
         DomRoot
@@ -25,7 +25,7 @@ export default {
         },
         root: {
             type: Boolean,
-            default: true
+            default: false
         },
         offset: {
             default: 0

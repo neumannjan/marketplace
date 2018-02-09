@@ -2,7 +2,7 @@
     <transition-group
             name="tr"
             tag="div"
-            class="fixed-bottom-right d-flex flex-column-reverse">
+            class="d-flex flex-column-reverse">
         <button v-for="(button, index) in $data._buttons"
                 ref="button"
                 :key="button.id ? button.id : button.icon"
@@ -60,10 +60,6 @@ export default {
     $ease-in-quad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
     $ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     $ease-quad: cubic-bezier(0.455, 0.03, 0.515, 0.955);
-
-    .fixed-bottom-right {
-        z-index: 1020;
-    }
 
     .btn-floating {
         position: absolute;
