@@ -1,11 +1,14 @@
 <template>
-    <div>
-        <img v-if="displayed" v-show="ready" ref="img" :style="imgStyle" :class="imgClass">
-        <slot v-if="!displayed || !ready">
-            <div :class="['img-placeholder w-100 h-100', placeholderClass]">
-                <icon name="image" scale="2.5"/>
-            </div>
-        </slot>
+    <div :style="wrapperStyle">
+        <img v-if="displayed" v-show="ready" ref="img" :alt="alt" :style="imgStyle" :class="imgClass"
+             :crossorigin="crossOrigin" :width="width" :height="height">
+        <template v-if="!displayed || !ready">
+            <slot>
+                <div :class="['img-placeholder w-100 h-100', placeholderClass]">
+                    <icon name="image" scale="2.5"/>
+                </div>
+            </slot>
+        </template>
     </div>
 </template>
 
@@ -17,7 +20,17 @@
         name: 'placeholder-img',
         mixins: [events],
         props: {
-            src: {},
+            src: {
+                type: String,
+                default: ''
+            },
+            alt: {
+                type: String
+            },
+            srcset: {
+                type: String,
+                default: ''
+            },
             placeholderClass: {
                 type: String,
                 default: ''
@@ -28,6 +41,8 @@
             imgClass: {
                 default: ''
             },
+            width: {},
+            height: {},
         },
         data: () => ({
             ready: false
@@ -35,12 +50,32 @@
         computed: {
             displayed() {
                 return !!this.src;
+            },
+            crossOrigin() {
+                return process.env.NODE_ENV === 'development' ? 'anonymous' : undefined;
+            },
+            wrapperStyle() {
+                let style = {};
+
+                if (this.width) style.width = `${this.width}px`;
+                if (this.height) style.height = `${this.height}px`;
+
+                return style;
             }
         },
         watch: {
-            async src(src) {
-                if (!src) return;
+            src(val) {
+                if (!val) return;
 
+                this.load(this.src, this.srcset);
+            },
+            ready(val) {
+                if (val)
+                    this.$emit('img', this.$refs.img);
+            }
+        },
+        methods: {
+            async load(src, srcset) {
                 this.ready = false;
 
                 await this.$nextTick();
@@ -53,7 +88,16 @@
                 };
 
                 img.addEventListener('load', enable);
-                img.src = src;
+                if (srcset)
+                    img.srcset = srcset;
+
+                if (src)
+                    img.src = src;
+            }
+        },
+        mounted() {
+            if (this.src) {
+                this.load(this.src, this.srcset);
             }
         }
     };

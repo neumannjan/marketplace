@@ -1,8 +1,11 @@
 <template>
-    <div :is="root ? 'dom-root' : 'div'">
+    <dom-root v-if="root">
         <div ref="popper">
             <slot/>
         </div>
+    </dom-root>
+    <div v-else ref="popper">
+        <slot/>
     </div>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
     <div v-if="user">
-        <blurred-img v-if="userHasImg" class="user-nav-bg" :data="img" :modify-callback="modifyBG"/>
+        <blurred-img v-if="imgEl" class="user-nav-bg" :data="imgEl" :modify-callback="modifyBG"/>
         <div v-else class="user-nav-bg"></div>
         <div class="user-nav-content px-3" :style="{
             transform: `translateY(${- (borderSize + imgSize)/2}px)`,
@@ -9,20 +9,9 @@
             <div class="img-border" :style="{
                 width: `${imgSize + borderSize}px`,
                 height: `${imgSize + borderSize}px`}">
-                <!-- TODO img alt -->
-                <img ref="profileImg"
-                     v-if="userHasImg"
-                     :src="userImgSrc"
-                     :width="imgSize"
-                     :height="imgSize"
-                     class="rounded-circle"
-                     :crossorigin="crossOrigin"
-                     :srcset="`${user.profile_image.urls.icon}, ${user.profile_image.urls.icon_2x} 2x`">
-                <icon class="profile-img-placeholder"
-                      v-else
-                      name="user-circle"
-                      label="user"
-                      :scale="imgSize/16"/> <!-- TODO translate label -->
+                <profile-img :img="img ? img : {}" @img="onImg" :style="{
+                    width: `${imgSize}px`,
+                    height: `${imgSize}px`}"/>
             </div>
             <h1 class="h2 text-center">{{ user.display_name }}</h1>
         </div>
@@ -34,7 +23,7 @@
     import BlurredImg from 'JS/components/widgets/image/blurred-img';
     import events from 'JS/components/mixins/events';
 
-    import 'vue-awesome/icons/user-circle';
+    import ProfileImg from "JS/components/widgets/image/profile-img";
 
     export default {
         name: 'user-route-navigation',
@@ -50,20 +39,20 @@
             }
         },
         components: {
+            ProfileImg,
             BlurredImg
         },
         computed: {
-            userHasImg() {
-                return this.user && !!this.user.profile_image;
+            img() {
+                return this.user && this.user.profile_image ? this.user.profile_image : null;
             },
             crossOrigin() {
                 return process.env.NODE_ENV === 'development' ? 'anonymous' : undefined;
             }
         },
         data: () => ({
-            img: null,
             user: null,
-            userImgSrc: null,
+            imgEl: null
         }),
         methods: {
             modifyBG(imageData) {
@@ -82,19 +71,8 @@
 
                 return contrastImage(imageData, 70);
             },
-            requestImg() {
-                if (!this.userHasImg) return;
-
-                const profileImg = this.$refs.profileImg;
-
-                const setImg = () => {
-                    this.img = profileImg;
-                    profileImg.removeEventListener('load', setImg);
-                };
-
-                profileImg.addEventListener('load', setImg);
-
-                this.userImgSrc = this.user.profile_image.urls.icon;
+            onImg(el) {
+                this.imgEl = el;
             }
         },
         created() {
@@ -107,7 +85,6 @@
                 }
 
                 this.user = user;
-                this.$nextTick(this.requestImg);
             });
         }
     };
@@ -137,15 +114,6 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-    }
-
-    .profile-img-placeholder {
-        color: $placeholder-color;
-    }
-
-    img {
-        position: relative;
-        flex-shrink: 0;
     }
 
     .img-border {

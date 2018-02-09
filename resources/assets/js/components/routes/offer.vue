@@ -10,7 +10,7 @@
     import route from 'JS/components/mixins/route';
     import routeGuard from 'JS/components/mixins/route-guard';
     import api from 'JS/api';
-    import OfferCard from 'JS/components/widgets/cards/data-aware/offer/offer-card';
+    import OfferCard from 'JS/components/widgets/masonry/data-aware/offer/offer-card';
 
     import router from 'JS/router';
 

@@ -25,8 +25,8 @@
 <script>
     import api from 'JS/api';
     import infiniteScroll from 'vue-infinite-scroll';
-    import MasonryComponent from 'JS/components/widgets/cards/masonry';
-    import CardComponent from 'JS/components/widgets/cards/card';
+    import MasonryComponent from 'JS/components/widgets/masonry/masonry';
+    import CardComponent from 'JS/components/widgets/masonry/card';
 
     export default {
         props: {

@@ -7,7 +7,7 @@
 
 <script>
     import route from 'JS/components/mixins/route';
-    import OfferMasonry from 'JS/components/widgets/cards/data-aware/offer/offer-masonry';
+    import OfferMasonry from 'JS/components/widgets/masonry/data-aware/offer/offer-masonry';
     import Search from "JS/components/widgets/search";
 
     export default {

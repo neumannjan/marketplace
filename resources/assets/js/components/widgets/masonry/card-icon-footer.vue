@@ -2,7 +2,7 @@
     <div :class="['card-footer-icons d-flex', `justify-content-${justifyContent}`]">
         <button v-for="button in buttons" type="button" @click="button.callback ? button.callback() : null"
                 :disabled="button.disabled ? true : undefined"
-                :class="['btn btn-link', buttonClass, {gray: gray}]">
+                :class="['btn btn-link', buttonClass, {'btn-link-gray': gray}]">
             <icon :name="button.icon" :label="button.label"/>
         </button>
     </div>
@@ -38,14 +38,6 @@
         padding: 12px;
         flex-grow: 1;
         max-width: 150px;
-
-        &.gray {
-            color: $gray-700;
-
-            &:hover {
-                color: $gray-900;
-            }
-        }
     }
 
     .card-footer-icons {

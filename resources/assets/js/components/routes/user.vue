@@ -8,7 +8,7 @@
     import route from 'JS/components/mixins/route';
     import routeFetch from 'JS/components/mixins/route-fetch';
     import api from 'JS/api';
-    import OfferMasonry from 'JS/components/widgets/cards/data-aware/offer/offer-masonry';
+    import OfferMasonry from 'JS/components/widgets/masonry/data-aware/offer/offer-masonry';
     import router, {events as routeEvents} from 'JS/router';
     import store from 'JS/store';
     import {mapState} from 'vuex';

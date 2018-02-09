@@ -57,6 +57,8 @@
             }
         },
         mounted() {
+            if (this.data)
+                this.load();
             this.$onElResize(this.$refs.canvas, () => this.load(true));
         },
         activated() {

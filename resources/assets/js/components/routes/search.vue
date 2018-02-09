@@ -12,7 +12,7 @@
     import Search from "JS/components/widgets/search";
     import route from "JS/components/mixins/route";
     import api from 'JS/api';
-    import OfferMasonry from "JS/components/widgets/cards/data-aware/offer/offer-masonry";
+    import OfferMasonry from "JS/components/widgets/masonry/data-aware/offer/offer-masonry";
 
     export default {
         name: "search-route",

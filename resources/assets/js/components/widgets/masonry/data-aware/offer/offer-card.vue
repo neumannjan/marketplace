@@ -2,12 +2,7 @@
     <card :class="[color('border-')]">
         <div v-if="showAuthor" slot="header" class="offer-card-header">
             <router-link :to="toAuthor" class="offer-card-header text-dark">
-                <img v-if="profileImage" class="profile-img rounded-circle"
-                     :src="profileImage['1x']"
-                     :srcset="`${profileImage['1x']}, ${profileImage['2x']} 2x`"/>
-                <div v-else="" class="profile-img profile-img-placeholder">
-                    <icon name="user-circle" scale="2"/>
-                </div>
+                <profile-img :img="profileImage ? profileImage : {}" :img-size="32"/>
                 <span class="ml-2 author-info">
                         {{ data.author.display_name }} <small
                         class="text-muted">{{ `@${data.author.username}` }}</small>
@@ -92,10 +87,12 @@
     import 'vue-awesome/icons/expand';
     import 'vue-awesome/icons/user-circle';
     import Alert from "JS/components/widgets/alert";
+    import ProfileImg from "JS/components/widgets/image/profile-img";
 
     export default {
         name: "offer-card",
         components: {
+            ProfileImg,
             Alert,
             Card,
             CardIconFooter,
@@ -227,10 +224,7 @@
             },
             profileImage() {
                 if (this.data.author.profile_image) {
-                    return {
-                        '1x': this.data.author.profile_image.urls.icon,
-                        '2x': this.data.author.profile_image.urls.icon_2x,
-                    }
+                    return this.data.author.profile_image;
                 }
 
                 return null;
@@ -299,10 +293,6 @@
         float: left;
         min-width: 32px;
         height: 32px;
-    }
-
-    .profile-img-placeholder {
-        color: $placeholder-color;
     }
 
     .author-info {
