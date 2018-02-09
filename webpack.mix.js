@@ -20,6 +20,7 @@ mix
     .sourceMaps()
     .version()
     .browserSync({proxy: 'localhost:8080'})
+    .disableNotifications()
     .webpackConfig({
         plugins: [
             new LodashPlugin()
