@@ -21,32 +21,38 @@
             </div>
         </div>
         <div class="overflow-scroll-y p-2">
-            <div v-if="user" class="d-flex flex-column-reverse">
+            <div v-if="user" class="d-flex flex-column">
                 <template v-for="n in 30">
-                    <div v-if="n % 3" class="chat-item-right mb-3 d-flex flex-row-reverse align-items-start">
-                        <div class="align-self-stretch d-flex flex-column justify-content-between align-items-start">
-                            <a href="#" @click.prevent="" class="mx-2">
-                                <profile-img :img="{}" :img-size="imgSize"/>
-                            </a>
-                            <!-- TODO label -->
-                            <icon v-if="n % 5 === 0" name="check-circle" scale="0.8" class="mt-auto mx-2 text-primary"/>
-                            <icon v-else-if="n % 4 === 0" name="check-circle-o" scale="0.8"
-                                  class="mt-auto mx-2 text-primary"/>
-                            <icon v-else-if="n % 2 === 0" name="circle-o" scale="0.8"
-                                  class="mt-auto mx-2 text-primary"/>
+                    <div v-if="n % 3" class="chat-item-right mb-2 d-flex flex-row-reverse align-items-end">
+                        <!-- TODO label -->
+                        <div class="chat-item-indicator mx-2">
+                            <icon v-if="n % 7 === 0" name="check-circle" :scale="indicatorSize/16"
+                                  class="text-primary"/>
+                            <icon v-else-if="n % 5 === 0" name="check-circle-o" :scale="indicatorSize/16"
+                                  class="text-primary"/>
+                            <icon v-else-if="n % 4 === 0" name="circle-o" :scale="indicatorSize/16"
+                                  class="text-primary"/>
+                            <profile-img v-else-if="n % 2 === 0" :img="{}" :img-size="indicatorSize"/>
+                            <div v-else :style="{width: `${indicatorSize}px`, height: '1px'}"></div>
                         </div>
-                        <div class="card text-white bg-primary px-3 py-2" :style="{borderRadius: `${imgSize/2}px`}">
-                            Hello
-                            <template v-if="n % 2" v-for="o in 10">hello hello</template>
+                        <div class="chat-item-message card text-white bg-primary"
+                             :style="{borderRadius: `${imgSize/2}px`}">
+                            <p class="m-0">
+                                Hello&#32;<template v-if="n % 2" v-for="o in 10">hello&#32;hello&#32;</template>
+                            </p>
                         </div>
                     </div>
-                    <div v-else class="chat-item-left mb-3 d-flex flex-row align-items-start">
+                    <div v-else class="chat-item-left mb-2 d-flex flex-row align-items-end">
                         <a href="#" @click.prevent="" class="mx-2">
                             <profile-img :img="{}" :img-size="imgSize"/>
                         </a>
-                        <div class="card bg-light px-3 py-2" :style="{borderRadius: `${imgSize/2}px`}">
-                            Hello
-                            <template v-if="n % 2" v-for="o in 10">hello hello</template>
+                        <div class="chat-item-message card bg-light" :style="{borderRadius: `${imgSize/2}px`}">
+                            <p v-if="n < 30" class="m-0">
+                                Hello&#32;<template v-if="n % 2" v-for="o in 10">hello&#32;hello&#32;</template>
+                            </p>
+                            <div v-else class="chat-item-typing">
+                                <div></div>
+                            </div>
                         </div>
                     </div>
                 </template>
@@ -59,8 +65,7 @@
                         <div class="d-flex flex-column chat-user-content">
                             <span class="text-truncate d-block">User name</span>
                             <small class="text-truncate d-block text-muted">
-                                Text
-                                <template v-for="n in 10">text</template>
+                                Hello&#32;<template v-for="o in 10">hello&#32;hello&#32;</template>
                             </small>
                         </div>
                     </a>
@@ -96,6 +101,10 @@
             imgSize: {
                 type: Number,
                 default: 32
+            },
+            indicatorSize: {
+                type: Number,
+                default: 14
             }
         },
         data: () => ({
@@ -136,6 +145,54 @@
     }
 
     .chat-item-message {
+        padding: .25em .75em;
+    }
 
+    .chat-item-indicator {
+        line-height: 0;
+    }
+
+    @keyframes typing {
+        35% {
+            transform: translateY(25%);
+        }
+
+        50% {
+            transform: translateY(-50%);
+        }
+
+        65% {
+            transform: translateY(25%);
+        }
+    }
+
+    .chat-item-typing {
+        display: inline-block;
+        flex-direction: row;
+
+        &:before, &:after {
+            content: ' ';
+        }
+
+        & > *, &:before, &:after {
+            width: 9px;
+            height: 9px;
+            margin: 0 .15em;
+            border-radius: 50%;
+            background: $gray-500;
+            display: inline-block;
+            will-change: transform;
+
+            animation: typing 2s ease infinite;
+            transform: translateY(25%);
+        }
+
+        & > * {
+            animation-delay: .1s;
+        }
+
+        &:after {
+            animation-delay: .2s;
+        }
     }
 </style>
