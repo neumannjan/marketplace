@@ -49,6 +49,23 @@ class DatabaseSeeder extends Seeder
                     'offer_id' => $o->id
                 ]);
             });
+
+            factory(\App\Message::class, 20)->make()->each(function (\App\Message $m) use ($u, $faker) {
+                $isTo = $faker->boolean;
+                $other = \App\User::whereKeyNot($u->id)->inRandomOrder()->limit(1)->first(['id']);
+
+                if ($other) {
+                    if ($isTo) {
+                        $m->to_id = $u->id;
+                        $m->from_id = $other->id;
+                    } else {
+                        $m->from_id = $u->id;
+                        $m->to_id = $other->id;
+                    }
+
+                    $m->save();
+                }
+            });
         });
     }
 }

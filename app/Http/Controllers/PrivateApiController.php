@@ -9,6 +9,7 @@ use App\Api\Request\Auth\PasswordEmailRequest;
 use App\Api\Request\Auth\PasswordResetRequest;
 use App\Api\Request\Auth\RegisterRequest;
 use App\Api\Request\CachedDataRequest;
+use App\Api\Request\DB\Chat\ConversationsRequest;
 use App\Api\Request\DB\MultiRequest;
 use App\Api\Request\DB\Offer\OfferCreateRequest;
 use App\Api\Request\DB\Offer\OfferSearchRequest;
@@ -67,6 +68,8 @@ class PrivateApiController extends Controller
             ],
 
             'search' => OfferSearchRequest::class,
+
+            'conversations' => ConversationsRequest::class,
 
             // DB set
             'offer-create' => OfferCreateRequest::class

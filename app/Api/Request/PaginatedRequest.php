@@ -4,9 +4,9 @@ namespace App\Api\Request;
 
 
 use App\Api\Response\Response;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\ResourceCollection;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Validator;
 
