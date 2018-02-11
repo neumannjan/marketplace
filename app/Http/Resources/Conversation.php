@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Message;
 use Illuminate\Http\Resources\Json\Resource;
 
 class Conversation extends Resource
@@ -14,8 +15,11 @@ class Conversation extends Resource
      */
     public function toArray($request)
     {
+        /** @var Message|Conversation $this */
         return [
-
+            'content' => $this->content,
+            'additional' => $this->additional,
+            'user' => $this->user,
         ];
     }
 }

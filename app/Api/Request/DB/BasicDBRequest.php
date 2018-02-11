@@ -18,7 +18,7 @@ trait BasicDBRequest
     protected $resourceClass;
 
     /**
-     * BasicSingleRequest constructor.
+     * BasicDBRequest constructor.
      * @param string $modelClass
      * @param string $resourceClass
      */
@@ -39,9 +39,10 @@ trait BasicDBRequest
 
     /**
      * Returns name of a Resource class to be used. If false, no Resource class used
+     * @param Collection $parameters
      * @return string|false
      */
-    protected function resourceClass()
+    protected function resourceClass(Collection $parameters)
     {
         return $this->resourceClass;
     }

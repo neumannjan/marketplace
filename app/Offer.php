@@ -4,6 +4,8 @@ namespace App;
 
 
 use App\Eloquent\AuthorizationAwareModel;
+use App\Eloquent\Timestamp\OrderAware;
+use App\Eloquent\Timestamp\OrderAwareModel;
 use App\Observers\OfferObserver;
 use App\Rules\CurrencyRule;
 use App\Rules\MoneyRule;
@@ -20,9 +22,9 @@ use Money\Money;
 /**
  * App\Offer
  */
-class Offer extends Model implements AuthorizationAwareModel
+class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
 {
-    use Searchable;
+    use Searchable, OrderAware;
 
     const STATUS_DRAFT = 0;
     const STATUS_AVAILABLE = 1;
@@ -75,8 +77,17 @@ class Offer extends Model implements AuthorizationAwareModel
         self::observe(OfferObserver::class);
 
         static::addGlobalScope('sort', function (Builder $query) {
-            $query->orderBy('listed_at', 'desc');
+            return $query
+                ->orderBy('listed_at', 'desc');
         });
+    }
+
+    /**
+     * @inheritdoc
+     */
+    function getTimestampOrderBy()
+    {
+        return 'listed_at';
     }
 
     /**

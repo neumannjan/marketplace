@@ -18,6 +18,12 @@ trait DBRequest
     use BasicDBRequest;
 
     /**
+     * Public scope to be used by default. Null if the scope parameter is required.
+     * @var string|null
+     */
+    protected $defaultScope = null;
+
+    /**
      * @inheritDoc
      */
     protected function _rules(Validator $validator = null)
@@ -28,10 +34,9 @@ trait DBRequest
         $model = new $modelClass;
 
         return [
-                'scope' => [
-                    'required',
-                    Rule::in($model->getPublicScopes())
-                ]
+                'scope' => $this->defaultScope ?
+                    [] :
+                    ['required', Rule::in($model->getPublicScopes())]
             ] + parent::_rules($validator);
     }
 
@@ -84,7 +89,7 @@ trait DBRequest
      */
     protected function buildQuery(Collection $parameters)
     {
-        $scope = $parameters['scope'];
+        $scope = $parameters->get('scope', $this->defaultScope);
 
         $modelClass = $this->modelClass();
 

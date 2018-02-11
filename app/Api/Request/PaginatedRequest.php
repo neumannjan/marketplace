@@ -22,16 +22,29 @@ abstract class PaginatedRequest extends Request
     protected $perPageDefault = 10;
 
     /**
+     * Whether a page based or a timestamp based Paginator will be used.
+     * @var bool
+     */
+    protected $timestampBased = false;
+
+    /**
      * @inheritDoc
      */
     protected function _rules(Validator $validator = null)
     {
-        return [
+        $rules = [
             'per_page' => ($this->perPageDefault === null ? 'required|' : '') . 'integer',
             'page' => 'integer',
             ] + parent::_rules($validator);
-    }
 
+        if ($this->timestampBased) {
+            $rules['timestamp'] = 'integer';
+        } else {
+            $rules['page'] = 'integer';
+        }
+
+        return $rules;
+    }
 
     /**
      * @inheritDoc
@@ -39,7 +52,10 @@ abstract class PaginatedRequest extends Request
     protected function doResolve($name, Collection $parameters)
     {
         $perPage = $parameters->get('per_page', $this->perPageDefault);
-        $page = $parameters->get('page', 1);
+        if ($this->timestampBased)
+            $page = $parameters->get('timestamp', null);
+        else
+            $page = $parameters->get('page', 1);
 
         $urlParameters = $this->_urlParameters($parameters);
         $query = [
@@ -57,7 +73,7 @@ abstract class PaginatedRequest extends Request
         $paginator->appends($query);
         $paginator->setPath(route('api.single', ['name' => $name], false));
 
-        $resource = $this->resourceClass();
+        $resource = $this->resourceClass($parameters);
         $result = null;
 
         if ($resource) {
@@ -103,16 +119,17 @@ abstract class PaginatedRequest extends Request
      * Returns a Paginator instance to be used
      * @param Collection $parameters
      * @param integer $perPage
-     * @param integer $page
+     * @param integer|null $pageOrTimestamp
      * @return Paginator
      */
-    protected abstract function paginator(Collection $parameters, $perPage, $page);
+    protected abstract function paginator(Collection $parameters, $perPage, $pageOrTimestamp);
 
     /**
      * Returns name of a Resource class to be used. If false, no Resource class used
+     * @param Collection $parameters
      * @return string|false
      */
-    protected function resourceClass()
+    protected function resourceClass(Collection $parameters)
     {
         return false;
     }

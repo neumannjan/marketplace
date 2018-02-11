@@ -10,6 +10,7 @@ use App\Api\Request\Auth\PasswordResetRequest;
 use App\Api\Request\Auth\RegisterRequest;
 use App\Api\Request\CachedDataRequest;
 use App\Api\Request\DB\Chat\ConversationsRequest;
+use App\Api\Request\DB\Chat\MessagesRequest;
 use App\Api\Request\DB\MultiRequest;
 use App\Api\Request\DB\Offer\OfferCreateRequest;
 use App\Api\Request\DB\Offer\OfferSearchRequest;
@@ -52,7 +53,8 @@ class PrivateApiController extends Controller
             'offers' => [
                 MultiRequest::class,
                 'modelClass' => Offer::class,
-                'resourceClass' => \App\Http\Resources\Offer::class
+                'resourceClass' => \App\Http\Resources\Offer::class,
+                'timestampBased' => true
             ],
 
             'offer' => [
@@ -70,6 +72,7 @@ class PrivateApiController extends Controller
             'search' => OfferSearchRequest::class,
 
             'conversations' => ConversationsRequest::class,
+            'messages' => MessagesRequest::class,
 
             // DB set
             'offer-create' => OfferCreateRequest::class

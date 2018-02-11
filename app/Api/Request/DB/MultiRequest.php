@@ -4,6 +4,7 @@ namespace App\Api\Request\DB;
 
 
 use App\Api\Request\PaginatedRequest;
+use App\Eloquent\Timestamp\TimestampPaginator;
 use Illuminate\Support\Collection;
 
 /**
@@ -12,6 +13,19 @@ use Illuminate\Support\Collection;
 class MultiRequest extends PaginatedRequest
 {
     use DBRequest;
+
+    /**
+     * MultiRequest constructor.
+     * @param string $modelClass
+     * @param string $resourceClass
+     * @param bool $timestampBased
+     */
+    public function __construct($modelClass, $resourceClass, $timestampBased = false)
+    {
+        $this->modelClass = $modelClass;
+        $this->resourceClass = $resourceClass;
+        $this->timestampBased = $timestampBased;
+    }
 
     /**
      * @inheritDoc
@@ -26,7 +40,6 @@ class MultiRequest extends PaginatedRequest
      */
     protected function _urlParameters(Collection $parameters)
     {
-
         $result = array_merge([
             'scope'
         ], $this->getDBParameters($parameters)->keys()->toArray(), parent::_urlParameters($parameters));
@@ -37,10 +50,14 @@ class MultiRequest extends PaginatedRequest
     /**
      * @inheritDoc
      */
-    protected function paginator(Collection $parameters, $perPage, $page)
+    protected function paginator(Collection $parameters, $perPage, $pageOrTimestamp)
     {
         $query = $this->buildQuery($parameters);
 
-        return $query->paginate($perPage, ['*'], 'page', $page);
+        if ($this->timestampBased) {
+            return TimestampPaginator::fromQuery($query, $perPage, $pageOrTimestamp);
+        } else {
+            return $query->paginate($perPage, ['*'], 'page', $pageOrTimestamp);
+        }
     }
 }

@@ -28,7 +28,7 @@ class SingleRequest extends Request
         }
 
         /** @var \Illuminate\Http\Resources\Json\Resource $resourceClass */
-        $resourceClass = $this->resourceClass();
+        $resourceClass = $this->resourceClass($parameters);
 
         return new Response(true, ($resourceClass)::make($model));
     }

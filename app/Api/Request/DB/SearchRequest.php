@@ -55,7 +55,7 @@ abstract class SearchRequest extends PaginatedRequest
     /**
      * @inheritDoc
      */
-    protected function paginator(Collection $parameters, $perPage, $page)
+    protected function paginator(Collection $parameters, $perPage, $pageOrTimestamp)
     {
         /** @var Model|Searchable $modelClass */
         $modelClass = $this->modelClass();
@@ -63,7 +63,7 @@ abstract class SearchRequest extends PaginatedRequest
         $query = $modelClass::search($parameters['query']);
         $query = $this->filterQuery($query);
 
-        return $query->paginate($perPage, 'page', $page);
+        return $query->paginate($perPage, 'page', $pageOrTimestamp);
     }
 
 }
