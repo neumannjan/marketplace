@@ -70,12 +70,12 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
          *   INNER JOIN (
          *                SELECT
          *                  IF(to_id = 1, from_id, to_id) AS user_id,
-         *                  MAX(id)                       AS id
+         *                  MAX(id)                       AS max_id
          *                FROM messages
          *                WHERE to_id = 1 OR from_id = 1
          *                GROUP BY user_id
          *              ) m
-         *     ON messages.id = m.id
+         *     ON messages.id = m.max_id
          * ORDER BY messages.created_at DESC, messages.id DESC;
          */
 
@@ -83,7 +83,7 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
             ->withoutGlobalScope('order')
             ->select([
                 DB::raw("IF(to_id = $user_id, from_id, to_id) AS user_id"),
-                DB::raw('MAX(id) AS id')
+                DB::raw('MAX(id) AS max_id')
             ])
             ->where(['to_id' => $user_id])
             ->orWhere(['from_id' => $user_id])
@@ -92,7 +92,7 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
         return $query
             ->setBindings($inner->getBindings())
             ->select(['messages.*', 'm.user_id'])
-            ->join(DB::raw("({$inner->toSql()}) m"), 'messages.id', '=', 'm.id');
+            ->join(DB::raw("({$inner->toSql()}) m"), 'messages.id', '=', 'm.max_id');
     }
 
     /**

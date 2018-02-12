@@ -21,59 +21,11 @@
             </div>
         </div>
         <div class="overflow-scroll-y p-2">
-            <div v-if="user" class="d-flex flex-column">
-                <template v-for="n in 30">
-                    <div v-if="n % 3" class="chat-item-right mb-2 d-flex flex-row-reverse align-items-end">
-                        <!-- TODO label -->
-                        <div class="chat-item-indicator mx-2">
-                            <icon v-if="n % 7 === 0" name="check-circle" :scale="indicatorSize/16"
-                                  class="text-primary"/>
-                            <icon v-else-if="n % 5 === 0" name="check-circle-o" :scale="indicatorSize/16"
-                                  class="text-primary"/>
-                            <icon v-else-if="n % 4 === 0" name="circle-o" :scale="indicatorSize/16"
-                                  class="text-primary"/>
-                            <profile-img v-else-if="n % 2 === 0" :img="{}" :img-size="indicatorSize"/>
-                            <div v-else :style="{width: `${indicatorSize}px`, height: '1px'}"></div>
-                        </div>
-                        <div class="chat-item-message card text-white bg-primary"
-                             :style="{borderRadius: `${imgSize/2}px`}">
-                            <p class="m-0">
-                                Hello&#32;<template v-if="n % 2" v-for="o in 10">hello&#32;hello&#32;</template>
-                            </p>
-                        </div>
-                    </div>
-                    <div v-else class="chat-item-left mb-2 d-flex flex-row align-items-end">
-                        <a href="#" @click.prevent="" class="mx-2">
-                            <profile-img :img="{}" :img-size="imgSize"/>
-                        </a>
-                        <div class="chat-item-message card bg-light" :style="{borderRadius: `${imgSize/2}px`}">
-                            <p v-if="n < 30" class="m-0">
-                                Hello&#32;<template v-if="n % 2" v-for="o in 10">hello&#32;hello&#32;</template>
-                            </p>
-                            <div v-else class="chat-item-typing">
-                                <div></div>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-            </div>
-
-            <ul v-else class="list-group list-group-flush">
-                <li v-for="n in 20" class="list-group-item px-2">
-                    <a href="#" @click.prevent="user = {}" class="chat-user no-decoration">
-                        <profile-img :img="{}" :img-size="imgSize" class="mr-2"/>
-                        <div class="d-flex flex-column chat-user-content">
-                            <span class="text-truncate d-block">User name</span>
-                            <small class="text-truncate d-block text-muted">
-                                Hello&#32;<template v-for="o in 10">hello&#32;hello&#32;</template>
-                            </small>
-                        </div>
-                    </a>
-                </li>
-            </ul>
+            <list-messages v-if="user" :user="user" :img-size="imgSize" :indicator-size="indicatorSize"/>
+            <list-conversations v-else @select="onSelectUser" :img-size="imgSize"/>
         </div>
 
-        <div v-if="user" class="p-1">
+        <div v-if="user" class="p-1 mt-auto">
             <form @submit.prevent="" class="input-group input-group-sm">
                 <input type="text" class="form-control" placeholder="Type a message">
                 <div class="input-group-append">
@@ -93,9 +45,15 @@
     import "vue-awesome/icons/check-circle";
     import "vue-awesome/icons/circle-o";
     import "vue-awesome/icons/close";
+    import ListConversations from "JS/components/widgets/chat/list-conversations";
+    import ListMessages from "JS/components/widgets/chat/list-messages";
 
     export default {
-        components: {ProfileImg},
+        components: {
+            ListMessages,
+            ListConversations,
+            ProfileImg
+        },
         name: 'chat-card',
         props: {
             imgSize: {
@@ -113,86 +71,10 @@
         methods: {
             onClose() {
                 this.$emit('close');
+            },
+            onSelectUser(user) {
+                this.user = user;
             }
         }
     }
 </script>
-
-<style scoped lang="scss" type="text/scss">
-    @import "~CSS/includes";
-
-    .chat-user {
-        position: relative;
-        display: flex;
-    }
-
-    .chat-user-content {
-        line-height: 100%;
-        overflow: hidden;
-    }
-
-    $chat-item-margin: map_get($spacers, 5);
-    $image-margin: map_get($spacers, 2);
-
-    .chat-item-left {
-        margin-right: #{$chat-item-margin};
-        margin-left: #{-1 * $image-margin};
-    }
-
-    .chat-item-right {
-        margin-left: #{$chat-item-margin};
-        margin-right: #{-1 * $image-margin};
-    }
-
-    .chat-item-message {
-        padding: .25em .75em;
-    }
-
-    .chat-item-indicator {
-        line-height: 0;
-    }
-
-    @keyframes typing {
-        35% {
-            transform: translateY(25%);
-        }
-
-        50% {
-            transform: translateY(-50%);
-        }
-
-        65% {
-            transform: translateY(25%);
-        }
-    }
-
-    .chat-item-typing {
-        display: inline-block;
-        flex-direction: row;
-
-        &:before, &:after {
-            content: ' ';
-        }
-
-        & > *, &:before, &:after {
-            width: 9px;
-            height: 9px;
-            margin: 0 .15em;
-            border-radius: 50%;
-            background: $gray-500;
-            display: inline-block;
-            will-change: transform;
-
-            animation: typing 2s ease infinite;
-            transform: translateY(25%);
-        }
-
-        & > * {
-            animation-delay: .1s;
-        }
-
-        &:after {
-            animation-delay: .2s;
-        }
-    }
-</style>

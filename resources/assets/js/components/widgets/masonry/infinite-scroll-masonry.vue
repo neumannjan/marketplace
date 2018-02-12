@@ -1,22 +1,22 @@
 <template>
     <div>
-        <masonry :class="masonryClass" v-if="this.requestBusy || this.cards.length > 0" :cards="cards"
-                 @ready="masonryBusy = false"
-                 v-infinite-scroll="request" infinite-scroll-disabled="busy"
-                 infinite-scroll-distance="200">
-            <template slot-scope="props">
-                <slot :data="props.data"/>
-            </template>
-            <template slot="below">
-                <template v-if="hasMore">
-                    <slot name="loading"/>
+        <infinite-scroll :busy="busy" @request="request" v-if="cards.length > 0">
+            <masonry :class="masonryClass" :cards="cards"
+                     @ready="masonryBusy = false">
+                <template slot-scope="props">
+                    <slot :data="props.data"/>
                 </template>
-            </template>
-        </masonry>
+                <template slot="below">
+                    <template v-if="hasMore">
+                        <slot name="loading"/>
+                    </template>
+                </template>
+            </masonry>
+        </infinite-scroll>
         <template v-if="hasMore">
             <slot name="loading-after"/>
         </template>
-        <template v-else="">
+        <template v-else>
             <slot name="loaded"/>
         </template>
     </div>
@@ -24,9 +24,9 @@
 
 <script>
     import api from 'JS/api';
-    import infiniteScroll from 'vue-infinite-scroll';
     import MasonryComponent from 'JS/components/widgets/masonry/masonry';
     import CardComponent from 'JS/components/widgets/masonry/card';
+    import InfiniteScroll from "JS/components/widgets/infinite-scroll";
 
     export default {
         props: {
@@ -41,11 +41,9 @@
             }
         },
         components: {
+            InfiniteScroll,
             masonry: MasonryComponent,
             card: CardComponent
-        },
-        directives: {
-            infiniteScroll
         },
         computed: {
             hasMore() {

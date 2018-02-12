@@ -22,6 +22,7 @@ class OwnedMessage extends Resource
 
         /** @var \App\Message|OwnedMessage $this */
         return [
+            'id' => $this->id,
             'content' => $this->content,
             'additional' => $this->additional,
             'mine' => $this->from_id === $user->id

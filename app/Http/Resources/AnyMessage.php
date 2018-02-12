@@ -16,6 +16,7 @@ class AnyMessage extends Resource
     {
         /** @var \App\Message|OwnedMessage $this */
         return [
+            'id' => $this->id,
             'content' => $this->content,
             'additional' => $this->additional,
             'from' => User::make($this->from),

@@ -17,9 +17,10 @@ class Conversation extends Resource
     {
         /** @var Message|Conversation $this */
         return [
+            'id' => $this->id,
             'content' => $this->content,
             'additional' => $this->additional,
-            'user' => $this->user,
+            'user' => User::make($this->user),
         ];
     }
 }
