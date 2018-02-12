@@ -54,7 +54,7 @@ class PrivateApiController extends Controller
                 MultiRequest::class,
                 'modelClass' => Offer::class,
                 'resourceClass' => \App\Http\Resources\Offer::class,
-                'timestampBased' => true
+                'orderBased' => true
             ],
 
             'offer' => [

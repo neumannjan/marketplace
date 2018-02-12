@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Eloquent\Timestamp;
+namespace App\Eloquent\Order;
 
 
-use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 /**
- * {@see Paginator} based on a timestamp.
+ * {@see Paginator} based on order.
  */
-class TimestampPaginator implements Paginator, Arrayable, Jsonable, \JsonSerializable
+class AfterPaginator implements Paginator, Arrayable, Jsonable, \JsonSerializable
 {
     /**
      * All of the items being paginated.
@@ -31,11 +31,11 @@ class TimestampPaginator implements Paginator, Arrayable, Jsonable, \JsonSeriali
     protected $perPage;
 
     /**
-     * The current timestamp being "viewed".
+     * The value of a primary key of the model after which items are being "viewed".
      *
-     * @var int
+     * @var mixed|null
      */
-    protected $currentTimestamp;
+    protected $currentAfter;
 
     /**
      * The base path to assign to all URLs.
@@ -59,41 +59,41 @@ class TimestampPaginator implements Paginator, Arrayable, Jsonable, \JsonSeriali
     protected $fragment;
 
     /**
-     * The query string variable used to store the timestamp.
+     * The query string variable used to store the value of the primary key of the 'after' model.
      *
      * @var string
      */
-    protected $timestampName = 'timestamp';
+    protected $afterName = 'after';
 
     /**
-     * TimestampPaginator constructor.
+     * AfterPaginator constructor.
      * @param Collection $items
      * @param int $perPage
-     * @param int|null $timestamp
+     * @param mixed|null $after
      */
-    public function __construct(Collection $items, $perPage, $timestamp = null)
+    public function __construct(Collection $items, $perPage, $after = null)
     {
         $this->items = $items;
         $this->perPage = $perPage;
-        $this->currentTimestamp = $timestamp;
+        $this->currentAfter = $after;
     }
 
     /**
      * Paginate a database query
      * @param Builder $query
      * @param int $perPage
-     * @param int|null $timestamp
-     * @return TimestampPaginator
+     * @param mixed|null $after
+     * @return AfterPaginator
      */
-    public static function fromQuery(Builder $query, $perPage, $timestamp = null)
+    public static function fromQuery(Builder $query, $perPage, $after = null)
     {
-        if ($timestamp) {
-            $query->scopes(['after' => $timestamp]);
+        if ($after) {
+            $query->scopes(['after' => $after]);
         }
 
         $query->limit($perPage);
         $result = $query->get();
-        return new TimestampPaginator($result, $perPage, $timestamp);
+        return new AfterPaginator($result, $perPage, $after);
     }
 
     /**
@@ -105,10 +105,10 @@ class TimestampPaginator implements Paginator, Arrayable, Jsonable, \JsonSeriali
     {
         if ($this->hasMorePages()) {
             $last = $this->items->last();
-            if ($last instanceof OrderAwareModel) {
-                return $this->url($last->orderTimestamp);
+            if ($last instanceof Model) {
+                return $this->url($last->getKey());
             } else {
-                $class = OrderAwareModel::class;
+                $class = Model::class;
                 throw new \RuntimeException("Item not instance of $class");
             }
         }
@@ -119,15 +119,15 @@ class TimestampPaginator implements Paginator, Arrayable, Jsonable, \JsonSeriali
     /**
      * Get the URL for a given timestamp.
      *
-     * @param Carbon|null $timestamp
+     * @param mixed|null $after
      * @return string
      */
-    public function url($timestamp = null)
+    public function url($after = null)
     {
         // If we have any extra query string key / value pairs that need to be added
         // onto the URL, we will put them in query string form and then attach it
         // to the URL. This allows for extra information like sortings storage.
-        $parameters = $timestamp === null ? [] : [$this->timestampName => $timestamp->timestamp];
+        $parameters = $after === null ? [] : [$this->afterName => $after];
 
         if (count($this->query) > 0) {
             $parameters = array_merge($this->query, $parameters);
@@ -196,7 +196,7 @@ class TimestampPaginator implements Paginator, Arrayable, Jsonable, \JsonSeriali
      */
     protected function addQuery($key, $value)
     {
-        if ($key !== $this->timestampName) {
+        if ($key !== $this->afterName) {
             $this->query[$key] = $value;
         }
 

@@ -35,7 +35,7 @@ trait DBRequest
 
         return [
                 'scope' => $this->defaultScope ?
-                    [] :
+                    ['sometimes', Rule::in($model->getPublicScopes())] :
                     ['required', Rule::in($model->getPublicScopes())]
             ] + parent::_rules($validator);
     }

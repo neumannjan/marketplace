@@ -16,7 +16,7 @@ class MessagesRequest extends MultiRequest
 
     protected $defaultScope = Message::SCOPE_PERSONAL;
 
-    protected $timestampBased = true;
+    protected $orderBased = true;
 
     /**
      * @var Guard
@@ -29,7 +29,7 @@ class MessagesRequest extends MultiRequest
      */
     public function __construct(Guard $guard)
     {
-        parent::__construct($this->modelClass, $this->resourceClass, $this->timestampBased);
+        parent::__construct($this->modelClass, $this->resourceClass, $this->orderBased);
         $this->guard = $guard;
     }
 

@@ -4,7 +4,7 @@ namespace App\Api\Request\DB\Chat;
 
 
 use App\Api\Request\PaginatedRequest;
-use App\Eloquent\Timestamp\TimestampPaginator;
+use App\Eloquent\Order\AfterPaginator;
 use App\Http\Resources\Conversation;
 use App\Message;
 use App\User;
@@ -18,7 +18,7 @@ class ConversationsRequest extends PaginatedRequest
     /** @var Guard */
     protected $guard;
 
-    protected $timestampBased = true;
+    protected $orderBased = true;
 
     /**
      * ConversationsRequest constructor.
@@ -56,12 +56,12 @@ class ConversationsRequest extends PaginatedRequest
     /**
      * @inheritdoc
      */
-    protected function paginator(Collection $parameters, $perPage, $pageOrTimestamp)
+    protected function paginator(Collection $parameters, $perPage, $pageOrAfter)
     {
         /** @var User $user */
         $user = $this->guard->user();
 
-        return TimestampPaginator::fromQuery(Message::conversationsWith($user->id), $perPage, $pageOrTimestamp);
+        return AfterPaginator::fromQuery(Message::conversationsWith($user->id), $perPage, $pageOrAfter);
     }
 
     /**

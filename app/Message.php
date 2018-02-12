@@ -3,8 +3,8 @@
 namespace App;
 
 use App\Eloquent\AuthorizationAwareModel;
-use App\Eloquent\Timestamp\OrderAware;
-use App\Eloquent\Timestamp\OrderAwareModel;
+use App\Eloquent\Order\OrderAware;
+use App\Eloquent\Order\OrderAwareModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;

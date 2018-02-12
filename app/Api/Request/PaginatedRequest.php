@@ -22,10 +22,10 @@ abstract class PaginatedRequest extends Request
     protected $perPageDefault = 10;
 
     /**
-     * Whether a page based or a timestamp based Paginator will be used.
+     * Whether a page based or an order based Paginator will be used.
      * @var bool
      */
-    protected $timestampBased = false;
+    protected $orderBased = false;
 
     /**
      * @inheritDoc
@@ -37,8 +37,8 @@ abstract class PaginatedRequest extends Request
             'page' => 'integer',
             ] + parent::_rules($validator);
 
-        if ($this->timestampBased) {
-            $rules['timestamp'] = 'integer';
+        if ($this->orderBased) {
+            $rules['after'] = 'filled';
         } else {
             $rules['page'] = 'integer';
         }
@@ -52,8 +52,8 @@ abstract class PaginatedRequest extends Request
     protected function doResolve($name, Collection $parameters)
     {
         $perPage = $parameters->get('per_page', $this->perPageDefault);
-        if ($this->timestampBased)
-            $page = $parameters->get('timestamp', null);
+        if ($this->orderBased)
+            $page = $parameters->get('after', null);
         else
             $page = $parameters->get('page', 1);
 
@@ -119,10 +119,10 @@ abstract class PaginatedRequest extends Request
      * Returns a Paginator instance to be used
      * @param Collection $parameters
      * @param integer $perPage
-     * @param integer|null $pageOrTimestamp
+     * @param integer|string|null $pageOrAfter
      * @return Paginator
      */
-    protected abstract function paginator(Collection $parameters, $perPage, $pageOrTimestamp);
+    protected abstract function paginator(Collection $parameters, $perPage, $pageOrAfter);
 
     /**
      * Returns name of a Resource class to be used. If false, no Resource class used
