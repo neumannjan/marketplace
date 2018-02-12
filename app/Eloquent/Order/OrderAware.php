@@ -55,6 +55,8 @@ trait OrderAware
 
                 $prev[] = $order;
             }
+
+            return $query;
         });
 
         foreach ($timestampOrder as $order) {
