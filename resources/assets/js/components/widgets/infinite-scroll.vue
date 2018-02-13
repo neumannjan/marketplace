@@ -64,7 +64,8 @@
             as: {
                 default: 'div'
             },
-            top: Boolean
+            top: Boolean,
+            value: {}
         },
         data: () => ({
             onScroll: null,
@@ -78,16 +79,42 @@
                     await this.$nextTick();
 
                     if (!val) {
-                        scrollEventTarget.scrollTop = scrollEventTarget.scrollHeight - this.previousContainerHeight;
+                        this.setScroll(this.previousContainerHeight);
                     }
 
                     this.previousContainerHeight = scrollEventTarget.scrollHeight;
                 }
+            },
+            value(val) {
+                this.$nextTick(() => {
+                    this.setScroll(val, false);
+                });
             }
         },
         methods: {
             doRequest() {
                 this.$emit('request');
+            },
+            setScroll(scroll = null, emit = true) {
+                if (scroll !== undefined && scroll !== null && scroll !== false) {
+                    const scrollEventTarget = this.getScrollEventTarget();
+                    if (this.top) {
+                        scrollEventTarget.scrollTop = scrollEventTarget.scrollHeight - scroll;
+                    } else {
+                        scrollEventTarget.scrollTop = scroll;
+                    }
+
+                    if (emit) {
+                        this.$emit('input', scroll);
+                    }
+                } else if (emit) {
+                    const scrollEventTarget = this.getScrollEventTarget();
+                    if (this.top) {
+                        this.$emit('input', scrollEventTarget.scrollHeight - scrollEventTarget.scrollTop);
+                    } else {
+                        this.$emit('input', scrollEventTarget.scrollTop);
+                    }
+                }
             },
             request() {
                 if (this.busy) {
@@ -101,28 +128,27 @@
                 const viewportScrollTop = getScrollTop(scrollEventTarget);
                 const viewportBottom = viewportScrollTop + getVisibleHeight(scrollEventTarget);
 
-                let shouldTrigger = false;
+                let atTop = false;
+                let atBottom = false;
 
                 if (scrollEventTarget === element) {
-                    if (this.top) {
-                        shouldTrigger = viewportScrollTop <= distance;
-                    } else {
-                        shouldTrigger = scrollEventTarget.scrollHeight - viewportBottom <= distance;
-                    }
+                    atTop = viewportScrollTop <= distance;
+                    atBottom = scrollEventTarget.scrollHeight - viewportBottom <= distance;
                 } else {
-                    if (this.top) {
-                        const elementTop = getElementTop(element) - getElementTop(scrollEventTarget);
-                        shouldTrigger = -elementTop <= distance;
-                    } else {
-                        const elementBottom = getElementTop(element) - getElementTop(scrollEventTarget)
-                            + element.offsetHeight + viewportScrollTop;
-                        shouldTrigger = viewportBottom + distance >= elementBottom;
-                    }
+                    const elementTop = getElementTop(element) - getElementTop(scrollEventTarget);
+                    atTop = -elementTop <= distance;
+
+                    const elementBottom = elementTop + element.offsetHeight + viewportScrollTop;
+                    atBottom = viewportBottom + distance >= elementBottom;
                 }
 
-                if (shouldTrigger) {
+                if ((atTop && this.top) || (atBottom && !this.top)) {
                     this.doRequest();
                 }
+
+                this.$emit('top', atTop);
+                this.$emit('bottom', atBottom);
+                this.setScroll();
             },
             getScrollEventTarget() {
                 if (this.scrollEventTarget)

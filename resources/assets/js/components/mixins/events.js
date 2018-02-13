@@ -1,4 +1,5 @@
 import ResizeSensor from 'css-element-queries/src/ResizeSensor';
+import echo from 'JS/echo';
 
 export default {
     data: () => ({
@@ -28,6 +29,12 @@ export default {
             this.$attachEvent(
                 () => vm.$on(event, listener),
                 () => vm.$off(event, listener)
+            );
+        },
+        $onEcho(event, listener) {
+            this.$attachEvent(
+                () => echo.on(event, listener),
+                () => echo.off(event, listener)
             );
         },
         $onDocumentVisibility(listener) {

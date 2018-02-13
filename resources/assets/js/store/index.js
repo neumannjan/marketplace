@@ -40,7 +40,8 @@ const store = new Vuex.Store({
             currencies: []
         },
         _cached_loaded: false,
-        persisted: {}
+        persisted: {},
+        socket_host: null
     },
     mutations: {
         global(state, data) {
@@ -99,10 +100,6 @@ const store = new Vuex.Store({
         }
     }
 });
-
-if (data) {
-    store.commit('global', JSON.parse(atob(data)));
-}
 
 export const helpers = {
     trans(key, parameters) {

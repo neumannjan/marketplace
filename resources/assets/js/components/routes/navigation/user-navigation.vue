@@ -14,6 +14,7 @@
                     height: `${imgSize}px`}"/>
             </div>
             <h1 class="h2 text-center">{{ user.display_name }}</h1>
+            <p class="text-muted text-center"><i>@{{ user.username }}</i></p>
         </div>
     </div>
 </template>
@@ -81,6 +82,7 @@
 
                 if (this.user && user) {
                     this.user = null;
+                    this.imgEl = null;
                     await this.$nextTick();
                 }
 

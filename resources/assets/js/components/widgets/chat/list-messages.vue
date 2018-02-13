@@ -1,5 +1,5 @@
 <template>
-    <infinite-scroll top :busy="busy" @request="request" class="d-flex flex-column">
+    <infinite-scroll top :busy="busy" @request="request" @bottom="onBottom" v-model="scroll" class="d-flex flex-column">
         <div v-if="busy" class="text-center">
             <icon name="spinner" label="Loading" pulse/>
         </div>
@@ -23,9 +23,9 @@
                 </div>
             </div>
             <div v-else class="chat-item-left mb-2 d-flex flex-row align-items-end">
-                <a href="#" @click.prevent="" class="mx-2">
+                <router-link :to="{name: 'user', params: {username: user.username}}" class="mx-2">
                     <profile-img :img="profileImage ? profileImage : {}" :img-size="imgSize"/>
-                </a>
+                </router-link>
                 <div class="chat-item-message card bg-light" :style="{borderRadius: `${imgSize/2}px`}">
                     <chat-message-content class="m-0" :message="message"/>
                 </div>
@@ -33,9 +33,9 @@
         </template>
         <!-- Typing indicator -->
         <div class="chat-item-left mb-2 d-flex flex-row align-items-end">
-            <a href="#" @click.prevent="" class="mx-2">
+            <router-link :to="{name: 'user', params: {username: user.username}}" class="mx-2">
                 <profile-img :img="profileImage ? profileImage : {}" :img-size="imgSize"/>
-            </a>
+            </router-link>
             <div class="chat-item-message card bg-light" :style="{borderRadius: `${imgSize/2}px`}">
                 <div class="chat-item-typing">
                     <div></div>
@@ -47,12 +47,15 @@
 
 <script>
     import api from 'JS/api';
+    import events from 'JS/components/mixins/events';
+
     import ProfileImg from 'JS/components/widgets/image/profile-img';
     import ChatMessageContent from "JS/components/widgets/chat/chat-message-content";
     import InfiniteScroll from "JS/components/widgets/infinite-scroll";
 
     export default {
         name: 'list-messages',
+        mixins: [events],
         components: {
             InfiniteScroll,
             ChatMessageContent,
@@ -70,13 +73,18 @@
             indicatorSize: {
                 type: Number,
                 default: 14
+            },
+            postedMessages: {
+                type: Array,
             }
         },
         data: () => ({
-            nextUrl: '/api/messages',
+            nextUrl: null,
             messages: [],
             messagesByKey: {},
             busy: false,
+            atBottom: true,
+            scroll: 0
         }),
         computed: {
             messagesReverse() {
@@ -84,6 +92,13 @@
             },
             profileImage() {
                 return this.user.profile_image ? this.user.profile_image : null;
+            }
+        },
+        watch: {
+            postedMessages(val, oldVal) {
+                if (val !== oldVal) {
+                    this.addMessages(val);
+                }
             }
         },
         methods: {
@@ -94,23 +109,41 @@
                     api.requestByURL(this.nextUrl)
                         .then(result => {
                             this.busy = false;
-                            this.addMessages(result.data);
+                            this.addMessages(result.data, true);
                             this.nextUrl = result.next_page_url;
                         })
                 }
             },
-            addMessages(messages) {
+            addMessages(messages, toTop = false) {
                 messages = messages.filter(message => this.messagesByKey[message.id] === undefined);
 
-                this.messages = [...this.messages, ...messages];
-                for (let message of messages) {
-                    this.messagesByKey[message.id] = message;
+                if (messages.length > 0) {
+                    if (toTop) {
+                        this.messages = [...this.messages, ...messages];
+                    } else {
+                        this.messages = [...messages, ...this.messages];
+                    }
+
+                    for (let message of messages) {
+                        this.messagesByKey[message.id] = message;
+                    }
+
+                    this.scroll = 0;
                 }
+            },
+            onBottom(atBottom) {
+                this.atBottom = atBottom;
             }
         },
         created() {
+            this.nextUrl = `/api/messages?with=${this.user.username}`;
             this.request();
-        }
+
+            this.$onEcho('MessageSent', message => {
+                this.addMessages([message]);
+            });
+        },
+
     }
 </script>
 

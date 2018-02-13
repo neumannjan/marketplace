@@ -25,7 +25,7 @@ class OwnedMessage extends Resource
             'id' => $this->id,
             'content' => $this->content,
             'additional' => $this->additional,
-            'mine' => $this->from_id === $user->id
+            'mine' => $this->from_username === $user->username
         ];
     }
 }

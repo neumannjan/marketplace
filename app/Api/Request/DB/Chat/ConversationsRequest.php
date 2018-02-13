@@ -3,22 +3,23 @@
 namespace App\Api\Request\DB\Chat;
 
 
-use App\Api\Request\PaginatedRequest;
-use App\Eloquent\Order\AfterPaginator;
+use App\Api\Request\DB\MultiRequest;
 use App\Http\Resources\Conversation;
 use App\Message;
 use App\User;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Collection;
-use Illuminate\Validation\Validator;
 
-class ConversationsRequest extends PaginatedRequest
+class ConversationsRequest extends MultiRequest
 {
+    protected $modelClass = Message::class;
+    protected $resourceClass = Conversation::class;
+    protected $orderBased = true;
+
+    protected $defaultScope = Message::SCOPE_PERSONAL;
 
     /** @var Guard */
     protected $guard;
-
-    protected $orderBased = true;
 
     /**
      * ConversationsRequest constructor.
@@ -26,6 +27,7 @@ class ConversationsRequest extends PaginatedRequest
      */
     public function __construct(Guard $guard)
     {
+        parent::__construct($this->modelClass, $this->resourceClass, $this->orderBased);
         $this->guard = $guard;
     }
 
@@ -38,37 +40,17 @@ class ConversationsRequest extends PaginatedRequest
     }
 
     /**
-     * @inheritDoc
-     */
-    protected function rules(Validator $validator = null)
-    {
-        return [];
-    }
-
-    /**
      * @inheritdoc
      */
-    protected function urlParameters(Collection $parameters)
+    protected function additionalQuery($query, Collection $parameters)
     {
-        return [];
-    }
+        parent::additionalQuery($query, $parameters);
 
-    /**
-     * @inheritdoc
-     */
-    protected function paginator(Collection $parameters, $perPage, $pageOrAfter)
-    {
         /** @var User $user */
         $user = $this->guard->user();
 
-        return AfterPaginator::fromQuery(Message::conversationsWith($user->id), $perPage, $pageOrAfter);
-    }
+        $query->scopes(['conversationsWith' => $user->username]);
 
-    /**
-     * @inheritDoc
-     */
-    protected function resourceClass(Collection $parameters)
-    {
-        return Conversation::class;
+        return $query;
     }
 }

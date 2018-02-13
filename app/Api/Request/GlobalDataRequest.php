@@ -6,6 +6,7 @@ namespace App\Api\Request;
 use App\Api\Data\FlashMessages;
 use App\Api\Response\Response;
 use App\Http\Resources\User;
+use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Collection;
 
 /**
@@ -18,10 +19,10 @@ class GlobalDataRequest extends Request
      */
     protected function doResolve($name, Collection $parameters)
     {
-        return new Response(true, static::get());
+        return new Response(true, static::get($this->httpRequest));
     }
 
-    public static function get()
+    public static function get(HttpRequest $request)
     {
         // CSRF token
         $token = csrf_token();
@@ -49,13 +50,22 @@ class GlobalDataRequest extends Request
 
         $flash = $flashMessages->toPassable();
 
+        // websocket host
+        $socket_host = env('WEBSOCKET_PROTOCOL', 'http') .
+            '://' .
+            env('WEBSOCKET_HOST', $request->getHost()) .
+            ':' .
+            env('WEBSOCKET_PORT', 6001) .
+            '/app/' . env('WEBSOCKET_APP_ID') . '?auth_key=' . env('WEBSOCKET_KEY');
+
         return compact(
             'token',
             'locale',
             'is_authenticated',
             'user',
             'is_admin',
-            'flash'
+            'flash',
+            'socket_host'
         );
     }
 }

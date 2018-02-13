@@ -23,9 +23,11 @@ class DevServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // ide helper (development)
-        if (class_exists('Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider')) {
+        if (env('APP_DEBUG')) {
+
+            // ide helper (development)
             $this->app->register('Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider');
+            $this->app->register('Barryvdh\Debugbar\ServiceProvider');
         }
     }
 }

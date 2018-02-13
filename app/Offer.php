@@ -306,7 +306,7 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
 
         return [
             'name' => 'required|string|min:3|max:255',
-            'description' => 'nullable|string|min:5',
+            'description' => 'nullable|string|min:5|max:2000',
             'currency' => '',
             'price' => '',
             'images' => '',

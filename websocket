@@ -66,6 +66,12 @@ function required(func) {
  * Laravel echo server options
  */
 const options = {
+    clients: [
+        {
+            appId: required(e => e.WEBSOCKET_APP_ID),
+            key: required(e => e.WEBSOCKET_KEY)
+        }
+    ],
     authHost: required(e => e.APP_URL),
     devMode: optional(e => e.APP_DEBUG === "true" || e.APP_DEBUG === true, false),
     port: optional(e => e.WEBSOCKET_PORT, 6001),
@@ -74,6 +80,9 @@ const options = {
     sslKeyPath: optional(e => e.SSL_KEY_PATH, ''),
     sslCertChainPath: optional(e => e.SSL_CERT_CHAIN_PATH, ''),
     sslPassphrase: optional(e => e.SSL_PASSPHRASE, ''),
+    apiOriginAllow: {
+        allowCors: optional(e => e.WEBSOCKET_ALLOW_CORS, false)
+    }
 };
 
 // Run the server

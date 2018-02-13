@@ -2,15 +2,17 @@
 
 namespace App\Api\Request;
 
+use Illuminate\Http\Request as HttpRequest;
+
 /**
  * Request that contains variables that the frontend might require at the beginning of its existence.
  * Extends {@see GlobalRequest}.
  */
 class InitialDataRequest extends GlobalDataRequest
 {
-    public static function get()
+    public static function get(HttpRequest $request)
     {
-        $array = parent::get();
+        $array = parent::get($request);
 
         $array['messages'] = [
             'validation' => [

@@ -52,15 +52,15 @@ class DatabaseSeeder extends Seeder
 
             factory(\App\Message::class, 20)->make()->each(function (\App\Message $m) use ($u, $faker) {
                 $isTo = $faker->boolean;
-                $other = \App\User::whereKeyNot($u->id)->inRandomOrder()->limit(1)->first(['id']);
+                $other = \App\User::whereKeyNot($u->id)->inRandomOrder()->limit(1)->first(['username']);
 
                 if ($other) {
                     if ($isTo) {
-                        $m->to_id = $u->id;
-                        $m->from_id = $other->id;
+                        $m->to_username = $u->username;
+                        $m->from_username = $other->username;
                     } else {
-                        $m->from_id = $u->id;
-                        $m->to_id = $other->id;
+                        $m->from_username = $u->username;
+                        $m->to_username = $other->username;
                     }
 
                     $m->save();

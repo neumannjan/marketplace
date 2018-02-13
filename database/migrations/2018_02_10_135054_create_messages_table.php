@@ -18,11 +18,12 @@ class CreateMessagesTable extends Migration
             $table->timestamps();
             $table->text('content');
             $table->json('additional')->nullable();
+            $table->boolean('read')->default(false);
 
-            $table->unsignedInteger('from_id');
-            $table->unsignedInteger('to_id');
-            $table->foreign('from_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('to_id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('from_username');
+            $table->string('to_username');
+            $table->foreign('from_username')->references('username')->on('users')->onDelete('cascade');
+            $table->foreign('to_username')->references('username')->on('users')->onDelete('cascade');
         });
     }
 

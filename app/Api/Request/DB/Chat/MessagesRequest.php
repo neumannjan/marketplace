@@ -8,7 +8,9 @@ use App\Http\Resources\AnyMessage;
 use App\Http\Resources\OwnedMessage;
 use App\Message;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Validator;
 
 class MessagesRequest extends MultiRequest
 {
@@ -17,6 +19,8 @@ class MessagesRequest extends MultiRequest
     protected $defaultScope = Message::SCOPE_PERSONAL;
 
     protected $orderBased = true;
+
+    protected $perPageDefault = 15;
 
     /**
      * @var Guard
@@ -39,6 +43,41 @@ class MessagesRequest extends MultiRequest
     protected function shouldResolve()
     {
         return $this->guard->check();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function rules(Validator $validator = null)
+    {
+        return [
+            'with' => 'sometimes|string'
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function urlParameters(Collection $parameters)
+    {
+        return ['with'];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function additionalQuery($query, Collection $parameters)
+    {
+        parent::additionalQuery($query, $parameters);
+
+        $with = $parameters['with'];
+
+        return $query->whereNested(function ($query) use ($with) {
+            /** @var Builder $query */
+            return $query
+                ->where(['to_username' => $with])
+                ->orWhere(['from_username' => $with]);
+        });
     }
 
     /**

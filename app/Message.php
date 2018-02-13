@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 /**
- * @property-read integer|null $user_id
+ * @property-read integer|null $user_username
  */
 class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
 {
@@ -24,8 +24,11 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
     protected $fillable = [
         'from',
         'to',
+        'from_username',
+        'to_username',
         'content',
-        'additional'
+        'additional',
+        'read'
     ];
 
     protected $casts = [
@@ -49,31 +52,31 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
 
     public function from()
     {
-        return $this->belongsTo(User::class, 'from_id');
+        return $this->belongsTo(User::class, 'from_username', 'username');
     }
 
     public function to()
     {
-        return $this->belongsTo(User::class, 'to_id');
+        return $this->belongsTo(User::class, 'to_username', 'username');
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_username', 'username');
     }
 
-    public function scopeConversationsWith(Builder $query, $user_id)
+    public function scopeConversationsWith(Builder $query, $user_username)
     {
         /*
-         * SELECT messages.*, m.user_id
+         * SELECT messages.*, m.user_username
          * FROM messages
          *   INNER JOIN (
          *                SELECT
-         *                  IF(to_id = 1, from_id, to_id) AS user_id,
+         *                  IF(to_username = 1, from_username, to_username) AS user_username,
          *                  MAX(id)                       AS max_id
          *                FROM messages
-         *                WHERE to_id = 1 OR from_id = 1
-         *                GROUP BY user_id
+         *                WHERE to_username = 1 OR from_username = 1
+         *                GROUP BY user_username
          *              ) m
          *     ON messages.id = m.max_id
          * ORDER BY messages.created_at DESC, messages.id DESC;
@@ -82,17 +85,18 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
         $inner = Message::query()
             ->withoutGlobalScope('order')
             ->select([
-                DB::raw("IF(to_id = $user_id, from_id, to_id) AS user_id"),
+                DB::raw("IF(to_username = ?, from_username, to_username) AS user_username"),
                 DB::raw('MAX(id) AS max_id')
             ])
-            ->where(['to_id' => $user_id])
-            ->orWhere(['from_id' => $user_id])
-            ->groupBy(['user_id']);
+            ->addBinding($user_username, 'select')
+            ->where(['to_username' => $user_username])
+            ->orWhere(['from_username' => $user_username])
+            ->groupBy(['user_username']);
 
         return $query
-            ->setBindings($inner->getBindings())
-            ->select(['messages.*', 'm.user_id'])
-            ->join(DB::raw("({$inner->toSql()}) m"), 'messages.id', '=', 'm.max_id');
+            ->select(['messages.*', 'm.user_username'])
+            ->join(DB::raw("({$inner->toSql()}) m"), 'messages.id', '=', 'm.max_id')
+            ->addBinding($inner->getBindings(), 'join');
     }
 
     /**
@@ -110,15 +114,28 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
 
     public function scopePersonal(Builder $query)
     {
-        $id = Auth::id();
+        $user = Auth::user();
 
-        if ($id === null) {
+        if ($user === null) {
             throw new \RuntimeException("Not logged in");
         }
 
+        $userQuery = function ($query) {
+            /** @var Builder $query */
+            return $query->where(['status' => User::STATUS_ACTIVE]);
+        };
+
         return $query
-            ->where(['to_id' => $id])
-            ->orWhere(['from_id' => $id]);
+            ->whereNested(function ($query) use ($user) {
+                $username = $user->username;
+
+                /** @var Builder $query */
+                return $query
+                    ->where(['to_username' => $username])
+                    ->orWhere(['from_username' => $username]);
+            })
+            ->whereHas('from', $userQuery)
+            ->whereHas('to', $userQuery);
     }
 
     /**
@@ -146,8 +163,8 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
             case self::SCOPE_PERSONAL:
                 return Collection::wrap($columnNames)
                     ->diff(Collection::make([
-                        'from_id',
-                        'to_id',
+                        'from_username',
+                        'to_username',
                         'content',
                         'additional',
                     ]))

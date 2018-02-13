@@ -28,7 +28,12 @@
             loaded: false
         }),
         watch: {
-            data() {
+            async data() {
+                if (this.loaded) {
+                    this.loaded = false;
+                    await this.$nextTick();
+                }
+
                 this.load();
             }
         },

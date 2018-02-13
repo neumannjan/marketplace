@@ -11,7 +11,7 @@
 @push('meta')
     <script type="text/javascript">
                 @php
-                    $data = \App\Api\Request\InitialDataRequest::get();
+                    $data = \App\Api\Request\InitialDataRequest::get(app('request'));
 
                     /**
                      * Base64 is used here to obfuscate the result, so that noobs don't think they are

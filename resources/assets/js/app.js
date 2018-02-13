@@ -5,6 +5,7 @@ import ElementQueries from 'css-element-queries/src/ElementQueries';
 import stickyfill from 'stickyfilljs';
 
 import store from 'JS/store';
+import 'JS/echo';
 import router from 'JS/router';
 import AppComponent from './components/app.vue';
 import LazyImgComponent from './components/widgets/image/lazy-img';
@@ -13,6 +14,11 @@ import LazyImgComponent from './components/widgets/image/lazy-img';
 
 Vue.use(Vuelidate);
 ElementQueries.listen();
+
+// Apply data to store
+if (data) {
+    store.commit('global', JSON.parse(atob(data)));
+}
 
 // Global Vue components and directives
 
