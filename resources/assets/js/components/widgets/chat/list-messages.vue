@@ -7,16 +7,15 @@
             <div v-if="isMine(message)" class="chat-item-right mb-2 d-flex flex-row-reverse align-items-end">
                 <!-- TODO label -->
                 <div class="chat-item-indicator mx-2">
-                    <template v-if="lastMessageID === message.id">
-                        <profile-img v-if="message.read" :img="profileImage ? profileImage : {}"
-                                     :img-size="indicatorSize"/>
-                        <icon v-else-if="message.received" name="check-circle" :scale="indicatorSize/16"
-                              class="text-primary"/>
-                        <icon v-else-if="message.awaiting" name="circle-o" :scale="indicatorSize/16"
-                              class="text-primary"/>
-                        <icon v-else name="check-circle-o" :scale="indicatorSize/16"
-                              class="text-primary"/>
-                    </template>
+                    <profile-img v-if="lastMessageID === message.id && message.read"
+                                 :img="profileImage ? profileImage : {}"
+                                 :img-size="indicatorSize"/>
+                    <icon v-else-if="!message.read && message.received" name="check-circle" :scale="indicatorSize/16"
+                          class="text-primary"/>
+                    <icon v-else-if="message.awaiting" name="circle-o" :scale="indicatorSize/16"
+                          class="text-primary"/>
+                    <icon v-else-if="!message.read && !message.received" name="check-circle-o" :scale="indicatorSize/16"
+                          class="text-primary"/>
                     <div v-else :style="{width: `${indicatorSize}px`, height: '1px'}"></div>
                 </div>
                 <div class="chat-item-message card text-white bg-primary"

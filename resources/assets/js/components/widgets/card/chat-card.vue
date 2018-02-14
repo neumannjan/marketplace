@@ -127,8 +127,8 @@
                 this.$emit('close');
             },
             onSelectUser(user) {
+                this.addedMessages = {};
                 this.user = user;
-                this.posted = [];
             },
             doNotifyTyping(typing) {
                 if (!this.$store.state.user || !this.user) {

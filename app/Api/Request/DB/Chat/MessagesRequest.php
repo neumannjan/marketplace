@@ -6,6 +6,7 @@ namespace App\Api\Request\DB\Chat;
 use App\Api\Request\DB\MultiRequest;
 use App\Events\MessageReceived;
 use App\Message;
+use App\User;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
@@ -84,9 +85,11 @@ class MessagesRequest extends MultiRequest
      */
     protected function onResults($results)
     {
+        /** @var User $user */
+        $user = $this->guard->user();
         foreach ($results as $message) {
             /** @var Message $message */
-            if (!$message->read) {
+            if (!$message->read && $message->to_username === $user->username) {
                 $message->received = true;
                 $message->read = true;
                 $message->save();
