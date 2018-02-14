@@ -66,13 +66,15 @@ function required(func) {
  * Laravel echo server options
  */
 const options = {
-    clients: [
-        {
-            appId: required(e => e.WEBSOCKET_APP_ID),
-            key: required(e => e.WEBSOCKET_KEY)
+    database: 'redis',
+    databaseConfig: {
+        redis: {
+            host: optional(e => e.REDIS_HOST, '127.0.0.1'),
+            port: optional(e => e.REDIS_PORT, 6379),
+            password: optional(e => e.REDIS_PASSWORD, ''),
         }
-    ],
-    authHost: required(e => e.APP_URL),
+    },
+    authHost: required(e => e.WEBSOCKET_APP_ENDPOINT || e.APP_URL),
     devMode: optional(e => e.APP_DEBUG === "true" || e.APP_DEBUG === true, false),
     port: optional(e => e.WEBSOCKET_PORT, 6001),
     protocol: optional(e => e.WEBSOCKET_PROTOCOL, "http"),
@@ -80,9 +82,6 @@ const options = {
     sslKeyPath: optional(e => e.SSL_KEY_PATH, ''),
     sslCertChainPath: optional(e => e.SSL_CERT_CHAIN_PATH, ''),
     sslPassphrase: optional(e => e.SSL_PASSPHRASE, ''),
-    apiOriginAllow: {
-        allowCors: optional(e => e.WEBSOCKET_ALLOW_CORS, false)
-    }
 };
 
 // Run the server

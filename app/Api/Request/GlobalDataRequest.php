@@ -55,8 +55,7 @@ class GlobalDataRequest extends Request
             '://' .
             env('WEBSOCKET_HOST', $request->getHost()) .
             ':' .
-            env('WEBSOCKET_PORT', 6001) .
-            '/app/' . env('WEBSOCKET_APP_ID') . '?auth_key=' . env('WEBSOCKET_KEY');
+            env('WEBSOCKET_PORT', 6001);
 
         return compact(
             'token',

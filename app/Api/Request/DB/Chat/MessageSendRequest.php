@@ -6,7 +6,6 @@ namespace App\Api\Request\DB\Chat;
 use App\Api\Request\Request;
 use App\Api\Response\Response;
 use App\Events\MessageSent;
-use App\Http\Resources\OwnedMessage;
 use App\Message;
 use App\User;
 use Illuminate\Contracts\Auth\Guard;
@@ -43,7 +42,8 @@ class MessageSendRequest extends Request
         return [
             'to' => 'required|string|min:1|max:2000',
             'content' => 'required|string',
-            'additional' => 'sometimes|array'
+            'additional' => 'sometimes|array',
+            'identifier' => 'sometimes|string'
         ];
     }
 
@@ -58,20 +58,16 @@ class MessageSendRequest extends Request
         $message = new Message([
             'from_username' => $user->username,
             'to_username' => $parameters['to'],
-            'content' => $parameters['content']
+            'content' => $parameters['content'],
+            'additional' => $parameters->get('additional', null),
+            'identifier' => $parameters->get('identifier', null)
         ]);
-
-        $additional = $parameters->get('additional', null);
-
-        if ($additional) {
-            $message->additional = $additional;
-        }
 
         $message->save();
 
-        broadcast(new MessageSent($message));
+        broadcast(new MessageSent($message))->toOthers();
 
-        return new Response(true, OwnedMessage::make($message));
+        return new Response(true, \App\Http\Resources\Message::make($message));
     }
 
 }

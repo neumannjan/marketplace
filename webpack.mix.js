@@ -14,12 +14,12 @@ const path = require('path');
  */
 
 mix
-    .autoload({}) //disable autoload of jquery, which we do not use and therefore do not need
+    .autoload({}) //disable autoload of jquery, which we do not need
     .js('resources/assets/js/app.js', 'public/js')
     .sass('resources/assets/css/app.scss', 'public/css')
     .sourceMaps()
     .version()
-    .browserSync({proxy: 'localhost:8080'})
+    .browserSync({proxy: {target: 'localhost:8080', ws: true}})
     .disableNotifications()
     .webpackConfig({
         plugins: [

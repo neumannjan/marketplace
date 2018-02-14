@@ -24,7 +24,7 @@
         <div class="overflow-scroll-y p-2">
             <list-messages v-if="user" :user="user" :img-size="imgSize"
                            :indicator-size="indicatorSize"
-                           :posted-messages="posted"/>
+                           v-model="addedMessages"/>
             <list-conversations v-else @select="onSelectUser" :img-size="imgSize"/>
         </div>
 
@@ -72,19 +72,43 @@
         data: () => ({
             user: null,
             message: '',
-            posted: []
+            addedMessages: {}
         }),
         methods: {
             async sendMessage() {
                 if (this.message) {
                     try {
+                        let uniqueId = null;
+                        const content = this.message;
+                        this.message = '';
+
+                        // create a unique ID for awaited message
+                        do {
+                            uniqueId = (Math.random() + 1).toString(36).substr(2, 5);
+                        } while (this.addedMessages[uniqueId] !== undefined);
+
+                        // save to added messages
+                        this.addedMessages = {
+                            ...this.addedMessages,
+                            [uniqueId]: {
+                                content: content,
+                                additional: [],
+                                mine: true,
+                                awaiting: true,
+                            }
+                        };
+
+                        // send the message
                         const message = await api.requestSingle('message-send', {
                             to: this.user.username,
-                            content: this.message
+                            content: content,
+                            identifier: uniqueId
                         });
 
-                        this.posted = [message];
-                        this.message = '';
+                        // remove 'awaiting' from added messages if still exists
+                        if (this.addedMessages[uniqueId]) {
+                            this.addedMessages[uniqueId].awaiting = false;
+                        }
                     } catch (e) {
                     }
                 }

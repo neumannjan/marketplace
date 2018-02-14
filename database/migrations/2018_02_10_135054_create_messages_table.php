@@ -18,6 +18,7 @@ class CreateMessagesTable extends Migration
             $table->timestamps();
             $table->text('content');
             $table->json('additional')->nullable();
+            $table->boolean('received')->default(false);
             $table->boolean('read')->default(false);
 
             $table->string('from_username');

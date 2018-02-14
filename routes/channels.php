@@ -14,3 +14,7 @@
 Broadcast::channel('user.{username}', function (\App\User $user, $username) {
     return $user->username === $username;
 });
+
+Broadcast::channel('conversation.{username1}.{username2}', function (\App\User $user, $username1, $username2) {
+    return $user->username === $username1 || $user->username === $username2;
+});

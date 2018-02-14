@@ -28,12 +28,21 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
         'to_username',
         'content',
         'additional',
-        'read'
+        'read',
+        'identifier'
     ];
 
     protected $casts = [
         'additional' => 'array'
     ];
+
+    protected $appends = ['identifier'];
+
+    /**
+     * Message identifier. Provided by the client. Not saved to the database.
+     * @var string
+     */
+    protected $identifier;
 
     /**
      * @inheritDoc
@@ -48,6 +57,16 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
                 ->orderBy('created_at', 'desc')
                 ->orderBy('id', 'desc');
         });
+    }
+
+    public function getIdentifierAttribute()
+    {
+        return $this->identifier;
+    }
+
+    public function setIdentifierAttribute($identifier)
+    {
+        $this->identifier = $identifier;
     }
 
     public function from()

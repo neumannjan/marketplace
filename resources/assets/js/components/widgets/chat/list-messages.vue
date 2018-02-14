@@ -3,17 +3,17 @@
         <div v-if="busy" class="text-center">
             <icon name="spinner" label="Loading" pulse/>
         </div>
-        <template v-for="message in messagesReverse">
-            <div v-if="message.mine" class="chat-item-right mb-2 d-flex flex-row-reverse align-items-end">
+        <template v-for="message in allMessages">
+            <div v-if="isMine(message)" class="chat-item-right mb-2 d-flex flex-row-reverse align-items-end">
                 <!-- TODO label -->
                 <div class="chat-item-indicator mx-2">
-                    <icon v-if="message.id % 7 === 0" name="check-circle" :scale="indicatorSize/16"
+                    <icon v-if="false" name="check-circle" :scale="indicatorSize/16"
                           class="text-primary"/>
-                    <icon v-else-if="message.id % 5 === 0" name="check-circle-o" :scale="indicatorSize/16"
+                    <icon v-else-if="false" name="check-circle-o" :scale="indicatorSize/16"
                           class="text-primary"/>
-                    <icon v-else-if="message.id % 4 === 0" name="circle-o" :scale="indicatorSize/16"
+                    <icon v-else-if="message.awaiting" name="circle-o" :scale="indicatorSize/16"
                           class="text-primary"/>
-                    <profile-img v-else-if="message.id % 2 === 0" :img="profileImage ? profileImage : {}"
+                    <profile-img v-else-if="false" :img="profileImage ? profileImage : {}"
                                  :img-size="indicatorSize"/>
                     <div v-else :style="{width: `${indicatorSize}px`, height: '1px'}"></div>
                 </div>
@@ -74,8 +74,8 @@
                 type: Number,
                 default: 14
             },
-            postedMessages: {
-                type: Array,
+            value: {
+                type: Object
             }
         },
         data: () => ({
@@ -87,21 +87,48 @@
             scroll: 0
         }),
         computed: {
-            messagesReverse() {
-                return this.messages.slice(0).reverse();
+            allMessages() {
+                return [
+                    ...this.messages.slice(0).reverse(),
+                    ...Object.entries(this.value)
+                        .filter(([identifier, message]) => this.messagesByKey[identifier] === undefined)
+                        .map(([identifier, message]) => message)
+                ];
             },
             profileImage() {
                 return this.user.profile_image ? this.user.profile_image : null;
             }
         },
         watch: {
-            postedMessages(val, oldVal) {
+            value(val, oldVal) {
                 if (val !== oldVal) {
-                    this.addMessages(val);
+                    const newVal = Object.assign({}, val);
+
+                    let changed = false;
+
+                    for (let identifier of Object.keys(val)) {
+                        if (this.messagesByKey[identifier] !== undefined) {
+                            delete newVal[identifier];
+                            changed = true;
+                        }
+                    }
+
+                    if (changed) {
+                        this.$emit('input', newVal);
+                    }
                 }
             }
         },
         methods: {
+            isMine(message) {
+                if (message.mine === true)
+                    return true;
+
+                if (!this.$store.state.user)
+                    return false;
+
+                return message.from.username === this.$store.state.user.username;
+            },
             request() {
                 if (this.nextUrl) {
                     this.busy = true;
@@ -115,8 +142,10 @@
                 }
             },
             addMessages(messages, toTop = false) {
+                // filter out existing messages
                 messages = messages.filter(message => this.messagesByKey[message.id] === undefined);
 
+                // add messages
                 if (messages.length > 0) {
                     if (toTop) {
                         this.messages = [...this.messages, ...messages];
@@ -126,9 +155,17 @@
 
                     for (let message of messages) {
                         this.messagesByKey[message.id] = message;
+
+                        if (message.identifier) {
+                            this.messagesByKey[message.identifier] = message;
+                        }
                     }
 
-                    this.scroll = 0;
+                    // scroll down
+                    this.scroll = 1;
+                    this.$nextTick(() => {
+                        this.scroll = 0;
+                    });
                 }
             },
             onBottom(atBottom) {
@@ -136,10 +173,24 @@
             }
         },
         created() {
+            if (!this.$store.state.user || !this.user) {
+                return;
+            }
+
             this.nextUrl = `/api/messages?with=${this.user.username}`;
             this.request();
 
-            this.$onEcho('MessageSent', message => {
+            function getChannelName(username1, username2) {
+                const name = 'conversation';
+                if (username1 <= username2)
+                    return `${name}.${username1}.${username2}`;
+                else
+                    return `${name}.${username2}.${username1}`;
+            }
+
+            const name = getChannelName(this.user.username, this.$store.state.user.username);
+
+            this.$onEcho('private', name, 'MessageSent', message => {
                 this.addMessages([message]);
             });
         },

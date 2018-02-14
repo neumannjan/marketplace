@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
 
-class OwnedMessage extends Resource
+class Message extends Resource
 {
     /**
      * Transform the resource into an array.
@@ -14,18 +14,14 @@ class OwnedMessage extends Resource
      */
     public function toArray($request)
     {
-        $user = \Auth::user();
-
-        if (!$user) {
-            return [];
-        }
-
-        /** @var \App\Message|OwnedMessage $this */
+        /** @var \App\Message|Message $this */
         return [
             'id' => $this->id,
             'content' => $this->content,
             'additional' => $this->additional,
-            'mine' => $this->from_username === $user->username
+            'from' => User::make($this->from),
+            'to' => User::make($this->to),
+            'identifier' => $this->identifier
         ];
     }
 }

@@ -31,10 +31,17 @@ export default {
                 () => vm.$off(event, listener)
             );
         },
-        $onEcho(event, listener) {
+        $onEchoGlobal(event, listener) {
             this.$attachEvent(
-                () => echo.on(event, listener),
-                () => echo.off(event, listener)
+                () => echo.global.on(event, listener),
+                () => echo.global.off(event, listener)
+            );
+        },
+        $onEcho(type, channel, event, listener) {
+            const channelListener = echo.channel(type, channel);
+            this.$attachEvent(
+                () => channelListener.on(event, listener),
+                () => channelListener.off(event, listener)
             );
         },
         $onDocumentVisibility(listener) {

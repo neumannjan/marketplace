@@ -101,6 +101,10 @@ const store = new Vuex.Store({
     }
 });
 
+if (data) {
+    store.commit('global', JSON.parse(atob(data)));
+}
+
 export const helpers = {
     trans(key, parameters) {
         if (!store.state.messages)

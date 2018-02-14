@@ -12,20 +12,23 @@ use Illuminate\Queue\SerializesModels;
 
 class MessageSent implements ShouldBroadcastNow
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use ConversationEvent, Dispatchable, InteractsWithSockets, SerializesModels;
 
     /** @var Message */
     protected $message;
 
+    /** @var string */
+    protected $identifier;
+
     /**
      * Create a new event instance.
      *
-     * @return void
+     * @param Message $message
      */
     public function __construct(Message $message)
     {
-        \Log::info('Created MessageSent', $message->toArray());
         $this->message = $message;
+        $this->identifier = $message->identifier;
     }
 
     /**
@@ -35,7 +38,10 @@ class MessageSent implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new PrivateChannel("user.{$this->message->to_username}");
+        return [
+            new PrivateChannel("user.{$this->message->to_username}"),
+            $this->getConversationChannel($this->message->from_username, $this->message->to_username)
+        ];
     }
 
     /**
@@ -45,8 +51,9 @@ class MessageSent implements ShouldBroadcastNow
      */
     public function broadcastWith()
     {
-        $array = OwnedMessage::make($this->message)->toArray(null);
-        \Log::info('Created MessageSent resource', $array);
-        return $array;
+        if ($this->identifier) {
+            $this->message->identifier = $this->identifier;
+        }
+        return \App\Http\Resources\Message::make($this->message)->toArray(null);
     }
 }
