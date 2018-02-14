@@ -115,4 +115,12 @@ trait DBRequest
 
         return $query;
     }
+
+    /**
+     * Called after the query is requested.
+     * @param Model[]|Model $results
+     */
+    protected function onResults($results)
+    {
+    }
 }

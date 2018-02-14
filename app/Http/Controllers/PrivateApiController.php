@@ -10,6 +10,7 @@ use App\Api\Request\Auth\PasswordResetRequest;
 use App\Api\Request\Auth\RegisterRequest;
 use App\Api\Request\CachedDataRequest;
 use App\Api\Request\DB\Chat\ConversationsRequest;
+use App\Api\Request\DB\Chat\MessageReceivedNotifyRequest;
 use App\Api\Request\DB\Chat\MessageSendRequest;
 use App\Api\Request\DB\Chat\MessagesRequest;
 use App\Api\Request\DB\MultiRequest;
@@ -75,6 +76,7 @@ class PrivateApiController extends Controller
             'conversations' => ConversationsRequest::class,
             'messages' => MessagesRequest::class,
             'message-send' => MessageSendRequest::class,
+            'message-received-notify' => MessageReceivedNotifyRequest::class,
 
             // DB set
             'offer-create' => OfferCreateRequest::class

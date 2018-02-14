@@ -7,14 +7,16 @@
             <div v-if="isMine(message)" class="chat-item-right mb-2 d-flex flex-row-reverse align-items-end">
                 <!-- TODO label -->
                 <div class="chat-item-indicator mx-2">
-                    <icon v-if="false" name="check-circle" :scale="indicatorSize/16"
-                          class="text-primary"/>
-                    <icon v-else-if="false" name="check-circle-o" :scale="indicatorSize/16"
-                          class="text-primary"/>
-                    <icon v-else-if="message.awaiting" name="circle-o" :scale="indicatorSize/16"
-                          class="text-primary"/>
-                    <profile-img v-else-if="false" :img="profileImage ? profileImage : {}"
-                                 :img-size="indicatorSize"/>
+                    <template v-if="lastMessageID === message.id">
+                        <profile-img v-if="message.read" :img="profileImage ? profileImage : {}"
+                                     :img-size="indicatorSize"/>
+                        <icon v-else-if="message.received" name="check-circle" :scale="indicatorSize/16"
+                              class="text-primary"/>
+                        <icon v-else-if="message.awaiting" name="circle-o" :scale="indicatorSize/16"
+                              class="text-primary"/>
+                        <icon v-else name="check-circle-o" :scale="indicatorSize/16"
+                              class="text-primary"/>
+                    </template>
                     <div v-else :style="{width: `${indicatorSize}px`, height: '1px'}"></div>
                 </div>
                 <div class="chat-item-message card text-white bg-primary"
@@ -32,7 +34,7 @@
             </div>
         </template>
         <!-- Typing indicator -->
-        <div class="chat-item-left mb-2 d-flex flex-row align-items-end">
+        <div v-if="typing" class="chat-item-left mb-2 d-flex flex-row align-items-end">
             <router-link :to="{name: 'user', params: {username: user.username}}" class="mx-2">
                 <profile-img :img="profileImage ? profileImage : {}" :img-size="imgSize"/>
             </router-link>
@@ -47,11 +49,14 @@
 
 <script>
     import api from 'JS/api';
+    import echo from 'JS/echo';
     import events from 'JS/components/mixins/events';
+    import helpers from 'JS/helpers';
 
     import ProfileImg from 'JS/components/widgets/image/profile-img';
     import ChatMessageContent from "JS/components/widgets/chat/chat-message-content";
     import InfiniteScroll from "JS/components/widgets/infinite-scroll";
+
 
     export default {
         name: 'list-messages',
@@ -84,12 +89,13 @@
             messagesByKey: {},
             busy: false,
             atBottom: true,
-            scroll: 0
+            scroll: 0,
+            typing: false,
         }),
         computed: {
             allMessages() {
                 return [
-                    ...this.messages.slice(0).reverse(),
+                    ...this.messages,
                     ...Object.entries(this.value)
                         .filter(([identifier, message]) => this.messagesByKey[identifier] === undefined)
                         .map(([identifier, message]) => message)
@@ -97,6 +103,9 @@
             },
             profileImage() {
                 return this.user.profile_image ? this.user.profile_image : null;
+            },
+            lastMessageID() {
+                return this.allMessages.length > 0 ? this.allMessages[this.allMessages.length - 1].id : -1;
             }
         },
         watch: {
@@ -143,14 +152,18 @@
             },
             addMessages(messages, toTop = false) {
                 // filter out existing messages
-                messages = messages.filter(message => this.messagesByKey[message.id] === undefined);
+                messages = messages
+                    .filter(message => this.messagesByKey[message.id] === undefined)
+                    .reverse();
+
+                let mine = false;
 
                 // add messages
                 if (messages.length > 0) {
                     if (toTop) {
-                        this.messages = [...this.messages, ...messages];
-                    } else {
                         this.messages = [...messages, ...this.messages];
+                    } else {
+                        this.messages = [...this.messages, ...messages];
                     }
 
                     for (let message of messages) {
@@ -159,17 +172,71 @@
                         if (message.identifier) {
                             this.messagesByKey[message.identifier] = message;
                         }
-                    }
 
-                    // scroll down
-                    this.scroll = 1;
-                    this.$nextTick(() => {
-                        this.scroll = 0;
-                    });
+                        if (message.to === this.user.username) {
+                            mine = true;
+                        }
+                    }
                 }
+
+                // scroll down
+                this.scrollDown(mine);
+            },
+            async scrollDown(force = false) {
+                if (!force && !this.atBottom) {
+                    return;
+                }
+
+                if (this.scroll === 0) {
+                    this.scroll = 1;
+                    await this.$nextTick();
+                }
+
+                this.scroll = 0;
             },
             onBottom(atBottom) {
                 this.atBottom = atBottom;
+            },
+            notifyReceived(messages, read = false) {
+                if (!this.$store.state.user || !this.user) {
+                    return;
+                }
+
+                let data = {
+                    read: read
+                };
+
+                if (!Array.isArray(messages)) {
+                    messages = [messages];
+                }
+
+                data.ids = messages.map(m => m.id);
+
+                api.requestSingle('message-received-notify', data);
+
+                const name = helpers.getConversationChannelName(this.user.username, this.$store.state.user.username);
+                for (let message of messages) {
+                    echo.whisper('private', name, 'received', {
+                        id: message.id,
+                        read: read
+                    });
+                }
+            },
+            setReceived(messageID, read = false) {
+                const messages = this.messages;
+
+                // iterating backwards because the message we are looking for is likely to be close to the end
+                for (let i = messages.length - 1; i >= 0; --i) {
+                    const message = messages[i];
+
+                    if (message.id === messageID) {
+                        message.received = true;
+                        message.read = read;
+                        break;
+                    }
+                }
+
+                this.messages = messages;
             }
         },
         created() {
@@ -180,18 +247,27 @@
             this.nextUrl = `/api/messages?with=${this.user.username}`;
             this.request();
 
-            function getChannelName(username1, username2) {
-                const name = 'conversation';
-                if (username1 <= username2)
-                    return `${name}.${username1}.${username2}`;
-                else
-                    return `${name}.${username2}.${username1}`;
-            }
-
-            const name = getChannelName(this.user.username, this.$store.state.user.username);
+            const name = helpers.getConversationChannelName(this.user.username, this.$store.state.user.username);
 
             this.$onEcho('private', name, 'MessageSent', message => {
                 this.addMessages([message]);
+                this.typing = false;
+                this.notifyReceived(message, true);
+            });
+
+            this.$onEcho('private', name, 'MessageReceived', message => {
+                this.setReceived(message.id, message.read);
+            });
+
+            this.$onEcho('private', name, 'whisper-received', message => {
+                this.setReceived(message.id, message.read);
+            });
+
+            this.$onEcho('private', name, 'whisper-typing', (data) => {
+                if (data.username === this.user.username) {
+                    this.typing = data.typing;
+                    this.scrollDown();
+                }
             });
         },
 

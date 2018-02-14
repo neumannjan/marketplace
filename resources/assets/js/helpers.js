@@ -27,4 +27,13 @@ export default {
             });
         });
     },
+
+    getConversationChannelName(username1, username2) {
+        const name = 'conversation';
+        if (username1 <= username2)
+            return `${name}.${username1}.${username2}`;
+        else
+            return `${name}.${username2}.${username1}`;
+    }
+
 }

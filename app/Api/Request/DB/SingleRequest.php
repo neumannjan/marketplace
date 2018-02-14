@@ -22,6 +22,7 @@ class SingleRequest extends Request
         $query = $this->buildQuery($parameters);
 
         $model = $query->first();
+        $this->onResults($model);
 
         if (!$model) {
             return new Response(true, null);

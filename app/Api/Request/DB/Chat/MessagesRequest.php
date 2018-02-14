@@ -4,6 +4,7 @@ namespace App\Api\Request\DB\Chat;
 
 
 use App\Api\Request\DB\MultiRequest;
+use App\Events\MessageReceived;
 use App\Message;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Query\Builder;
@@ -76,6 +77,23 @@ class MessagesRequest extends MultiRequest
                 ->where(['to_username' => $with])
                 ->orWhere(['from_username' => $with]);
         });
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function onResults($results)
+    {
+        foreach ($results as $message) {
+            /** @var Message $message */
+            if (!$message->read) {
+                $message->received = true;
+                $message->read = true;
+                $message->save();
+
+                broadcast(new MessageReceived($message))->toOthers();
+            }
+        }
     }
 
     /**

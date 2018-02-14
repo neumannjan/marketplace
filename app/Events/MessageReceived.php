@@ -4,20 +4,16 @@ namespace App\Events;
 
 use App\Message;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class MessageSent implements ShouldBroadcastNow
+class MessageReceived implements ShouldBroadcast
 {
     use ConversationEvent, Dispatchable, InteractsWithSockets, SerializesModels;
 
     /** @var Message */
     protected $message;
-
-    /** @var string */
-    protected $identifier;
 
     /**
      * Create a new event instance.
@@ -27,7 +23,6 @@ class MessageSent implements ShouldBroadcastNow
     public function __construct(Message $message)
     {
         $this->message = $message;
-        $this->identifier = $message->identifier;
     }
 
     /**
@@ -37,10 +32,7 @@ class MessageSent implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return [
-            new PrivateChannel("user.{$this->message->to_username}"),
-            $this->getConversationChannel($this->message->from_username, $this->message->to_username)
-        ];
+        return $this->getConversationChannel($this->message->from_username, $this->message->to_username);
     }
 
     /**
@@ -50,9 +42,9 @@ class MessageSent implements ShouldBroadcastNow
      */
     public function broadcastWith()
     {
-        if ($this->identifier) {
-            $this->message->identifier = $this->identifier;
-        }
-        return \App\Http\Resources\Message::make($this->message)->toArray(null);
+        return [
+            'id' => $this->message->id,
+            'read' => $this->message->read
+        ];
     }
 }

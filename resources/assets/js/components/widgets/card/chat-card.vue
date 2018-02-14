@@ -41,6 +41,10 @@
 
 <script>
     import api from 'JS/api';
+    import echo from 'JS/echo';
+    import helpers from 'JS/helpers';
+
+    import debounce from 'lodash/debounce';
 
     import "vue-awesome/icons/arrow-left";
     import "vue-awesome/icons/refresh";
@@ -72,8 +76,14 @@
         data: () => ({
             user: null,
             message: '',
-            addedMessages: {}
+            addedMessages: {},
+            notifyTyping: null
         }),
+        watch: {
+            message(val) {
+                this.notifyTyping();
+            }
+        },
         methods: {
             async sendMessage() {
                 if (this.message) {
@@ -119,7 +129,31 @@
             onSelectUser(user) {
                 this.user = user;
                 this.posted = [];
+            },
+            doNotifyTyping(typing) {
+                if (!this.$store.state.user || !this.user) {
+                    return;
+                }
+
+                const name = helpers.getConversationChannelName(this.$store.state.user.username, this.user.username);
+                echo.whisper('private', name, 'typing', {
+                    typing: typing,
+                    username: this.$store.state.user.username
+                });
             }
+        },
+        created() {
+            const notifyTypingTrue = debounce(() => this.doNotifyTyping(this.message !== ''), 200, {
+                leading: true,
+                trailing: false
+            });
+
+            const notifyTypingFalse = debounce(() => this.doNotifyTyping(false), 10000);
+
+            this.notifyTyping = () => {
+                notifyTypingTrue();
+                notifyTypingFalse();
+            };
         }
     }
 </script>

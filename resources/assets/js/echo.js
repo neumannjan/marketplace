@@ -74,6 +74,26 @@ class EventListener {
 }
 
 /**
+ * Get channel instance by type and name
+ * @param {Echo} echo
+ * @param {string} type
+ * @param {string} name
+ * @return {Echo.Channel}
+ */
+function getChannelByType(echo, type, name) {
+    switch (type) {
+        case 'private':
+            return echo.private(name);
+        case 'presence':
+            return echo.join(name);
+        case 'public':
+            return echo.channel(name);
+        default:
+            throw `Unknown channel type '${type}'.`;
+    }
+}
+
+/**
  * ChannelListeners class.
  */
 class ChannelListeners {
@@ -101,22 +121,8 @@ class ChannelListeners {
      * @returns {EventListener}
      */
     channel(type, name) {
-        let channel = null;
-
         // get the channel instance
-        switch (type) {
-            case 'private':
-                channel = this.echo.private(name);
-                break;
-            case 'presence':
-                channel = this.echo.join(name);
-                break;
-            case 'public':
-                channel = this.echo.channel(name);
-                break;
-            default:
-                throw Error(`Unknown channel type '${type}'.`);
-        }
+        const channel = getChannelByType(this.echo, type, name);
 
         // retrieve from _channelListeners if already exists
         if (this._channelListeners[channel.name]) {
@@ -130,12 +136,17 @@ class ChannelListeners {
 
         // listen for each requested channel event and dispatch the result to the listener
         listener.onCallbacks.push(name => {
-
             // only if not listening yet
             if (boundEvents[name] !== true) {
-                channel.listen(name, (...params) => {
-                    listener.dispatch(name, ...params);
-                });
+                if (name.startsWith('whisper-')) {
+                    channel.listenForWhisper(name.substr(8), (...params) => {
+                        listener.dispatch(name, ...params);
+                    });
+                } else {
+                    channel.listen(name, (...params) => {
+                        listener.dispatch(name, ...params);
+                    });
+                }
                 boundEvents[name] = true;
             }
         });
@@ -144,6 +155,18 @@ class ChannelListeners {
         this._channelListeners[channel.name] = listener;
 
         return listener;
+    }
+
+    /**
+     * Trigger client event on a channel.
+     * @param {string} channelType 'private', 'presence' or 'public'.
+     * @param {string} channelName Channel name.
+     * @param {string} eventName Whisper event name.
+     * @param {object} data Whisper data
+     */
+    whisper(channelType, channelName, eventName, data) {
+        const channel = getChannelByType(this.echo, channelType, channelName);
+        channel.whisper(eventName, data);
     }
 }
 

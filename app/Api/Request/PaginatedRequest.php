@@ -5,6 +5,7 @@ namespace App\Api\Request;
 
 use App\Api\Response\Response;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Collection;
@@ -70,6 +71,7 @@ abstract class PaginatedRequest extends Request
 
         /** @var Paginator $paginator */
         $paginator = $this->paginator($parameters, $perPage, $page);
+        $this->onResults($paginator->items());
         $paginator->appends($query);
         $paginator->setPath(route('api.single', ['name' => $name], false));
 
@@ -123,6 +125,14 @@ abstract class PaginatedRequest extends Request
      * @return Paginator
      */
     protected abstract function paginator(Collection $parameters, $perPage, $pageOrAfter);
+
+    /**
+     * Called after the query is requested.
+     * @param Model[]|Model $results
+     */
+    protected function onResults($results)
+    {
+    }
 
     /**
      * Returns name of a Resource class to be used. If false, no Resource class used
