@@ -5,7 +5,6 @@ namespace App\Api\Request\DB\Offer;
 
 use App\Api\Request\DB\SearchRequest;
 use App\Offer;
-use Laravel\Scout\Builder;
 
 class OfferSearchRequest extends SearchRequest
 {
@@ -14,9 +13,10 @@ class OfferSearchRequest extends SearchRequest
 
     /**
      * @inheritDoc
+     * @param Offer $model
      */
-    protected function filterQuery(Builder $query)
+    function filterResult($model)
     {
-        return $query->where('displayable', true);
+        return $model->displayable;
     }
 }
