@@ -304,13 +304,31 @@ const channelListeners = new ChannelListeners(null);
         channelListeners.global.dispatch('reconnect');
     });
 
-    // watch for token changes and apply
-    store.watch(state => state.token, value => echo.connector.options.csrfToken = value);
-
     /*
      * Set up global event listener events
      */
 
+    /**
+     * @type {Channel}
+     */
+    let userChannel = null;
+
+    // watch for CSRF token changes and apply
+    store.watch(state => state.token, token => {
+        echo.options.csrfToken = token;
+        echo.connector.options.csrfToken = token;
+        echo.connector.options.auth.headers['X-CSRF-TOKEN'] = token;
+
+        if (userChannel) {
+            userChannel.options = echo.connector.options;
+        }
+    });
+
+    /**
+     * Bind channel events to global event listener events
+     * @param {Channel|PresenceChannel} channel
+     * @param {string|string[]} events
+     */
     function bindToGlobalEventListener(channel, events) {
         if (!Array.isArray(events)) {
             events = [events];
@@ -325,7 +343,6 @@ const channelListeners = new ChannelListeners(null);
 
     // user channel
 
-    let userChannel = null;
     const userChannelName = user => `user.${user}`;
 
     function onUserChange(value, oldValue = null) {
@@ -333,11 +350,14 @@ const channelListeners = new ChannelListeners(null);
         const oldUsername = oldValue && oldValue.username;
         if (username !== oldUsername) {
             if (userChannel) {
-                userChannel.unbind();
+                echo.leave(userChannel.name);
                 userChannel = null;
             }
 
             if (username) {
+                echo.disconnect();
+                echo.connector.connect();
+
                 userChannel = echo.private(userChannelName(username));
 
                 // listen for events and dispatch to global EventListener

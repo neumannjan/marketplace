@@ -10,9 +10,9 @@ function setGlobal(of, data, createNew = false) {
     for (let [key, value] of Object.entries(data)) {
         if (of[key] !== undefined) {
             if (of[key] instanceof Array && value instanceof Array) {
-                to[key] = [].concat(of[key], value);
+                to[key] = [...of[key], ...value];
             } else if (of[key] instanceof Object && value instanceof Object) {
-                to[key] = Object.assign({}, of[key], value);
+                to[key] = {...of[key], ...value};
             } else {
                 to[key] = value;
             }
