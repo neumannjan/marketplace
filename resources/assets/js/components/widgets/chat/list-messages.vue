@@ -3,11 +3,12 @@
         <div v-if="busy" class="text-center">
             <icon name="spinner" label="Loading" pulse/>
         </div>
-        <template v-for="message in allMessages">
-            <div v-if="isMine(message)" class="chat-item-right mb-2 d-flex flex-row-reverse align-items-end">
+        <div v-for="message in allMessages"
+             :key="message.identifier ? message.identifier : message.id" class="mb-2">
+            <div v-if="isMine(message)" class="chat-item-right d-flex flex-row-reverse align-items-end">
                 <!-- TODO label -->
                 <div class="chat-item-indicator mx-2">
-                    <profile-img v-if="lastMessageID === message.id && message.read"
+                    <profile-img v-if="lastReadMessageID === message.id"
                                  :img="profileImage ? profileImage : {}"
                                  :img-size="indicatorSize"/>
                     <icon v-else-if="!message.read && message.received" name="check-circle" :scale="indicatorSize/16"
@@ -23,15 +24,21 @@
                     <chat-message-content class="m-0" :message="message"/>
                 </div>
             </div>
-            <div v-else class="chat-item-left mb-2 d-flex flex-row align-items-end">
-                <router-link :to="{name: 'user', params: {username: user.username}}" class="mx-2">
-                    <profile-img :img="profileImage ? profileImage : {}" :img-size="imgSize"/>
-                </router-link>
-                <div class="chat-item-message card bg-light" :style="{borderRadius: `${imgSize/2}px`}">
-                    <chat-message-content class="m-0" :message="message"/>
+            <div v-else class="d-flex flex-row align-items-end">
+                <div class="chat-item-left d-flex flex-row">
+                    <router-link :to="{name: 'user', params: {username: user.username}}" class="mx-2">
+                        <profile-img :img="profileImage ? profileImage : {}" :img-size="imgSize"/>
+                    </router-link>
+                    <div class="chat-item-message card bg-light" :style="{borderRadius: `${imgSize/2}px`}">
+                        <chat-message-content class="m-0" :message="message"/>
+                    </div>
+                </div>
+                <div v-if="lastReadMessageID === message.id" class="chat-item-indicator ml-auto">
+                    <profile-img :img="profileImage ? profileImage : {}"
+                                 :img-size="indicatorSize"/>
                 </div>
             </div>
-        </template>
+        </div>
         <!-- Typing indicator -->
         <div v-if="typing" class="chat-item-left mb-2 d-flex flex-row align-items-end">
             <router-link :to="{name: 'user', params: {username: user.username}}" class="mx-2">
@@ -105,6 +112,20 @@
             },
             lastMessageID() {
                 return this.allMessages.length > 0 ? this.allMessages[this.allMessages.length - 1].id : -1;
+            },
+            lastReadMessageID() {
+                const messages = this.messages;
+
+                // iterating backwards because the message we are looking for is likely to be close to the end
+                for (let i = messages.length - 1; i >= 0; --i) {
+                    const message = messages[i];
+
+                    if (message.read) {
+                        return message.id;
+                    }
+                }
+
+                return -1;
             }
         },
         watch: {
