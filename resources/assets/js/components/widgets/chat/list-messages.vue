@@ -55,6 +55,11 @@
     import ProfileImg from 'JS/components/widgets/image/profile-img';
     import ChatMessageContent from "JS/components/widgets/chat/chat-message-content";
     import InfiniteScroll from "JS/components/widgets/infinite-scroll";
+    // TODO: Ensure that all events are ShouldBroadcastNow
+    // TODO: Bugfix typing indicator not disappearing on backspace.
+    // TODO: Bugfix token not getting changed. 
+    // TODO: User chat notification and 'received' without 'read' on notification. 
+    // TODO: Add missed messages on reconnect.
 
 
     export default {
