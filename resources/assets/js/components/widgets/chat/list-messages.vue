@@ -55,12 +55,9 @@
     import ProfileImg from 'JS/components/widgets/image/profile-img';
     import ChatMessageContent from "JS/components/widgets/chat/chat-message-content";
     import InfiniteScroll from "JS/components/widgets/infinite-scroll";
-    // TODO: Ensure that all events are ShouldBroadcastNow
-    // TODO: Bugfix typing indicator not disappearing on backspace.
-    // TODO: Bugfix token not getting changed. 
+    // TODO: Bugfix token not getting changed.
     // TODO: User chat notification and 'received' without 'read' on notification. 
     // TODO: Add missed messages on reconnect.
-
 
     export default {
         name: 'list-messages',
@@ -220,10 +217,11 @@
 
                 const name = helpers.getConversationChannelName(this.user.username, this.$store.state.user.username);
                 for (let message of messages) {
-                    echo.whisper('private', name, 'received', {
-                        id: message.id,
-                        read: read
-                    });
+                    echo.channel('private', name)
+                        .whisper('received', {
+                            id: message.id,
+                            read: read
+                        });
                 }
             },
             setReceived(messageID, read = false) {
@@ -263,11 +261,11 @@
                 this.setReceived(message.id, message.read);
             });
 
-            this.$onEcho('private', name, 'whisper-received', message => {
+            this.$onEchoWhisper('private', name, 'received', message => {
                 this.setReceived(message.id, message.read);
             });
 
-            this.$onEcho('private', name, 'whisper-typing', (data) => {
+            this.$onEchoWhisper('private', name, 'typing', (data) => {
                 if (data.username === this.user.username) {
                     this.typing = data.typing;
                     this.scrollDown();

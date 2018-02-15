@@ -136,16 +136,17 @@
                 }
 
                 const name = helpers.getConversationChannelName(this.$store.state.user.username, this.user.username);
-                echo.whisper('private', name, 'typing', {
-                    typing: typing,
-                    username: this.$store.state.user.username
-                });
+                echo.channel('private', name)
+                    .whisper('typing', {
+                        typing: typing,
+                        username: this.$store.state.user.username
+                    });
             }
         },
         created() {
             const notifyTypingTrue = debounce(() => this.doNotifyTyping(this.message !== ''), 200, {
                 leading: true,
-                trailing: false
+                trailing: true
             });
 
             const notifyTypingFalse = debounce(() => this.doNotifyTyping(false), 10000);

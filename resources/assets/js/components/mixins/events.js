@@ -44,6 +44,13 @@ export default {
                 () => channelListener.off(event, listener)
             );
         },
+        $onEchoWhisper(type, channel, event, listener) {
+            const channelListener = echo.channel(type, channel);
+            this.$attachEvent(
+                () => channelListener.onWhisper(event, listener),
+                () => channelListener.offWhisper(event, listener)
+            );
+        },
         $onDocumentVisibility(listener) {
             let hidden, visibilityChange;
 

@@ -73,12 +73,109 @@ class EventListener {
     }
 }
 
+const WHISPER_EVENT_PREFIX = 'whisper-';
+
+/**
+ * ChannelEventListener class.
+ * Allows to bind and unbind event callbacks including whisper events. Allows to trigger client events as well.
+ */
+class ChannelEventListener extends EventListener {
+
+    /**
+     * @param {Channel|PresenceChannel} channel
+     */
+    constructor(channel) {
+        super();
+
+        /**
+         * Echo Channel instance
+         * @type {Channel|PresenceChannel}
+         */
+        this.channel = channel;
+
+        let boundEvents = {};
+
+        // listen for each requested channel event and dispatch the result
+        this.onCallbacks.push(name => {
+
+            // only if not listening yet
+            if (boundEvents[name] !== true) {
+
+                //is whisper?
+                if (name.startsWith(WHISPER_EVENT_PREFIX)) {
+
+                    //remove the whisper prefix
+                    name = name.substr(WHISPER_EVENT_PREFIX.length);
+
+                    //dispatch on websocket event
+                    channel.listenForWhisper(name, (...params) => {
+                        this.dispatchWhisper(name, ...params);
+                    });
+                } else {
+
+                    //dispatch on websocket event
+                    channel.listen(name, (...params) => {
+                        this.dispatch(name, ...params);
+                    });
+                }
+
+                boundEvents[name] = true;
+            }
+        });
+    }
+
+    /**
+     * Attach an event listener to a whisper event.
+     * @param {string} name
+     * @param {string} callback
+     */
+    onWhisper(name, callback) {
+        this.on(WHISPER_EVENT_PREFIX + name, callback);
+    }
+
+    /**
+     * Detach an event listener from a whisper event.
+     * @param {string} name
+     * @param {string} callback
+     */
+    offWhisper(name, callback) {
+        this.off(WHISPER_EVENT_PREFIX + name, callback);
+    }
+
+    /**
+     * Attach an event listener to a whisper event, but only once.
+     * @param {string} name
+     * @param {string} callback
+     */
+    onceWhisper(name, callback) {
+        this.once(WHISPER_EVENT_PREFIX + name, callback);
+    }
+
+    /**
+     * Dispatch a whisper event.
+     * @param {string} name
+     * @param params Parameters to pass to each callback.
+     */
+    dispatchWhisper(name, ...params) {
+        this.dispatch(WHISPER_EVENT_PREFIX + name, ...params);
+    }
+
+    /**
+     * Trigger a client event.
+     * @param {string} name Event name
+     * @param {object} data Event data
+     */
+    whisper(name, data) {
+        this.channel.whisper(name, data);
+    }
+}
+
 /**
  * Get channel instance by type and name
  * @param {Echo} echo
  * @param {string} type
  * @param {string} name
- * @return {Echo.Channel}
+ * @return {Channel|PresenceChannel}
  */
 function getChannelByType(echo, type, name) {
     switch (type) {
@@ -97,6 +194,10 @@ function getChannelByType(echo, type, name) {
  * ChannelListeners class.
  */
 class ChannelListeners {
+
+    /**
+     * @param {Echo} echo Laravel Echo instance.
+     */
     constructor(echo) {
         /**
          * Laravel Echo instance.
@@ -118,7 +219,7 @@ class ChannelListeners {
      * Get an event listener for a particular channel.
      * @param {string} type 'private', 'presence' or 'public'.
      * @param {string} name Channel name.
-     * @returns {EventListener}
+     * @returns {ChannelEventListener}
      */
     channel(type, name) {
         // get the channel instance
@@ -129,44 +230,13 @@ class ChannelListeners {
             return this._channelListeners[channel.name];
         }
 
-        let boundEvents = {};
-
         // create new event listener for channel
-        const listener = new EventListener();
-
-        // listen for each requested channel event and dispatch the result to the listener
-        listener.onCallbacks.push(name => {
-            // only if not listening yet
-            if (boundEvents[name] !== true) {
-                if (name.startsWith('whisper-')) {
-                    channel.listenForWhisper(name.substr(8), (...params) => {
-                        listener.dispatch(name, ...params);
-                    });
-                } else {
-                    channel.listen(name, (...params) => {
-                        listener.dispatch(name, ...params);
-                    });
-                }
-                boundEvents[name] = true;
-            }
-        });
+        const listener = new ChannelEventListener(channel);
 
         // add listener to _channelListeners
         this._channelListeners[channel.name] = listener;
 
         return listener;
-    }
-
-    /**
-     * Trigger client event on a channel.
-     * @param {string} channelType 'private', 'presence' or 'public'.
-     * @param {string} channelName Channel name.
-     * @param {string} eventName Whisper event name.
-     * @param {object} data Whisper data
-     */
-    whisper(channelType, channelName, eventName, data) {
-        const channel = getChannelByType(this.echo, channelType, channelName);
-        channel.whisper(eventName, data);
     }
 }
 
