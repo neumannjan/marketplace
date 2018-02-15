@@ -315,7 +315,7 @@
                     })
                     .catch(error => {
                         if (error.response === undefined)
-                            this.$store.commit('connection', false);
+                            this.$store.commit('httpConnection', false);
 
                         this.error = true;
 

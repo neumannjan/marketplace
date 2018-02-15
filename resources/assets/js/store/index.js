@@ -26,13 +26,15 @@ const store = new Vuex.Store({
     plugins: [persistedState({paths: ['cached', '_cached_loaded', 'persisted']})],
     strict: true,
     state: {
-        is_authenticated: false,
+        token: false,
         locale: 'en',
+        is_authenticated: false,
         user: null,
         is_admin: false,
-        connection_lost: false,
-        token: false,
+        connection_http: null,
+        connection_websocket: null,
         flash: {},
+        notifications: {},
         messages: [],
         currencies: [],
         reRoutedTimes: -1,
@@ -59,8 +61,26 @@ const store = new Vuex.Store({
         addFlash(state, flash) {
             Vue.set(state.flash, flash.key, flash);
         },
-        connection(state, value) {
-            state.connection_lost = !value;
+        addNotification(state, notification) {
+            if (!notification.id && notification.id !== 0) {
+                notification.id = (Math.random() + 1).toString(36).substr(2, 5);
+            }
+
+            const notifications = state.notifications;
+            delete notifications[notification.id];
+
+            state.notifications = {[notification.id]: notification, ...notifications};
+        },
+        removeNotification(state, id) {
+            const notifications = state.notifications;
+            delete notifications[id];
+            state.notifications = notifications;
+        },
+        httpConnection(state, value) {
+            state.connection_http = value;
+        },
+        websocketConnection(state, value) {
+            state.connection_websocket = value;
         },
         addReRoute(state) {
             ++state.reRoutedTimes;

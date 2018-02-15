@@ -1,10 +1,10 @@
 <template>
-    <div class="wrapper flex-row" v-if="shown">
+    <div class="wrapper flex-row">
         <div class="navbar navbar-expand navbar-dark bg-dark navbar-vertical">
             <top-nav class="navbar-nav navbar-nav-fixed-top"/>
             <bottom-nav class="navbar-nav navbar-nav-fixed-bottom"/>
         </div>
-        <div class="wrapper">
+        <div class="wrapper" v-if="shown">
             <main role="main"
                   :style="loadingStyle"
                   :class="['main', {'navigation-shown': has.navigation, 'navigation-not-shown': !has.navigation}]">
@@ -33,8 +33,8 @@
             </footer>
         </div>
 
+        <notifications class="fixed-top-right"/>
         <main-floating-btns/>
-
         <modal-router :data="modals"/>
     </div>
 </template>
@@ -52,9 +52,11 @@
     import ModalRouter from "JS/components/widgets/modal-router";
 
     import events from 'JS/components/mixins/events';
+    import Notifications from "JS/components/widgets/notifications";
 
     export default {
         components: {
+            Notifications,
             ModalRouter,
             Icon,
             TopNav,
@@ -71,28 +73,8 @@
             modals: queryRouter,
             loading: false,
         }),
-        computed: {
-            ...mapState({
-                connection: state => !state.connection_lost, //TODO show notification if connection lost
-            }),
-            loadingStyle() {
-                return this.loading ? {visibility: 'hidden'} : {};
-            }
-        },
-        methods: {
-            async restoreConnection() { //TODO call when 'try for connection' pressed
-                if (!this.shown) return;
-
-                this.$store.commit('connection', true);
-
-                this.shown = false;
-                await this.$nextTick();
-                this.shown = true;
-                await this.$nextTick();
-            },
-        },
         watch: {
-            '$route'(to) {
+            $route(to) {
                 if (!to.matched) return;
 
                 let has = {};
@@ -101,7 +83,55 @@
                 }
 
                 this.has = has;
+            },
+            httpConnection(val, oldVal) {
+                if (oldVal !== undefined && oldVal !== null && val !== oldVal) {
+                    this.notifyConnection(true, val);
+                }
+            },
+            websocketConnection(val, oldVal) {
+                if (oldVal !== undefined && oldVal !== null && val !== oldVal) {
+                    this.notifyConnection(false, val);
+                }
             }
+        },
+        computed: {
+            ...mapState({
+                httpConnection: state => state.connection_http,
+                websocketConnection: state => state.connection_websocket
+            }),
+            loadingStyle() {
+                return this.loading ? {visibility: 'hidden'} : {};
+            }
+        },
+        methods: {
+            notifyConnection(isHttp, value) {
+                const type = isHttp ? 'http' : 'websocket';
+                const getValue = value => value ? 'true' : 'false';
+
+                this.$store.commit('addNotification', {
+                    id: `connection-${type}-${getValue(value)}`,
+                    persistent: !value,
+                    message: `TODO message: ${type} connection ${value ? 'regained' : 'lost'}.`,
+                    type: value ? 'success' : 'danger'
+                });
+
+                this.$store.commit('removeNotification', `connection-${type}-${getValue(!value)}`);
+
+                if (isHttp && value) {
+                    this.restoreConnection();
+                }
+            },
+            async restoreConnection() {
+                if (!this.shown) return;
+
+                this.$store.commit('httpConnection', true);
+
+                this.shown = false;
+                await this.$nextTick();
+                this.shown = true;
+                await this.$nextTick();
+            },
         },
         mounted() {
             this.$onVue(routeEvents, 'loading', () => this.loading = true);

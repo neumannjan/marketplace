@@ -63,6 +63,8 @@
     import ChatMessageContent from "JS/components/widgets/chat/chat-message-content";
     import InfiniteScroll from "JS/components/widgets/infinite-scroll";
     // TODO: User chat notification and 'received' without 'read' on notification.
+    // TODO: Message red on send error
+    // TODO: reload page on reconnect only unless there is a form that we are writing
 
     export default {
         name: 'list-messages',

@@ -1,7 +1,7 @@
 <template>
     <infinite-scroll as="ul" class="list-group list-group-flush"
                      :busy="busy" @request="request">
-        <li v-for="conversation in conversations" class="list-group-item px-2">
+        <li v-for="conversation in conversations" :key="conversation.id" class="list-group-item px-2">
             <a href="#" @click.prevent="onSelect(conversation)" class="chat-user no-decoration">
                 <profile-img :img="conversation.user.profile_image ? conversation.user.profile_image : {}"
                              :img-size="imgSize" class="mr-2"/>

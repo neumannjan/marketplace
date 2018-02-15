@@ -5,9 +5,11 @@ import ElementQueries from 'css-element-queries/src/ElementQueries';
 import stickyfill from 'stickyfilljs';
 
 import store from 'JS/store';
+import echo from 'JS/echo';
 import router from 'JS/router';
 import AppComponent from './components/app.vue';
 import LazyImgComponent from './components/widgets/image/lazy-img';
+import api from "JS/api";
 
 // setup
 
@@ -52,4 +54,19 @@ export const app = new Vue({
     components: {
         app: AppComponent,
     }
+});
+
+// connection detection
+export function checkHttpConnection() {
+    api.requestSingle('dummy', {});
+}
+
+echo.global.on('connect', () => store.commit('websocketConnection', true));
+echo.global.on('reconnect', () => {
+    store.commit('websocketConnection', true);
+    checkHttpConnection();
+});
+echo.global.on('disconnect', () => {
+    store.commit('websocketConnection', false);
+    checkHttpConnection();
 });

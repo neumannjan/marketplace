@@ -17,6 +17,7 @@ use App\Api\Request\DB\MultiRequest;
 use App\Api\Request\DB\Offer\OfferCreateRequest;
 use App\Api\Request\DB\Offer\OfferSearchRequest;
 use App\Api\Request\DB\SingleRequest;
+use App\Api\Request\DummyRequest;
 use App\Api\Request\GlobalDataRequest;
 use App\Api\Request\Request as ApiRequest;
 use App\Api\Response\CompositeResponse as CompositeApiResponse;
@@ -43,6 +44,7 @@ class PrivateApiController extends Controller
             // Global
             'global' => GlobalDataRequest::class,
             'cached' => CachedDataRequest::class,
+            'dummy' => DummyRequest::class,
 
             // Auth
             'login' => LoginRequest::class,

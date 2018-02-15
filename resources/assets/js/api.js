@@ -12,7 +12,7 @@ const defaultReject = (reject, isHttp) => {
     return (error) => {
         if (isHttp) {
             if (error.response === undefined) {
-                store.commit('connection', false);
+                store.commit('httpConnection', false);
             }
         }
 
@@ -27,7 +27,7 @@ const defaultReject = (reject, isHttp) => {
 };
 
 const reportConnection = () => {
-    store.commit('connection', true);
+    store.commit('httpConnection', true);
 };
 
 /**
