@@ -272,37 +272,51 @@ const channelListeners = new ChannelListeners(null);
     // pass Laravel Echo instance to ChannelListeners
     channelListeners.echo = echo;
 
-    //watch for socket.io errors and successes
-    if (process.env.NODE_ENV === 'development') {
-        echo.connector.socket.addEventListener('connect', () => {
-            console.log('Socket.io successfully connected.')
+    function attachEventListeners(socket) {
+        //watch for socket.io errors and successes
+        if (process.env.NODE_ENV === 'development') {
+            socket.addEventListener('connect', () => {
+                console.log('Socket.io successfully connected.')
+            });
+
+            socket.addEventListener('connect_error', e => {
+                console.error('Socket.io connection error:', e);
+            });
+
+            socket.addEventListener('connect_timeout', e => {
+                console.error('Socket.io connection timeout:', e);
+            });
+
+            socket.addEventListener('reconnect', () => {
+                console.log('Socket.io successfully reconnected.')
+            });
+
+            socket.addEventListener('reconnecting', num => {
+                console.log(`Socket.io's attempt to reconnect no. ${num}...`)
+            });
+
+            socket.addEventListener('reconnect_failed', e => {
+                console.error('Socket.io failed to reconnect.', e);
+            });
+
+            socket.addEventListener('disconnect', () => {
+                console.log('Socket.io disconnected.')
+            });
+        }
+
+        // dispatch 'reconnect' global event
+        socket.addEventListener('reconnect', () => {
+            channelListeners.global.dispatch('reconnect');
         });
 
-        echo.connector.socket.addEventListener('connect_error', e => {
-            console.error('Socket.io connection error:', e);
-        });
-
-        echo.connector.socket.addEventListener('connect_timeout', e => {
-            console.error('Socket.io connection timeout:', e);
-        });
-
-        echo.connector.socket.addEventListener('reconnect', () => {
-            console.log('Socket.io successfully reconnected.')
-        });
-
-        echo.connector.socket.addEventListener('reconnecting', num => {
-            console.log(`Socket.io's attempt to reconnect no. ${num}...`)
-        });
-
-        echo.connector.socket.addEventListener('reconnect_failed', e => {
-            console.error('Socket.io failed to reconnect.', e);
+        // reconnect on disconnect
+        socket.addEventListener('disconnect', () => {
+            echo.connector.connect();
+            attachEventListeners(echo.connector.socket);
         });
     }
 
-    // dispatch 'reconnect' global event
-    echo.connector.socket.addEventListener('reconnect', () => {
-        channelListeners.global.dispatch('reconnect');
-    });
+    attachEventListeners(echo.connector.socket);
 
     /*
      * Set up global event listener events
@@ -357,6 +371,7 @@ const channelListeners = new ChannelListeners(null);
             if (username) {
                 echo.disconnect();
                 echo.connector.connect();
+                attachEventListeners(echo.connector.socket);
 
                 userChannel = echo.private(userChannelName(username));
 
