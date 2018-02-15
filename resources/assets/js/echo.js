@@ -304,13 +304,19 @@ const channelListeners = new ChannelListeners(null);
             });
         }
 
+        //dispatch 'connect' global event
+        socket.addEventListener('connect', () => {
+            channelListeners.global.dispatch('connect');
+        });
+
         // dispatch 'reconnect' global event
         socket.addEventListener('reconnect', () => {
             channelListeners.global.dispatch('reconnect');
         });
 
-        // reconnect on disconnect
+        // dispatch 'disconnect' global event and attempt reconnect
         socket.addEventListener('disconnect', () => {
+            channelListeners.global.dispatch('disconnect');
             echo.connector.connect();
             attachEventListeners(echo.connector.socket);
         });
@@ -359,7 +365,7 @@ const channelListeners = new ChannelListeners(null);
 
     const userChannelName = user => `user.${user}`;
 
-    function onUserChange(value, oldValue = null) {
+    function onUserChange(value, oldValue = null, reconnect = false) {
         const username = value && value.username;
         const oldUsername = oldValue && oldValue.username;
         if (username !== oldUsername) {
@@ -369,9 +375,11 @@ const channelListeners = new ChannelListeners(null);
             }
 
             if (username) {
-                echo.disconnect();
-                echo.connector.connect();
-                attachEventListeners(echo.connector.socket);
+                if (reconnect) {
+                    echo.disconnect();
+                    echo.connector.connect();
+                    attachEventListeners(echo.connector.socket);
+                }
 
                 userChannel = echo.private(userChannelName(username));
 
@@ -386,7 +394,9 @@ const channelListeners = new ChannelListeners(null);
     onUserChange(store.state.user);
 
     //set up user channel on user change
-    store.watch(state => state.user, onUserChange);
+    store.watch(state => state.user, (value, oldValue) => {
+        onUserChange(value, oldValue, true);
+    });
 })();
 
 export default channelListeners;

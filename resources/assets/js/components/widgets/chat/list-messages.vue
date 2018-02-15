@@ -55,8 +55,7 @@
     import ProfileImg from 'JS/components/widgets/image/profile-img';
     import ChatMessageContent from "JS/components/widgets/chat/chat-message-content";
     import InfiniteScroll from "JS/components/widgets/infinite-scroll";
-    // TODO: User chat notification and 'received' without 'read' on notification. 
-    // TODO: Add missed messages on reconnect.
+    // TODO: User chat notification and 'received' without 'read' on notification.
 
     export default {
         name: 'list-messages',
@@ -238,6 +237,21 @@
                 }
 
                 this.messages = messages;
+            },
+            freshRequest(resetOuter = false) {
+                if (!this.$store.state.user || !this.user) {
+                    return;
+                }
+
+                this.nextUrl = `/api/messages?with=${this.user.username}`;
+                this.messages = [];
+                this.messagesByKey = {};
+
+                if (resetOuter) {
+                    this.$emit('input', {});
+                }
+
+                this.request();
             }
         },
         created() {
@@ -245,10 +259,13 @@
                 return;
             }
 
-            this.nextUrl = `/api/messages?with=${this.user.username}`;
-            this.request();
+            this.freshRequest();
 
             const name = helpers.getConversationChannelName(this.user.username, this.$store.state.user.username);
+
+            this.$onEchoGlobal('reconnect', () => {
+                this.freshRequest(true);
+            });
 
             this.$onEcho('private', name, 'MessageSent', message => {
                 this.addMessages([message]);
