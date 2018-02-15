@@ -3,7 +3,7 @@
             name="tr"
             tag="div"
             class="d-flex flex-column-reverse">
-        <button v-for="(button, index) in $data._buttons"
+        <button v-for="(button, index) in filteredButtons"
                 ref="button"
                 :key="button.id ? button.id : button.icon"
                 @click="onClick(button, index)"
@@ -22,28 +22,12 @@ export default {
             required: true
         },
     },
-    data: () => ({
-        _buttons: []
-    }),
-    watch: {
-        $route() {
-            this.setButtons();
-        },
-        buttons() {
-            this.setButtons();
+    computed: {
+        filteredButtons() {
+            return this.buttons.filter(button => !button.show || button.show() !== false);
         }
     },
     methods: {
-        setButtons() {
-            let buttons = [];
-
-            for (let button of this.buttons) {
-                if (!button.show || button.show() !== false)
-                    buttons.push(button);
-            }
-
-            this.$data._buttons = buttons;
-        },
         onClick(button, index) {
             this.$emit('click', button, this.$refs.button[index]);
         }

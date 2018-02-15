@@ -13,6 +13,7 @@
     import Popper from './popper';
     import events from 'JS/components/mixins/events';
     import router from 'JS/router';
+    import {mapState} from 'vuex';
 
     import 'vue-awesome/icons/plus';
     import 'vue-awesome/icons/comment';
@@ -50,7 +51,7 @@
         },
         mixins: [events],
         data: () => ({
-            buttons: [],
+            isSideA: true,
             scrollY: window.scrollY,
             backShown: false,
             popperEl: null,
@@ -60,25 +61,28 @@
             '$route'() {
                 this.scrollY = window.scrollY;
                 this.backShown = !router.getRouteMainComponent().isTopLevelRoute;
-                this.buttons = this.aButtons;
+                this.isSideA = true;
             },
-            buttons() {
-                if (this.popperEl && !this.buttons.map(b => b.id).includes(this.lastSelectedButton)) {
+            buttons(buttons) {
+                if (this.popperEl && !buttons.map(b => b.id).includes(this.lastSelectedButton)) {
                     this.popperEl = null;
                 }
             }
         },
         computed: {
-            aButtons() {
-                if (this.$store.state.is_authenticated)
-                    return this.backShown ? [...buttons, backButton] : buttons;
-                else
-                    return this.backShown ? [backButton] : [];
-
+            buttons() {
+                if (this.isSideA) {
+                    if (this.isAuthenticated)
+                        return this.backShown ? [...buttons, backButton] : buttons;
+                    else
+                        return this.backShown ? [backButton] : [];
+                } else {
+                    return [upButton];
+                }
             },
-            bButtons() {
-                return [upButton];
-            }
+            ...mapState({
+                isAuthenticated: state => state.is_authenticated
+            })
         },
         methods: {
             click(button, element) {
@@ -110,16 +114,10 @@
             this.$onJS(window, 'scroll', () => {
                 const scrollY = window.scrollY;
 
-                if (scrollY <= 300 || scrollY > this.scrollY || this.popperEl) {
-                    this.buttons = this.aButtons;
-                } else {
-                    this.buttons = this.bButtons;
-                }
+                this.isSideA = scrollY <= 300 || scrollY > this.scrollY || this.popperEl;
 
                 this.scrollY = scrollY;
             });
-
-            this.buttons = this.aButtons;
         },
     };
 </script>
