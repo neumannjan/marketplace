@@ -8,6 +8,7 @@
                 <div class="d-flex flex-column chat-user-content">
                     <span class="text-truncate d-block">{{ conversation.user.display_name }}</span>
                     <chat-message-content as="small"
+                                          :inline="true"
                                           :message="conversation"
                                           class="text-truncate d-block text-muted"/>
                 </div>

@@ -8,10 +8,10 @@
             <div v-if="isMine(message)" class="chat-item-right d-flex flex-column align-items-end">
                 <!-- TODO label -->
                 <div class="d-flex flex-row align-items-end">
-                    <div class="d-flex flex-row-reverse align-items-end">
+                    <div class="d-flex flex-row-reverse align-items-end ml-auto">
                         <div :class="['chat-item-message card text-white', message.error ? 'bg-danger' : 'bg-primary']"
                              :style="{borderRadius: `${imgSize/2}px`}">
-                            <chat-message-content class="m-0" :message="message"/>
+                            <chat-message-content class="m-0" :message="message" :white="true" :img-size="imgSize"/>
                         </div>
                         <ul v-if="message.error" class="list-unstyled mb-0 mr-1 line-height-1">
                             <li>
@@ -49,7 +49,7 @@
                         <profile-img :img="profileImage ? profileImage : {}" :img-size="imgSize"/>
                     </router-link>
                     <div class="chat-item-message card bg-light" :style="{borderRadius: `${imgSize/2}px`}">
-                        <chat-message-content class="m-0" :message="message"/>
+                        <chat-message-content class="m-0" :message="message" :img-size="imgSize"/>
                     </div>
                 </div>
                 <div v-if="lastReadMessageID === message.id" class="chat-item-indicator ml-auto">
@@ -385,9 +385,12 @@
         margin-right: #{-1 * $image-margin};
     }
 
-    .chat-item-message {
-        padding: .25em .75em;
-        word-break: break-all;
+    .d-flex {
+        min-width: 0;
+    }
+
+    .flex-row {
+        width: 100%;
     }
 
     .chat-item-indicator {

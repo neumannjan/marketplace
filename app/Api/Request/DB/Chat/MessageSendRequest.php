@@ -41,8 +41,8 @@ class MessageSendRequest extends Request
     {
         return [
             'to' => 'required|string|min:1|max:2000',
-            'content' => 'required|string',
-            'additional' => 'sometimes|array',
+            'content' => 'required_if:additional,null|sometimes|string',
+            'additional' => 'required_if:content,null|sometimes|array',
             'identifier' => 'sometimes|string'
         ];
     }

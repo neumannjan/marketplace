@@ -4,7 +4,7 @@
              :crossorigin="crossOrigin" :width="width" :height="height">
         <template v-if="!displayed || !ready">
             <slot>
-                <div :class="['img-placeholder w-100 h-100', placeholderClass]">
+                <div :class="['img-placeholder', placeholderClass]" :style="placeholderStyle">
                     <icon name="image" scale="2.5"/>
                 </div>
             </slot>
@@ -31,9 +31,12 @@
                 type: String,
                 default: ''
             },
+            placeholderStyle: {
+                default: ''
+            },
             placeholderClass: {
                 type: String,
-                default: ''
+                default: 'w-100 h-100'
             },
             imgStyle: {
                 default: ''

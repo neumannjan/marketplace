@@ -78,11 +78,11 @@
     import CardIconFooter from "../../card-icon-footer";
     import Badge from 'JS/components/widgets/badge'
     import Carousel from 'JS/components/widgets/carousel';
+    import {events as appEvents} from 'JS/app';
 
     import router from 'JS/router';
     import api from 'JS/api';
 
-    import 'vue-awesome/icons/heart';
     import 'vue-awesome/icons/shopping-cart';
     import 'vue-awesome/icons/expand';
     import 'vue-awesome/icons/user-circle';
@@ -156,16 +156,22 @@
             buttons() {
                 const ubiquitous = [
                     {
-                        icon: 'heart',
-                        label: 'Like',
-                        disabled: this.isThisUser || !this.$store.state.is_authenticated,
-                        callback: null
-                    },
-                    {
                         icon: 'shopping-cart',
                         label: 'Buy',
                         disabled: this.isThisUser || !this.$store.state.is_authenticated,
-                        callback: null
+                        callback: () => {
+                            //TODO translate
+                            if (!confirm(`Are you sure you want to send user ${this.data.author.display_name} a message?`)) {
+                                return;
+                            }
+
+                            appEvents.$emit('request-popup', {
+                                type: 'chat',
+                                then: () => {
+                                    appEvents.$emit('request-buy', this.data);
+                                }
+                            });
+                        }
                     },
                 ];
 

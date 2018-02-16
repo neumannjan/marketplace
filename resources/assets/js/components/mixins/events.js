@@ -1,5 +1,6 @@
 import ResizeSensor from 'css-element-queries/src/ResizeSensor';
 import echo from 'JS/echo';
+import {events as appEvents} from 'JS/app';
 
 export default {
     data: () => ({
@@ -30,6 +31,9 @@ export default {
                 () => vm.$on(event, listener),
                 () => vm.$off(event, listener)
             );
+        },
+        $onAppEvents(event, listener) {
+            this.$onVue(appEvents, event, listener);
         },
         $onEchoGlobal(event, listener) {
             this.$attachEvent(

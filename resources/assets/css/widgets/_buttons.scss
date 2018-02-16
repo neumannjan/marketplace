@@ -22,7 +22,7 @@
 .btn-link-gray {
   color: $gray-700;
 
-  &:hover {
+  &:not([disabled]):hover {
     color: $gray-900;
   }
 }

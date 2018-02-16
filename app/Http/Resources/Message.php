@@ -19,7 +19,7 @@ class Message extends Resource
             'id' => $this->id,
             'identifier' => $this->identifier,
             'content' => $this->content,
-            'additional' => $this->additional,
+            'additional' => MessageAdditional::make($this->resource->additional),
             'from' => User::make($this->from),
             'to' => User::make($this->to),
             'received' => $this->received,

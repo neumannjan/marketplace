@@ -29,7 +29,7 @@
         </div>
 
         <div v-if="user" class="p-1 mt-auto">
-            <form @submit.prevent="sendMessage" class="input-group input-group-sm">
+            <form @submit.prevent="sendInputMessage" class="input-group input-group-sm">
                 <input type="text" class="form-control" placeholder="Type a message" v-model="message">
                 <div class="input-group-append">
                     <button class="btn btn-outline-primary" type="submit">Send</button>
@@ -42,6 +42,7 @@
 <script>
     import echo from 'JS/echo';
     import helpers from 'JS/helpers';
+    import events from 'JS/components/mixins/events';
 
     import debounce from 'lodash/debounce';
 
@@ -52,12 +53,13 @@
     import ProfileImg from "JS/components/widgets/image/profile-img";
 
     export default {
+        name: 'chat-card',
+        mixins: [events],
         components: {
             ListMessages,
             ListConversations,
             ProfileImg
         },
-        name: 'chat-card',
         props: {
             imgSize: {
                 type: Number,
@@ -80,28 +82,31 @@
             }
         },
         methods: {
-            sendMessage() {
+            sendInputMessage() {
                 if (this.message) {
-                    let uniqueId = null;
-                    const content = this.message;
+                    this.sendMessage(this.message);
                     this.message = '';
-
-                    // create a unique ID for awaited message
-                    do {
-                        uniqueId = (Math.random() + 1).toString(36).substr(2, 5);
-                    } while (this.addedMessages[uniqueId] !== undefined);
-
-                    // save to added messages
-                    this.addedMessages = {
-                        ...this.addedMessages,
-                        [uniqueId]: {
-                            content: content,
-                            additional: [],
-                            mine: true,
-                            awaiting: true,
-                        }
-                    };
                 }
+            },
+            sendMessage(content, additional = [], additionalPrivate = []) {
+                let uniqueId = null;
+
+                // create a unique ID for awaited message
+                do {
+                    uniqueId = (Math.random() + 1).toString(36).substr(2, 5);
+                } while (this.addedMessages[uniqueId] !== undefined);
+
+                // save to added messages
+                this.addedMessages = {
+                    ...this.addedMessages,
+                    [uniqueId]: {
+                        content: content,
+                        additional: additional,
+                        additionalPrivate: additionalPrivate,
+                        mine: true,
+                        awaiting: true,
+                    }
+                };
             },
             onClose() {
                 this.$emit('close');
@@ -135,6 +140,27 @@
                 notifyTypingTrue();
                 notifyTypingFalse();
             };
+
+            this.$onAppEvents('request-buy', async offer => {
+                if (!this.$store.state.user || offer.author.username === this.$store.state.user.username) {
+                    return;
+                }
+
+                if (this.user) {
+                    this.user = null;
+                    await this.$nextTick();
+                }
+
+                this.user = offer.author;
+
+                this.$nextTick(() => {
+                    this.sendMessage('', {
+                        offer: offer.id
+                    }, {
+                        offer: offer
+                    });
+                })
+            });
         }
     }
 </script>

@@ -4,7 +4,7 @@
             tag="div"
             class="d-flex flex-column-reverse">
         <button v-for="(button, index) in filteredButtons"
-                ref="button"
+                ref="buttons"
                 :key="button.id ? button.id : button.icon"
                 @click="onClick(button, index)"
                 :class="['btn btn-floating', `btn-floating-${index}`, button.class ? button.class : 'btn-dark']">
@@ -22,6 +22,13 @@ export default {
             required: true
         },
     },
+    watch: {
+        filteredButtons(val, oldVal) {
+            if (val !== oldVal) {
+                this.$emit('buttons', this.$refs.buttons);
+            }
+        }
+    },
     computed: {
         filteredButtons() {
             return this.buttons.filter(button => !button.show || button.show() !== false);
@@ -29,8 +36,11 @@ export default {
     },
     methods: {
         onClick(button, index) {
-            this.$emit('click', button, this.$refs.button[index]);
+            this.$emit('click', button, this.$refs.buttons[index]);
         }
+    },
+    mounted() {
+        this.$emit('buttons', this.$refs.buttons);
     }
 };
 

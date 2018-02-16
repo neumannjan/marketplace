@@ -1,6 +1,6 @@
 <template>
     <div class="fixed-bottom-right">
-        <floating-btns :buttons="buttons" @click="click"/>
+        <floating-btns :buttons="buttons" @click="click" @buttons="onButtonEls"/>
         <popper v-if="popperEl" :element="popperEl" placement="left-start" class="card-popup-z">
             <chat-card v-if="lastSelectedButton === 'chat'" class="card-popup mr-3 m-1" @close="popperEl = null"/>
             <notifications-card v-else-if="lastSelectedButton === 'notifications'" class="card-popup mr-3 m-1"/>
@@ -56,6 +56,7 @@
             backShown: false,
             popperEl: null,
             lastSelectedButton: null,
+            buttonEls: null
         }),
         watch: {
             '$route'() {
@@ -109,6 +110,9 @@
                         window.scrollTo(window.scrollX, 0);
                         break;
                 }
+            },
+            onButtonEls(els) {
+                this.buttonEls = els;
             }
         },
         mounted() {
@@ -118,6 +122,14 @@
                 this.isSideA = scrollY <= 300 || scrollY > this.scrollY || this.popperEl;
 
                 this.scrollY = scrollY;
+            });
+
+            this.$onAppEvents('request-popup', data => {
+                if (this.buttonEls !== null && this.buttonEls.length > 0) {
+                    this.popperEl = this.buttonEls[0];
+                    this.lastSelectedButton = data.type;
+                    this.$nextTick(data.then);
+                }
             });
         },
     };
