@@ -3,12 +3,30 @@
   margin: 0 $btn-floating-margin $btn-floating-margin 0;
   width: $btn-floating-size;
   height: $btn-floating-size;
-  overflow: hidden;
+  overflow: auto;
   display: flex;
   justify-content: space-around;
   align-items: center;
   z-index: 1020;
   box-shadow: $btn-floating-shadow;
+
+  .badge {
+    position: absolute;
+    border-radius: 50%;
+    display: block;
+    top: -5px;
+    right: -5px;
+    width: 22px;
+    height: 22px;
+    transform-origin: center;
+
+    & > * {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
 }
 
 //carousel

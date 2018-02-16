@@ -1,6 +1,6 @@
 <template>
     <div class="fixed-bottom-right">
-        <floating-btns :buttons="buttons" @click="click" @buttons="onButtonEls"/>
+        <floating-btns :buttons="buttons" :badges="badges" @click="onClick" @buttons="onButtonEls"/>
         <popper v-if="popperEl" :element="popperEl" placement="left-start" class="card-popup-z">
             <chat-card v-if="lastSelectedButton === 'chat'" class="card-popup mr-3 m-1" @close="popperEl = null"/>
             <notifications-card v-else-if="lastSelectedButton === 'notifications'" class="card-popup mr-3 m-1"/>
@@ -56,7 +56,8 @@
             backShown: false,
             popperEl: null,
             lastSelectedButton: null,
-            buttonEls: null
+            buttonEls: null,
+            chatConversations: {}
         }),
         watch: {
             '$route'() {
@@ -82,34 +83,67 @@
                     return [upButton];
                 }
             },
+            badges() {
+                return {
+                    [BTN_CHAT]: Object.keys(this.chatConversations).length
+                }
+            },
             ...mapState({
                 isAuthenticated: state => state.is_authenticated,
             })
         },
         methods: {
-            click(button, element) {
-                const lastPopperEl = this.popperEl;
-                this.popperEl = null;
-                this.lastSelectedButton = button.id;
+            isOpen(buttonId) {
+                return this.popperEl && this.lastSelectedButton === buttonId;
+            },
+            onClick(button, element) {
+                this.click(button.id, element);
+            },
+            click(buttonId, element = null, toggle = true) {
+                const result = (() => {
+                    const lastPopperEl = this.popperEl;
+                    this.popperEl = null;
+                    this.lastSelectedButton = buttonId;
 
-                switch (button.id) {
-                    case BTN_ADD:
-                        router.push({name: 'offer-create'});
-                        break;
-                    case BTN_CHAT:
-                    case BTN_NOTIFICATIONS:
-                        if (lastPopperEl === element)
-                            this.popperEl = null;
-                        else
-                            this.popperEl = element;
-                        break;
-                    case BTN_BACK:
-                        router.back();
-                        break;
-                    case BTN_UP:
-                        window.scrollTo(window.scrollX, 0);
-                        break;
+                    switch (buttonId) {
+                        case BTN_ADD:
+                            router.push({name: 'offer-create'});
+                            return true;
+                        case BTN_CHAT:
+                        case BTN_NOTIFICATIONS:
+                            if (element) {
+                                if (toggle && lastPopperEl === element)
+                                    this.popperEl = null;
+                                else
+                                    this.popperEl = element;
+
+                                return true;
+                            } else if (this.buttonEls !== null && this.buttonEls.length > 0) {
+                                this.popperEl = this.buttonEls[0];
+
+                                return true;
+                            }
+                            return false;
+                        case BTN_BACK:
+                            router.back();
+                            return true;
+                        case BTN_UP:
+                            window.scrollTo(window.scrollX, 0);
+                            return true;
+                    }
+
+                    return false;
+                })();
+
+                if (result) {
+                    switch (buttonId) {
+                        case BTN_CHAT:
+                            this.chatConversations = {};
+                            break;
+                    }
                 }
+
+                return result;
             },
             onButtonEls(els) {
                 this.buttonEls = els;
@@ -125,11 +159,25 @@
             });
 
             this.$onAppEvents('request-popup', data => {
-                if (this.buttonEls !== null && this.buttonEls.length > 0) {
-                    this.popperEl = this.buttonEls[0];
-                    this.lastSelectedButton = data.type;
+                if (this.click(data.type, null, false)) {
                     this.$nextTick(data.then);
                 }
+            });
+
+            this.$onEchoGlobal('MessageSentOther', message => {
+                if (!this.isOpen(BTN_CHAT)) {
+                    this.$set(this.chatConversations, message.from.username, true);
+                }
+            });
+
+            this.$onAppEvents('unread_conversations', conversations => {
+                const c = {};
+
+                for (let conversation of conversations) {
+                    c[conversation.from.username] = true;
+                }
+
+                this.chatConversations = c;
             });
         },
     };

@@ -9,6 +9,12 @@
                 @click="onClick(button, index)"
                 :class="['btn btn-floating', `btn-floating-${index}`, button.class ? button.class : 'btn-dark']">
             <icon :name="button.icon" :label="button.label"/>
+            <transition name="badge">
+                <span v-if="badges[button.id]"
+                      :class="`badge badge-${button.badgeType ? button.badgeType : 'danger'}`">
+                    <span>{{ badges[button.id] }}</span>
+                </span>
+            </transition>
         </button>
     </transition-group>
 </template>
@@ -21,6 +27,10 @@ export default {
             type: Array,
             required: true
         },
+        badges: {
+            type: Object,
+            default: () => ({})
+        }
     },
     watch: {
         filteredButtons(val, oldVal) {
@@ -84,5 +94,21 @@ export default {
 
     .tr-leave-active {
         transition: transform $duration $ease-in-quad;
+    }
+
+    .badge {
+        will-change: transform;
+        transition: transform .3s ease;
+    }
+
+    .badge-enter-active, .badge-leave-active {
+    }
+
+    .badge-enter, .badge-leave-to {
+        transform: scale(0);
+    }
+
+    .badge-leave, .badge-enter-to {
+        transform: scale(1);
     }
 </style>

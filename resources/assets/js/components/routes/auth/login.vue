@@ -34,6 +34,8 @@
     import InputComponent from 'JS/components/widgets/form/input.vue';
     import SelectComponent from 'JS/components/widgets/form/select.vue';
 
+    import {events as appEvents} from "JS/app";
+
     import {minLength, required} from 'vuelidate/lib/validators';
 
     import route from 'JS/components/mixins/route';
@@ -55,7 +57,10 @@
         }),
         methods: {
             submit() {
-                this.$submitForm('login', 'form', () => this.$router.push({name: 'index'}));
+                this.$submitForm('login', 'form', response => {
+                    appEvents.$emit('unread_conversations', response.unread_conversations);
+                    this.$router.push({name: 'index'});
+                });
             },
         },
         computed: {

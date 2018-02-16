@@ -9,6 +9,7 @@ use App\Message;
 use App\User;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Validator;
 
 class ConversationsRequest extends MultiRequest
 {
@@ -34,6 +35,24 @@ class ConversationsRequest extends MultiRequest
     /**
      * @inheritDoc
      */
+    protected function rules(Validator $validator = null)
+    {
+        return [
+            'unread' => 'sometimes|boolean'
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function urlParameters(Collection $parameters)
+    {
+        return ['unread'];
+    }
+
+    /**
+     * @inheritDoc
+     */
     protected function shouldResolve()
     {
         return $this->guard->check();
@@ -44,12 +63,14 @@ class ConversationsRequest extends MultiRequest
      */
     protected function additionalQuery($query, Collection $parameters)
     {
-        parent::additionalQuery($query, $parameters);
-
         /** @var User $user */
         $user = $this->guard->user();
 
         $query->scopes(['conversationsWith' => $user->username]);
+
+        if ($parameters->get('unread', false)) {
+            $query->where(['read' => false])->where(['to_username' => $user->username]);
+        }
 
         return $query;
     }

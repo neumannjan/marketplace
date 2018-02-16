@@ -5,7 +5,7 @@
             <a href="#" @click.prevent="onSelect(conversation)" class="chat-user no-decoration">
                 <profile-img :img="conversation.user.profile_image ? conversation.user.profile_image : {}"
                              :img-size="imgSize" class="mr-2"/>
-                <span :is="conversation.read || isMine(conversation) ?'span':'strong'"
+                <span :is="conversation.read || isMine(conversation) ? 'span' : 'strong'"
                       class="d-flex flex-column chat-user-content">
                     <span class="text-truncate d-block">{{ conversation.user.display_name }}</span>
                     <chat-message-content as="small"
@@ -23,6 +23,7 @@
 
 <script>
     import ProfileImg from "JS/components/widgets/image/profile-img";
+    import events from 'JS/components/mixins/events';
     import api from "JS/api";
     import ChatMessageContent from "JS/components/widgets/chat/chat-message-content";
 
@@ -31,6 +32,7 @@
 
     export default {
         name: 'list-conversations',
+        mixins: [events],
         components: {
             InfiniteScroll,
             ChatMessageContent,
@@ -43,7 +45,7 @@
             }
         },
         data: () => ({
-            conversations: [],
+            conversations: {},
             busy: false,
             nextUrl: '/api/conversations'
         }),
@@ -58,7 +60,17 @@
                     api.requestByURL(this.nextUrl)
                         .then(result => {
                             this.busy = false;
-                            this.conversations = [...this.conversations, ...result.data];
+
+                            const additional = {};
+
+                            for (let conversation of result.data) {
+                                additional[conversation.user.username] = conversation;
+                            }
+
+                            this.conversations = {
+                                ...this.conversations,
+                                ...additional
+                            };
                             this.nextUrl = result.next_page_url;
                         })
                 }
@@ -69,6 +81,12 @@
         },
         created() {
             this.request();
+
+            this.$onEchoGlobal('MessageSentOther', message => {
+                message.user = message.from;
+                this.$delete(this.conversations, message.user.username);
+                this.conversations = {[message.user.username]: message, ...this.conversations};
+            });
         }
     }
 </script>

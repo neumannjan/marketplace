@@ -6,6 +6,11 @@ namespace App\Api\Request\Auth;
 use App\Api\Request\Request as ApiRequest;
 use App\Api\Response\Response as ApiResponse;
 use App\Auth\AuthenticatesUsers;
+use App\Http\Resources\Conversation;
+use App\Message;
+use App\User;
+use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Validator;
 
@@ -17,12 +22,24 @@ class LoginRequest extends ApiRequest
 
     use AuthenticatesUsers;
 
+    /** @var Guard */
+    protected $guard;
+
+    /**
+     * LoginRequest constructor.
+     * @param Guard $guard
+     */
+    public function __construct(Guard $guard)
+    {
+        $this->guard = $guard;
+    }
+
     /**
      * @inheritDoc
      */
     protected function shouldResolve()
     {
-        return \Auth::guest();
+        return $this->guard->guest();
     }
 
     /**
@@ -56,7 +73,24 @@ class LoginRequest extends ApiRequest
      */
     protected function sendLoginResponse()
     {
-        return [];
+        /** @var User $user */
+        $user = $this->guard->user();
+
+        // add user specific data
+
+        // unread conversations
+        /** @var Builder $query */
+        $query = Message::conversationsWith($user->username)
+            ->scopes(['personal']);
+
+        $conversations = $query
+            ->where(['to_username' => $user->username])
+            ->where(['read' => false])
+            ->get();
+
+        return [
+            'unread_conversations' => Conversation::collection($conversations)
+        ];
     }
 
 }

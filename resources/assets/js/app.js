@@ -57,8 +57,10 @@ export const app = new Vue({
 });
 
 // connection detection
-export function checkHttpConnection() {
-    api.requestSingle('dummy', {});
+export function checkHttpConnection(force = false) {
+    if (force || !store.state.connection_http) {
+        api.requestSingle('dummy', {});
+    }
 }
 
 echo.global.on('connect', () => store.commit('websocketConnection', true));
@@ -66,7 +68,9 @@ echo.global.on('reconnect', () => {
     store.commit('websocketConnection', true);
     checkHttpConnection();
 });
-echo.global.on('disconnect', () => {
-    store.commit('websocketConnection', false);
-    checkHttpConnection();
+echo.global.on('disconnect', reason => {
+    if (reason !== 'io client disconnect' && reason !== 'transport close') {
+        store.commit('websocketConnection', false);
+        checkHttpConnection(true);
+    }
 });

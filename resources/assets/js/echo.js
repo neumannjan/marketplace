@@ -17,7 +17,7 @@ class EventListener {
     /**
      * Attach an event listener to an event.
      * @param {string} name
-     * @param {string} callback
+     * @param {function} callback
      */
     on(name, callback) {
         for (let callback of this.onCallbacks) {
@@ -34,7 +34,7 @@ class EventListener {
     /**
      * Detach an event listener from an event.
      * @param {string} name
-     * @param {string} callback
+     * @param {function} callback
      */
     off(name, callback) {
         if (this.listeners[name]) {
@@ -48,7 +48,7 @@ class EventListener {
     /**
      * Attach an event listener to an event, but only once.
      * @param {string} name
-     * @param {string} callback
+     * @param {function} callback
      */
     once(name, callback) {
         const c = (...params) => {
@@ -127,7 +127,7 @@ class ChannelEventListener extends EventListener {
     /**
      * Attach an event listener to a whisper event.
      * @param {string} name
-     * @param {string} callback
+     * @param {function} callback
      */
     onWhisper(name, callback) {
         this.on(WHISPER_EVENT_PREFIX + name, callback);
@@ -136,7 +136,7 @@ class ChannelEventListener extends EventListener {
     /**
      * Detach an event listener from a whisper event.
      * @param {string} name
-     * @param {string} callback
+     * @param {function} callback
      */
     offWhisper(name, callback) {
         this.off(WHISPER_EVENT_PREFIX + name, callback);
@@ -145,7 +145,7 @@ class ChannelEventListener extends EventListener {
     /**
      * Attach an event listener to a whisper event, but only once.
      * @param {string} name
-     * @param {string} callback
+     * @param {function} callback
      */
     onceWhisper(name, callback) {
         this.once(WHISPER_EVENT_PREFIX + name, callback);
@@ -299,8 +299,8 @@ const channelListeners = new ChannelListeners(null);
                 console.error('Socket.io failed to reconnect.', e);
             });
 
-            socket.addEventListener('disconnect', () => {
-                console.log('Socket.io disconnected.')
+            socket.addEventListener('disconnect', reason => {
+                console.log(`Socket.io disconnected. Reason: ${reason}`)
             });
         }
 
@@ -315,8 +315,8 @@ const channelListeners = new ChannelListeners(null);
         });
 
         // dispatch 'disconnect' global event and attempt reconnect
-        socket.addEventListener('disconnect', () => {
-            channelListeners.global.dispatch('disconnect');
+        socket.addEventListener('disconnect', reason => {
+            channelListeners.global.dispatch('disconnect', reason);
             echo.connector.connect();
             attachEventListeners(echo.connector.socket);
         });
@@ -396,6 +396,15 @@ const channelListeners = new ChannelListeners(null);
     //set up user channel on user change
     store.watch(state => state.user, (value, oldValue) => {
         onUserChange(value, oldValue, true);
+    });
+
+    /*
+     * Custom global event listener events
+     */
+    channelListeners.global.on('MessageSent', message => {
+        if (message.mine === false || !store.state.user || store.state.user.username !== message.from.username) {
+            channelListeners.global.dispatch('MessageSentOther', message);
+        }
     });
 })();
 
