@@ -9,7 +9,7 @@
                 <!-- TODO label -->
                 <div class="d-flex flex-row align-items-end">
                     <div class="d-flex flex-row-reverse align-items-end ml-auto">
-                        <div :class="['chat-item-message card text-white', message.error ? 'bg-danger' : 'bg-primary']"
+                        <div :class="['card text-white', message.error ? 'bg-danger' : 'bg-primary']"
                              :style="{borderRadius: `${imgSize/2}px`}">
                             <chat-message-content class="m-0" :message="message" :white="true" :img-size="imgSize"/>
                         </div>
@@ -48,7 +48,7 @@
                     <router-link :to="{name: 'user', params: {username: user.username}}" class="mx-2">
                         <profile-img :img="profileImage ? profileImage : {}" :img-size="imgSize"/>
                     </router-link>
-                    <div class="chat-item-message card bg-light" :style="{borderRadius: `${imgSize/2}px`}">
+                    <div class="card bg-light" :style="{borderRadius: `${imgSize/2}px`}">
                         <chat-message-content class="m-0" :message="message" :img-size="imgSize"/>
                     </div>
                 </div>
@@ -59,8 +59,8 @@
             </div>
         </div>
         <!-- Typing indicator -->
-        <div v-if="typing" class="chat-item-left mb-2 d-flex flex-row-reverse align-items-end">
-            <div class="chat-item-message card bg-light" :style="{borderRadius: `${imgSize/2}px`}">
+        <div v-if="typing" class="chat-item-left mb-2 d-flex mr-auto flex-row-reverse align-items-end">
+            <div class="card bg-light" :style="{borderRadius: `${imgSize/2}px`}">
                 <div class="chat-item-typing">
                     <div></div>
                 </div>
@@ -414,6 +414,7 @@
     .chat-item-typing {
         display: inline-block;
         flex-direction: row;
+        padding: .25em .75em;
 
         &:before, &:after {
             content: ' ';
