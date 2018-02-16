@@ -5,13 +5,14 @@
             <a href="#" @click.prevent="onSelect(conversation)" class="chat-user no-decoration">
                 <profile-img :img="conversation.user.profile_image ? conversation.user.profile_image : {}"
                              :img-size="imgSize" class="mr-2"/>
-                <div class="d-flex flex-column chat-user-content">
+                <span :is="conversation.read || isMine(conversation) ?'span':'strong'"
+                      class="d-flex flex-column chat-user-content">
                     <span class="text-truncate d-block">{{ conversation.user.display_name }}</span>
                     <chat-message-content as="small"
                                           :inline="true"
                                           :message="conversation"
                                           class="text-truncate d-block text-muted"/>
-                </div>
+                </span>
             </a>
         </li>
         <li v-if="busy" class="list-group-item px-2 text-center">
@@ -61,6 +62,9 @@
                             this.nextUrl = result.next_page_url;
                         })
                 }
+            },
+            isMine(conversation) {
+                return this.$store.state.user && this.$store.state.user.username === conversation.from.username;
             }
         },
         created() {

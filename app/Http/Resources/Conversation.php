@@ -22,6 +22,7 @@ class Conversation extends Resource
             'additional' => MessageAdditional::make($this->resource->additional),
             'user' => User::make($this->user),
             'from' => User::make($this->from),
+            'read' => $this->read
         ];
     }
 }
