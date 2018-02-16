@@ -119,8 +119,10 @@ const store = new Vuex.Store({
     }
 });
 
-if (data) {
-    store.commit('global', JSON.parse(atob(data)));
+export const initialData = data ? JSON.parse(atob(data)) : null;
+
+if (initialData) {
+    store.commit('global', initialData);
 }
 
 export const helpers = {

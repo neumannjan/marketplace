@@ -2,6 +2,10 @@
 
 namespace App\Api\Request;
 
+use App\Http\Resources\Conversation;
+use App\Message;
+use App\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request as HttpRequest;
 
 /**
@@ -28,6 +32,22 @@ class InitialDataRequest extends GlobalDataRequest
                 'image' => trans('validation.image'),
             ]
         ];
+
+        /** @var User $user */
+        $user = \Auth::user();
+
+        // unread conversations
+        if ($user) {
+            /** @var Builder $query */
+            $query = Message::conversationsWith($user->username)
+                ->scopes(['personal']);
+            $conversations = $query
+                ->where(['to_username' => $user->username])
+                ->where(['read' => false])
+                ->get();
+
+            $array['unread_conversations'] = Conversation::collection($conversations);
+        }
 
         return $array;
     }

@@ -49,6 +49,9 @@
     import MainFloatingBtns from './widgets/main-floating-btns';
     import Modal from './widgets/modal';
 
+    import {events as appEvents} from "JS/app";
+    import {initialData} from 'JS/store';
+
     import ModalRouter from "JS/components/widgets/modal-router";
 
     import events from 'JS/components/mixins/events';
@@ -136,6 +139,27 @@
         mounted() {
             this.$onVue(routeEvents, 'loading', () => this.loading = true);
             this.$onVue(routeEvents, 'loaded', () => this.loading = false);
+        },
+        created() {
+            const addConversationNotification = (plural) => {
+                //TODO translate
+                this.$store.commit('addNotification', {
+                    id: 'chat',
+                    message: plural ? 'You have new messages.' : 'You have a new message.',
+                    type: 'primary'
+                });
+            };
+
+            this.$onEchoGlobal('MessageSentOther', () => addConversationNotification(false));
+
+            this.$onAppEvents('unread_conversations', conversations => {
+                addConversationNotification(conversations.length > 1);
+            });
+        },
+        mounted() {
+            if (initialData && initialData.unread_conversations && initialData.unread_conversations.length > 0) {
+                appEvents.$emit('unread_conversations', initialData.unread_conversations);
+            }
         }
     };
 </script>

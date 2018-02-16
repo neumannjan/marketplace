@@ -58,7 +58,10 @@
         methods: {
             submit() {
                 this.$submitForm('login', 'form', response => {
-                    appEvents.$emit('unread_conversations', response.unread_conversations);
+                    if (response.unread_conversations && response.unread_conversations.length > 0) {
+                        appEvents.$emit('unread_conversations', response.unread_conversations);
+                    }
+
                     this.$router.push({name: 'index'});
                 });
             },

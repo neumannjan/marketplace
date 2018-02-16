@@ -3,7 +3,7 @@
          class="d-flex flex-row align-items-start"
          @mouseenter="hover(true)" @mouseleave="hover(false)">
         <slot/>
-        <button v-if="closable" type="button" class="close ml-2" v-on:click="close()" aria-label="Close">
+        <button v-if="closable" type="button" class="close pl-2 ml-auto" v-on:click="close()" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
