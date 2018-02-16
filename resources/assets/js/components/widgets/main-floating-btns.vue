@@ -33,7 +33,7 @@
     //TODO labels
     const mainButtons = [
         {id: BTN_ADD, icon: 'plus', class: 'btn-primary', show: () => router.currentRoute.name !== 'offer-create'},
-        {id: BTN_CHAT, icon: 'comment', websocketRequired: true, httpRequired: true},
+        {id: BTN_CHAT, icon: 'comment'},
         {id: BTN_NOTIFICATIONS, icon: 'bell'},
     ];
 
@@ -71,25 +71,18 @@
         },
         computed: {
             buttons() {
-                let buttons = null;
-
                 if (this.isSideA) {
                     if (this.isAuthenticated) {
-                        buttons = this.backShown ? [...mainButtons, backButton] : mainButtons;
+                        return this.backShown ? [...mainButtons, backButton] : mainButtons;
                     } else {
-                        buttons = this.backShown ? [backButton] : [];
+                        return this.backShown ? [backButton] : [];
                     }
                 } else {
-                    buttons = [upButton];
+                    return [upButton];
                 }
-
-                return buttons.filter(b => (b.websocketRequired !== true || this.websocketConnection)
-                    && (b.httpRequired !== true || this.httpConnection));
             },
             ...mapState({
                 isAuthenticated: state => state.is_authenticated,
-                httpConnection: state => state.connection_http !== null ? state.connection_http : true,
-                websocketConnection: state => state.connection_websocket !== null ? state.connection_websocket : true,
             })
         },
         methods: {

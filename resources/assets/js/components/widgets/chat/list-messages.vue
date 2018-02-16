@@ -5,24 +5,43 @@
         </div>
         <div v-for="message in allMessages"
              :key="message.identifier ? message.identifier : message.id" class="mb-2">
-            <div v-if="isMine(message)" class="chat-item-right d-flex flex-row-reverse align-items-end">
+            <div v-if="isMine(message)" class="chat-item-right d-flex flex-column align-items-end">
                 <!-- TODO label -->
-                <div class="chat-item-indicator mx-2">
-                    <profile-img v-if="lastReadMessageID === message.id"
-                                 :img="profileImage ? profileImage : {}"
-                                 :img-size="indicatorSize"/>
-                    <icon v-else-if="!message.read && message.received" name="check-circle" :scale="indicatorSize/16"
-                          class="text-primary"/>
-                    <icon v-else-if="message.awaiting" name="circle-o" :scale="indicatorSize/16"
-                          class="text-primary"/>
-                    <icon v-else-if="!message.read && !message.received" name="check-circle-o" :scale="indicatorSize/16"
-                          class="text-primary"/>
-                    <div v-else :style="{width: `${indicatorSize}px`, height: '1px'}"></div>
+                <div class="d-flex flex-row align-items-end">
+                    <div class="d-flex flex-row-reverse align-items-end">
+                        <div :class="['chat-item-message card text-white', message.error ? 'bg-danger' : 'bg-primary']"
+                             :style="{borderRadius: `${imgSize/2}px`}">
+                            <chat-message-content class="m-0" :message="message"/>
+                        </div>
+                        <ul v-if="message.error" class="list-unstyled mb-0 mr-1 line-height-1">
+                            <li>
+                                <small><i><a href="#" @click.prevent="resendFailed(message.identifier)">Resend</a></i>
+                                </small>
+                            </li>
+                            <li>
+                                <small><i><a href="#" @click.prevent="removeFailed(message.identifier)">Remove</a></i>
+                                </small>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="chat-item-indicator mx-2">
+                        <profile-img v-if="lastReadMessageID === message.id"
+                                     :img="profileImage ? profileImage : {}"
+                                     :img-size="indicatorSize"/>
+                        <icon v-else-if="message.error" name="times-circle" :scale="indicatorSize/16"
+                              class="text-danger"/>
+                        <icon v-else-if="!message.read && message.received" name="check-circle"
+                              :scale="indicatorSize/16"
+                              class="text-primary"/>
+                        <icon v-else-if="message.awaiting" name="circle-o" :scale="indicatorSize/16"
+                              class="text-primary"/>
+                        <icon v-else-if="!message.read && !message.received" name="check-circle-o"
+                              :scale="indicatorSize/16"
+                              class="text-primary"/>
+                        <div v-else :style="{width: `${indicatorSize}px`, height: '1px'}"></div>
+                    </div>
                 </div>
-                <div class="chat-item-message card text-white bg-primary"
-                     :style="{borderRadius: `${imgSize/2}px`}">
-                    <chat-message-content class="m-0" :message="message"/>
-                </div>
+                <small v-if="message.error" class="text-danger"><i>Message send failed.</i></small>
             </div>
             <div v-else class="d-flex flex-row align-items-end">
                 <div class="chat-item-left d-flex flex-row">
@@ -40,15 +59,15 @@
             </div>
         </div>
         <!-- Typing indicator -->
-        <div v-if="typing" class="chat-item-left mb-2 d-flex flex-row align-items-end">
-            <router-link :to="{name: 'user', params: {username: user.username}}" class="mx-2">
-                <profile-img :img="profileImage ? profileImage : {}" :img-size="imgSize"/>
-            </router-link>
+        <div v-if="typing" class="chat-item-left mb-2 d-flex flex-row-reverse align-items-end">
             <div class="chat-item-message card bg-light" :style="{borderRadius: `${imgSize/2}px`}">
                 <div class="chat-item-typing">
                     <div></div>
                 </div>
             </div>
+            <router-link :to="{name: 'user', params: {username: user.username}}" class="mx-2">
+                <profile-img :img="profileImage ? profileImage : {}" :img-size="imgSize"/>
+            </router-link>
         </div>
     </infinite-scroll>
 </template>
@@ -59,11 +78,16 @@
     import events from 'JS/components/mixins/events';
     import helpers from 'JS/helpers';
 
+    import "vue-awesome/icons/spinner";
+    import "vue-awesome/icons/check-circle-o";
+    import "vue-awesome/icons/check-circle";
+    import "vue-awesome/icons/circle-o";
+    import "vue-awesome/icons/times-circle";
+
     import ProfileImg from 'JS/components/widgets/image/profile-img';
     import ChatMessageContent from "JS/components/widgets/chat/chat-message-content";
     import InfiniteScroll from "JS/components/widgets/infinite-scroll";
     // TODO: User chat notification and 'received' without 'read' on notification.
-    // TODO: Message red on send error
     // TODO: reload page on reconnect only unless there is a form that we are writing
 
     export default {
@@ -135,17 +159,36 @@
                 if (val !== oldVal) {
                     const newVal = Object.assign({}, val);
 
-                    let changed = false;
-
-                    for (let identifier of Object.keys(val)) {
+                    for (let [identifier, message] of Object.entries(val)) {
                         if (this.messagesByKey[identifier] !== undefined) {
-                            delete newVal[identifier];
-                            changed = true;
-                        }
-                    }
+                            // remove existing
 
-                    if (changed) {
-                        this.$emit('input', newVal);
+                            delete newVal[identifier];
+                            this.$emit('input', newVal);
+                        } else if (message.awaiting) {
+                            // send awaiting
+
+                            api.requestSingle('message-send', {
+                                to: this.user.username,
+                                content: message.content,
+                                additional: message.additional,
+                                identifier: identifier
+                            }).then(message => {
+                                // add to messages
+                                this.addMessages([message]);
+
+                                // remove from value
+                                delete newVal[identifier];
+                                this.$emit('input', newVal);
+                            }).catch(reason => {
+                                // set as error
+                                newVal[identifier].awaiting = false;
+                                newVal[identifier].error = true;
+                                newVal[identifier].identifier = identifier;
+                                this.$emit('input', newVal);
+                                this.scrollDown(true);
+                            });
+                        }
                     }
                 }
             }
@@ -172,10 +215,26 @@
                         })
                 }
             },
+            resendFailed(identifier) {
+                const msg = this.value[identifier];
+                msg.awaiting = true;
+                msg.error = false;
+
+                this.$emit('input', {
+                    ...this.value,
+                    [identifier]: msg
+                });
+            },
+            removeFailed(identifier) {
+                const newVal = Object.assign({}, this.value);
+                delete newVal[identifier];
+                this.$emit('input', newVal);
+            },
             addMessages(messages, toTop = false) {
                 // filter out existing messages
                 messages = messages
-                    .filter(message => this.messagesByKey[message.id] === undefined)
+                    .filter(message => this.messagesByKey[message.id] === undefined
+                        && this.messagesByKey[message.identifier] === undefined)
                     .reverse();
 
                 let mine = false;
@@ -261,7 +320,7 @@
 
                 this.messages = messages;
             },
-            freshRequest(resetOuter = false) {
+            freshRequest() {
                 if (!this.$store.state.user || !this.user) {
                     return;
                 }
@@ -269,10 +328,6 @@
                 this.nextUrl = `/api/messages?with=${this.user.username}`;
                 this.messages = [];
                 this.messagesByKey = {};
-
-                if (resetOuter) {
-                    this.$emit('input', {});
-                }
 
                 this.request();
             }
@@ -287,7 +342,7 @@
             const name = helpers.getConversationChannelName(this.user.username, this.$store.state.user.username);
 
             this.$onEchoGlobal('reconnect', () => {
-                this.freshRequest(true);
+                this.freshRequest();
             });
 
             this.$onEcho('private', name, 'MessageSent', message => {
@@ -333,6 +388,7 @@
 
     .chat-item-message {
         padding: .25em .75em;
+        word-break: break-all;
     }
 
     .chat-item-indicator {

@@ -40,17 +40,12 @@
 </template>
 
 <script>
-    import api from 'JS/api';
     import echo from 'JS/echo';
     import helpers from 'JS/helpers';
 
     import debounce from 'lodash/debounce';
 
     import "vue-awesome/icons/arrow-left";
-    import "vue-awesome/icons/refresh";
-    import "vue-awesome/icons/check-circle-o";
-    import "vue-awesome/icons/check-circle";
-    import "vue-awesome/icons/circle-o";
     import "vue-awesome/icons/close";
     import ListConversations from "JS/components/widgets/chat/list-conversations";
     import ListMessages from "JS/components/widgets/chat/list-messages";
@@ -85,42 +80,27 @@
             }
         },
         methods: {
-            async sendMessage() {
+            sendMessage() {
                 if (this.message) {
-                    try {
-                        let uniqueId = null;
-                        const content = this.message;
-                        this.message = '';
+                    let uniqueId = null;
+                    const content = this.message;
+                    this.message = '';
 
-                        // create a unique ID for awaited message
-                        do {
-                            uniqueId = (Math.random() + 1).toString(36).substr(2, 5);
-                        } while (this.addedMessages[uniqueId] !== undefined);
+                    // create a unique ID for awaited message
+                    do {
+                        uniqueId = (Math.random() + 1).toString(36).substr(2, 5);
+                    } while (this.addedMessages[uniqueId] !== undefined);
 
-                        // save to added messages
-                        this.addedMessages = {
-                            ...this.addedMessages,
-                            [uniqueId]: {
-                                content: content,
-                                additional: [],
-                                mine: true,
-                                awaiting: true,
-                            }
-                        };
-
-                        // send the message
-                        const message = await api.requestSingle('message-send', {
-                            to: this.user.username,
+                    // save to added messages
+                    this.addedMessages = {
+                        ...this.addedMessages,
+                        [uniqueId]: {
                             content: content,
-                            identifier: uniqueId
-                        });
-
-                        // remove 'awaiting' from added messages if still exists
-                        if (this.addedMessages[uniqueId]) {
-                            this.addedMessages[uniqueId].awaiting = false;
+                            additional: [],
+                            mine: true,
+                            awaiting: true,
                         }
-                    } catch (e) {
-                    }
+                    };
                 }
             },
             onClose() {
