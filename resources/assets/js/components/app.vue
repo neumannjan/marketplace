@@ -4,18 +4,18 @@
             <top-nav class="navbar-nav navbar-nav-fixed-top"/>
             <bottom-nav class="navbar-nav navbar-nav-fixed-bottom"/>
         </div>
-        <div class="wrapper" v-if="shown">
+        <div class="wrapper">
             <main role="main"
                   :style="loadingStyle"
                   :class="['main', {'navigation-shown': has.navigation, 'navigation-not-shown': !has.navigation}]">
                 <!-- NAVIGATION -->
-                <div v-if="has.navigation" class="content-navigation" v-sticky>
+                <div v-if="shown && has.navigation" class="content-navigation" v-sticky>
                     <keep-alive :include="keepAlive('navigation')">
                         <router-view class="content-navigation-inner" name="navigation" v-sticky/>
                     </keep-alive>
                 </div>
 
-                <div class="main-container">
+                <div class="main-container" v-if="shown || !$route.meta.refreshOnReconnect">
                     <!-- FLASH MESSAGES -->
                     <flash-messages/>
 
@@ -33,9 +33,9 @@
             </footer>
         </div>
 
-        <notifications class="fixed-top-right"/>
         <main-floating-btns/>
-        <modal-router :data="modals"/>
+        <modal-router :data="modals" v-if="shown"/>
+        <notifications class="fixed-top-right notifications"/>
     </div>
 </template>
 
@@ -139,3 +139,9 @@
         }
     };
 </script>
+
+<style scoped>
+    .notifications {
+        z-index: 1100;
+    }
+</style>

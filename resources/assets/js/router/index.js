@@ -60,7 +60,10 @@ const router = new VueRouter({
         {
             path: '/',
             name: 'index',
-            component: IndexRoute
+            component: IndexRoute,
+            meta: {
+                refreshOnReconnect: true
+            }
         },
 
         // Test page TODO remove
@@ -129,12 +132,18 @@ const router = new VueRouter({
             name: 'offer',
             component: OfferRoute,
             props: route => ({id: parseInt(route.params.id)}),
+            meta: {
+                refreshOnReconnect: true
+            }
         },
         {
             path: '/search/:query?',
             name: 'search',
             component: SearchRoute,
-            props: true
+            props: true,
+            meta: {
+                refreshOnReconnect: true
+            }
         },
 
         // Modify pages
