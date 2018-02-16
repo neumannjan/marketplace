@@ -1,5 +1,5 @@
 <template>
-    <div v-if="shown" v-bind:class="['alert', 'alert-' + type]" role="alert"
+    <div v-bind:class="['alert', 'alert-' + type]" role="alert"
          class="d-flex flex-row align-items-start"
          @mouseenter="hover(true)" @mouseleave="hover(false)">
         <slot/>
@@ -21,12 +21,8 @@
                 default: true
             }
         },
-        data: () => ({
-            shown: true
-        }),
         methods: {
             close() {
-                this.shown = false;
                 this.$emit('close');
             },
             hover(hover) {

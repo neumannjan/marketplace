@@ -72,9 +72,7 @@ const store = new Vuex.Store({
             state.notifications = {[notification.id]: notification, ...notifications};
         },
         removeNotification(state, id) {
-            const notifications = state.notifications;
-            delete notifications[id];
-            state.notifications = notifications;
+            Vue.delete(state.notifications, id);
         },
         httpConnection(state, value) {
             state.connection_http = value;
