@@ -13,6 +13,7 @@
   "devDependencies": {
     "axios": "^0.16.2",
     "babel-plugin-lodash": "^3.3.2",
+    "babel-polyfill": "^6.26.0",
     "bootstrap": "^4.0.0",
     "browser-sync": "^2.23.5",
     "browser-sync-webpack-plugin": "^1.2.0",
@@ -28,7 +29,8 @@
     "popper.js": "^1.12.9",
     "socket.io-client": "^2.0.4",
     "stackblur-canvas": "^1.4.0",
-    "stickyfilljs": "^2.0.3",
+    "ts-loader": "^3.5.0",
+    "typescript": "^2.7.2",
     "velocity-animate": "^1.5.0",
     "vue": "^2.5.13",
     "vue-awesome": "^2.3.4",

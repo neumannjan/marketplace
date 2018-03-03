@@ -15,7 +15,7 @@ const path = require('path');
 
 mix
     .autoload({}) //disable autoload of jquery, which we do not need
-    .js('resources/assets/js/app.js', 'public/js')
+    .ts('resources/assets/js/app.ts', 'public/js')
     .sass('resources/assets/css/app.scss', 'public/css')
     .sourceMaps()
     .version()

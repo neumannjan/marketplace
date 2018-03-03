@@ -314,6 +314,7 @@
                             .catch(reject);
                     })
                     .catch(error => {
+                        console.log(error);
                         if (error.response === undefined)
                             this.$store.commit('httpConnection', false);
 

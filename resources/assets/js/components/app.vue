@@ -9,9 +9,9 @@
                   :style="loadingStyle"
                   :class="['main', {'navigation-shown': has.navigation, 'navigation-not-shown': !has.navigation}]">
                 <!-- NAVIGATION -->
-                <div v-if="shown && has.navigation" class="content-navigation" v-sticky>
+                <div v-if="shown && has.navigation" class="content-navigation">
                     <keep-alive :include="keepAlive('navigation')">
-                        <router-view class="content-navigation-inner" name="navigation" v-sticky/>
+                        <router-view class="content-navigation-inner" name="navigation"/>
                     </keep-alive>
                 </div>
 

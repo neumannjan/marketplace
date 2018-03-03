@@ -45,12 +45,6 @@ body {
   }
 }
 
-.sticky-top {
-  position: sticky;
-  top: 0;
-  z-index: $zindex-sticky;
-}
-
 .fixed-bottom-right {
   position: fixed;
   bottom: 0;

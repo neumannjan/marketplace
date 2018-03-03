@@ -58,7 +58,8 @@
 }
 
 .content-navigation-inner {
-  position: sticky;
+  position: fixed;
+  width: $v-nav-broad-width;
   top: 0;
 
   & > * {
@@ -78,8 +79,6 @@
   }
 
   .content-navigation {
-    //position: sticky;
-    //top: 0;
     width: 100%;
     border: none;
     border-bottom: $content-navigation-border;

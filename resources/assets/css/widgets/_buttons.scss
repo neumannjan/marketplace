@@ -5,10 +5,14 @@
   height: $btn-floating-size;
   overflow: auto;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
   z-index: 1020;
   box-shadow: $btn-floating-shadow;
+
+  & > * {
+    width: 100%;
+  }
 
   .badge {
     position: absolute;

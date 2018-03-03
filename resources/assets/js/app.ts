@@ -1,14 +1,18 @@
-import Vue from 'vue';
+///<reference path="./types/index.d.ts" />
+
+import './polyfill';
+import 'babel-polyfill';
+
+import Vue, {VNodeDirective} from 'vue';
 import Vuelidate from 'vuelidate';
-import IconComponent from 'vue-awesome/components/Icon';
-import ElementQueries from 'css-element-queries/src/ElementQueries';
-import stickyfill from 'stickyfilljs';
+import IconComponent from 'vue-awesome/components/Icon.vue';
+import * as ElementQueries from 'css-element-queries/src/ElementQueries';
 
 import store from 'JS/store';
 import echo from 'JS/echo';
 import router from 'JS/router';
 import AppComponent from './components/app.vue';
-import LazyImgComponent from './components/widgets/image/lazy-img';
+import LazyImgComponent from './components/widgets/image/lazy-img.vue';
 import api from "JS/api";
 
 // setup
@@ -21,22 +25,16 @@ ElementQueries.listen();
 Vue.component('icon', IconComponent);
 Vue.component('lazy-img', LazyImgComponent);
 
-Vue.directive('sticky', {
-    inserted(el) {
-        stickyfill.add(el);
-    }
-});
-
 Vue.directive('focus', {
-    bind(el, binding) {
+    bind(el: HTMLElement, binding: VNodeDirective) {
         if (binding.value)
             el.focus();
     },
-    inserted(el, binding) {
+    inserted(el: HTMLElement, binding: VNodeDirective) {
         if (binding.value)
             el.focus();
     },
-    update(el, binding) {
+    update(el: HTMLElement, binding: VNodeDirective) {
         if (binding.value)
             el.focus();
     }
@@ -68,7 +66,7 @@ echo.global.on('reconnect', () => {
     store.commit('websocketConnection', true);
     checkHttpConnection();
 });
-echo.global.on('disconnect', reason => {
+echo.global.on('disconnect', (reason: string) => {
     if (reason !== 'io client disconnect' && reason !== 'transport close') {
         store.commit('websocketConnection', false);
         checkHttpConnection(true);
