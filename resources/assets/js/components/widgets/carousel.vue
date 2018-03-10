@@ -18,6 +18,7 @@
             </button>
             <ol class="carousel-indicators">
                 <li v-for="(item, index) in items"
+                    :key="item.id ? item.id : `fallback-${index}`"
                     @click="activeIndex = index"
                     :class="['m-1', {'active': activeIndex === index}]"></li>
             </ol>

@@ -4,8 +4,8 @@
             <router-link :to="toAuthor" class="offer-card-header text-dark">
                 <profile-img :img="profileImage ? profileImage : {}" :img-size="32"/>
                 <span class="ml-2 author-info">
-                        {{ data.author.display_name }} <small
-                        class="text-muted">{{ `@${data.author.username}` }}</small>
+                        {{ value.author.display_name }} <small
+                        class="text-muted">{{ `@${value.author.username}` }}</small>
                     </span>
             </router-link>
             <slot name="header-end"/>
@@ -19,13 +19,13 @@
 
             <router-link :to="toOffer" :class="[color('text-', 'dark')]">
                 <h4 class="card-title">
-                    <span>{{ data.name }} </span>
+                    <span>{{ value.name }} </span>
                     <badge class="ml-1 badge" v-for="(badge, index) in badges" :key="index" v-bind="badge"/>
                 </h4>
             </router-link>
 
             <p class="card-text">{{ shortDesc }}</p>
-            <p class="h5 card-text">{{ data.price }}</p>
+            <p class="h5 card-text">{{ value.price }}</p>
 
         </template>
         <div v-else class="row">
@@ -35,7 +35,7 @@
                     Not all images have appeared yet.
                     <a href="#" @click.prevent="refreshImages" class="alert-link">Check again if they are ready?</a>
                 </alert>
-                <carousel v-if="this.data.images" :items="this.data.images">
+                <carousel v-if="this.value.images" :items="this.value.images">
                     <template slot-scope="props">
                         <lazy-img :width="props.item.width" :height="props.item.height"
                                   v-if="props.item.ready"
@@ -48,13 +48,13 @@
 
             <div class="col-md-7 d-flex flex-column">
                 <h1 :class="['card-title heading-resp', color('text-', 'dark')]">
-                    <span>{{ data.name }} </span>
+                    <span>{{ value.name }} </span>
                     <badge class="ml-1 badge" v-for="(badge, index) in badges" :key="index" v-bind="badge"/>
                 </h1>
 
-                <p v-if="data.description" class="card-text">{{ data.description }}</p>
+                <p v-if="value.description" class="card-text">{{ value.description }}</p>
 
-                <p class="price-resp card-text mt-auto">{{ data.price }}</p>
+                <p class="price-resp card-text mt-auto">{{ value.price }}</p>
                 <div class="btn-group btn-group-lg" role="group" aria-label="Basic example">
                     <button type="button"
                             v-for="button in buttons"
@@ -74,20 +74,20 @@
 </template>
 
 <script>
-    import Card from "../../card";
-    import CardIconFooter from "../../card-icon-footer";
-    import Badge from 'JS/components/widgets/badge'
-    import Carousel from 'JS/components/widgets/carousel';
-    import {events as appEvents} from 'JS/app';
+    import Card from "../../card.vue";
+    import CardIconFooter from "../../card-icon-footer.vue";
+    import Badge from 'JS/components/widgets/badge.vue';
+    import Carousel from 'JS/components/widgets/carousel.vue';
+    import Alert from "JS/components/widgets/alert.vue";
+    import ProfileImg from "JS/components/widgets/image/profile-img.vue";
 
+    import appEvents,{ Events } from 'JS/events';
     import router from 'JS/router';
     import api from 'JS/api';
 
     import 'vue-awesome/icons/shopping-cart';
     import 'vue-awesome/icons/expand';
     import 'vue-awesome/icons/user-circle';
-    import Alert from "JS/components/widgets/alert";
-    import ProfileImg from "JS/components/widgets/image/profile-img";
 
     export default {
         name: "offer-card",
@@ -100,7 +100,7 @@
             Carousel
         },
         props: {
-            data: {
+            value: {
                 type: Object,
                 required: true
             },
@@ -114,45 +114,60 @@
             }
         },
         methods: {
+            /**
+             * @param {string} prefix
+             * @param {string | null} defautColor
+             * @param {boolean} important
+             */
             color(prefix = '', defaultColor = null, important = false) {
+                /**
+                 * @param {string | null} value
+                 */
                 const doReturn = (value = defaultColor) => {
                     if (!value)
                         return undefined;
                     return prefix + value;
                 };
 
-                if (!this.data)
+                if (!this.value)
                     return doReturn();
 
                 let badges = [];
 
-                switch (this.data.status) {
+                switch (this.value.status) {
                     case 0: // draft
                         return doReturn('warning');
                     case 2: // sold
                         return doReturn(important ? 'info' : defaultColor)
                 }
 
-                if (this.data.expired)
+                if (this.value.expired)
                     return doReturn('danger');
 
                 return doReturn();
             },
             refreshImages() {
-                if (!this.data) return;
+                if (!this.value) return;
 
                 api.requestSingle('offer', {
-                    id: this.data.id,
+                    id: this.value.id,
                     scope: this.$store.getters.scope.offer
                 }).then(result => {
-                    this.data = result;
+                    this.$emit('input', result);
                 });
             }
         },
         computed: {
+            /**
+             * @returns {boolean}
+             */
             isThisUser() {
-                return this.$store.state.user && this.$store.state.user.username === this.data.author.username;
+                return this.$store.state.user && this.$store.state.user.username === this.value.author.username;
             },
+
+            /**
+             * @returns {object}
+             */
             buttons() {
                 const ubiquitous = [
                     {
@@ -161,14 +176,14 @@
                         disabled: this.isThisUser || !this.$store.state.is_authenticated,
                         callback: () => {
                             //TODO translate
-                            if (!confirm(`Are you sure you want to send user ${this.data.author.display_name} a message?`)) {
+                            if (!confirm(`Are you sure you want to send user ${this.value.author.display_name} a message?`)) {
                                 return;
                             }
 
-                            appEvents.$emit('request-popup', {
+                            appEvents.dispatch(Events.RequestPopup, {
                                 type: 'chat',
                                 then: () => {
-                                    appEvents.$emit('request-buy', this.data);
+                                    appEvents.dispatch(Events.RequestBuy, this.value);
                                 }
                             });
                         }
@@ -189,13 +204,13 @@
                     return [...ubiquitous, ...nonLarge];
             },
             imgData() {
-                if (!this.data || this.data.images.length === 0)
+                if (!this.value || this.value.images.length === 0)
                     return null;
 
-                let image = this.data.images[0];
+                let image = this.value.images[0];
 
                 return {
-                    alt: this.data.name,
+                    alt: this.value.name,
                     src: image.urls.original,
                     thumb: image.urls.tiny,
                     width: image['width'],
@@ -203,10 +218,10 @@
                 };
             },
             isAwaitingImages() {
-                if (!this.data || this.data.images.length === 0)
+                if (!this.value || this.value.images.length === 0)
                     return false;
 
-                for (let img of this.data.images) {
+                for (let img of this.value.images) {
                     if (img.ready === false)
                         return true;
                 }
@@ -214,10 +229,10 @@
                 return false;
             },
             shortDesc() {
-                if (!this.data.description)
+                if (!this.value.description)
                     return '';
 
-                let desc = this.data.description;
+                let desc = this.value.description;
 
                 if (desc.length < 300)
                     return desc;
@@ -229,8 +244,8 @@
                 return desc;
             },
             profileImage() {
-                if (this.data.author.profile_image) {
-                    return this.data.author.profile_image;
+                if (this.value.author.profile_image) {
+                    return this.value.author.profile_image;
                 }
 
                 return null;
@@ -239,7 +254,7 @@
                 return {
                     name: 'user',
                     params: {
-                        username: this.data.author.username
+                        username: this.value.author.username
                     }
                 }
             },
@@ -247,19 +262,19 @@
                 return {
                     query: {
                         ...this.$route.query,
-                        offer: this.data.id
+                        offer: this.value.id
                     }
                 }
             },
             badges() {
                 // TODO translate
 
-                if (!this.data)
+                if (!this.value)
                     return null;
 
                 let badges = [];
 
-                switch (this.data.status) {
+                switch (this.value.status) {
                     case 0:
                         badges.push({message: 'Draft', type: 'warning'});
                         break;
@@ -268,7 +283,7 @@
                         break;
                 }
 
-                if (this.data.expired)
+                if (this.value.expired)
                     badges.push({message: 'Expired', type: 'danger'});
 
                 return badges;

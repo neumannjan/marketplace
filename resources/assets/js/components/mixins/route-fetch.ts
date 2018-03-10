@@ -1,9 +1,15 @@
-import router, {events} from 'JS/router';
+import {routeEvents, RouteEvents, routesMatch} from 'JS/router';
+import Vue from "vue";
 
-export default (fetchAsyncFunction, nullObj, before = true) => {
+type Result = {
+    [key: string]: any
+};
 
-    async function handleResult(vm, result) {
-        function setValues(from) {
+export default function <R extends Result, P extends object>
+(fetchAsyncFunction: (params: P) => Promise<R | null>, nullObj: R, before: boolean = true) {
+
+    async function handleResult(vm: Vue, result: R) {
+        function setValues(from: R) {
             for (let [key, value] of Object.entries(from))
                 vm.$data[key] = value;
         }
@@ -16,21 +22,21 @@ export default (fetchAsyncFunction, nullObj, before = true) => {
             await vm.$nextTick();
         }
 
-        events.$emit('loaded');
+        routeEvents.dispatch(RouteEvents.Loaded);
     }
 
     function notifyLoading() {
         if (before)
-            events.$emit('loading');
+            routeEvents.dispatch(RouteEvents.Loading);
     }
 
-    return {
+    return Vue.extend({
         beforeRouteEnter(to, from, next) {
             if (before) {
                 notifyLoading();
-                fetchAsyncFunction(to.params).then(result => {
+                fetchAsyncFunction(<any>to.params).then(result => {
                     next(vm => {
-                        handleResult(vm, result);
+                        handleResult(vm, result ? result : nullObj);
                     });
                 });
             } else {
@@ -38,15 +44,15 @@ export default (fetchAsyncFunction, nullObj, before = true) => {
             }
         },
         beforeRouteUpdate(to, from, next) {
-            if (router.routesMatch(to, from)) {
+            if (routesMatch(to, from)) {
                 next();
                 return;
             }
 
             notifyLoading();
-            fetchAsyncFunction(to.params).then(result => {
+            fetchAsyncFunction(<any>to.params).then(result => {
                 if (!before) next();
-                handleResult(this, result);
+                handleResult(this, result ? result : nullObj);
                 if (before) next();
             });
         },
@@ -71,8 +77,8 @@ export default (fetchAsyncFunction, nullObj, before = true) => {
         },
         methods: {
             doFetch() {
-                fetchAsyncFunction(this).then(result => handleResult(this, result));
+                fetchAsyncFunction(<any>this).then(result => handleResult(this, result ? result : nullObj));
             }
         }
-    };
+    });
 }

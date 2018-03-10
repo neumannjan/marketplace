@@ -78,11 +78,19 @@
             }
         },
         methods: {
+            /**
+             * @param {string} src
+             * @param {string} srcset
+             */
             async load(src, srcset) {
                 this.ready = false;
 
                 await this.$nextTick();
 
+                /**
+                 * @type {HTMLImageElement}
+                 */
+                //@ts-ignore
                 const img = this.$refs.img;
 
                 const enable = () => {

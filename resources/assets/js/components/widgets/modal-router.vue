@@ -4,14 +4,14 @@
                v-if="$route.query[key]"
                :key="key"
                :size="modal.size"
-               @close="close(key)">
+               @close="close()">
             <component :is="modal.component" v-bind="{[key]: $route.query[key]}" @close="close(key)"/>
         </modal>
     </div>
 </template>
 
 <script>
-    import Modal from "JS/components/widgets/modal";
+    import Modal from "JS/components/widgets/modal.vue";
     import router from 'JS/router';
 
     export default {
@@ -24,7 +24,7 @@
             }
         },
         methods: {
-            close(key) {
+            close() {
                 if (this.$store.state.reRoutedTimes > 0) {
                     router.back();
                 } else {

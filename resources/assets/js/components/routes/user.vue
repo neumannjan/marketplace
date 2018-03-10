@@ -8,17 +8,23 @@
     import route from 'JS/components/mixins/route';
     import routeFetch from 'JS/components/mixins/route-fetch';
     import api from 'JS/api';
-    import OfferMasonry from 'JS/components/widgets/masonry/data-aware/offer/offer-masonry';
-    import router, {events as routeEvents} from 'JS/router';
+    import OfferMasonry from 'JS/components/widgets/masonry/data-aware/offer/offer-masonry.vue';
+    import router, {routeEvents, RouteEvents} from 'JS/router';
     import store from 'JS/store';
     import {mapState} from 'vuex';
+import { User, PaginatedResponse, Offer } from 'JS/api/types';
 
+    /** 
+     * @param {{username: string}} params
+     * @returns {Promise<{user: User | null, startOffers: PaginatedResponse<Offer[]> | null, nextUrl: string | null} | null>}
+     */
     async function fetch(params) {
+        /** @type {any} */
         let result = {};
 
         const scopes = store.getters.scope;
 
-        const response = await api.requestMultiple({
+        const response = await api.requestComposite({
             user: {
                 scope: scopes.user,
                 username: params.username,
@@ -33,7 +39,7 @@
 
         if (result.user === null) {
             router.replace({name: 'error'});
-            return;
+            return null;
         }
 
         result.startOffers = response.offers.result.data;
@@ -43,8 +49,13 @@
     }
 
     const dataDef = {
+        /** @type {User | null} */
         user: null,
+
+        /** @type {PaginatedResponse<Offer[]> | null} */
         startOffers: null,
+
+        /** @type {string | null} */
         nextUrl: null,
         shown: true
     };
@@ -64,7 +75,7 @@
         data: () => ({...dataDef}),
         watch: {
             user(val) {
-                routeEvents.$emit('user-navigation', val);
+                routeEvents.dispatch(RouteEvents.UserNavigation, val);
             },
             authenticated(auth, oldAuth) {
                 if (auth !== oldAuth) {

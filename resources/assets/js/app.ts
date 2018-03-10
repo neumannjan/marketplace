@@ -1,6 +1,6 @@
-///<reference path="./types/index.d.ts" />
+///<reference path="./lib/types/index.d.ts" />
 
-import './polyfill';
+import './lib/polyfill';
 import 'babel-polyfill';
 
 import Vue, {VNodeDirective} from 'vue';
@@ -8,12 +8,17 @@ import Vuelidate from 'vuelidate';
 import IconComponent from 'vue-awesome/components/Icon.vue';
 import * as ElementQueries from 'css-element-queries/src/ElementQueries';
 
-import store from 'JS/store';
-import echo from 'JS/echo';
+import store, {State} from 'JS/store';
 import router from 'JS/router';
 import AppComponent from './components/app.vue';
 import LazyImgComponent from './components/widgets/image/lazy-img.vue';
-import api from "JS/api";
+import {Store} from "vuex";
+
+declare global {
+    interface Window {
+        data: string
+    }
+}
 
 // setup
 
@@ -40,35 +45,13 @@ Vue.directive('focus', {
     }
 });
 
-// Event constants
-export const events = new Vue();
-
 // Vue app
 
 export const app = new Vue({
     el: '#app',
-    store,
+    store: <Store<any>> store,
     router,
     components: {
         app: AppComponent,
-    }
-});
-
-// connection detection
-export function checkHttpConnection(force = false) {
-    if (force || !store.state.connection_http) {
-        api.requestSingle('dummy', {});
-    }
-}
-
-echo.global.on('connect', () => store.commit('websocketConnection', true));
-echo.global.on('reconnect', () => {
-    store.commit('websocketConnection', true);
-    checkHttpConnection();
-});
-echo.global.on('disconnect', (reason: string) => {
-    if (reason !== 'io client disconnect' && reason !== 'transport close') {
-        store.commit('websocketConnection', false);
-        checkHttpConnection(true);
     }
 });

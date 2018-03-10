@@ -5,10 +5,12 @@
 </template>
 
 <script>
+    //@ts-ignore
     import Choices from 'choices.js';
     import events from 'JS/components/mixins/events';
+    import Vue from 'vue';
 
-    export default {
+    export default Vue.extend({
         name: "choices",
         mixins: [events],
         props: {
@@ -20,13 +22,15 @@
                 type: Object,
                 default: () => ({})
             },
-            value: undefined,
+            value: {},
             elemClass: {},
             name: String
         },
         watch: {
             async elemClass() {
+                /** @type {HTMLElement} */
                 const wrapper = this.$refs.wrapper;
+                /** @type {HTMLElement | null} */
                 const el = this.el;
 
                 if (!el) return;
@@ -61,11 +65,15 @@
                 noResultsText: 'No results found',
                 noChoicesText: 'No choices to choose from',
                 itemSelectText: 'Press to select',
+                //@ts-ignore
                 addItemText: value => `Press Enter to add <b>"${value}"</b>`,
+                //@ts-ignore
                 maxItemText: maxItemCount => `Only ${maxItemCount} values can be added.`, //TODO translate
+                //@ts-ignore
                 callbackOnCreateTemplates(template) {
                     const classNames = this.config.classNames;
                     return {
+                        //@ts-ignore
                         containerOuter: (direction) => {
                             return template(`
             <div class="${classNames.containerOuter} ${clss}" data-type="${this.passedElement.type}" ${this.passedElement.type === 'select-one' ? 'tabindex="0"' : ''} aria-haspopup="true" aria-expanded="false" dir="${direction}"></div>
@@ -148,14 +156,20 @@
             wrapper.parentNode.insertBefore(this.el, wrapper.nextSibling);
             wrapper.style.display = 'none';
 
-            this.$onJS(choices.passedElement, 'choice', e => {
+            /**
+             * @param {UIEvent} e
+             */
+            const onChoice = e => {
+                //@ts-ignore
                 this.$emit('input', e.detail.choice.value);
-            });
+            };
+
+            this.$onJS(choices.passedElement, 'choice', );
         },
         beforeDestroy() {
             this.choices.destroy();
         }
-    };
+    });
 </script>
 
 <style lang="scss" type="text/scss">

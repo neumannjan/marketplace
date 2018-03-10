@@ -24,9 +24,9 @@
 
 <script>
     import api from 'JS/api';
-    import MasonryComponent from 'JS/components/widgets/masonry/masonry';
-    import CardComponent from 'JS/components/widgets/masonry/card';
-    import InfiniteScroll from "JS/components/widgets/infinite-scroll";
+    import MasonryComponent from 'JS/components/widgets/masonry/masonry.vue';
+    import CardComponent from 'JS/components/widgets/masonry/card.vue';
+    import InfiniteScroll from "JS/components/widgets/infinite-scroll.vue";
 
     export default {
         props: {
@@ -54,10 +54,15 @@
             }
         },
         data: () => ({
+            /** @type {object[]} */
             cards: [],
+            /** @type {boolean} */
             requestBusy: false,
+            /** @type {boolean} */
             masonryBusy: true,
+            /** @type {string | null} */
             nextUrl: null,
+            /** @type {boolean} */
             active: true
         }),
         methods: {
@@ -65,8 +70,8 @@
                 if (this.active === false || this.requestBusy === true)
                     return;
 
-                if (!this.hasMore)
-                    return false;
+                if (!this.hasMore || !this.nextUrl)
+                    return;
 
                 this.requestBusy = true;
 
@@ -79,6 +84,10 @@
                         this.$emit('request', result);
                     });
             },
+
+            /**
+             * @param {object[]} cards
+             */
             addCards(cards) {
                 this.cards = [...this.cards, ...cards];
             }

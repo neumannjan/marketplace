@@ -22,13 +22,15 @@
 </template>
 
 <script>
-    import ProfileImg from "JS/components/widgets/image/profile-img";
+    import ProfileImg from "JS/components/widgets/image/profile-img.vue";
     import events from 'JS/components/mixins/events';
     import api from "JS/api";
-    import ChatMessageContent from "JS/components/widgets/chat/chat-message-content";
+    import { Conversation, Message } from 'JS/api/types';
+    import appEvents,{ Events } from 'JS/events';
 
     import "vue-awesome/icons/spinner";
-    import InfiniteScroll from "JS/components/widgets/infinite-scroll";
+    import InfiniteScroll from "JS/components/widgets/infinite-scroll.vue";
+    import ChatMessageContent from "JS/components/widgets/chat/chat-message-content.vue";
 
     export default {
         name: 'list-conversations',
@@ -50,6 +52,9 @@
             nextUrl: '/api/conversations'
         }),
         methods: {
+            /**
+             * @param {Conversation} conversation
+             */
             onSelect(conversation) {
                 this.$emit('select', conversation.user);
             },
@@ -75,6 +80,9 @@
                         })
                 }
             },
+            /**
+             * @param {Conversation} conversation
+             */
             isMine(conversation) {
                 return this.$store.state.user && this.$store.state.user.username === conversation.from.username;
             }
@@ -82,11 +90,16 @@
         created() {
             this.request();
 
-            this.$onEchoGlobal('MessageSentOther', message => {
+            /**
+             * @param {Conversation} message
+             */
+            const onOtherMessageSent = message => {
                 message.user = message.from;
                 this.$delete(this.conversations, message.user.username);
                 this.conversations = {[message.user.username]: message, ...this.conversations};
-            });
+            };
+
+            this.$onEventListener(appEvents, Events.MessageSentOther, onOtherMessageSent);
         }
     }
 </script>

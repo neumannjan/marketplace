@@ -14,7 +14,6 @@ class Offer extends Resource
      */
     public function toArray($request)
     {
-        echo "";
         return [
             'id' => $this->id,
             'name' => $this->name,

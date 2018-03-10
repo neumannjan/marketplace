@@ -34,12 +34,13 @@
     import InputComponent from 'JS/components/widgets/form/input.vue';
     import SelectComponent from 'JS/components/widgets/form/select.vue';
 
-    import {events as appEvents} from "JS/app";
+    import appEvents,{ Events } from "JS/events";
 
     import {minLength, required} from 'vuelidate/lib/validators';
 
     import route from 'JS/components/mixins/route';
     import form from 'JS/components/mixins/form';
+    import { LoginResponse } from 'JS/api/types';
 
     export default {
         mixins: [route, form],
@@ -57,13 +58,21 @@
         }),
         methods: {
             submit() {
-                this.$submitForm('login', 'form', response => {
+                /**
+                 * @param {LoginResponse} response
+                 */
+                const onSubmit = response => {
                     if (response.unread_conversations && response.unread_conversations.length > 0) {
-                        appEvents.$emit('unread_conversations', response.unread_conversations);
+                        appEvents.dispatch(Events.UnreadConversations, response.unread_conversations);
                     }
 
                     this.$router.push({name: 'index'});
-                });
+                }
+
+                /**
+                 * 
+                 */
+                this.$submitForm('login', 'form', onSubmit);
             },
         },
         computed: {

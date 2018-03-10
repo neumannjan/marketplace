@@ -13,10 +13,11 @@
 </template>
 
 <script>
+    import Vue from 'vue';
 
     let modals = 0;
 
-    export default {
+    export default Vue.extend({
         name: "modal",
         props: {
             size: String,
@@ -25,6 +26,9 @@
             scrollbarWidth: 0
         }),
         methods: {
+            /**
+             * @param {HTMLElement} to
+             */
             append(to) {
                 const content = this.$refs.content;
                 const backdrop = this.$refs.backdrop;
@@ -53,5 +57,5 @@
             }
             this.append(this.$refs.container);
         }
-    }
+    });
 </script>

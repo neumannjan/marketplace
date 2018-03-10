@@ -1,52 +1,133 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
+import Vue, {VueConstructor} from 'vue';
+import VueRouter, { Route, Location } from 'vue-router';
 
-import IndexRoute from '../components/routes/index';
-import TestRoute from '../components/routes/test';
-import ErrorRoute from '../components/routes/404';
-import UserRoute from '../components/routes/user';
-import OfferRoute from '../components/routes/offer';
-import SearchRoute from '../components/routes/search';
+import IndexRoute from '../components/routes/index.vue';
+import TestRoute from '../components/routes/test.vue';
+import ErrorRoute from '../components/routes/404.vue';
+import UserRoute from '../components/routes/user.vue';
+import OfferRoute from '../components/routes/offer.vue';
+import SearchRoute from '../components/routes/search.vue';
 
-import OfferFormRoute from '../components/routes/offer-form';
+import OfferFormRoute from '../components/routes/offer-form.vue';
 
-import LoginRoute from '../components/routes/auth/login';
-import RegisterRoute from '../components/routes/auth/register';
-import PasswordEmailRoute from '../components/routes/auth/password-email';
-import PasswordResetRoute from '../components/routes/auth/password-reset';
+import LoginRoute from '../components/routes/auth/login.vue';
+import RegisterRoute from '../components/routes/auth/register.vue';
+import PasswordEmailRoute from '../components/routes/auth/password-email.vue';
+import PasswordResetRoute from '../components/routes/auth/password-reset.vue';
 
-import UserNavigation from 'JS/components/routes/navigation/user-navigation';
+import UserNavigation from 'JS/components/routes/navigation/user-navigation.vue';
 
 import GuestGuard from './guards/guest';
 import AuthGuard from './guards/auth';
 
-import OfferModal from '../components/routes/modal/offer-modal';
+import OfferModal from '../components/routes/modal/offer-modal.vue';
 
 import store from 'JS/store';
+import EventListener from "JS/lib/event-listener";
+import { events } from 'JS/events';
 
 Vue.use(VueRouter);
 
+/*
+ * List of route components that should be cached
+ */
 const cachedRouteComponents = [
     'search-route'
 ];
 
-export const cached = (suffix = '') => suffix ? cachedRouteComponents.map((route) => `${route}-${suffix}`) : cachedRouteComponents;
+/**
+ * Get list of route components that should be cached
+ * @param {string} suffix String suffix to append to each component
+ * @returns {string[]}
+ */
+export function cached(suffix = '') {
+    if(suffix) {
+        return cachedRouteComponents.map((route) => `${route}-${suffix}`);
+    } else {
+        return cachedRouteComponents;
+    }
+}
 
-export const events = new Vue();
+/**
+ * Route events enum
+ */
+export enum RouteEvents {
+    Loading, Loaded, UserNavigation
+}
 
-export const queryRouter = {
+/**
+ * Route events
+ */
+export const routeEvents = new EventListener<RouteEvents>();
+
+/**
+ * Interface for a router that displays modal windows based on route query parameters
+ */
+export interface QueryModalRouter {
+    [queryParam: string]: {
+        component: Vue | VueConstructor,
+
+        /**
+         * Modal window size
+         */
+        size: string
+    }
+}
+
+export const queryModalRouter: QueryModalRouter = {
     offer: {
         component: OfferModal,
         size: 'xl'
     }
 };
 
+/**
+ * Get the main Vue component of route
+ * @param {Route} route
+ */
+export function getRouteMainComponent(route: Route = router.currentRoute): null | (Vue & {isTopLevelRoute?: boolean}) {
+    const matched = route.matched;
+    if (matched.length > 0) {
+        return matched[matched.length - 1].instances.default;
+    } else {
+        return null;
+    }
+}
+
+/**
+ * Check whether two routes are identical
+ * @param {Route | Location} route1
+ * @param {Route | Location} route2
+ * @param {boolean} ignoreParams
+ * @return {boolean}
+ */
+export function routesMatch(route1: Route | Location, route2: Route | Location = router.currentRoute, ignoreParams: boolean = false): boolean {
+    if (!route1 || !route2)
+        return false;
+
+    if (route1.path === route2.path)
+        return true;
+
+    if (route1.name !== route2.name)
+        return false;
+
+    if (ignoreParams)
+        return true;
+
+    let match = true;
+    for (let [key, param] of Object.entries(route2.params ? route2.params : {})) {
+        match = match && route1.params !== undefined && route1.params[key] === param;
+        if (!match) break;
+    }
+
+    return match;
+}
+
 const router = new VueRouter({
     mode: 'history',
     scrollBehavior(to, from, savedPosition) {
-
         const promise = to.meta.async ?
-            new Promise(resolve => events.$once('loaded', resolve))
+            new Promise<void>(resolve => routeEvents.once(RouteEvents.Loaded, resolve))
             : Promise.resolve();
 
         if (savedPosition) {
@@ -170,32 +251,5 @@ const router = new VueRouter({
 router.afterEach(() => {
     store.commit('addReRoute');
 });
-
-router.getRouteMainComponent = (route = router.currentRoute) => {
-    const matched = route.matched;
-    return matched[matched.length - 1].instances.default;
-};
-
-router.routesMatch = (route1, route2 = router.currentRoute, ignoreParams = false) => {
-    if (!route1 || !route2)
-        return false;
-
-    if (route1.path === route2.path)
-        return true;
-
-    if (route1.name !== route2.name)
-        return false;
-
-    if (ignoreParams)
-        return true;
-
-    let match = true;
-    for (let [key, param] of Object.entries(route2.params)) {
-        match = match && route1.params[key] === param;
-        if (!match) break;
-    }
-
-    return match;
-};
 
 export default router;

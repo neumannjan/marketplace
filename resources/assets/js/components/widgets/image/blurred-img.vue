@@ -8,8 +8,9 @@
 <script>
     import events from 'JS/components/mixins/events';
     import StackBlur from 'stackblur-canvas';
+    import Vue from 'vue';
 
-    export default {
+    export default Vue.extend({
         name: 'blurred-img',
         mixins: [events],
         props: {
@@ -42,17 +43,20 @@
                 if ((!force && this.loaded) || !this.data)
                     return;
 
+                /** @type {HTMLCanvasElement} */
                 const canvas = this.$refs.canvas;
                 const styles = getComputedStyle(canvas);
-                canvas.width = parseFloat(styles.width);
-                canvas.height = parseFloat(styles.height);
+                canvas.width = parseFloat(styles.width ? styles.width : '0');
+                canvas.height = parseFloat(styles.height ? styles.height : '0');
 
                 const ctx = canvas.getContext('2d');
 
-                ctx.drawImage(this.data, 0, 0, canvas.width, canvas.height);
+                if (ctx) {
+                    ctx.drawImage(this.data, 0, 0, canvas.width, canvas.height);
 
-                if (this.modifyCallback)
-                    ctx.putImageData(this.modifyCallback(ctx.getImageData(0, 0, canvas.width, canvas.height)), 0, 0);
+                    if (this.modifyCallback)
+                        ctx.putImageData(this.modifyCallback(ctx.getImageData(0, 0, canvas.width, canvas.height)), 0, 0);
+                }
 
                 StackBlur.canvasRGB(canvas, 0, 0, canvas.width, canvas.height, this.blur);
 
@@ -69,7 +73,7 @@
         activated() {
             this.load(true);
         }
-    };
+    });
 </script>
 
 <style scoped>

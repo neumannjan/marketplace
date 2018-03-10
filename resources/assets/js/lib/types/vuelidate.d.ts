@@ -13,7 +13,7 @@ declare module "vuelidate" {
 
     module "vue/types/vue" {
         interface Vue {
-            $v: Vuelidate<any>;
+            $v: Vuelidate<any> & IValidator;
         }
     }
 

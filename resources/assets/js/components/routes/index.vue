@@ -7,8 +7,8 @@
 
 <script>
     import route from 'JS/components/mixins/route';
-    import OfferMasonry from 'JS/components/widgets/masonry/data-aware/offer/offer-masonry';
-    import Search from "JS/components/widgets/search";
+    import OfferMasonry from 'JS/components/widgets/masonry/data-aware/offer/offer-masonry.vue';
+    import Search from "JS/components/widgets/search.vue";
 
     export default {
         name: 'index-route',
@@ -23,6 +23,9 @@
             isTopLevelRoute: true
         }),
         methods: {
+            /**
+             * @param {string} query
+             */
             requestSearch(query) {
                 if (!query)
                     return;

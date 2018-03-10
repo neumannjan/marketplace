@@ -1,12 +1,12 @@
 export default {
     /**
      * Safely retrieves a value from a nested object. Returns defaultValue if the key is not present in the object.
-     * @param {Object} object
+     * @param {object} object
      * @param {string | Array<string>} accessor Dot notation or an array of keys
      * @param defaultValue Value to be returned
      * @return Value or defaultValue
      */
-    safeGet(object: Object, accessor: string | Array<string>, defaultValue: any = null): any {
+    safeGet(object: object, accessor: string | Array<string>, defaultValue: any = null): any {
         if (typeof accessor === 'string') {
             accessor = accessor.split('.');
         }
@@ -23,11 +23,11 @@ export default {
      * Return a promise that resolves once an event is triggered.
      * @param {EventTarget} target
      * @param {string} type
-     * @return {Promise}
+     * @return {Promise<Event>}
      */
     awaitEvent(target: EventTarget, type: string): Promise<any> {
-        return new Promise(resolve => {
-            target.addEventListener(type, (event) => {
+        return new Promise((resolve: (event: Event) => void) => {
+            target.addEventListener(type, event => {
                 resolve(event);
             }, {
                 once: true

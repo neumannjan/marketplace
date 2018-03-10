@@ -76,7 +76,8 @@
     import api from 'JS/api';
     import echo from 'JS/echo';
     import events from 'JS/components/mixins/events';
-    import helpers from 'JS/helpers';
+    import helpers from 'JS/lib/helpers';
+    import Vue from 'vue';
 
     import "vue-awesome/icons/spinner";
     import "vue-awesome/icons/check-circle-o";
@@ -84,12 +85,14 @@
     import "vue-awesome/icons/circle-o";
     import "vue-awesome/icons/times-circle";
 
-    import ProfileImg from 'JS/components/widgets/image/profile-img';
-    import ChatMessageContent from "JS/components/widgets/chat/chat-message-content";
-    import InfiniteScroll from "JS/components/widgets/infinite-scroll";
+    import ProfileImg from 'JS/components/widgets/image/profile-img.vue';
+    import ChatMessageContent from "JS/components/widgets/chat/chat-message-content.vue";
+    import InfiniteScroll from "JS/components/widgets/infinite-scroll.vue";
+    import { Message } from 'JS/api/types';
+import { ChannelType } from 'JS/lib/echo/channel';
     // TODO: User chat notification and 'received' without 'read' on notification.
 
-    export default {
+    export default Vue.extend({
         name: 'list-messages',
         mixins: [events],
         components: {
@@ -115,15 +118,25 @@
             }
         },
         data: () => ({
+            /** @type {string | null} */
             nextUrl: null,
+            /** @type {Message[]} */
             messages: [],
+            /** @type {{[index: string]: Message}} */
             messagesByKey: {},
+            /** @type {boolean} */
             busy: false,
+            /** @type {boolean} */
             atBottom: true,
+            /** @type {number} */
             scroll: 0,
+            /** @type {boolean} */
             typing: false,
         }),
         computed: {
+            /**
+             * @returns {Message[]}
+             */
             allMessages() {
                 return [
                     ...this.messages,
@@ -136,6 +149,7 @@
                 return this.user.profile_image ? this.user.profile_image : null;
             },
             lastMessageID() {
+                //@ts-ignore
                 return this.allMessages.length > 0 ? this.allMessages[this.allMessages.length - 1].id : -1;
             },
             lastReadMessageID() {
@@ -174,6 +188,7 @@
                                 identifier: identifier
                             }).then(message => {
                                 // add to messages
+                                //@ts-ignore
                                 this.addMessages([message]);
 
                                 // remove from value
@@ -193,10 +208,10 @@
             }
         },
         methods: {
+            /**
+             * @param {Message} message
+             */
             isMine(message) {
-                if (message.mine === true)
-                    return true;
-
                 if (!this.$store.state.user)
                     return false;
 
@@ -207,6 +222,7 @@
                     this.busy = true;
 
                     api.requestByURL(this.nextUrl)
+                        //@ts-ignore
                         .then(result => {
                             this.busy = false;
                             this.addMessages(result.data, true);
@@ -214,6 +230,9 @@
                         })
                 }
             },
+            /**
+             * @param {string} identifier
+             */
             resendFailed(identifier) {
                 const msg = this.value[identifier];
                 msg.awaiting = true;
@@ -224,15 +243,23 @@
                     [identifier]: msg
                 });
             },
+            /**
+             * @param {string} identifier
+             */
             removeFailed(identifier) {
                 const newVal = Object.assign({}, this.value);
                 delete newVal[identifier];
                 this.$emit('input', newVal);
             },
+            /**
+             * @param {Message[]} messages
+             * @param {boolean} toTop
+             */
             addMessages(messages, toTop = false) {
                 // filter out existing messages
                 messages = messages
                     .filter(message => this.messagesByKey[message.id] === undefined
+                        && message.identifier
                         && this.messagesByKey[message.identifier] === undefined)
                     .reverse();
 
@@ -274,9 +301,16 @@
 
                 this.scroll = 0;
             },
+            /**
+             * @param {boolean} atBottom
+             */
             onBottom(atBottom) {
                 this.atBottom = atBottom;
             },
+            /**
+             * @param {Message[]|Message} messages
+             * @param {boolean} read
+             */
             notifyReceived(messages, read = false) {
                 if (!this.$store.state.user || !this.user) {
                     return;
@@ -296,13 +330,17 @@
 
                 const name = helpers.getConversationChannelName(this.user.username, this.$store.state.user.username);
                 for (let message of messages) {
-                    echo.channel('private', name)
+                    echo.channel(ChannelType.Private, name)
                         .whisper('received', {
                             id: message.id,
                             read: read
                         });
                 }
             },
+            /**
+             * @param {number} messageID
+             * @param {boolean} read
+             */
             setReceived(messageID, read = false) {
                 const messages = this.messages;
 
@@ -344,29 +382,40 @@
                 this.freshRequest();
             });
 
-            this.$onEcho('private', name, 'MessageSent', message => {
+            /**
+             * @param {Message} message
+             */
+            const onMessageSent = message => {
                 this.addMessages([message]);
                 this.typing = false;
                 this.notifyReceived(message, true);
-            });
+            };
 
-            this.$onEcho('private', name, 'MessageReceived', message => {
+            this.$onEcho(ChannelType.Private, name, 'MessageSent', onMessageSent);
+
+            /**
+             * @param {Message} message
+             */
+            const onMessageReceived = message => {
                 this.setReceived(message.id, message.read);
-            });
+            }
 
-            this.$onEchoWhisper('private', name, 'received', message => {
-                this.setReceived(message.id, message.read);
-            });
+            this.$onEcho(ChannelType.Private, name, 'MessageReceived', onMessageReceived);
+            this.$onEchoWhisper(ChannelType.Private, name, 'received', onMessageReceived);
 
-            this.$onEchoWhisper('private', name, 'typing', (data) => {
+            /**
+             * @param {{typing: boolean, username: string}} data
+             */
+            const onTyping = (data) => {
                 if (data.username === this.user.username) {
                     this.typing = data.typing;
                     this.scrollDown();
                 }
-            });
+            }
+            this.$onEchoWhisper(ChannelType.Private, name, 'typing', onTyping);
         },
 
-    }
+    });
 </script>
 
 <style scoped lang="scss" type="text/scss">

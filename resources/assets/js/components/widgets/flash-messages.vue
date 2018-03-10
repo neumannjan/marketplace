@@ -19,6 +19,9 @@
             }
         },
         methods: {
+            /**
+             * @param {string} key
+             */
             remove(key) {
                 this.$store.commit('removeFlash', key);
             }

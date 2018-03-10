@@ -1,6 +1,6 @@
 <template>
     <div class="masonry" ref="masonry">
-        <div class="masonry-card col-flexible" v-for="card in cards">
+        <div class="masonry-card col-flexible" v-for="(card, index) in cards" :key="card.id ? card.id : `fallback-${index}`">
             <slot :data="card"/>
         </div>
         <slot name="below"/>
@@ -8,10 +8,12 @@
 </template>
 
 <script>
-    import CardComponent from './card';
+    import CardComponent from './card.vue';
+
+    //@ts-ignore
     import Masonry from 'masonry-layout';
     import events from 'JS/components/mixins/events';
-    import {events as appEvents} from 'JS/app';
+    import appEvents,{ Events } from 'JS/events';
 
     export default {
         name: "masonry",
@@ -20,6 +22,7 @@
             card: CardComponent
         },
         data: () => ({
+            /** @type {object | null} */
             masonry: null,
             ready: false
         }),
@@ -44,7 +47,7 @@
                 resize: false
             });
 
-            this.$onElResize(this.$refs.masonry, (size) => this.redraw());
+            this.$onElResize(this.$refs.masonry, () => this.redraw());
 
             this.masonry._positionItem = this.positionItem;
 
@@ -59,9 +62,10 @@
                         this.masonry.reloadItems();
                     this.masonry.layout();
 
-                    appEvents.$emit('viewport_change');
+                    appEvents.dispatch(Events.ViewportChange);
                 }
             },
+            //@ts-ignore
             positionItem(item, x, y, isInstant, i) {
                 item.goTo(x, y);
             }

@@ -1,0 +1,35 @@
+/**
+ * This class represents a basic channel.
+ */
+export declare abstract class Channel {
+    /**
+     * The Echo options.
+     *
+     * @type {any}
+     */
+    options: any;
+    /**
+     * Listen for an event on the channel instance.
+     *
+     * @param  {string} event
+     * @param  {Function} callback
+     * @return {Channel}
+     */
+    abstract listen(event: string, callback: Function): Channel;
+    /**
+     * Listen for an event on the channel instance.
+     *
+     * @param  {string} event
+     * @param  {Function} callback
+     * @return {Channel}
+     */
+    notification(callback: Function): Channel;
+    /**
+     * Listen for a whisper event on the channel instance.
+     *
+     * @param  {string} event
+     * @param  {Function}   callback
+     * @return {PusherChannel}
+     */
+    listenForWhisper(event: string, callback: Function): Channel;
+}

@@ -9,10 +9,15 @@
 </template>
 
 <script>
-    import FloatingBtns from './floating-btns';
-    import Popper from './popper';
+    import FloatingBtns from './floating-btns.vue';
+    import Popper from './popper.vue';
+    import ProfileImg from "JS/components/widgets/image/profile-img.vue";
+    import ChatCard from "JS/components/widgets/card/chat-card.vue";
+    import NotificationsCard from "JS/components/widgets/card/notifications-card.vue";
+
     import events from 'JS/components/mixins/events';
-    import router from 'JS/router';
+    import appEvents,{ Events } from 'JS/events';
+    import router,{ getRouteMainComponent } from 'JS/router';
     import {mapState} from 'vuex';
 
     import 'vue-awesome/icons/plus';
@@ -20,9 +25,7 @@
     import 'vue-awesome/icons/bell';
     import 'vue-awesome/icons/angle-left';
     import 'vue-awesome/icons/angle-up';
-    import ProfileImg from "JS/components/widgets/image/profile-img";
-    import ChatCard from "JS/components/widgets/card/chat-card";
-    import NotificationsCard from "JS/components/widgets/card/notifications-card";
+import { Message, Conversation } from 'JS/api/types';
 
     const BTN_ADD = 'add';
     const BTN_CHAT = 'chat';
@@ -54,18 +57,24 @@
             isSideA: true,
             scrollY: window.scrollY,
             backShown: false,
+            /** @type {HTMLElement | null} */
             popperEl: null,
+            /** @type {string | null} */
             lastSelectedButton: null,
+            /** @type {HTMLElement[] | null} */
             buttonEls: null,
             chatConversations: {}
         }),
         watch: {
             '$route'() {
                 this.scrollY = window.scrollY;
-                this.backShown = !router.getRouteMainComponent().isTopLevelRoute;
+
+                const mainComponent = getRouteMainComponent();
+                this.backShown = !mainComponent || !mainComponent.isTopLevelRoute;
                 this.isSideA = true;
             },
             buttons(buttons) {
+                //@ts-ignore
                 if (this.popperEl && !buttons.map(b => b.id).includes(this.lastSelectedButton)) {
                     this.popperEl = null;
                 }
@@ -93,12 +102,24 @@
             })
         },
         methods: {
+            /**
+             * @param {string} buttonId
+             */
             isOpen(buttonId) {
                 return this.popperEl && this.lastSelectedButton === buttonId;
             },
+            /**
+             * @param {object & {id: string}} button
+             * @param {HTMLElement | null} element
+             */
             onClick(button, element) {
                 this.click(button.id, element);
             },
+            /**
+             * @param {string} buttonId
+             * @param {HTMLElement | null} element
+             * @param {boolean} toggle
+             */
             click(buttonId, element = null, toggle = true) {
                 const result = (() => {
                     const lastPopperEl = this.popperEl;
@@ -145,6 +166,9 @@
 
                 return result;
             },
+            /** 
+             * @param {HTMLElement[]} els
+             */
             onButtonEls(els) {
                 this.buttonEls = els;
             }
@@ -153,24 +177,37 @@
             this.$onJS(window, 'scroll', () => {
                 const scrollY = window.scrollY;
 
-                this.isSideA = scrollY <= 300 || scrollY > this.scrollY || this.popperEl;
+                this.isSideA = scrollY <= 300 || scrollY > this.scrollY || !!this.popperEl;
 
                 this.scrollY = scrollY;
             });
 
-            this.$onAppEvents('request-popup', data => {
+            /**
+             * @param {{ type: string, then: () => void }} data
+             */
+            const onRequestPopup = data => {
                 if (this.click(data.type, null, false)) {
                     this.$nextTick(data.then);
                 }
-            });
+            };
 
-            this.$onEchoGlobal('MessageSentOther', message => {
+            this.$onEventListener(appEvents, Events.RequestPopup, onRequestPopup);
+
+            /**
+             * @param {Message} message
+             */
+            const onMessageSentOther = message => {
                 if (!this.isOpen(BTN_CHAT)) {
                     this.$set(this.chatConversations, message.from.username, true);
                 }
-            });
+            };
 
-            this.$onAppEvents('unread_conversations', conversations => {
+            this.$onEventListener(appEvents, Events.MessageSentOther, onMessageSentOther);
+
+            /**
+             * @param  {Conversation[]} conversations
+             */
+            const onUnreadConversations = conversations => {
                 const c = {};
 
                 for (let conversation of conversations) {
@@ -178,7 +215,9 @@
                 }
 
                 this.chatConversations = c;
-            });
+            }
+
+            this.$onEventListener(appEvents, Events.UnreadConversations, onUnreadConversations);
         },
     };
 </script>

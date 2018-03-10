@@ -41,11 +41,17 @@ export default {
     },
     computed: {
         filteredButtons() {
+            //@ts-ignore
             return this.buttons.filter(button => !button.show || button.show() !== false);
         }
     },
     methods: {
+        /**
+         * @param {object} button
+         * @param {number} index
+         */
         onClick(button, index) {
+            //@ts-ignore
             this.$emit('click', button, this.$refs.buttons[index]);
         }
     },
@@ -99,9 +105,6 @@ export default {
     .badge {
         will-change: transform;
         transition: transform .3s ease;
-    }
-
-    .badge-enter-active, .badge-leave-active {
     }
 
     .badge-enter, .badge-leave-to {

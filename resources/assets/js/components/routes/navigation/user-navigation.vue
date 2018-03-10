@@ -20,11 +20,12 @@
 </template>
 
 <script>
-    import {events as routeEvents} from 'JS/router';
-    import BlurredImg from 'JS/components/widgets/image/blurred-img';
+    import {routeEvents, RouteEvents} from 'JS/router';
+    import BlurredImg from 'JS/components/widgets/image/blurred-img.vue';
     import events from 'JS/components/mixins/events';
 
-    import ProfileImg from "JS/components/widgets/image/profile-img";
+    import ProfileImg from "JS/components/widgets/image/profile-img.vue";
+    import { User } from 'JS/api/types';
 
     export default {
         name: 'user-route-navigation',
@@ -52,12 +53,22 @@
             }
         },
         data: () => ({
+            /** @type {User | null} */
             user: null,
+
+            /** @type {HTMLElement | null} */
             imgEl: null
         }),
         methods: {
+            /** 
+             * @param {ImageData} imageData
+             */
             modifyBG(imageData) {
 
+                /**
+                 * @param {ImageData} imgData
+                 * @param {number} contrast
+                 */
                 function contrastImage(imgData, contrast) {  //input range [-100..100]
                     const d = imgData.data;
                     contrast = (contrast / 100) + 1;  //convert to decimal & shift range: [0..2]
@@ -72,12 +83,20 @@
 
                 return contrastImage(imageData, 70);
             },
+
+            /**
+             * @param {HTMLElement} el
+             */
             onImg(el) {
                 this.imgEl = el;
             }
         },
         created() {
-            this.$onVue(routeEvents, 'user-navigation', async user => {
+
+            /**
+             * @param {User} user
+             */
+            const setUser = async (user) => {
                 if (this.user && this.user === user) return;
 
                 if (this.user && user) {
@@ -87,7 +106,9 @@
                 }
 
                 this.user = user;
-            });
+            }
+
+            this.$onEventListener(routeEvents, RouteEvents.UserNavigation, setUser);
         }
     };
 </script>

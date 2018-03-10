@@ -40,22 +40,23 @@
 </template>
 
 <script>
-    import TopNav from './widgets/nav/vertical/top-nav';
-    import BottomNav from './widgets/nav/vertical/bottom-nav';
-    import FlashMessages from './widgets/flash-messages';
-    import {cached, events as routeEvents, queryRouter} from 'JS/router';
+    import TopNav from './widgets/nav/vertical/top-nav.vue';
+    import BottomNav from './widgets/nav/vertical/bottom-nav.vue';
+    import FlashMessages from './widgets/flash-messages.vue';
+    import {cached, routeEvents, queryModalRouter, RouteEvents} from 'JS/router';
     import {mapState} from 'vuex';
     import Icon from "../../../../node_modules/vue-awesome/components/Icon.vue";
-    import MainFloatingBtns from './widgets/main-floating-btns';
-    import Modal from './widgets/modal';
+    import MainFloatingBtns from './widgets/main-floating-btns.vue';
+    import Modal from './widgets/modal.vue';
 
-    import {events as appEvents} from "JS/app";
+    import appEvents,{ Events } from "JS/events";
     import {initialData} from 'JS/store';
 
-    import ModalRouter from "JS/components/widgets/modal-router";
+    import ModalRouter from "JS/components/widgets/modal-router.vue";
 
     import events from 'JS/components/mixins/events';
-    import Notifications from "JS/components/widgets/notifications";
+    import Notifications from "JS/components/widgets/notifications.vue";
+import { Conversation } from 'JS/api/types';
 
     export default {
         components: {
@@ -73,7 +74,7 @@
             keepAlive: cached,
             shown: true,
             has: {},
-            modals: queryRouter,
+            modals: queryModalRouter,
             loading: false,
         }),
         watch: {
@@ -108,8 +109,14 @@
             }
         },
         methods: {
+            /**
+             * @param {boolean} isHttp
+             * @param {boolean} value
+             */
             notifyConnection(isHttp, value) {
                 const type = isHttp ? 'http' : 'websocket';
+
+                /** @param {boolean} value */
                 const getValue = value => value ? 'true' : 'false';
 
                 this.$store.commit('addNotification', {
@@ -137,10 +144,17 @@
             },
         },
         mounted() {
-            this.$onVue(routeEvents, 'loading', () => this.loading = true);
-            this.$onVue(routeEvents, 'loaded', () => this.loading = false);
+            this.$onEventListener(routeEvents, RouteEvents.Loading, () => this.loading = true);
+            this.$onEventListener(routeEvents, RouteEvents.Loaded, () => this.loading = false);
+
+            if (initialData && initialData.unread_conversations && initialData.unread_conversations.length > 0) {
+                appEvents.dispatch(Events.UnreadConversations, initialData.unread_conversations);
+            }
         },
         created() {
+            /**
+             * @param {boolean} plural
+             */
             const addConversationNotification = (plural) => {
                 //TODO translate
                 this.$store.commit('addNotification', {
@@ -152,14 +166,14 @@
 
             this.$onEchoGlobal('MessageSentOther', () => addConversationNotification(false));
 
-            this.$onAppEvents('unread_conversations', conversations => {
+            /**
+             * @param {Conversation[]} conversations
+             */
+            const onUnreadConversations = conversations => {
                 addConversationNotification(conversations.length > 1);
-            });
-        },
-        mounted() {
-            if (initialData && initialData.unread_conversations && initialData.unread_conversations.length > 0) {
-                appEvents.$emit('unread_conversations', initialData.unread_conversations);
-            }
+            };
+
+            this.$onEventListener(appEvents, Events.UnreadConversations, onUnreadConversations);
         }
     };
 </script>

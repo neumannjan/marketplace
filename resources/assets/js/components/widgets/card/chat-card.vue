@@ -41,16 +41,19 @@
 
 <script>
     import echo from 'JS/echo';
-    import helpers from 'JS/helpers';
+    import helpers from 'JS/lib/helpers';
     import events from 'JS/components/mixins/events';
+    import appEvents,{ Events } from 'JS/events';
 
     import debounce from 'lodash/debounce';
 
     import "vue-awesome/icons/arrow-left";
     import "vue-awesome/icons/close";
-    import ListConversations from "JS/components/widgets/chat/list-conversations";
-    import ListMessages from "JS/components/widgets/chat/list-messages";
-    import ProfileImg from "JS/components/widgets/image/profile-img";
+    import ListConversations from "JS/components/widgets/chat/list-conversations.vue";
+    import ListMessages from "JS/components/widgets/chat/list-messages.vue";
+    import ProfileImg from "JS/components/widgets/image/profile-img.vue";
+    import { User, Offer } from 'JS/api/types';
+    import { ChannelType } from 'JS/lib/echo/channel';
 
     export default {
         name: 'chat-card',
@@ -71,14 +74,18 @@
             }
         },
         data: () => ({
+            /** @type {User | null} */
             user: null,
             message: '',
             addedMessages: {},
+            /** @type {null | function} */
             notifyTyping: null
         }),
         watch: {
             message(val) {
-                this.notifyTyping();
+                if (this.notifyTyping) {
+                    this.notifyTyping();
+                }
             }
         },
         methods: {
@@ -88,7 +95,13 @@
                     this.message = '';
                 }
             },
-            sendMessage(content, additional = [], additionalPrivate = []) {
+
+            /**
+             * @param {string} content
+             * @param {object} additional
+             * @param {object} additionalPrivate
+             */
+            sendMessage(content, additional = {}, additionalPrivate = {}) {
                 let uniqueId = null;
 
                 // create a unique ID for awaited message
@@ -111,17 +124,25 @@
             onClose() {
                 this.$emit('close');
             },
+
+            /**
+             * @param {User} user
+             */
             onSelectUser(user) {
                 this.addedMessages = {};
                 this.user = user;
             },
+
+            /**
+             * @param {boolean} typing
+             */
             doNotifyTyping(typing) {
                 if (!this.$store.state.user || !this.user) {
                     return;
                 }
 
                 const name = helpers.getConversationChannelName(this.$store.state.user.username, this.user.username);
-                echo.channel('private', name)
+                echo.channel(ChannelType.Private, name)
                     .whisper('typing', {
                         typing: typing,
                         username: this.$store.state.user.username
@@ -141,7 +162,10 @@
                 notifyTypingFalse();
             };
 
-            this.$onAppEvents('request-buy', async offer => {
+            /**
+             * @param {Offer} offer
+             */
+            const buy = async offer => {
                 if (!this.$store.state.user || offer.author.username === this.$store.state.user.username) {
                     return;
                 }
@@ -160,7 +184,9 @@
                         offer: offer
                     });
                 })
-            });
+            }
+
+            this.$onEventListener(appEvents, Events.RequestBuy, buy);
         }
     }
 </script>

@@ -81,11 +81,19 @@
                 password: {
                     required,
                     min: minLength(8),
+
+                    /**
+                     * @param {string} value
+                     */
                     containsNonNumeric(value) {
                         if (value === '') return true;
 
                         return value.match(/[^0-9]/) !== null;
                     },
+
+                    /** 
+                     * @param {string} value
+                     */
                     containsNumeric(value) {
                         if (value === '') return true;
 

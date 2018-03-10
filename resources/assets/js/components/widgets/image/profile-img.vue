@@ -14,7 +14,7 @@
 </template>
 
 <script>
-    import PlaceholderImg from "JS/components/widgets/image/placeholder-img";
+    import PlaceholderImg from "JS/components/widgets/image/placeholder-img.vue";
     import 'vue-awesome/icons/user-circle';
 
     export default {
@@ -31,6 +31,9 @@
             },
         },
         methods: {
+            /**
+             * @param {HTMLImageElement} el
+             */
             onImg(el) {
                 this.$emit('img', el);
             }

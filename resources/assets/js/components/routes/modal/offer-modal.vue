@@ -14,7 +14,7 @@
 </template>
 
 <script>
-    import OfferRoute from "JS/components/routes/offer";
+    import OfferRoute from "JS/components/routes/offer.vue";
 
     import router from 'JS/router';
 

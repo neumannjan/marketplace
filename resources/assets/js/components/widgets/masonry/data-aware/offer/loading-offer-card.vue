@@ -14,8 +14,8 @@
 </template>
 
 <script>
-    import Card from '../../card';
-    import CardIconFooter from '../../card-icon-footer';
+    import Card from '../../card.vue';
+    import CardIconFooter from '../../card-icon-footer.vue';
 
     import 'vue-awesome/icons/heart';
     import 'vue-awesome/icons/shopping-cart';

@@ -19,15 +19,20 @@
 </template>
 
 <script>
-    import ValidationMessage from "JS/components/widgets/form/validation-message";
+    import ValidationMessage from "JS/components/widgets/form/validation-message.vue";
+    import Vue from "vue";
 
-    export default {
+    export default Vue.extend({
         components: {ValidationMessage},
         name: "file-select",
         data: () => ({
+            /** @type {string | null} */
             id: null,
+            /** @type {Array | null} */
             files: null,
+            /** @type {boolean} */
             valid: false,
+            /** @type {null | boolean} */
             error: null,
         }),
         props: {
@@ -60,6 +65,7 @@
                         amountStr = '1 file';
                         break;
                     default:
+                        //@ts-ignore
                         amountStr = `${this.files.length} files`;
                         break;
                 }
@@ -68,6 +74,7 @@
             }
         },
         methods: {
+            /** @param {any} e */
             async onFileChange(e) {
                 this.files = null;
                 await this.$nextTick();
@@ -78,7 +85,7 @@
         mounted() {
             this.id = 'input-' + this._uid;
         }
-    }
+    });
 </script>
 
 <style lang="scss" type="text/scss">

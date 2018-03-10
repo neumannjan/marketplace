@@ -69,7 +69,7 @@
             <div v-if="imageOrder && imageOrder.length > 0" class="form-group">
                 <div class="mb-2">Reorder the images (use drag & drop)</div>
                 <draggable class="d-flex flex-wrap thumbnail-container" v-model="imageOrder">
-                    <placeholder-img v-for="(image, index) of imageOrder"
+                    <placeholder-img v-for="(image) of imageOrder"
                                      :src="image.src"
                                      :key="image.key"
                                      class="thumbnail-wrapper p-2"
@@ -97,22 +97,26 @@
     import route from 'JS/components/mixins/route';
     import routeGuard from 'JS/components/mixins/route-guard';
     import form from 'JS/components/mixins/form';
+    import store from 'JS/store';
+    import Vue from 'vue';
 
     import {cached} from 'JS/store';
-    import Choices from "JS/components/widgets/form/choices";
-    import ValidationMessage from "JS/components/widgets/form/validation-message";
+    import Choices from "JS/components/widgets/form/choices.vue";
+    import ValidationMessage from "JS/components/widgets/form/validation-message.vue";
 
+    //@ts-ignore
     import Cleave from 'cleave.js';
-    import FileSelect from "JS/components/widgets/form/file-select";
+    import FileSelect from "JS/components/widgets/form/file-select.vue";
 
+    //@ts-ignore
     import Draggable from 'vuedraggable';
-    import PlaceholderImg from "JS/components/widgets/image/placeholder-img";
+    import PlaceholderImg from "JS/components/widgets/image/placeholder-img.vue";
 
-    export default {
+    export default Vue.extend({
         name: 'offer-form-route',
         mixins: [
             route,
-            routeGuard('auth', vm => vm.$store.state.is_authenticated),
+            routeGuard('auth', () => store.state.is_authenticated),
             form
         ],
         components: {
@@ -128,28 +132,39 @@
             currencies: {},
             errors: {},
             valids: {},
+
+            /** @type {any} */
             priceCleave: null,
+
+            /** @type {any} */
             form: {
                 name: "",
                 description: "",
+                /** @type {string | number} */
                 price: "",
                 currency: false,
+                /** @type {Array | FileList} */
                 images: [],
             },
+            /** @type {Array} */
             imageOrder: []
         }),
         methods: {
             touchPrice() {
+                //@ts-ignore
                 this.$v.form.price.$touch();
+                //@ts-ignore
                 this.$v.form.currency.$touch();
             },
             onPriceInput() {
                 this.touchPrice();
                 this.form = {...this.form, price: parseFloat(this.priceCleave.getRawValue())};
             },
+            /** @param {FileList} f */
             onFileInput(f) {
                 this.form = {...this.form, images: f};
 
+                /** @type {any} */
                 let imageOrder = [];
 
                 for (let [index, image] of Array.from(f).entries()) {
@@ -175,6 +190,7 @@
                 this.imageOrder = imageOrder;
             },
             submit(asDraft = false) {
+                //@ts-ignore
                 const formData = new FormData(this.$refs.form);
                 formData.set('price', this.form.price);
                 formData.set('status', asDraft ? 0 : 1);
@@ -186,15 +202,26 @@
 
                 formData.set('imageOrder', JSON.stringify(imageOrder));
 
-                this.$submitForm('offer-create', 'form', result => {
+                /**
+                 * @param {object} result
+                 */
+                const onSubmitSuccess = result => {
                     this.form = {};
 
                     if (result && result.id)
                         this.$router.replace({name: 'offer', params: {id: result.id}});
                     else
                         this.$router.replace({name: 'index'});
-                }, formData, asDraft);
+                };
+
+                this.$submitForm('offer-create', 'form', onSubmitSuccess, formData, asDraft);
             },
+
+            /**
+             * @param {string} objName
+             * @param {string} key
+             * @param {any} value
+             */
             setObjArg(objName, key, value) {
                 const obj = this[objName];
                 this[objName] = {...obj, [key]: value};
@@ -215,6 +242,7 @@
                 return val.substr(0, 3) !== 'NaN' ? val : '';
             },
             choicesCurrencies() {
+                /** @type {Array} */
                 const currencies = Object.keys(this.currencies).map((currency, index) => ({
                     value: currency,
                     label: currency,
@@ -254,22 +282,41 @@
                     min: minLength(5),
                 },
                 price: {
+                    /**
+                     * @param {number} val
+                     */
                     required(val) {
                         return (val || val === 0) && !isNaN(val);
                     },
+
+                    /**
+                     * @param {number} val
+                     */
                     numeric(val) {
                         return typeof val === "number";
                     }
                 },
                 currency: {
+
+                    /**
+                     * @param {string} value
+                     */
                     required(value) {
                         return (value && value.match(/[a-zA-Z]/) !== null) || (this.form.price === 0);
                     },
                 },
                 images: {
+
+                    /**
+                     * @param {Array} value
+                     */
                     required(value) {
                         return value && value.length > 0;
                     },
+
+                    /**
+                     * @param {Array} images
+                     */
                     image(images) {
                         for (let image of images) {
                             if (!image.type.startsWith('image/'))
@@ -302,7 +349,7 @@
                 next(false)
             }
         }
-    };
+    });
 </script>
 
 <style scoped lang="scss" type="text/scss">

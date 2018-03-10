@@ -7,7 +7,7 @@
                 <span class="sr-only">&nbsp;(current)</span> <!-- TODO translate the "current" word -->
             </template>
         </router-link>
-        <a v-else="" href="#" class="nav-link" @click.prevent="callback">
+        <a v-else href="#" class="nav-link" @click.prevent="callback">
             <icon v-if="icon" :name="icon" :label="label" :scale="1.125"/>
             <template v-else>
                 {{ label }}
@@ -18,9 +18,11 @@
 </template>
 
 <script>
-    import router from 'JS/router';
+    import router,{ routesMatch } from 'JS/router';
+    import Vue from 'vue';
+    import { Location } from 'vue-router/types/router';
 
-    export default {
+    export default Vue.extend({
         props: {
             route: {
                 type: String
@@ -46,11 +48,15 @@
         },
         computed: {
             active() {
-                return router.routesMatch(this.routeDefinition, this.$route, this.activeAnyParams);
+                //@ts-ignore
+                return routesMatch(this.routeDefinition, this.$route, this.activeAnyParams);
             },
             labelFull() {
                 return this.label + (this.active ? ' (current)' : ''); // TODO translate the "current" word
             },
+            /**
+             * @returns {Location}
+             */
             routeDefinition() {
                 if (this.route) {
                     return {name: this.route, params: this.params};
@@ -62,5 +68,5 @@
                 return this.route || this.path;
             }
         },
-    };
+    });
 </script>

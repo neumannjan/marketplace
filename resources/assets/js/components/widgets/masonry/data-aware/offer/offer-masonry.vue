@@ -11,9 +11,9 @@
 </template>
 
 <script>
-    import InfiniteScrollMasonry from '../../infinite-scroll-masonry';
-    import OfferCard from './offer-card';
-    import LoadingOfferCard from './loading-offer-card';
+    import InfiniteScrollMasonry from '../../infinite-scroll-masonry.vue';
+    import OfferCard from './offer-card.vue';
+    import LoadingOfferCard from './loading-offer-card.vue';
 
     export default {
         name: 'offer-masonry',

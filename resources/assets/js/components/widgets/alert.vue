@@ -25,6 +25,9 @@
             close() {
                 this.$emit('close');
             },
+            /**
+             * @param {boolean} hover
+             */
             hover(hover) {
                 this.$emit('hover', hover)
             }

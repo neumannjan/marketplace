@@ -11,6 +11,9 @@
     "websocket": "node websocket.js --env"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.104",
+    "@types/socket.io-client": "^1.4.32",
+    "@types/velocity-animate": "^1.2.32",
     "axios": "^0.16.2",
     "babel-plugin-lodash": "^3.3.2",
     "babel-polyfill": "^6.26.0",
@@ -34,6 +37,8 @@
     "velocity-animate": "^1.5.0",
     "vue": "^2.5.13",
     "vue-awesome": "^2.3.4",
+    "vue-class-component": "^6.2.0",
+    "vue-property-decorator": "^6.0.0",
     "vue-router": "^3.0.1",
     "vuedraggable": "^2.16.0",
     "vuelidate": "^0.6.1",

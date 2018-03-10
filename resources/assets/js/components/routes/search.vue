@@ -9,12 +9,14 @@
 </template>
 
 <script>
-    import Search from "JS/components/widgets/search";
+    import Search from "JS/components/widgets/search.vue";
     import route from "JS/components/mixins/route";
     import api from 'JS/api';
-    import OfferMasonry from "JS/components/widgets/masonry/data-aware/offer/offer-masonry";
+    import OfferMasonry from "JS/components/widgets/masonry/data-aware/offer/offer-masonry.vue";
+    import Vue from "vue";
+    import { PaginatedResponse, Offer } from "JS/api/types";
 
-    export default {
+    export default Vue.extend({
         name: "search-route",
         props: {
             query: String
@@ -27,6 +29,8 @@
         data: () => ({
             input: '',
             loading: false,
+
+            /** @type {null | PaginatedResponse<Offer>} */
             results: null,
             isTopLevelRoute: true
         }),
@@ -45,10 +49,15 @@
                 this.$router.push({
                     name: 'search',
                     params: {
-                        query: this.input ? this.input : undefined
+                        query: this.input ? this.input : ''
                     }
                 });
             },
+
+            /**
+             * @param {string} query
+             * @param {string | null} oldQuery
+             */
             async performSearch(query, oldQuery = null) {
                 if (!query) {
                     this.results = null;
@@ -68,6 +77,7 @@
 
                 this.loading = true;
 
+                //@ts-ignore
                 this.results = await api.requestSingle('search', {
                     query: query
                 });
@@ -78,7 +88,7 @@
         mounted() {
             this.performSearch(this.query);
         }
-    }
+    });
 </script>
 
 <style scoped>

@@ -28,10 +28,14 @@
             value: String,
         },
         methods: {
+            /**
+             * @param {string} value
+             */
             input(value) {
                 this.$emit('input', value);
             },
             submit() {
+                //@ts-ignore
                 this.$emit('submit', this.$refs.input.value);
             }
         }

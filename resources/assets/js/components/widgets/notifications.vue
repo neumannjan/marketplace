@@ -19,21 +19,23 @@
     import {mapState} from 'vuex';
     import events from 'JS/components/mixins/events';
 
-    import Alert from "JS/components/widgets/alert";
+    import Alert from "JS/components/widgets/alert.vue";
 
     export default {
         name: 'notifications',
         components: {Alert},
         mixins: [events],
         data: () => ({
-            hoverNotificationID: -1,
+            /** @type {string | null} */
+            hoverNotificationID: null,
+            /** @type {function | null} */
             hoverNotification: null,
             windowFocus: true
         }),
         watch: {
             displayedNotifications(val, oldVal) {
                 for (let notification of val) {
-                    if (oldVal.indexOf(notification) === -1) {
+                    if (oldVal.indexOf(notification) === -1 && this.hoverNotification) {
                         this.hoverNotification(notification, false, false);
                     }
                 }
@@ -49,11 +51,14 @@
             }
         },
         methods: {
+            /**
+             * @param {string} id
+             */
             closeNotification(id) {
                 this.$store.commit('removeNotification', id);
 
                 if (this.hoverNotificationID === id) {
-                    this.hoverNotificationID = -1;
+                    this.hoverNotificationID = null;
                 }
             }
         },
@@ -66,9 +71,13 @@
             // hoverNotification function
             const removeNotificationTimerIDs = {};
 
+            /**
+             * @param {{id: string, persistent?: boolean}} notification
+             * @param {boolean} hover
+             */
             this.hoverNotification = (notification, hover, setHover = true) => {
                 if (setHover) {
-                    this.hoverNotificationID = hover ? notification.id : -1;
+                    this.hoverNotificationID = hover ? notification.id : null;
                 }
 
                 if (notification.persistent) {

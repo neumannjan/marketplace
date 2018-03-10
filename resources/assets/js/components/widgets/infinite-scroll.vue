@@ -14,6 +14,9 @@
 
     const getComputedStyle = document.defaultView.getComputedStyle;
 
+    /**
+     * @param {HTMLElement} element
+     */
     const getScrollEventTarget = function (element) {
         let currentNode = element;
         while (currentNode && currentNode.tagName !== 'HTML' && currentNode.tagName !== 'BODY' && currentNode.nodeType === 1) {
@@ -21,31 +24,45 @@
             if (overflowY === 'scroll' || overflowY === 'auto') {
                 return currentNode;
             }
+            //@ts-ignore
             currentNode = currentNode.parentNode;
         }
         return window;
     };
 
+    /**
+     * @param {HTMLElement | Window} element
+     */
     const getScrollTop = function (element) {
         if (element === window) {
             return Math.max(window.pageYOffset || 0, document.documentElement.scrollTop);
         }
 
+        //@ts-ignore
         return element.scrollTop;
     };
-
+    
+    /**
+     * @param {HTMLElement | Window} element
+     */
     const getVisibleHeight = function (element) {
         if (element === window) {
             return document.documentElement.clientHeight;
         }
 
+        //@ts-ignore
         return element.clientHeight;
     };
-
+    
+    /**
+     * @param {HTMLElement | Window} element
+     */
     const getElementTop = function (element) {
         if (element === window) {
             return getScrollTop(window);
         }
+
+        //@ts-ignore
         return element.getBoundingClientRect().top + getScrollTop(window);
     };
 
@@ -68,6 +85,7 @@
             value: {}
         },
         data: () => ({
+            /** @type {(() => void) | null} */
             onScroll: null,
             scrollEventTarget: null,
             previousContainerHeight: 0,
@@ -95,6 +113,10 @@
             doRequest() {
                 this.$emit('request');
             },
+            /**
+             * @param {number | null | false} scroll
+             * @param {boolean} emit
+             */
             setScroll(scroll = null, emit = true) {
                 if (scroll !== undefined && scroll !== null && scroll !== false) {
                     const scrollEventTarget = this.getScrollEventTarget();
@@ -122,6 +144,11 @@
                 }
 
                 const scrollEventTarget = this.getScrollEventTarget();
+
+                /**
+                 * @type {HTMLElement}
+                 */
+                //@ts-ignore
                 const element = this.$refs.container;
                 const distance = this.distance;
 
@@ -154,6 +181,7 @@
                 if (this.scrollEventTarget)
                     return this.scrollEventTarget;
 
+                //@ts-ignore
                 return this.scrollEventTarget = getScrollEventTarget(this.$refs.container);
             }
         },

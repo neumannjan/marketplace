@@ -18,7 +18,8 @@
 
 <script>
     import api from 'JS/api';
-    import PlaceholderImg from "JS/components/widgets/image/placeholder-img";
+    import PlaceholderImg from "JS/components/widgets/image/placeholder-img.vue";
+    import { Location } from 'vue-router/types/router';
 
     const TYPE_REGULAR = 'regular';
     const TYPE_OFFER = 'offer';
@@ -52,7 +53,9 @@
         },
         data: () => ({
             content: '',
+            /** @type {string | null} */
             imgSrc: null,
+            /** @type {Location | null} */
             route: null
         }),
         watch: {
@@ -112,6 +115,9 @@
                 this.imgSrc = offer.images.length > 0 ? offer.images[0].urls.original : null;
                 this.route = {query: {offer: offer.id}};
             },
+            /**
+             * @param {string} string
+             */
             escapeString(string) {
                 if (!string)
                     return '';
@@ -120,11 +126,13 @@
                 // https://github.com/angular/angular.js/blob/8d6ac5f3178cb6ead6b3b7526c50cd1c07112097/src/ngSanitize/sanitize.js
                 return string
                     .replace(/&/g, '&amp;')
+                    //@ts-ignore
                     .replace(SURROGATE_PAIR_REGEXP, function (value) {
                         let hi = value.charCodeAt(0);
                         let low = value.charCodeAt(1);
                         return '&#' + (((hi - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000) + ';';
                     })
+                    //@ts-ignore
                     .replace(NON_ALPHANUMERIC_REGEXP, function (value) {
                         return '&#' + value.charCodeAt(0) + ';';
                     })

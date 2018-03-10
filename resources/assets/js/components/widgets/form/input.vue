@@ -9,7 +9,8 @@
                   :placeholder="placeholder"
                   :title="label"
                   @input="onInput" @blur="touch()" v-focus="autofocus"
-                  :required="required" :aria-describedby="hint ? hintId : false">{{ value }}</textarea>
+                  v-model="value"
+                  :required="required" :aria-describedby="hint ? hintId : false"></textarea>
         <input v-else
                :id="id" :name="name" :type="type" :class="['form-control', {'is-invalid': error, 'is-valid': valid}]"
                :value="value"
@@ -26,13 +27,16 @@
 </template>
 
 <script>
-    import ValidationMessage from "JS/components/widgets/form/validation-message";
+    import ValidationMessage from "JS/components/widgets/form/validation-message.vue";
 
     export default {
         components: {ValidationMessage},
         data: () => ({
+            /** @type {string | null} */
             id: null,
+            /** @type {boolean} */
             valid: false,
+            /** @type {boolean | null} */
             error: null,
             input: '',
         }),
@@ -68,8 +72,11 @@
                 if (this.validation)
                     this.validation.$touch();
             },
+            /**@param {Event} event */
             onInput(event) {
+                //@ts-ignore
                 this.input = event.target.value;
+                //@ts-ignore
                 this.$emit('input', event.target.value);
                 this.touch();
             },

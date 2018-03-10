@@ -14,20 +14,22 @@
     import axios from 'axios';
     import Blur from 'stackblur-canvas';
     import Velocity from 'velocity-animate';
-    import Pool from 'JS/tools/pool';
     import throttle from 'lodash/throttle';
-    import helpers from 'JS/helpers';
-    import {events as appEvents} from 'JS/app';
+    import helpers from 'JS/lib/helpers';
+    import appEvents,{ Events } from 'JS/events';
+    import CanvasPool from 'JS/components/widgets/image/canvas-pool';
+    import Vue from 'vue';
 
     import 'vue-awesome/icons/chain-broken';
 
-    const canvasPool = new Pool(() => {
-        return document.createElement('canvas');
-    }, (canvas, width, height) => {
-        canvas.width = width;
-        canvas.height = height;
-    }, 5);
+    /**
+     * @type {CanvasPool}
+     */
+    const canvasPool = new CanvasPool(5);
 
+    /**
+    * @param {HTMLImageElement} img
+    */
     const loadImagePromise = (img) => {
         if (img.complete || img.naturalWidth > 0)
             return Promise.resolve(img);
@@ -38,7 +40,7 @@
         });
     };
 
-    export default {
+    export default Vue.extend({
         name: "lazy-img",
         props: {
             src: {
@@ -87,11 +89,15 @@
             error: false,
         }),
         computed: {
+            /**
+             * @returns {number}
+             */
             aspectRatio() {
                 return this.height / this.width;
             },
             wrapperStyle() {
                 return {
+                    //@ts-ignore
                     'padding-bottom': `${this.aspectRatio * 100}%`
                 }
             },
@@ -101,6 +107,8 @@
         },
         methods: {
             inViewportCheck() {
+                /** @type {HTMLElement} */
+                //@ts-ignore
                 const el = this.$refs.wrapper;
 
                 if (!el || !this.inDOM) {
@@ -134,6 +142,7 @@
 
 
                 const p2 = new Promise(resolve => {
+                    /** @type {() => boolean} */
                     let func;
 
                     const activate = () => window.addEventListener('scroll', func);
@@ -165,22 +174,29 @@
                 const p3 = new Promise(resolve => {
                     const func = () => {
                         if (this.inViewportCheck()) {
-                            appEvents.$off('viewport_change', func);
+                            appEvents.off(Events.ViewportChange, func);
                             resolve();
                         }
                     };
 
-                    appEvents.$on('viewport_change', func);
+                    appEvents.on(Events.ViewportChange, func);
                 });
 
                 return Promise.race([p1, p2, p3]);
             },
+            /**
+             * @param {Promise<ImageBitmap>} thumbRequest
+             */
             async load(thumbRequest) {
                 if (this.loadingBegan)
                     return;
 
                 this.loadingBegan = true;
 
+                /**
+                 * @type {HTMLImageElement}
+                 */
+                //@ts-ignore
                 const fullImage = this.$refs.img;
 
                 if (this.error)
@@ -207,12 +223,21 @@
 
                 const thumbImage = loadedImage;
 
+                /**
+                 * @type {HTMLCanvasElement}
+                 */
+                //@ts-ignore
                 let canvas = this.$refs.canvas;
+                /**
+                 * @type {CanvasRenderingContext2D | null}
+                 */
                 let ctx;
 
                 if (canvas && !thumbFailed) {
                     ctx = canvas.getContext('2d');
-                    ctx.drawImage(thumbImage, 0, 0, this.width, this.height);
+                    if (ctx) {
+                        ctx.drawImage(thumbImage, 0, 0, this.width, this.height);
+                    }
                     Blur.canvasRGB(canvas, 0, 0, this.width, this.height, this.blur);
                 }
 
@@ -229,6 +254,7 @@
                     return;
                 }
 
+                //@ts-ignore
                 canvas = this.$refs.canvas;
                 ctx = canvas.getContext('2d');
 
@@ -241,17 +267,22 @@
                     return;
                 }
 
+                /**
+                 * @type {HTMLCanvasElement[]}
+                 */
                 let canvases = [];
 
                 for (let i = 0; i < this.blurIterations; ++i) {
-                    const c = canvasPool.get(width, height);
+                    const c = canvasPool.get([width, height]);
                     const cctx = c.getContext('2d');
                     canvases.push(c);
 
                     if (i > 0) {
                         let blur = ((this.blurIterations - i) / this.blurIterations) * this.blur * 0.5;
 
-                        cctx.drawImage(fullImage, 0, 0, fullImage.width, fullImage.height, 0, 0, width, height);
+                        if (cctx) {
+                            cctx.drawImage(fullImage, 0, 0, fullImage.width, fullImage.height, 0, 0, width, height);
+                        }
 
                         if (blur > 0) {
                             try {
@@ -260,18 +291,23 @@
                             catch (e) {
                             }
                         }
-                    } else {
+                    } else if(cctx) {
                         cctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, width, height);
                     }
                 }
 
-                canvases.push(fullImage);
+                /**
+                 * @type {(HTMLCanvasElement|HTMLImageElement)[]}
+                 */
+                let allCanvases = canvases.slice(0);
+                allCanvases.push(fullImage);
 
-                await Velocity(canvas, {
+                await Velocity.animate(canvas, {
                     tween: 1
                 }, {
                     duration: this.duration,
                     easing: 'linear',
+                    //@ts-ignore
                     progress: (elements, complete, remaining, start, tweenValue) => {
                         const iteration = Math.floor(tweenValue * (this.blurIterations));
 
@@ -279,25 +315,26 @@
 
                             const alpha = tweenValue * this.blurIterations - iteration;
 
-                            if (alpha !== 1) {
-                                const c = canvases[iteration];
-                                const c2 = canvases[iteration + 1];
-                                ctx.drawImage(c, 0, 0, c.width, c.height, 0, 0, this.width, this.height);
+                            if (ctx) {
+                                if (alpha !== 1) {
+                                    const c = allCanvases[iteration];
+                                    const c2 = allCanvases[iteration + 1];
+                                    ctx.drawImage(c, 0, 0, c.width, c.height, 0, 0, this.width, this.height);
 
-                                ctx.globalAlpha = alpha;
-                                ctx.drawImage(c2, 0, 0, c2.width, c2.height, 0, 0, this.width, this.height);
-                                ctx.globalAlpha = 1;
-                            } else if (iteration < this.blurIterations - 1) {
-                                const c2 = canvases[iteration + 1];
-                                ctx.drawImage(c2, 0, 0, c2.width, c2.height, 0, 0, this.width, this.height);
-                            } else {
-                                ctx.drawImage(fullImage, 0, 0, fullImage.width, fullImage.height, 0, 0, this.width, this.height);
+                                    ctx.globalAlpha = alpha;
+                                    ctx.drawImage(c2, 0, 0, c2.width, c2.height, 0, 0, this.width, this.height);
+                                    ctx.globalAlpha = 1;
+                                } else if (iteration < this.blurIterations - 1) {
+                                    const c2 = allCanvases[iteration + 1];
+                                    ctx.drawImage(c2, 0, 0, c2.width, c2.height, 0, 0, this.width, this.height);
+                                } else {
+                                    ctx.drawImage(fullImage, 0, 0, fullImage.width, fullImage.height, 0, 0, this.width, this.height);
+                                }
                             }
                         }
                     }
                 });
 
-                canvases.pop();
                 canvasPool.release(...canvases);
 
                 this.shown = true;
@@ -306,6 +343,9 @@
         async mounted() {
             this.inDOM = true;
 
+            /**
+             * @type {Promise<ImageBitmap>}
+             */
             const thumbRequest = new Promise((resolve, reject) => {
                 axios.get(this.thumb, {responseType: 'blob'})
                     .then(response => {
@@ -343,7 +383,7 @@
         destroyed() {
             this.$emit('destroyed');
         }
-    }
+    });
 </script>
 
 <style scoped lang="scss" type="text/scss">

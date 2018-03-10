@@ -1,6 +1,7 @@
 <template>
     <div :class="['card-footer-icons d-flex', `justify-content-${justifyContent}`]">
         <button v-for="button in buttons"
+                :key="button.icon"
                 type="button"
                 @click="button.callback && !button.disabled ? button.callback() : null"
                 :disabled="button.disabled ? 'true' : undefined"

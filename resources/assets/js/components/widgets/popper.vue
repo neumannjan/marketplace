@@ -11,7 +11,7 @@
 
 <script>
     import Popper from 'popper.js';
-    import DomRoot from 'JS/components/helpers/dom-root';
+    import DomRoot from 'JS/components/helpers/dom-root.vue';
 
     export default {
     name: 'popper',
@@ -38,6 +38,7 @@
         }
     },
     data: () => ({
+        /** @type {object | null} */
         popper: null
     }),
     watch: {
@@ -51,6 +52,7 @@
     methods: {
         show() {
             if (!this.popper && this.element) {
+                //@ts-ignore
                 this.popper = new Popper(this.element, this.$refs.popper, {
                     placement: this.placement,
                     modifiers: {
