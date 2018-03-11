@@ -39,26 +39,29 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+    import {cached, CachedRouteComponents, routeEvents, queryModalRouter, RouteEvents, QueryModalRouter} from 'JS/router';
+    import { Conversation } from 'JS/api/types';
+    import {mapState} from 'vuex';
+    import appEvents,{ Events } from "JS/events";
+    import store, {initialData, State} from 'JS/store';
+    import Vue from 'vue';
+
     import TopNav from './widgets/nav/vertical/top-nav.vue';
     import BottomNav from './widgets/nav/vertical/bottom-nav.vue';
     import FlashMessages from './widgets/flash-messages.vue';
-    import {cached, routeEvents, queryModalRouter, RouteEvents} from 'JS/router';
-    import {mapState} from 'vuex';
     import Icon from "../../../../node_modules/vue-awesome/components/Icon.vue";
     import MainFloatingBtns from './widgets/main-floating-btns.vue';
     import Modal from './widgets/modal.vue';
-
-    import appEvents,{ Events } from "JS/events";
-    import {initialData} from 'JS/store';
-
     import ModalRouter from "JS/components/widgets/modal-router.vue";
-
-    import events from 'JS/components/mixins/events';
     import Notifications from "JS/components/widgets/notifications.vue";
-import { Conversation } from 'JS/api/types';
+    import { Route } from 'vue-router/types/router';
 
-    export default {
+    interface Has {
+        navigation?: boolean
+    }
+
+    export default Vue.extend({
         components: {
             Notifications,
             ModalRouter,
@@ -69,8 +72,13 @@ import { Conversation } from 'JS/api/types';
             MainFloatingBtns,
             Modal
         },
-        mixins: [events],
-        data: () => ({
+        data: (): {
+            keepAlive: typeof cached,
+            shown: boolean,
+            has: Has,
+            modals: QueryModalRouter,
+            loading: boolean,
+        } => ({
             keepAlive: cached,
             shown: true,
             has: {},
@@ -78,55 +86,50 @@ import { Conversation } from 'JS/api/types';
             loading: false,
         }),
         watch: {
-            $route(to) {
+            $route(to: Route) {
                 if (!to.matched) return;
 
-                let has = {};
-                for (let view of ['navigation']) {
-                    has[view] = !!to.matched[0].components[view];
-                }
+                const has: Has = {
+                    navigation: !!to.matched[0].components['navigation']
+                } as Has;
 
                 this.has = has;
             },
-            httpConnection(val, oldVal) {
+            httpConnection(val: State['connection_http'], oldVal: State['connection_http']) {
                 if (oldVal !== undefined && oldVal !== null && val !== oldVal) {
-                    this.notifyConnection(true, val);
+                    this.notifyConnection(true, val ? true : false);
                 }
             },
-            websocketConnection(val, oldVal) {
+            websocketConnection(val: State['connection_websocket'], oldVal: State['connection_websocket']) {
                 if (oldVal !== undefined && oldVal !== null && val !== oldVal) {
-                    this.notifyConnection(false, val);
+                    this.notifyConnection(false, val ? true : false);
                 }
             }
         },
         computed: {
             ...mapState({
-                httpConnection: state => state.connection_http,
-                websocketConnection: state => state.connection_websocket
+                httpConnection: (state: State) => state.connection_http,
+                websocketConnection: (state: State) => state.connection_websocket
             }),
-            loadingStyle() {
+            loadingStyle(): object {
                 return this.loading ? {visibility: 'hidden'} : {};
             }
         },
         methods: {
-            /**
-             * @param {boolean} isHttp
-             * @param {boolean} value
-             */
-            notifyConnection(isHttp, value) {
+            notifyConnection(isHttp: boolean, value: boolean) {
                 const type = isHttp ? 'http' : 'websocket';
 
                 /** @param {boolean} value */
-                const getValue = value => value ? 'true' : 'false';
+                const getValue = (value: boolean) => value ? 'true' : 'false';
 
-                this.$store.commit('addNotification', {
+                store.commit('addNotification', {
                     id: `connection-${type}-${getValue(value)}`,
                     persistent: !value,
                     message: `TODO message: ${type} connection ${value ? 'regained' : 'lost'}.`,
                     type: value ? 'success' : 'danger'
                 });
 
-                this.$store.commit('removeNotification', `connection-${type}-${getValue(!value)}`);
+                store.commit('removeNotification', `connection-${type}-${getValue(!value)}`);
 
                 if (isHttp && value) {
                     this.restoreConnection();
@@ -135,7 +138,7 @@ import { Conversation } from 'JS/api/types';
             async restoreConnection() {
                 if (!this.shown) return;
 
-                this.$store.commit('httpConnection', true);
+                store.commit('httpConnection', true);
 
                 this.shown = false;
                 await this.$nextTick();
@@ -152,30 +155,22 @@ import { Conversation } from 'JS/api/types';
             }
         },
         created() {
-            /**
-             * @param {boolean} plural
-             */
-            const addConversationNotification = (plural) => {
+            const addConversationNotification = (plural: boolean) => {
                 //TODO translate
-                this.$store.commit('addNotification', {
+                store.commit('addNotification', {
                     id: 'chat',
                     message: plural ? 'You have new messages.' : 'You have a new message.',
                     type: 'primary'
                 });
             };
 
-            this.$onEchoGlobal('MessageSentOther', () => addConversationNotification(false));
+            this.$onEventListener(appEvents, Events.MessageSentOther, () => addConversationNotification(false));
 
-            /**
-             * @param {Conversation[]} conversations
-             */
-            const onUnreadConversations = conversations => {
+            this.$onEventListener(appEvents, Events.UnreadConversations, (conversations: Conversation[]) => {
                 addConversationNotification(conversations.length > 1);
-            };
-
-            this.$onEventListener(appEvents, Events.UnreadConversations, onUnreadConversations);
+            });
         }
-    };
+    });
 </script>
 
 <style scoped>

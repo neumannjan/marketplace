@@ -17,56 +17,55 @@
     </li>
 </template>
 
-<script>
+<script lang="ts">
+    import { Prop, Vue } from "vue-property-decorator";
+    import Component from 'vue-class-component';
     import router,{ routesMatch } from 'JS/router';
-    import Vue from 'vue';
     import { Location } from 'vue-router/types/router';
 
-    export default Vue.extend({
-        props: {
-            route: {
-                type: String
-            },
-            path: {
-                type: String
-            },
-            params: {
-                type: Object
-            },
-            label: {
-                type: String,
-                required: true
-            },
-            icon: {
-                type: String
-            },
-            activeAnyParams: {
-                type: Boolean,
-                default: false
-            },
-            callback: {}
-        },
-        computed: {
-            active() {
-                //@ts-ignore
-                return routesMatch(this.routeDefinition, this.$route, this.activeAnyParams);
-            },
-            labelFull() {
-                return this.label + (this.active ? ' (current)' : ''); // TODO translate the "current" word
-            },
-            /**
-             * @returns {Location}
-             */
-            routeDefinition() {
-                if (this.route) {
-                    return {name: this.route, params: this.params};
-                } else {
-                    return {path: this.path};
-                }
-            },
-            isToRoute() {
-                return this.route || this.path;
+    @Component({
+        name: 'nav-item'
+    })
+    export default class NavItem extends Vue {
+        @Prop({type: String})
+        route: string | undefined;
+
+        @Prop({type: String})
+        path: string | undefined;
+
+        @Prop({type: Object})
+        params: {[index: string]: string} | undefined;
+
+        @Prop({type: String, required: true})
+        label!: string | undefined;
+
+        @Prop({type: String})
+        icon: string | undefined;
+
+        @Prop({type: Boolean, default: false})
+        activeAnyParams!: boolean | undefined;
+
+        @Prop({})
+        callback: ((e: MouseEvent) => void) | undefined;
+
+        get active(): boolean {
+            return routesMatch(this.routeDefinition, this.$route, this.activeAnyParams);
+        }
+
+        get labelFull(): string {
+            return this.label + (this.active ? ' (current)' : ''); // TODO translate the "current" word
+        }
+
+        get routeDefinition(): Location {
+            if (this.route) {
+                return {name: this.route, params: this.params};
+            } else {
+                return {path: this.path};
             }
-        },
-    });
+        }
+
+        get isToRoute(): boolean {
+            return !!this.route || !!this.path;
+        }
+    }
 </script>

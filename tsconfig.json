@@ -3,6 +3,7 @@
     "module": "es2015",
     "moduleResolution": "node",
     "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
     "target": "es2015",
     "sourceMap": true,
     "allowJs": true,
@@ -30,12 +31,6 @@
     "resources/assets"
   ],
   "exclude": [
-    "node_modules",
-    "node_modules/laravel-echo/src/channel/pusher-presence-channel.ts",
-    "node_modules/laravel-echo/src/channel/pusher-private-channel.ts",
-    "node_modules/laravel-echo/src/channel/socketio-channel.ts",
-    "node_modules/laravel-echo/src/channel/socketio-presence-channel.ts",
-    "node_modules/laravel-echo/src/channel/socketio-private-channel.ts",
-    "node_modules/laravel-echo/src/util/event-formatter.ts"
+    "node_modules"
   ]
 }

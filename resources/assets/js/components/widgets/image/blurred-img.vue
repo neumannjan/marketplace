@@ -6,13 +6,11 @@
 </template>
 
 <script>
-    import events from 'JS/components/mixins/events';
     import StackBlur from 'stackblur-canvas';
     import Vue from 'vue';
 
     export default Vue.extend({
         name: 'blurred-img',
-        mixins: [events],
         props: {
             data: {
                 required: true

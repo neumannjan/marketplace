@@ -13,12 +13,10 @@
 </template>
 
 <script>
-    import events from 'JS/components/mixins/events';
     import 'vue-awesome/icons/image';
 
     export default {
         name: 'placeholder-img',
-        mixins: [events],
         props: {
             src: {
                 type: String,

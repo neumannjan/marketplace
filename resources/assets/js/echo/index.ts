@@ -1,6 +1,6 @@
 import ConnectionManager, {ConnectionManagerEvents} from "JS/lib/echo";
-import api from "./api";
-import store from "./store";
+import api from "JS/api";
+import store from "JS/store";
 import {ChannelType} from "JS/lib/echo/channel";
 import {Message} from "JS/api/types";
 import events, {Events} from "JS/events";
@@ -95,7 +95,7 @@ store.watch(state => state.user, (user, oldUser) => {
 
             channel.on('MessageSent', (message: Message) => {
                 events.dispatch(Events.MessageSent, message);
-                if (!store.state.user || store.state.user.username !== message.from.username) {
+                if (message.mine === false || !store.state.user || store.state.user.username !== message.from.username) {
                     events.dispatch(Events.MessageSentOther, message);
                 }
             });

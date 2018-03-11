@@ -9,7 +9,6 @@
      * Portions of code taken from https://github.com/ElemeFE/vue-infinite-scroll
      */
 
-    import events from 'JS/components/mixins/events';
     import throttle from 'lodash/throttle';
 
     const getComputedStyle = document.defaultView.getComputedStyle;
@@ -68,7 +67,6 @@
 
     export default {
         name: 'infinite-scroll',
-        mixins: [events],
         props: {
             distance: {
                 type: Number,

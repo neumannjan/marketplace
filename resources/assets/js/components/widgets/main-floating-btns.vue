@@ -8,42 +8,57 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
     import FloatingBtns from './floating-btns.vue';
     import Popper from './popper.vue';
     import ProfileImg from "JS/components/widgets/image/profile-img.vue";
     import ChatCard from "JS/components/widgets/card/chat-card.vue";
     import NotificationsCard from "JS/components/widgets/card/notifications-card.vue";
 
-    import events from 'JS/components/mixins/events';
-    import appEvents,{ Events } from 'JS/events';
+    import Vue from 'vue';
+    import store, { State } from 'JS/store';
+    import appEvents,{ Events, RequestPopupPayload } from 'JS/events';
     import router,{ getRouteMainComponent } from 'JS/router';
-    import {mapState} from 'vuex';
+    import { Message, Conversation } from 'JS/api/types';
 
     import 'vue-awesome/icons/plus';
     import 'vue-awesome/icons/comment';
     import 'vue-awesome/icons/bell';
     import 'vue-awesome/icons/angle-left';
     import 'vue-awesome/icons/angle-up';
-import { Message, Conversation } from 'JS/api/types';
 
-    const BTN_ADD = 'add';
-    const BTN_CHAT = 'chat';
-    const BTN_NOTIFICATIONS = 'notifications';
-    const BTN_BACK = 'back';
-    const BTN_UP = 'up';
+    enum ButtonTypes {
+        Add = 'add',
+        Chat = 'chat',
+        Notifications = 'notifications',
+        Back = 'back',
+        Up = 'up',
+    }
+
+    interface Button {
+        id: ButtonTypes,
+        icon: string,
+        class?: string,
+        label?: string, //TODO make required
+        badgeType?: string,
+        show?: () => boolean
+    }
+
+    type ChatConversations = {
+        [index: string]: boolean
+    }
 
     //TODO labels
-    const mainButtons = [
-        {id: BTN_ADD, icon: 'plus', class: 'btn-primary', show: () => router.currentRoute.name !== 'offer-create'},
-        {id: BTN_CHAT, icon: 'comment'},
-        {id: BTN_NOTIFICATIONS, icon: 'bell'},
+    const mainButtons: Button[] = [
+        {id: ButtonTypes.Add, icon: 'plus', class: 'btn-primary', show: () => router.currentRoute.name !== 'offer-create'},
+        {id: ButtonTypes.Chat, icon: 'comment'},
+        {id: ButtonTypes.Notifications, icon: 'bell'},
     ];
 
-    const backButton = {id: BTN_BACK, icon: 'angle-left'};
-    const upButton = {id: BTN_UP, icon: 'angle-up', class: 'btn-danger'};
+    const backButton = {id: ButtonTypes.Back, icon: 'angle-left'};
+    const upButton = {id: ButtonTypes.Up, icon: 'angle-up', class: 'btn-danger'};
 
-    export default {
+    export default Vue.extend({
         name: 'main-floating-btns',
         components: {
             NotificationsCard,
@@ -52,16 +67,20 @@ import { Message, Conversation } from 'JS/api/types';
             FloatingBtns,
             Popper
         },
-        mixins: [events],
-        data: () => ({
+        data: (): {
+            isSideA: boolean,
+            scrollY: number,
+            backShown: boolean,
+            popperEl: HTMLElement | null,
+            lastSelectedButton: string | null,
+            buttonEls: HTMLElement[] | null,
+            chatConversations: ChatConversations
+        } => ({
             isSideA: true,
             scrollY: window.scrollY,
             backShown: false,
-            /** @type {HTMLElement | null} */
             popperEl: null,
-            /** @type {string | null} */
             lastSelectedButton: null,
-            /** @type {HTMLElement[] | null} */
             buttonEls: null,
             chatConversations: {}
         }),
@@ -73,15 +92,14 @@ import { Message, Conversation } from 'JS/api/types';
                 this.backShown = !mainComponent || !mainComponent.isTopLevelRoute;
                 this.isSideA = true;
             },
-            buttons(buttons) {
-                //@ts-ignore
-                if (this.popperEl && !buttons.map(b => b.id).includes(this.lastSelectedButton)) {
+            buttons(buttons: Button[]) {
+                if (this.popperEl && !buttons.map(b => b.id).includes(<ButtonTypes>this.lastSelectedButton)) {
                     this.popperEl = null;
                 }
             }
         },
         computed: {
-            buttons() {
+            buttons(): Button[] {
                 if (this.isSideA) {
                     if (this.isAuthenticated) {
                         return this.backShown ? [...mainButtons, backButton] : mainButtons;
@@ -92,46 +110,34 @@ import { Message, Conversation } from 'JS/api/types';
                     return [upButton];
                 }
             },
-            badges() {
+            badges(): {[type in ButtonTypes]?: number | string} {
                 return {
-                    [BTN_CHAT]: Object.keys(this.chatConversations).length
+                    [ButtonTypes.Chat]: Object.keys(this.chatConversations).length
                 }
             },
-            ...mapState({
-                isAuthenticated: state => state.is_authenticated,
-            })
+            isAuthenticated(): boolean {
+                return store.state.is_authenticated;
+            }
         },
         methods: {
-            /**
-             * @param {string} buttonId
-             */
-            isOpen(buttonId) {
+            isOpen(buttonId: ButtonTypes) {
                 return this.popperEl && this.lastSelectedButton === buttonId;
             },
-            /**
-             * @param {object & {id: string}} button
-             * @param {HTMLElement | null} element
-             */
-            onClick(button, element) {
+            onClick(button: Button, element: HTMLElement | null) {
                 this.click(button.id, element);
             },
-            /**
-             * @param {string} buttonId
-             * @param {HTMLElement | null} element
-             * @param {boolean} toggle
-             */
-            click(buttonId, element = null, toggle = true) {
+            click(buttonId: ButtonTypes, element: HTMLElement | null = null, toggle = true) {
                 const result = (() => {
                     const lastPopperEl = this.popperEl;
                     this.popperEl = null;
                     this.lastSelectedButton = buttonId;
 
                     switch (buttonId) {
-                        case BTN_ADD:
+                        case ButtonTypes.Add:
                             router.push({name: 'offer-create'});
                             return true;
-                        case BTN_CHAT:
-                        case BTN_NOTIFICATIONS:
+                        case ButtonTypes.Chat:
+                        case ButtonTypes.Notifications:
                             if (element) {
                                 if (toggle && lastPopperEl === element)
                                     this.popperEl = null;
@@ -145,10 +151,10 @@ import { Message, Conversation } from 'JS/api/types';
                                 return true;
                             }
                             return false;
-                        case BTN_BACK:
+                        case ButtonTypes.Back:
                             router.back();
                             return true;
-                        case BTN_UP:
+                        case ButtonTypes.Up:
                             window.scrollTo(window.scrollX, 0);
                             return true;
                     }
@@ -158,7 +164,7 @@ import { Message, Conversation } from 'JS/api/types';
 
                 if (result) {
                     switch (buttonId) {
-                        case BTN_CHAT:
+                        case ButtonTypes.Chat:
                             this.chatConversations = {};
                             break;
                     }
@@ -166,10 +172,7 @@ import { Message, Conversation } from 'JS/api/types';
 
                 return result;
             },
-            /** 
-             * @param {HTMLElement[]} els
-             */
-            onButtonEls(els) {
+            onButtonEls(els: HTMLElement[]) {
                 this.buttonEls = els;
             }
         },
@@ -182,44 +185,29 @@ import { Message, Conversation } from 'JS/api/types';
                 this.scrollY = scrollY;
             });
 
-            /**
-             * @param {{ type: string, then: () => void }} data
-             */
-            const onRequestPopup = data => {
+            this.$onEventListener(appEvents, Events.RequestPopup, (data: RequestPopupPayload<ButtonTypes>) => {
                 if (this.click(data.type, null, false)) {
                     this.$nextTick(data.then);
                 }
-            };
+            });
 
-            this.$onEventListener(appEvents, Events.RequestPopup, onRequestPopup);
-
-            /**
-             * @param {Message} message
-             */
-            const onMessageSentOther = message => {
-                if (!this.isOpen(BTN_CHAT)) {
+            this.$onEventListener(appEvents, Events.MessageSentOther, (message: Message) => {
+                if (!this.isOpen(ButtonTypes.Chat)) {
                     this.$set(this.chatConversations, message.from.username, true);
                 }
-            };
+            });
 
-            this.$onEventListener(appEvents, Events.MessageSentOther, onMessageSentOther);
-
-            /**
-             * @param  {Conversation[]} conversations
-             */
-            const onUnreadConversations = conversations => {
-                const c = {};
+            this.$onEventListener(appEvents, Events.UnreadConversations, (conversations: Conversation[]) => {
+                const c: ChatConversations = {};
 
                 for (let conversation of conversations) {
                     c[conversation.from.username] = true;
                 }
 
                 this.chatConversations = c;
-            }
-
-            this.$onEventListener(appEvents, Events.UnreadConversations, onUnreadConversations);
+            });
         },
-    };
+    });
 </script>
 
 <style scoped lang="scss" type="text/scss">

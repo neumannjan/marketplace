@@ -1,9 +1,15 @@
 import {routeEvents, RouteEvents, routesMatch} from 'JS/router';
 import Vue from "vue";
+import Component from 'vue-class-component';
+import { Route, NavigationGuard, RawLocation } from 'vue-router';
 
 type Result = {
     [key: string]: any
 };
+
+export interface RouteFetchMixinInterface {
+    doFetch(): void;
+}
 
 export default function <R extends Result, P extends object>
 (fetchAsyncFunction: (params: P) => Promise<R | null>, nullObj: R, before: boolean = true) {
@@ -30,20 +36,22 @@ export default function <R extends Result, P extends object>
             routeEvents.dispatch(RouteEvents.Loading);
     }
 
-    return Vue.extend({
-        beforeRouteEnter(to, from, next) {
+    @Component({})
+    class RouteFetchMixin extends Vue implements RouteFetchMixinInterface {
+        beforeRouteEnter(to: Route, from: Route, next: (to?: RawLocation | false | ((vm: RouteFetchMixin & Vue) => any) | void) => void) {
             if (before) {
                 notifyLoading();
                 fetchAsyncFunction(<any>to.params).then(result => {
-                    next(vm => {
+                    next((vm: RouteFetchMixin & Vue) => {
                         handleResult(vm, result ? result : nullObj);
                     });
                 });
             } else {
                 next();
             }
-        },
-        beforeRouteUpdate(to, from, next) {
+        }
+
+        beforeRouteUpdate(to: Route, from: Route, next: (to?: RawLocation | false | ((vm: RouteFetchMixin & Vue) => any) | void) => void) {
             if (routesMatch(to, from)) {
                 next();
                 return;
@@ -55,7 +63,8 @@ export default function <R extends Result, P extends object>
                 handleResult(this, result ? result : nullObj);
                 if (before) next();
             });
-        },
+        }
+
         created() {
             let fetchLater = false;
 
@@ -74,11 +83,12 @@ export default function <R extends Result, P extends object>
                 notifyLoading();
                 this.doFetch();
             }
-        },
-        methods: {
-            doFetch() {
-                fetchAsyncFunction(<any>this).then(result => handleResult(this, result ? result : nullObj));
-            }
         }
-    });
+
+        doFetch() {
+            fetchAsyncFunction(<any>this).then(result => handleResult(this, result ? result : nullObj));
+        }
+    }
+
+    return RouteFetchMixin;
 }

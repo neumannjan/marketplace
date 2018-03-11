@@ -28,19 +28,21 @@ import { events } from 'JS/events';
 
 Vue.use(VueRouter);
 
+export type CachedRouteComponents = string[];
+
 /*
  * List of route components that should be cached
  */
 const cachedRouteComponents = [
     'search-route'
-];
+] as CachedRouteComponents;
 
 /**
  * Get list of route components that should be cached
  * @param {string} suffix String suffix to append to each component
- * @returns {string[]}
+ * @returns {CachedRouteComponents}
  */
-export function cached(suffix = '') {
+export function cached(suffix = ''): CachedRouteComponents {
     if(suffix) {
         return cachedRouteComponents.map((route) => `${route}-${suffix}`);
     } else {
@@ -52,7 +54,9 @@ export function cached(suffix = '') {
  * Route events enum
  */
 export enum RouteEvents {
-    Loading, Loaded, UserNavigation
+    Loading = 'Loading',
+    Loaded = 'Loaded',
+    UserNavigation = 'UserNavigation',
 }
 
 /**

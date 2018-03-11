@@ -72,10 +72,9 @@
     </infinite-scroll>
 </template>
 
-<script>
+<script lang="ts">
     import api from 'JS/api';
     import echo from 'JS/echo';
-    import events from 'JS/components/mixins/events';
     import helpers from 'JS/lib/helpers';
     import Vue from 'vue';
 
@@ -88,13 +87,18 @@
     import ProfileImg from 'JS/components/widgets/image/profile-img.vue';
     import ChatMessageContent from "JS/components/widgets/chat/chat-message-content.vue";
     import InfiniteScroll from "JS/components/widgets/infinite-scroll.vue";
-    import { Message } from 'JS/api/types';
-import { ChannelType } from 'JS/lib/echo/channel';
+    import { Message, Image, MessageReceivedNotifyRequest, PaginatedResponse } from 'JS/api/types';
+    import { ChannelType } from 'JS/lib/echo/channel';
+    import { ConnectionManagerEvents } from 'JS/lib/echo';
+    import { TypingEvent } from 'JS/echo/types';
     // TODO: User chat notification and 'received' without 'read' on notification.
+
+    type MessagesByKey = {
+        [index: string]: Message
+    }
 
     export default Vue.extend({
         name: 'list-messages',
-        mixins: [events],
         components: {
             InfiniteScroll,
             ChatMessageContent,
@@ -117,42 +121,39 @@ import { ChannelType } from 'JS/lib/echo/channel';
                 type: Object
             }
         },
-        data: () => ({
-            /** @type {string | null} */
+        data: (): {
+            nextUrl: string | null,
+            messages: Message[],
+            messagesByKey: MessagesByKey,
+            busy: boolean,
+            atBottom: boolean,
+            scroll: number,
+            typing: boolean
+        } => ({
             nextUrl: null,
-            /** @type {Message[]} */
             messages: [],
-            /** @type {{[index: string]: Message}} */
             messagesByKey: {},
-            /** @type {boolean} */
             busy: false,
-            /** @type {boolean} */
             atBottom: true,
-            /** @type {number} */
             scroll: 0,
-            /** @type {boolean} */
             typing: false,
         }),
         computed: {
-            /**
-             * @returns {Message[]}
-             */
-            allMessages() {
+            allMessages(): Message[] {
                 return [
                     ...this.messages,
-                    ...Object.entries(this.value)
+                    ...<any>Object.entries(this.value)
                         .filter(([identifier, message]) => this.messagesByKey[identifier] === undefined)
                         .map(([identifier, message]) => message)
                 ];
             },
-            profileImage() {
+            profileImage(): Image | null {
                 return this.user.profile_image ? this.user.profile_image : null;
             },
-            lastMessageID() {
-                //@ts-ignore
+            lastMessageID(): number {
                 return this.allMessages.length > 0 ? this.allMessages[this.allMessages.length - 1].id : -1;
             },
-            lastReadMessageID() {
+            lastReadMessageID(): number {
                 const messages = this.messages;
 
                 // iterating backwards because the message we are looking for is likely to be close to the end
@@ -168,7 +169,7 @@ import { ChannelType } from 'JS/lib/echo/channel';
             }
         },
         watch: {
-            value(val, oldVal) {
+            value(val: MessagesByKey, oldVal: MessagesByKey) {
                 if (val !== oldVal) {
                     const newVal = Object.assign({}, val);
 
@@ -181,14 +182,13 @@ import { ChannelType } from 'JS/lib/echo/channel';
                         } else if (message.awaiting) {
                             // send awaiting
 
-                            api.requestSingle('message-send', {
+                            api.requestSingle<Message>('message-send', {
                                 to: this.user.username,
                                 content: message.content,
                                 additional: message.additional,
                                 identifier: identifier
                             }).then(message => {
                                 // add to messages
-                                //@ts-ignore
                                 this.addMessages([message]);
 
                                 // remove from value
@@ -208,10 +208,10 @@ import { ChannelType } from 'JS/lib/echo/channel';
             }
         },
         methods: {
-            /**
-             * @param {Message} message
-             */
-            isMine(message) {
+            isMine(message: Message) {
+                if (message.mine === true)
+                    return true;
+
                 if (!this.$store.state.user)
                     return false;
 
@@ -221,8 +221,7 @@ import { ChannelType } from 'JS/lib/echo/channel';
                 if (this.nextUrl) {
                     this.busy = true;
 
-                    api.requestByURL(this.nextUrl)
-                        //@ts-ignore
+                    api.requestByURL<PaginatedResponse<Message[]>>(this.nextUrl)
                         .then(result => {
                             this.busy = false;
                             this.addMessages(result.data, true);
@@ -230,10 +229,7 @@ import { ChannelType } from 'JS/lib/echo/channel';
                         })
                 }
             },
-            /**
-             * @param {string} identifier
-             */
-            resendFailed(identifier) {
+            resendFailed(identifier: string) {
                 const msg = this.value[identifier];
                 msg.awaiting = true;
                 msg.error = false;
@@ -243,24 +239,16 @@ import { ChannelType } from 'JS/lib/echo/channel';
                     [identifier]: msg
                 });
             },
-            /**
-             * @param {string} identifier
-             */
-            removeFailed(identifier) {
+            removeFailed(identifier: string) {
                 const newVal = Object.assign({}, this.value);
                 delete newVal[identifier];
                 this.$emit('input', newVal);
             },
-            /**
-             * @param {Message[]} messages
-             * @param {boolean} toTop
-             */
-            addMessages(messages, toTop = false) {
+            addMessages(messages: Message[], toTop = false) {
                 // filter out existing messages
                 messages = messages
                     .filter(message => this.messagesByKey[message.id] === undefined
-                        && message.identifier
-                        && this.messagesByKey[message.identifier] === undefined)
+                        && (!message.identifier || this.messagesByKey[message.identifier] === undefined))
                     .reverse();
 
                 let mine = false;
@@ -301,23 +289,17 @@ import { ChannelType } from 'JS/lib/echo/channel';
 
                 this.scroll = 0;
             },
-            /**
-             * @param {boolean} atBottom
-             */
-            onBottom(atBottom) {
+            onBottom(atBottom: boolean) {
                 this.atBottom = atBottom;
             },
-            /**
-             * @param {Message[]|Message} messages
-             * @param {boolean} read
-             */
-            notifyReceived(messages, read = false) {
+            notifyReceived(messages: Message[] | Message, read = false) {
                 if (!this.$store.state.user || !this.user) {
                     return;
                 }
 
-                let data = {
-                    read: read
+                let data: MessageReceivedNotifyRequest = {
+                    read: read,
+                    ids: []
                 };
 
                 if (!Array.isArray(messages)) {
@@ -337,11 +319,7 @@ import { ChannelType } from 'JS/lib/echo/channel';
                         });
                 }
             },
-            /**
-             * @param {number} messageID
-             * @param {boolean} read
-             */
-            setReceived(messageID, read = false) {
+            setReceived(messageID: number, read = false) {
                 const messages = this.messages;
 
                 // iterating backwards because the message we are looking for is likely to be close to the end
@@ -378,41 +356,28 @@ import { ChannelType } from 'JS/lib/echo/channel';
 
             const name = helpers.getConversationChannelName(this.user.username, this.$store.state.user.username);
 
-            this.$onEchoGlobal('reconnect', () => {
-                this.freshRequest();
-            });
+            this.$onEventListener(echo, ConnectionManagerEvents.Reconnect, this.freshRequest);
 
-            /**
-             * @param {Message} message
-             */
-            const onMessageSent = message => {
+
+            this.$onEcho(ChannelType.Private, name, 'MessageSent', (message: Message) => {
                 this.addMessages([message]);
                 this.typing = false;
                 this.notifyReceived(message, true);
-            };
+            });
 
-            this.$onEcho(ChannelType.Private, name, 'MessageSent', onMessageSent);
-
-            /**
-             * @param {Message} message
-             */
-            const onMessageReceived = message => {
+            const onMessageReceived = (message: Message) => {
                 this.setReceived(message.id, message.read);
             }
 
             this.$onEcho(ChannelType.Private, name, 'MessageReceived', onMessageReceived);
             this.$onEchoWhisper(ChannelType.Private, name, 'received', onMessageReceived);
 
-            /**
-             * @param {{typing: boolean, username: string}} data
-             */
-            const onTyping = (data) => {
+            this.$onEchoWhisper(ChannelType.Private, name, 'typing', (data: TypingEvent) => {
                 if (data.username === this.user.username) {
                     this.typing = data.typing;
                     this.scrollDown();
                 }
-            }
-            this.$onEchoWhisper(ChannelType.Private, name, 'typing', onTyping);
+            });
         },
 
     });

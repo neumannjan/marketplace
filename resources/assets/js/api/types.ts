@@ -37,7 +37,7 @@ export enum OfferStatus {
  * Offer interface
  */
 export interface Offer {
-    id: string,
+    id: number,
     name: string,
     author: User,
     price: string,
@@ -47,14 +47,19 @@ export interface Offer {
     images: Image[]
 }
 
+export interface MessageAdditional {
+    offer?: Offer | number
+}
+
 export interface MessageBase {
     id: number,
     content: string,
-    additional: {
-        offer?: Offer
-    },
+    additional: MessageAdditional,
+    additionalPrivate?: MessageAdditional,
     from: User,
-    read: boolean
+    read: boolean,
+    mine?: boolean,
+    error?: boolean
 }
 
 /**
@@ -63,6 +68,7 @@ export interface MessageBase {
 export interface Message extends MessageBase {
     identifier: string | null,
     to: User,
+    awaiting?: boolean,
     received: boolean,
 }
 
@@ -156,3 +162,5 @@ export interface PaginatedResponse<Data> {
     per_page: number,
     count: number
 }
+
+export type MessageReceivedNotifyRequest = {read?: boolean} & ({id: number} | {ids: number[]})

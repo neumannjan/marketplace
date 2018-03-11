@@ -8,7 +8,7 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
     import Search from "JS/components/widgets/search.vue";
     import route from "JS/components/mixins/route";
     import api from 'JS/api';
@@ -26,16 +26,19 @@
             OfferMasonry,
             Search
         },
-        data: () => ({
+        data: (): {
+            input: string,
+            loading: boolean,
+            results: PaginatedResponse<Offer> | null,
+            isTopLevelRoute: boolean
+        } => ({
             input: '',
             loading: false,
-
-            /** @type {null | PaginatedResponse<Offer>} */
             results: null,
             isTopLevelRoute: true
         }),
         computed: {
-            title() {
+            title(): string {
                 return (this.query ? `${this.query} - ` : '') + 'Search';
             }
         },
@@ -54,11 +57,7 @@
                 });
             },
 
-            /**
-             * @param {string} query
-             * @param {string | null} oldQuery
-             */
-            async performSearch(query, oldQuery = null) {
+            async performSearch(query: string, oldQuery: string | null = null) {
                 if (!query) {
                     this.results = null;
                     this.input = '';
@@ -77,8 +76,7 @@
 
                 this.loading = true;
 
-                //@ts-ignore
-                this.results = await api.requestSingle('search', {
+                this.results = await api.requestSingle<PaginatedResponse<Offer>>('search', {
                     query: query
                 });
 

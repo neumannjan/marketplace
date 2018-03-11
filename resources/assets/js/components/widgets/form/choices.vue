@@ -7,12 +7,10 @@
 <script>
     //@ts-ignore
     import Choices from 'choices.js';
-    import events from 'JS/components/mixins/events';
     import Vue from 'vue';
 
     export default Vue.extend({
         name: "choices",
-        mixins: [events],
         props: {
             items: {
                 type: Array,
@@ -164,7 +162,7 @@
                 this.$emit('input', e.detail.choice.value);
             };
 
-            this.$onJS(choices.passedElement, 'choice', );
+            this.$onJS(choices.passedElement, 'choice', onChoice);
         },
         beforeDestroy() {
             this.choices.destroy();

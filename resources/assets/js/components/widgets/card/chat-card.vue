@@ -39,25 +39,24 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
     import echo from 'JS/echo';
-    import helpers from 'JS/lib/helpers';
-    import events from 'JS/components/mixins/events';
+    import helpers from 'JS/lib/helpers';    
     import appEvents,{ Events } from 'JS/events';
-
     import debounce from 'lodash/debounce';
-
-    import "vue-awesome/icons/arrow-left";
-    import "vue-awesome/icons/close";
+    import { User, Offer, MessageAdditional, Message } from 'JS/api/types';
+    import { ChannelType } from 'JS/lib/echo/channel'
+    import Vue from 'vue';
+    
     import ListConversations from "JS/components/widgets/chat/list-conversations.vue";
     import ListMessages from "JS/components/widgets/chat/list-messages.vue";
     import ProfileImg from "JS/components/widgets/image/profile-img.vue";
-    import { User, Offer } from 'JS/api/types';
-    import { ChannelType } from 'JS/lib/echo/channel';
 
-    export default {
+    import "vue-awesome/icons/arrow-left";
+    import "vue-awesome/icons/close";
+
+    export default Vue.extend({
         name: 'chat-card',
-        mixins: [events],
         components: {
             ListMessages,
             ListConversations,
@@ -73,12 +72,15 @@
                 default: 14
             }
         },
-        data: () => ({
-            /** @type {User | null} */
+        data: (): {
+            user: User | null,
+            message: string,
+            addedMessages: {[index: string]: Message},
+            notifyTyping: (() => void) | null
+        } => ({
             user: null,
             message: '',
             addedMessages: {},
-            /** @type {null | function} */
             notifyTyping: null
         }),
         watch: {
@@ -96,13 +98,8 @@
                 }
             },
 
-            /**
-             * @param {string} content
-             * @param {object} additional
-             * @param {object} additionalPrivate
-             */
-            sendMessage(content, additional = {}, additionalPrivate = {}) {
-                let uniqueId = null;
+            sendMessage(content: string, additional: MessageAdditional = {}, additionalPrivate: MessageAdditional = {}) {
+                let uniqueId: string;
 
                 // create a unique ID for awaited message
                 do {
@@ -118,25 +115,19 @@
                         additionalPrivate: additionalPrivate,
                         mine: true,
                         awaiting: true,
-                    }
+                    } as Message
                 };
             },
             onClose() {
                 this.$emit('close');
             },
 
-            /**
-             * @param {User} user
-             */
-            onSelectUser(user) {
+            onSelectUser(user: User) {
                 this.addedMessages = {};
                 this.user = user;
             },
 
-            /**
-             * @param {boolean} typing
-             */
-            doNotifyTyping(typing) {
+            doNotifyTyping(typing: boolean) {
                 if (!this.$store.state.user || !this.user) {
                     return;
                 }
@@ -162,10 +153,7 @@
                 notifyTypingFalse();
             };
 
-            /**
-             * @param {Offer} offer
-             */
-            const buy = async offer => {
+            const buy = async (offer: Offer) => {
                 if (!this.$store.state.user || offer.author.username === this.$store.state.user.username) {
                     return;
                 }
@@ -188,5 +176,5 @@
 
             this.$onEventListener(appEvents, Events.RequestBuy, buy);
         }
-    }
+    });
 </script>

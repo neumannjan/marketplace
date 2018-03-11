@@ -30,7 +30,7 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
     import InputComponent from 'JS/components/widgets/form/input.vue';
     import SelectComponent from 'JS/components/widgets/form/select.vue';
 
@@ -39,11 +39,12 @@
     import {minLength, required} from 'vuelidate/lib/validators';
 
     import route from 'JS/components/mixins/route';
-    import form from 'JS/components/mixins/form';
+    import FormMixin from 'JS/components/mixins/form';
     import { LoginResponse } from 'JS/api/types';
+    import Vue from 'vue';
 
-    export default {
-        mixins: [route, form],
+    export default Vue.extend({
+        mixins: [route, FormMixin],
         components: {
             'form-input': InputComponent,
             'form-select': SelectComponent
@@ -58,25 +59,18 @@
         }),
         methods: {
             submit() {
-                /**
-                 * @param {LoginResponse} response
-                 */
-                const onSubmit = response => {
+                const formMixin: FormMixin = <any>this;
+                formMixin.$submitForm('login', 'form', (response: LoginResponse) => {
                     if (response.unread_conversations && response.unread_conversations.length > 0) {
                         appEvents.dispatch(Events.UnreadConversations, response.unread_conversations);
                     }
 
                     this.$router.push({name: 'index'});
-                }
-
-                /**
-                 * 
-                 */
-                this.$submitForm('login', 'form', onSubmit);
+                });
             },
         },
         computed: {
-            title() {
+            title(): string {
                 return 'Login';
             }
         },
@@ -92,5 +86,5 @@
                 },
             }
         }
-    };
+    });
 </script>

@@ -4,27 +4,39 @@
     </div>
 </template>
 
-<script>
-    import route from 'JS/components/mixins/route';
-    import routeFetch from 'JS/components/mixins/route-fetch';
+<script lang="ts">
     import api from 'JS/api';
-    import OfferMasonry from 'JS/components/widgets/masonry/data-aware/offer/offer-masonry.vue';
     import router, {routeEvents, RouteEvents} from 'JS/router';
-    import store from 'JS/store';
+    import store,{ State } from 'JS/store';
     import {mapState} from 'vuex';
-import { User, PaginatedResponse, Offer } from 'JS/api/types';
+    import Vue from 'vue';
+    import { User, PaginatedResponse, Offer } from 'JS/api/types';
 
-    /** 
-     * @param {{username: string}} params
-     * @returns {Promise<{user: User | null, startOffers: PaginatedResponse<Offer[]> | null, nextUrl: string | null} | null>}
-     */
-    async function fetch(params) {
-        /** @type {any} */
-        let result = {};
+    import route from 'JS/components/mixins/route';
+    import routeFetch,{ RouteFetchMixinInterface } from 'JS/components/mixins/route-fetch';
+
+    import OfferMasonry from 'JS/components/widgets/masonry/data-aware/offer/offer-masonry.vue';
+
+    interface FetchResult {
+        user: User | null,
+        startOffers: Offer[] | null,
+        nextUrl: string | null,
+        shown: boolean
+    }
+
+    interface FetchParams {
+        username: string
+    }
+
+    async function fetch(params: FetchParams): Promise<FetchResult | null> {
+        let result = {} as FetchResult;
 
         const scopes = store.getters.scope;
 
-        const response = await api.requestComposite({
+        const response = await api.requestComposite<{
+            user: User,
+            offers: PaginatedResponse<Offer[]>
+        }>({
             user: {
                 scope: scopes.user,
                 username: params.username,
@@ -49,18 +61,13 @@ import { User, PaginatedResponse, Offer } from 'JS/api/types';
     }
 
     const dataDef = {
-        /** @type {User | null} */
         user: null,
-
-        /** @type {PaginatedResponse<Offer[]> | null} */
         startOffers: null,
-
-        /** @type {string | null} */
         nextUrl: null,
         shown: true
-    };
+    } as FetchResult;
 
-    export default {
+    export default Vue.extend({
         name: 'user-route',
         mixins: [route, routeFetch(fetch, dataDef)],
         components: {
@@ -72,30 +79,31 @@ import { User, PaginatedResponse, Offer } from 'JS/api/types';
                 required: true
             }
         },
-        data: () => ({...dataDef}),
+        data: (): FetchResult => ({...dataDef}),
         watch: {
-            user(val) {
+            user(val: User | null) {
                 routeEvents.dispatch(RouteEvents.UserNavigation, val);
             },
-            authenticated(auth, oldAuth) {
+            authenticated(auth: boolean, oldAuth: boolean) {
                 if (auth !== oldAuth) {
-                    this.doFetch();
+                    const routeFetchMixin: RouteFetchMixinInterface = <any>this;
+                    routeFetchMixin.doFetch();
                 }
             }
         },
         computed: {
-            title() {
+            title(): string {
                 return this.user ? this.user.display_name : this.username;
             },
-            isThisUser() {
+            isThisUser(): boolean {
                 return this.$store.state.user && this.$store.state.user.username === this.username;
             },
             isTopLevelRoute() {
                 return this.isThisUser;
             },
             ...mapState({
-                authenticated: state => state.is_authenticated
+                authenticated: (state: State) => state.is_authenticated
             })
         },
-    };
+    });
 </script>

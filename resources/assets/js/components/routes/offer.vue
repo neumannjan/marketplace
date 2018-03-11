@@ -1,27 +1,31 @@
 <template>
     <div>
-        <offer-card v-if="offer" :data="offer" :large="true">
+        <offer-card v-if="offer" v-model="offer" :large="true">
             <slot name="header-end" slot="header-end"/>
         </offer-card>
     </div>
 </template>
 
-<script>
+<script lang="ts">
     import route from 'JS/components/mixins/route';
     import routeGuard from 'JS/components/mixins/route-guard';
     import api from 'JS/api';
-    import OfferCard from 'JS/components/widgets/masonry/data-aware/offer/offer-card.vue';
     import store from 'JS/store';
-
     import router from 'JS/router';
     import { Offer } from 'JS/api/types';
+    import Vue from 'vue';
 
-    export default {
+    import OfferCard from 'JS/components/widgets/masonry/data-aware/offer/offer-card.vue';
+
+    interface VueData {
+        offer: Offer | null
+    }
+
+    export default Vue.extend({
         name: "offer-route",
         mixins: [
             route,
-            //@ts-ignore
-            routeGuard('auth', (vm) => (store.state.is_authenticated || !vm.offer || (vm.offer.status === 1 && !vm.offer.expired)))
+            routeGuard('auth', (vm: Vue & VueData) => (store.state.is_authenticated || !vm.offer || (vm.offer.status === 1 && !vm.offer.expired)))
         ],
         components: {
             OfferCard
@@ -32,12 +36,11 @@
                 required: true,
             }
         },
-        data: () => ({
-            /** @type {null | Offer} */
+        data: (): VueData => ({
             offer: null,
         }),
         computed: {
-            title() {
+            title(): string {
                 return this.offer ? this.offer.name : 'Offer'
             }
         },
@@ -48,8 +51,7 @@
                     await this.$nextTick();
                 }
 
-                //@ts-ignore
-                this.offer = await api.requestSingle('offer', {
+                this.offer = await api.requestSingle<Offer>('offer', {
                     scope: this.$store.getters.scope.offer,
                     id: this.id
                 });
@@ -67,5 +69,5 @@
             this.fetch();
             next();
         },
-    }
+    });
 </script>

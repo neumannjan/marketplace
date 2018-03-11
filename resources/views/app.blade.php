@@ -23,7 +23,7 @@
                      */
                     $data = base64_encode(json_encode($data));
                 @endphp
-        const data = "{{ $data }}";
+        window.data = "{{ $data }}";
     </script>
 @endpush
 

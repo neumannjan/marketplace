@@ -21,20 +21,23 @@
     </infinite-scroll>
 </template>
 
-<script>
+<script lang="ts">
     import ProfileImg from "JS/components/widgets/image/profile-img.vue";
-    import events from 'JS/components/mixins/events';
     import api from "JS/api";
     import { Conversation, Message } from 'JS/api/types';
     import appEvents,{ Events } from 'JS/events';
+    import Vue from 'vue';
 
     import "vue-awesome/icons/spinner";
     import InfiniteScroll from "JS/components/widgets/infinite-scroll.vue";
     import ChatMessageContent from "JS/components/widgets/chat/chat-message-content.vue";
 
-    export default {
+    type Conversations = {
+        [index: string]: Conversation
+    }
+
+    export default Vue.extend({
         name: 'list-conversations',
-        mixins: [events],
         components: {
             InfiniteScroll,
             ChatMessageContent,
@@ -46,16 +49,17 @@
                 default: 40
             }
         },
-        data: () => ({
+        data: (): {
+            conversations: Conversations,
+            busy: boolean,
+            nextUrl: string | null
+        } => ({
             conversations: {},
             busy: false,
             nextUrl: '/api/conversations'
         }),
         methods: {
-            /**
-             * @param {Conversation} conversation
-             */
-            onSelect(conversation) {
+            onSelect(conversation: Conversation) {
                 this.$emit('select', conversation.user);
             },
             request() {
@@ -66,7 +70,7 @@
                         .then(result => {
                             this.busy = false;
 
-                            const additional = {};
+                            const additional = {} as Conversations;
 
                             for (let conversation of result.data) {
                                 additional[conversation.user.username] = conversation;
@@ -80,28 +84,20 @@
                         })
                 }
             },
-            /**
-             * @param {Conversation} conversation
-             */
-            isMine(conversation) {
+            isMine(conversation: Conversation) {
                 return this.$store.state.user && this.$store.state.user.username === conversation.from.username;
             }
         },
         created() {
             this.request();
 
-            /**
-             * @param {Conversation} message
-             */
-            const onOtherMessageSent = message => {
+            this.$onEventListener(appEvents, Events.MessageSentOther, (message: Conversation) => {
                 message.user = message.from;
                 this.$delete(this.conversations, message.user.username);
                 this.conversations = {[message.user.username]: message, ...this.conversations};
-            };
-
-            this.$onEventListener(appEvents, Events.MessageSentOther, onOtherMessageSent);
+            });
         }
-    }
+    });
 </script>
 
 <style scoped>

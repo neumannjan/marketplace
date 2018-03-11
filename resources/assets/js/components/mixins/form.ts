@@ -2,6 +2,7 @@ import Api from 'JS/api';
 import helpers from 'JS/lib/helpers';
 import debounce from 'lodash/debounce';
 import Vue from "vue";
+import Component from 'vue-class-component';
 
 interface FormMixinData {
     validation: {
@@ -13,32 +14,23 @@ interface Function {
     (...params: any[]): void
 }
 
-const mixin = Vue.extend({
-    data: (): FormMixinData => ({
-        validation: {}
-    }),
-    methods: {
-        $serverValidationOn(key: string) {
-            let first = key.split('.')[0];
-            if (!<object>this.validation[first])
-                this.$set(this.validation, first, {});
+@Component({})
+class FormMixin extends Vue implements FormMixinData {
+    validation: { [index: string]: object; } = {};
 
-            return helpers.safeGet(this.validation, key);
-        },
+    $serverValidationOn(key: string): object {
+        let first = key.split('.')[0];
+        if (!<object>this.validation[first])
+            this.$set(this.validation, first, {});
 
-        /**
-         * @param {string} requestName
-         * @param {string} selectorKey
-         * @param {function} onSuccess
-         * @param {HTMLFormElement|FormData} data
-         * @param {boolean} bypassValidation
-         */
-        $submitForm(requestName: string, selectorKey: string, onSuccess: Function, data: FormData | false = false,
-                    bypassValidation: boolean = false) {
-            doSubmitForm(this, requestName, selectorKey, onSuccess, data, bypassValidation);
-        }
-    },
-});
+        return helpers.safeGet(this.validation, key);
+    }
+
+    $submitForm(requestName: string, selectorKey: string, onSuccess: Function, data: FormData | false = false,
+                bypassValidation: boolean = false) {
+        doSubmitForm(this, requestName, selectorKey, onSuccess, data, bypassValidation);
+    }
+}
 
 type VM = { [index: string]: any } & Vue & FormMixinData;
 
@@ -72,4 +64,4 @@ const doSubmitForm = debounce((vm: VM, requestName: string, selectorKey: string,
     }
 }, 1000, {leading: true, trailing: false});
 
-export default mixin;
+export default FormMixin;

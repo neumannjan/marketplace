@@ -16,10 +16,13 @@
     </p>
 </template>
 
-<script>
+<script lang="ts">
     import api from 'JS/api';
     import PlaceholderImg from "JS/components/widgets/image/placeholder-img.vue";
     import { Location } from 'vue-router/types/router';
+    import Vue from 'vue';
+    import { User, Message } from 'JS/api/types';
+    import { PropsDefinition } from 'vue/types/options';
 
     const TYPE_REGULAR = 'regular';
     const TYPE_OFFER = 'offer';
@@ -28,9 +31,9 @@
     // Match everything outside of normal chars and " (quote character)
     const NON_ALPHANUMERIC_REGEXP = /([^#-~ |!])/g;
 
-    export default {
-        components: {PlaceholderImg},
+    export default Vue.extend({
         name: "chat-message-content",
+        components: {PlaceholderImg},
         props: {
             message: {
                 type: Object,
@@ -51,11 +54,13 @@
                 default: 32
             }
         },
-        data: () => ({
+        data: (): {
+            content: string,
+            imgSrc: string | null,
+            route: Location | null
+        } => ({
             content: '',
-            /** @type {string | null} */
             imgSrc: null,
-            /** @type {Location | null} */
             route: null
         }),
         watch: {
@@ -115,10 +120,7 @@
                 this.imgSrc = offer.images.length > 0 ? offer.images[0].urls.original : null;
                 this.route = {query: {offer: offer.id}};
             },
-            /**
-             * @param {string} string
-             */
-            escapeString(string) {
+            escapeString(string: string) {
                 if (!string)
                     return '';
 
@@ -126,14 +128,12 @@
                 // https://github.com/angular/angular.js/blob/8d6ac5f3178cb6ead6b3b7526c50cd1c07112097/src/ngSanitize/sanitize.js
                 return string
                     .replace(/&/g, '&amp;')
-                    //@ts-ignore
-                    .replace(SURROGATE_PAIR_REGEXP, function (value) {
+                    .replace(SURROGATE_PAIR_REGEXP, function (value: string) {
                         let hi = value.charCodeAt(0);
                         let low = value.charCodeAt(1);
                         return '&#' + (((hi - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000) + ';';
                     })
-                    //@ts-ignore
-                    .replace(NON_ALPHANUMERIC_REGEXP, function (value) {
+                    .replace(NON_ALPHANUMERIC_REGEXP, function (value: string) {
                         return '&#' + value.charCodeAt(0) + ';';
                     })
                     .replace(/</g, '&lt;')
@@ -141,7 +141,7 @@
             }
         },
         computed: {
-            type() {
+            type(): string {
                 const msg = this.message;
                 if (msg) {
                     if ((msg.additional && msg.additional.offer)
@@ -152,7 +152,7 @@
 
                 return TYPE_REGULAR;
             },
-            user() {
+            user(): User {
                 if (this.message.mine === true)
                     return this.$store.state.user;
 
@@ -162,7 +162,7 @@
         created() {
             this.setContent();
         }
-    }
+    });
 </script>
 
 <style scoped>

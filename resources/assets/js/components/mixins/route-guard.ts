@@ -2,7 +2,7 @@ import Vue from "vue";
 import { Location, Route, NavigationGuard } from "vue-router";
 import router from "JS/router";
 
-export default function (name: string, get: (vm: Vue) => boolean, goTo: Location = {name: 'index'}) {
+export default function<V extends Vue>(name: string, get: (vm: V) => boolean, goTo: Location = {name: 'index'}) {
     name = `guard_${name}`;
 
     return Vue.extend({
@@ -28,7 +28,7 @@ export default function (name: string, get: (vm: Vue) => boolean, goTo: Location
         },
         computed: {
             [name](): boolean {
-                return get(this);
+                return get(<any>this);
             }
         }
     });

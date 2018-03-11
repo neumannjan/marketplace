@@ -19,17 +19,16 @@
     </div>
 </template>
 
-<script>
-    import {routeEvents, RouteEvents} from 'JS/router';
+<script lang="ts">
     import BlurredImg from 'JS/components/widgets/image/blurred-img.vue';
-    import events from 'JS/components/mixins/events';
-
     import ProfileImg from "JS/components/widgets/image/profile-img.vue";
-    import { User } from 'JS/api/types';
 
-    export default {
+    import { User, Image } from 'JS/api/types';
+    import {routeEvents, RouteEvents} from 'JS/router';
+    import Vue from 'vue';
+
+    export default Vue.extend({
         name: 'user-route-navigation',
-        mixins: [events],
         props: {
             imgSize: {
                 type: Number,
@@ -45,31 +44,28 @@
             BlurredImg
         },
         computed: {
-            img() {
-                return this.user && this.user.profile_image ? this.user.profile_image : null;
+            img(): Image | null {
+                if(this.user && this.user.profile_image) {
+                    return this.user.profile_image;
+                } else {
+                    return null;
+                }
             },
             crossOrigin() {
                 return process.env.NODE_ENV === 'development' ? 'anonymous' : undefined;
             }
         },
-        data: () => ({
-            /** @type {User | null} */
+        data: (): {
+            user: User | null,
+            imgEl: HTMLElement | null
+        } => ({
             user: null,
-
-            /** @type {HTMLElement | null} */
             imgEl: null
         }),
         methods: {
-            /** 
-             * @param {ImageData} imageData
-             */
-            modifyBG(imageData) {
+            modifyBG(imageData: ImageData) {
 
-                /**
-                 * @param {ImageData} imgData
-                 * @param {number} contrast
-                 */
-                function contrastImage(imgData, contrast) {  //input range [-100..100]
+                function contrastImage(imgData: ImageData, contrast: number) {  //input range [-100..100]
                     const d = imgData.data;
                     contrast = (contrast / 100) + 1;  //convert to decimal & shift range: [0..2]
                     const intercept = 128 * (1 - contrast);
@@ -84,19 +80,13 @@
                 return contrastImage(imageData, 70);
             },
 
-            /**
-             * @param {HTMLElement} el
-             */
-            onImg(el) {
+            onImg(el: HTMLElement) {
                 this.imgEl = el;
             }
         },
         created() {
 
-            /**
-             * @param {User} user
-             */
-            const setUser = async (user) => {
+            const setUser = async (user: User) => {
                 if (this.user && this.user === user) return;
 
                 if (this.user && user) {
@@ -110,7 +100,7 @@
 
             this.$onEventListener(routeEvents, RouteEvents.UserNavigation, setUser);
         }
-    };
+    });
 </script>
 
 <style lang="scss" type="text/scss" scoped>

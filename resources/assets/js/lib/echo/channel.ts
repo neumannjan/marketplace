@@ -1,5 +1,5 @@
-import {Channel as LaravelEchoChannel, PresenceChannel as _PresenceChannel} from "laravel-echo/src/channel";
-import EventListener, {EventCallback} from "resources/assets/js/lib/event-listener";
+import {Channel as LaravelEchoChannel, PresenceChannel as _PresenceChannel} from "JS/lib/types/laravel-echo/channel";
+import EventListener, {EventCallback} from "JS/lib/event-listener";
 import Echo from "laravel-echo";
 
 export enum ChannelType {
@@ -54,10 +54,11 @@ export class Channel extends EventListener {
     readonly type: ChannelType;
     readonly name: string;
 
-    constructor(type: ChannelType, name: string) {
+    constructor(type: ChannelType, name: string, echo: Echo | null) {
         super();
         this.type = type;
         this.name = name;
+        this.echo = echo;
     }
 
     public set echo(echo: Echo | null) {

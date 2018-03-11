@@ -17,14 +17,12 @@
 
 <script>
     import {mapState} from 'vuex';
-    import events from 'JS/components/mixins/events';
 
     import Alert from "JS/components/widgets/alert.vue";
 
     export default {
         name: 'notifications',
         components: {Alert},
-        mixins: [events],
         data: () => ({
             /** @type {string | null} */
             hoverNotificationID: null,

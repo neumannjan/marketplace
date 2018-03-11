@@ -10,9 +10,11 @@ import * as ElementQueries from 'css-element-queries/src/ElementQueries';
 
 import store, {State} from 'JS/store';
 import router from 'JS/router';
+import {Store} from "vuex";
+
+import EventsMixin, { EventsMixinInterface } from 'JS/components/mixins/events';
 import AppComponent from './components/app.vue';
 import LazyImgComponent from './components/widgets/image/lazy-img.vue';
-import {Store} from "vuex";
 
 declare global {
     interface Window {
@@ -25,10 +27,16 @@ declare global {
 Vue.use(Vuelidate);
 ElementQueries.listen();
 
-// Global Vue components and directives
+// Global Vue components, directives and mixins
 
 Vue.component('icon', IconComponent);
 Vue.component('lazy-img', LazyImgComponent);
+
+Vue.mixin(EventsMixin);
+
+declare module "vue/types/vue" {
+    interface Vue extends EventsMixinInterface {}
+}
 
 Vue.directive('focus', {
     bind(el: HTMLElement, binding: VNodeDirective) {

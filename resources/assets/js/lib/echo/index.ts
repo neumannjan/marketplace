@@ -1,4 +1,4 @@
-import {Channel, ChannelType} from "resources/assets/js/lib/echo/channel";
+import {Channel, ChannelType} from "JS/lib/echo/channel";
 import * as io from 'socket.io-client';
 import Echo from "laravel-echo";
 import EventListener from "JS/lib/event-listener";
@@ -10,7 +10,13 @@ type ChannelMap = {
 }
 
 export enum ConnectionManagerEvents {
-    Connect, Reconnect, Disconnect, ConnectError, ConnectTimeout, Reconnecting, ReconnectFailed
+    Connect = 'Connect',
+    Reconnect = 'Reconnect',
+    Disconnect = 'Disconnect',
+    ConnectError = 'ConnectError',
+    ConnectTimeout = 'ConnectTimeout',
+    Reconnecting = 'Reconnecting',
+    ReconnectFailed = 'ReconnectFailed',
 }
 
 /**
@@ -99,7 +105,7 @@ export default class ConnectionManager extends EventListener<ConnectionManagerEv
      */
     channel(type: ChannelType, name: string) {
         if(!this.channels[type][name]) {
-            return this.channels[type][name] = new Channel(type, name);
+            return this.channels[type][name] = new Channel(type, name, this.echo);
         } else {
             return this.channels[type][name];
         }

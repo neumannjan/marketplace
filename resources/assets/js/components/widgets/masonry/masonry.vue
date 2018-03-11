@@ -12,12 +12,10 @@
 
     //@ts-ignore
     import Masonry from 'masonry-layout';
-    import events from 'JS/components/mixins/events';
     import appEvents,{ Events } from 'JS/events';
 
     export default {
         name: "masonry",
-        mixins: [events],
         components: {
             card: CardComponent
         },
@@ -47,7 +45,8 @@
                 resize: false
             });
 
-            this.$onElResize(this.$refs.masonry, () => this.redraw());
+            //@ts-ignore
+            this.$onElResize(this.$refs.masonry, this.redraw);
 
             this.masonry._positionItem = this.positionItem;
 

@@ -1,6 +1,6 @@
 <template>
     <infinite-scroll-masonry masonry-class="row" :url="url" :start-cards="startCards">
-        <offer-card slot-scope="props" :data="props.data" :show-author="showAuthor"/>
+        <offer-card slot-scope="props" :value="props.data" :show-author="showAuthor"/>
         <div slot="loading" class="masonry-card col-flexible">
             <loading-offer-card/>
         </div>
