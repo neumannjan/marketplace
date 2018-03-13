@@ -91,6 +91,8 @@
     import { ChannelType } from 'JS/lib/echo/channel';
     import { ConnectionManagerEvents } from 'JS/lib/echo';
     import { TypingEvent } from 'JS/echo/types';
+    import appEvents,{ Events } from 'JS/events';
+
     // TODO: User chat notification and 'received' without 'read' on notification.
 
     type MessagesByKey = {
@@ -358,11 +360,12 @@
 
             this.$onEventListener(echo, ConnectionManagerEvents.Reconnect, this.freshRequest);
 
-
-            this.$onEcho(ChannelType.Private, name, 'MessageSent', (message: Message) => {
+            this.$onEventListener(appEvents, Events.MessageSent, (message: Message) => {
                 this.addMessages([message]);
-                this.typing = false;
-                this.notifyReceived(message, true);
+                if(!message.mine) {
+                    this.typing = false;
+                    this.notifyReceived(message, true);
+                }
             });
 
             const onMessageReceived = (message: Message) => {

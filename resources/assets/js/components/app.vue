@@ -41,7 +41,7 @@
 
 <script lang="ts">
     import {cached, CachedRouteComponents, routeEvents, queryModalRouter, RouteEvents, QueryModalRouter} from 'JS/router';
-    import { Conversation } from 'JS/api/types';
+    import { Conversation, Message } from 'JS/api/types';
     import {mapState} from 'vuex';
     import appEvents,{ Events } from "JS/events";
     import store, {initialData, State} from 'JS/store';
@@ -164,7 +164,11 @@
                 });
             };
 
-            this.$onEventListener(appEvents, Events.MessageSentOther, () => addConversationNotification(false));
+            this.$onEventListener(appEvents, Events.MessageSent, (message: Message) => {
+                if(!message.mine) {
+                    addConversationNotification(false);
+                }
+            });
 
             this.$onEventListener(appEvents, Events.UnreadConversations, (conversations: Conversation[]) => {
                 addConversationNotification(conversations.length > 1);

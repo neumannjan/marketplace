@@ -65,7 +65,7 @@ export interface MessageBase {
 /**
  * Message interface
  */
-export interface Message extends MessageBase {
+export interface _Message extends MessageBase {
     identifier: string | null,
     to: User,
     awaiting?: boolean,
@@ -77,6 +77,13 @@ export interface Message extends MessageBase {
  */
 export interface Conversation extends MessageBase {
     user: User
+}
+
+/**
+ * Message interface in which it is already determined whether it belongs to the current user or not.
+ */
+export interface Message extends _Message {
+    mine: boolean
 }
 
 //------------------------------------

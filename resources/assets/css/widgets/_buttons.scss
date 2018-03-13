@@ -3,7 +3,7 @@
   margin: 0 $btn-floating-margin $btn-floating-margin 0;
   width: $btn-floating-size;
   height: $btn-floating-size;
-  overflow: auto;
+  overflow: unset;
   display: flex;
   justify-content: center;
   align-items: center;

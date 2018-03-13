@@ -55,6 +55,7 @@ export default class ConnectionManager extends EventListener<ConnectionManagerEv
         this.echo = echo;
         this.host = host;
         this.csrfToken = csrfToken;
+        console.log('replacing echo');
 
         for(let channel of this) {
             channel.echo = echo;
@@ -63,31 +64,43 @@ export default class ConnectionManager extends EventListener<ConnectionManagerEv
 
     /**
      * Connect or reconnect to a host.
-     * @param {string} host
-     * @param {string} csrfToken
+     * @param {string | null} host
+     * @param {string | null} csrfToken
+     * @param {boolean} forceReconnect
      */
-    connect(host: string, csrfToken: string) {
-        if (host !== this.host || csrfToken !== this.csrfToken) {
-            const echo = new Echo({
-                broadcaster: 'socket.io',
-                host: host,
-                csrfToken: csrfToken,
-                client: io
-            });
-    
-            this.replaceEcho(echo, host, csrfToken);
-    
-            if (echo.connector.socket) {
-                const socket: EventTarget = echo.connector.socket;
-                socket.addEventListener('connect', () => this.dispatch(ConnectionManagerEvents.Connect));
-                socket.addEventListener('connect_error', e => this.dispatch(ConnectionManagerEvents.ConnectError, e));
-                socket.addEventListener('connect_timeout', e => this.dispatch(ConnectionManagerEvents.ConnectTimeout, e));
-                socket.addEventListener('reconnect', () => this.dispatch(ConnectionManagerEvents.Reconnect));
-                socket.addEventListener('reconnecting', num => this.dispatch(ConnectionManagerEvents.Reconnecting, num));
-                socket.addEventListener('reconnect_failed', e => this.dispatch(ConnectionManagerEvents.ReconnectFailed, e));
-                socket.addEventListener('disconnect', reason => this.dispatch(ConnectionManagerEvents.Disconnect, reason));
+    connect(host: string | null, csrfToken: string | null, forceReconnect: boolean = false) {
+        if (host && csrfToken) {
+            if (forceReconnect || host !== this.host || csrfToken !== this.csrfToken) {
+                const echo = new Echo({
+                    broadcaster: 'socket.io',
+                    host: host,
+                    csrfToken: csrfToken,
+                    client: io
+                });
+        
+                this.replaceEcho(echo, host, csrfToken);
+        
+                if (echo.connector.socket) {
+                    const socket: EventTarget = echo.connector.socket;
+                    socket.addEventListener('connect', () => this.dispatch(ConnectionManagerEvents.Connect));
+                    socket.addEventListener('connect_error', e => this.dispatch(ConnectionManagerEvents.ConnectError, e));
+                    socket.addEventListener('connect_timeout', e => this.dispatch(ConnectionManagerEvents.ConnectTimeout, e));
+                    socket.addEventListener('reconnect', () => this.dispatch(ConnectionManagerEvents.Reconnect));
+                    socket.addEventListener('reconnecting', num => this.dispatch(ConnectionManagerEvents.Reconnecting, num));
+                    socket.addEventListener('reconnect_failed', e => this.dispatch(ConnectionManagerEvents.ReconnectFailed, e));
+                    socket.addEventListener('disconnect', reason => this.dispatch(ConnectionManagerEvents.Disconnect, reason));
+                }
             }
+        } else {
+            throw "Failed to connect to websocket: missing host or token."
         }
+    }
+
+    /**
+     * Reconnect to the host.
+     */
+    reconnect() {
+        this.connect(this.host, this.csrfToken, true);
     }
 
     /**

@@ -91,10 +91,12 @@
         created() {
             this.request();
 
-            this.$onEventListener(appEvents, Events.MessageSentOther, (message: Conversation) => {
-                message.user = message.from;
-                this.$delete(this.conversations, message.user.username);
-                this.conversations = {[message.user.username]: message, ...this.conversations};
+            this.$onEventListener(appEvents, Events.MessageSent, (message: Message & Conversation) => {
+                if(!message.mine) {
+                    message.user = message.from;
+                    this.$delete(this.conversations, message.user.username);
+                    this.conversations = {[message.user.username]: message, ...this.conversations};
+                }
             });
         }
     });
