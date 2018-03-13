@@ -2,7 +2,7 @@ import ConnectionManager, {ConnectionManagerEvents} from "JS/lib/echo";
 import api from "JS/api";
 import store from "JS/store";
 import {ChannelType} from "JS/lib/echo/channel";
-import {_Message, User, Message} from "JS/api/types";
+import {Message, User} from "JS/api/types";
 import events, {Events} from "JS/events";
 import { StoreWatcher } from "JS/echo/store-watcher";
 
@@ -82,7 +82,6 @@ storeWatcher.onStoreState('user', (payload) => {
 
     if (username !== oldUsername) {
         if (oldUsername) {
-            console.log('clear old user');
             echo.leave(getUserChannelName(oldUsername));
         }
 
@@ -90,11 +89,10 @@ storeWatcher.onStoreState('user', (payload) => {
         
         if (username) {
             const channel = echo.channel(ChannelType.Private, getUserChannelName(username));
-            console.log('set new user');
             
-            channel.on('MessageSent', (message: _Message) => {
+            channel.on('MessageSent', (message: Message) => {
                 message.mine = (message.mine === true || (!!store.state.user && store.state.user.username === message.from.username));
-                events.dispatch(Events.MessageSent, message as Message);
+                events.dispatch(Events.MessageSent, message);
             });
         }
     }

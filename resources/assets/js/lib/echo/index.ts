@@ -55,7 +55,6 @@ export default class ConnectionManager extends EventListener<ConnectionManagerEv
         this.echo = echo;
         this.host = host;
         this.csrfToken = csrfToken;
-        console.log('replacing echo');
 
         for(let channel of this) {
             channel.echo = echo;
