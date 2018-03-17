@@ -18,7 +18,7 @@ import LazyImgComponent from './components/widgets/image/lazy-img.vue';
 
 declare global {
     interface Window {
-        data: string
+        data: string | undefined
     }
 }
 

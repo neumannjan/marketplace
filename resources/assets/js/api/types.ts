@@ -55,20 +55,17 @@ export interface MessageBase {
     id: number,
     content: string,
     additional: MessageAdditional,
-    additionalPrivate?: MessageAdditional,
     from: User,
     read: boolean,
-    mine?: boolean,
-    error?: boolean
+    mine?: boolean
 }
 
 /**
  * Message interface
  */
 export interface Message extends MessageBase {
-    identifier: string | null,
+    identifier?: string,    
     to: User,
-    awaiting?: boolean,
     received: boolean,
 }
 
@@ -154,13 +151,25 @@ export interface LoginResponse {
     unread_conversations: Conversation[]
 }
 
-export interface PaginatedResponse<Data> {
+export interface PaginatedResponse<Data extends Array<any>> {
     data: Data,
     first_page_url: string,
-    next_page_url: string,
+    next_page_url: string | null,
     path: string,
     per_page: number,
     count: number
+}
+
+/**
+ * Response that can request more data
+ */
+export type ContinuousResponse<T> = {
+    data: T;
+
+    /**
+     * Fetch more data
+     */
+    fetchMore: (() => Promise<ContinuousResponse<T>>) | null;
 }
 
 export type MessageReceivedNotifyRequest = {read?: boolean} & ({id: number} | {ids: number[]})

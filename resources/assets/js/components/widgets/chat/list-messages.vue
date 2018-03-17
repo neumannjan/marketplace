@@ -1,82 +1,91 @@
 <template>
-    <infinite-scroll top :busy="busy" @request="request" @bottom="onBottom" v-model="scroll" class="d-flex flex-column">
-        <div v-if="busy" class="text-center">
-            <icon name="spinner" label="Loading" pulse/>
-        </div>
-        <div v-for="message in allMessages"
-             :key="message.identifier ? message.identifier : message.id" class="mb-2">
-            <div v-if="isMine(message)" class="chat-item-right d-flex flex-column align-items-end">
-                <!-- TODO label -->
-                <div class="d-flex flex-row align-items-end">
-                    <div class="d-flex flex-row-reverse align-items-end ml-auto">
-                        <div :class="['card text-white', message.error ? 'bg-danger' : 'bg-primary']"
-                             :style="{borderRadius: `${imgSize/2}px`}">
-                            <chat-message-content class="m-0" :message="message" :white="true" :img-size="imgSize"/>
+    <div>
+        <infinite-scroll top :busy="busy" @request="request" @bottom="onBottom" v-model="scroll" class="flex-grow d-flex flex-column overflow-scroll-y p-2">
+            <div v-if="busy" class="text-center">
+                <icon name="spinner" label="Loading" pulse/>
+            </div>
+            <div v-for="message in allMessages"
+                :key="message.identifier ? message.identifier : message.id" class="mb-2">
+                <div v-if="message.mine" class="chat-item-right d-flex flex-column align-items-end">
+                    <!-- TODO label -->
+                    <div class="d-flex flex-row align-items-end">
+                        <div class="d-flex flex-row-reverse align-items-end ml-auto">
+                            <div :class="['card text-white', message.error ? 'bg-danger' : 'bg-primary']"
+                                :style="{borderRadius: `${imgSize/2}px`}">
+                                <chat-message-content class="m-0" :message="message" :white="true" :img-size="imgSize"/>
+                            </div>
+                            <ul v-if="message.error" class="list-unstyled mb-0 mr-1 line-height-1">
+                                <li>
+                                    <small><i><a href="#" @click.prevent="resendFailed(message.identifier)">Resend</a></i>
+                                    </small>
+                                </li>
+                                <li>
+                                    <small><i><a href="#" @click.prevent="removeFailed(message.identifier)">Remove</a></i>
+                                    </small>
+                                </li>
+                            </ul>
                         </div>
-                        <ul v-if="message.error" class="list-unstyled mb-0 mr-1 line-height-1">
-                            <li>
-                                <small><i><a href="#" @click.prevent="resendFailed(message.identifier)">Resend</a></i>
-                                </small>
-                            </li>
-                            <li>
-                                <small><i><a href="#" @click.prevent="removeFailed(message.identifier)">Remove</a></i>
-                                </small>
-                            </li>
-                        </ul>
+                        <div class="chat-item-indicator mx-2">
+                            <profile-img v-if="lastReadMessageID === message.id"
+                                        :img="profileImage ? profileImage : {}"
+                                        :img-size="indicatorSize"/>
+                            <icon v-else-if="message.error" name="times-circle" :scale="indicatorSize/16"
+                                class="text-danger"/>
+                            <icon v-else-if="!message.read && message.received" name="check-circle"
+                                :scale="indicatorSize/16"
+                                class="text-primary"/>
+                            <icon v-else-if="message.awaiting" name="circle-o" :scale="indicatorSize/16"
+                                class="text-primary"/>
+                            <icon v-else-if="!message.read && !message.received" name="check-circle-o"
+                                :scale="indicatorSize/16"
+                                class="text-primary"/>
+                            <div v-else :style="{width: `${indicatorSize}px`, height: '1px'}"></div>
+                        </div>
                     </div>
-                    <div class="chat-item-indicator mx-2">
-                        <profile-img v-if="lastReadMessageID === message.id"
-                                     :img="profileImage ? profileImage : {}"
-                                     :img-size="indicatorSize"/>
-                        <icon v-else-if="message.error" name="times-circle" :scale="indicatorSize/16"
-                              class="text-danger"/>
-                        <icon v-else-if="!message.read && message.received" name="check-circle"
-                              :scale="indicatorSize/16"
-                              class="text-primary"/>
-                        <icon v-else-if="message.awaiting" name="circle-o" :scale="indicatorSize/16"
-                              class="text-primary"/>
-                        <icon v-else-if="!message.read && !message.received" name="check-circle-o"
-                              :scale="indicatorSize/16"
-                              class="text-primary"/>
-                        <div v-else :style="{width: `${indicatorSize}px`, height: '1px'}"></div>
-                    </div>
+                    <small v-if="message.error" class="text-danger"><i>Message send failed.</i></small>
                 </div>
-                <small v-if="message.error" class="text-danger"><i>Message send failed.</i></small>
-            </div>
-            <div v-else class="d-flex flex-row align-items-end">
-                <div class="chat-item-left d-flex flex-row">
-                    <router-link :to="{name: 'user', params: {username: user.username}}" class="mx-2">
-                        <profile-img :img="profileImage ? profileImage : {}" :img-size="imgSize"/>
-                    </router-link>
-                    <div class="card bg-light" :style="{borderRadius: `${imgSize/2}px`}">
-                        <chat-message-content class="m-0" :message="message" :img-size="imgSize"/>
+                <div v-else class="d-flex flex-row align-items-end">
+                    <div class="chat-item-left d-flex flex-row">
+                        <router-link :to="{name: 'user', params: {username: user.username}}" class="mx-2">
+                            <profile-img :img="profileImage ? profileImage : {}" :img-size="imgSize"/>
+                        </router-link>
+                        <div class="card bg-light" :style="{borderRadius: `${imgSize/2}px`}">
+                            <chat-message-content class="m-0" :message="message" :img-size="imgSize"/>
+                        </div>
                     </div>
-                </div>
-                <div v-if="lastReadMessageID === message.id" class="chat-item-indicator ml-auto">
-                    <profile-img :img="profileImage ? profileImage : {}"
-                                 :img-size="indicatorSize"/>
+                    <div v-if="lastReadMessageID === message.id" class="chat-item-indicator ml-auto">
+                        <profile-img :img="profileImage ? profileImage : {}"
+                                    :img-size="indicatorSize"/>
+                    </div>
                 </div>
             </div>
+            <!-- Typing indicator -->
+            <div v-if="typing" class="chat-item-left mb-2 d-flex mr-auto flex-row-reverse align-items-end">
+                <div class="card bg-light" :style="{borderRadius: `${imgSize/2}px`}">
+                    <div class="chat-item-typing">
+                        <div></div>
+                    </div>
+                </div>
+                <router-link :to="{name: 'user', params: {username: user.username}}" class="mx-2">
+                    <profile-img :img="profileImage ? profileImage : {}" :img-size="imgSize"/>
+                </router-link>
+            </div>
+        </infinite-scroll>
+        <div class="p-1">
+            <form @submit.prevent="sendInputMessage" class="input-group input-group-sm">
+                <input type="text" class="form-control" placeholder="Type a message" v-model="message" v-focus>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-primary" type="submit">Send</button>
+                </div>
+            </form>
         </div>
-        <!-- Typing indicator -->
-        <div v-if="typing" class="chat-item-left mb-2 d-flex mr-auto flex-row-reverse align-items-end">
-            <div class="card bg-light" :style="{borderRadius: `${imgSize/2}px`}">
-                <div class="chat-item-typing">
-                    <div></div>
-                </div>
-            </div>
-            <router-link :to="{name: 'user', params: {username: user.username}}" class="mx-2">
-                <profile-img :img="profileImage ? profileImage : {}" :img-size="imgSize"/>
-            </router-link>
-        </div>
-    </infinite-scroll>
+    </div>
 </template>
 
 <script lang="ts">
-    import api from 'JS/api';
-    import echo from 'JS/echo';
-    import helpers from 'JS/lib/helpers';
-    import Vue from 'vue';
+    import ProfileImg from 'JS/components/widgets/image/profile-img.vue';
+    import ChatMessageContent from "JS/components/widgets/chat/chat-message-content.vue";
+    import InfiniteScroll from "JS/components/widgets/infinite-scroll.vue";
 
     import "vue-awesome/icons/spinner";
     import "vue-awesome/icons/check-circle-o";
@@ -84,306 +93,324 @@
     import "vue-awesome/icons/circle-o";
     import "vue-awesome/icons/times-circle";
 
-    import ProfileImg from 'JS/components/widgets/image/profile-img.vue';
-    import ChatMessageContent from "JS/components/widgets/chat/chat-message-content.vue";
-    import InfiniteScroll from "JS/components/widgets/infinite-scroll.vue";
-    import { Message, Image, MessageReceivedNotifyRequest, PaginatedResponse } from 'JS/api/types';
+    import api from 'JS/api';
+    import echo from 'JS/echo';
+    import messaging from 'JS/api/messaging';
+    import debounce from 'lodash/debounce';
+    import { Image, MessageReceivedNotifyRequest, PaginatedResponse, User, MessageAdditional, ContinuousResponse } from 'JS/api/types';
     import { ChannelType } from 'JS/lib/echo/channel';
     import { ConnectionManagerEvents } from 'JS/lib/echo';
     import { TypingEvent } from 'JS/echo/types';
     import appEvents,{ Events } from 'JS/events';
+    import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
+    import { NormalizedMessage } from 'JS/api/messaging/typings';
+    import { MessageSender } from 'JS/components/widgets/chat/types';
+    import { ConversationMediator, ConversationEvents } from 'JS/api/messaging/conversation';
 
     // TODO: User chat notification and 'received' without 'read' on notification.
+
+    interface LocalMessage {
+        identifier: string,
+        content: string,
+        additional: MessageAdditional,
+        additionalPrivate: MessageAdditional,
+        mine: boolean,
+        awaiting: boolean,
+        error?: boolean
+    }
+
+    type Message = LocalMessage | NormalizedMessage;
 
     type MessagesByKey = {
         [index: string]: Message
     }
 
-    export default Vue.extend({
+    @Component({
         name: 'list-messages',
         components: {
             InfiniteScroll,
             ChatMessageContent,
             ProfileImg
-        },
-        props: {
-            user: {
-                type: Object,
-                required: true
-            },
-            imgSize: {
-                type: Number,
-                default: 32
-            },
-            indicatorSize: {
-                type: Number,
-                default: 14
-            },
-            value: {
-                type: Object
-            }
-        },
-        data: (): {
-            nextUrl: string | null,
-            messages: Message[],
-            messagesByKey: MessagesByKey,
-            busy: boolean,
-            atBottom: boolean,
-            scroll: number,
-            typing: boolean
-        } => ({
-            nextUrl: null,
-            messages: [],
-            messagesByKey: {},
-            busy: false,
-            atBottom: true,
-            scroll: 0,
-            typing: false,
-        }),
-        computed: {
-            allMessages(): Message[] {
-                return [
-                    ...this.messages,
-                    ...<any>Object.entries(this.value)
-                        .filter(([identifier, message]) => this.messagesByKey[identifier] === undefined)
-                        .map(([identifier, message]) => message)
-                ];
-            },
-            profileImage(): Image | null {
-                return this.user.profile_image ? this.user.profile_image : null;
-            },
-            lastMessageID(): number {
-                return this.allMessages.length > 0 ? this.allMessages[this.allMessages.length - 1].id : -1;
-            },
-            lastReadMessageID(): number {
-                const messages = this.messages;
+        }
+    })
+    export default class ListMessages extends Vue {
+        @Prop({type: Object, required: true})
+        user!: User;
 
-                // iterating backwards because the message we are looking for is likely to be close to the end
-                for (let i = messages.length - 1; i >= 0; --i) {
-                    const message = messages[i];
+        @Prop({type: Number, default: 32})
+        imgSize: number = 32;
 
-                    if (message.read) {
-                        return message.id;
-                    }
-                }
+        @Prop({type: Number, default: 14})
+        indicatorSize: number = 14;
+     
+        cm: ConversationMediator | null = null;
 
-                return -1;
-            }
-        },
-        watch: {
-            value(val: MessagesByKey, oldVal: MessagesByKey) {
-                if (val !== oldVal) {
-                    const newVal = Object.assign({}, val);
+        nextFetch: (() => Promise<ContinuousResponse<NormalizedMessage[]>>) | null = null;
 
-                    for (let [identifier, message] of Object.entries(val)) {
-                        if (this.messagesByKey[identifier] !== undefined) {
-                            // remove existing
+        message: string = '';
 
-                            delete newVal[identifier];
-                            this.$emit('input', newVal);
-                        } else if (message.awaiting) {
-                            // send awaiting
+        addedMessages: {[index: string]: LocalMessage} = {};
 
-                            api.requestSingle<Message>('message-send', {
-                                to: this.user.username,
-                                content: message.content,
-                                additional: message.additional,
-                                identifier: identifier
-                            }).then(message => {
-                                // add to messages
-                                this.addMessages([message]);
+        notifyTyping: (() => void) | null = null;
 
-                                // remove from value
-                                delete newVal[identifier];
-                                this.$emit('input', newVal);
-                            }).catch(reason => {
-                                // set as error
-                                newVal[identifier].awaiting = false;
-                                newVal[identifier].error = true;
-                                newVal[identifier].identifier = identifier;
-                                this.$emit('input', newVal);
-                                this.scrollDown(true);
-                            });
-                        }
-                    }
+        messages: NormalizedMessage[] = [];
+
+        messagesByKey: MessagesByKey = {};
+
+        busy: boolean = false;
+
+        atBottom: boolean = true;
+
+        scroll: number = 0;
+
+        typing: boolean = false;
+
+        get allMessages(): Message[] {
+            return [
+                ...this.messages,
+                ...Object.entries(this.addedMessages)
+                    .filter(([identifier, message]) => this.messagesByKey[identifier] === undefined)
+                    .map(([identifier, message]) => message)
+            ];
+        }
+        
+        get profileImage(): Image | null {
+            return this.user.profile_image ? this.user.profile_image : null;
+        }
+
+        get lastReadMessageID(): number {
+            const messages = this.messages;
+
+            // iterating backwards because the message we are looking for is likely to be close to the end
+            for (let i = messages.length - 1; i >= 0; --i) {
+                const message = messages[i];
+
+                if (message.read) {
+                    return message.id;
                 }
             }
-        },
-        methods: {
-            isMine(message: Message) {
-                if (message.mine === true)
-                    return true;
 
-                if (!this.$store.state.user)
-                    return false;
+            return -1;
+        }
 
-                return message.from.username === this.$store.state.user.username;
-            },
-            request() {
-                if (this.nextUrl) {
-                    this.busy = true;
-
-                    api.requestByURL<PaginatedResponse<Message[]>>(this.nextUrl)
-                        .then(result => {
-                            this.busy = false;
-                            this.addMessages(result.data, true);
-                            this.nextUrl = result.next_page_url;
-                        })
-                }
-            },
-            resendFailed(identifier: string) {
-                const msg = this.value[identifier];
-                msg.awaiting = true;
-                msg.error = false;
-
-                this.$emit('input', {
-                    ...this.value,
-                    [identifier]: msg
-                });
-            },
-            removeFailed(identifier: string) {
-                const newVal = Object.assign({}, this.value);
-                delete newVal[identifier];
-                this.$emit('input', newVal);
-            },
-            addMessages(messages: Message[], toTop = false) {
-                // filter out existing messages
-                messages = messages
-                    .filter(message => this.messagesByKey[message.id] === undefined
-                        && (!message.identifier || this.messagesByKey[message.identifier] === undefined))
-                    .reverse();
-
-                let mine = false;
-
-                // add messages
-                if (messages.length > 0) {
-                    if (toTop) {
-                        this.messages = [...messages, ...this.messages];
-                    } else {
-                        this.messages = [...this.messages, ...messages];
-                    }
-
-                    for (let message of messages) {
-                        this.messagesByKey[message.id] = message;
-
-                        if (message.identifier) {
-                            this.messagesByKey[message.identifier] = message;
-                        }
-
-                        if (message.to === this.user.username) {
-                            mine = true;
-                        }
-                    }
-                }
-
-                // scroll down
-                this.scrollDown(mine);
-            },
-            async scrollDown(force = false) {
-                if (!force && !this.atBottom) {
-                    return;
-                }
-
-                if (this.scroll === 0) {
-                    this.scroll = 1;
-                    await this.$nextTick();
-                }
-
-                this.scroll = 0;
-            },
-            onBottom(atBottom: boolean) {
-                this.atBottom = atBottom;
-            },
-            notifyReceived(messages: Message[] | Message, read = false) {
-                if (!this.$store.state.user || !this.user) {
-                    return;
-                }
-
-                let data: MessageReceivedNotifyRequest = {
-                    read: read,
-                    ids: []
-                };
-
-                if (!Array.isArray(messages)) {
-                    messages = [messages];
-                }
-
-                data.ids = messages.map(m => m.id);
-
-                api.requestSingle('message-received-notify', data);
-
-                const name = helpers.getConversationChannelName(this.user.username, this.$store.state.user.username);
-                for (let message of messages) {
-                    echo.channel(ChannelType.Private, name)
-                        .whisper('received', {
-                            id: message.id,
-                            read: read
-                        });
-                }
-            },
-            setReceived(messageID: number, read = false) {
-                const messages = this.messages;
-
-                // iterating backwards because the message we are looking for is likely to be close to the end
-                for (let i = messages.length - 1; i >= 0; --i) {
-                    const message = messages[i];
-
-                    if (message.id === messageID) {
-                        message.received = true;
-                        message.read = read;
-                        break;
-                    }
-                }
-
-                this.messages = messages;
-            },
-            freshRequest() {
-                if (!this.$store.state.user || !this.user) {
-                    return;
-                }
-
-                this.nextUrl = `/api/messages?with=${this.user.username}`;
-                this.messages = [];
-                this.messagesByKey = {};
-
-                this.request();
+        @Watch('message')
+        onMessageChange() {
+            if (this.notifyTyping) {
+                this.notifyTyping();
             }
-        },
+        }
+
         created() {
-            if (!this.$store.state.user || !this.user) {
+            if (!this.$store.state.user) {
                 return;
             }
 
+            this.cm = messaging.joinConversation(this.user);
+
+            const messageSender: MessageSender = this.sendMessage;
+
+            this.$emit('sender', this.sendMessage);
+
             this.freshRequest();
 
-            const name = helpers.getConversationChannelName(this.user.username, this.$store.state.user.username);
+            this.cm.on(ConversationEvents.Reconnect, this.freshRequest);
 
-            this.$onEventListener(echo, ConnectionManagerEvents.Reconnect, this.freshRequest);
+            this.cm.on(ConversationEvents.Message, (message) => {
+                this.addMessages(message);
 
-            this.$onEventListener(appEvents, Events.MessageSent, (message: Message) => {
-                this.addMessages([message]);
                 if(!message.mine) {
                     this.typing = false;
-                    this.notifyReceived(message, true);
                 }
             });
 
-            const onMessageReceived = (message: Message) => {
-                this.setReceived(message.id, message.read);
+            this.cm.on(ConversationEvents.Received, payload => {
+                this.setReceived(payload.id, payload.read);
+            });
+
+            this.cm.on(ConversationEvents.Typing, typing => {
+                this.typing = typing;
+                this.scrollDown();
+            });
+
+            //
+            const notifyTypingTrue = debounce(() => {
+                if(this.cm) {
+                    this.cm.sendTyping(this.message !== '');
+                }
+            }, 200, {
+                leading: true,
+                trailing: true
+            });
+
+            const notifyTypingFalse = debounce(() => {
+                if(this.cm) {
+                    this.cm.sendTyping(false);
+                }
+            }, 10000);
+
+            this.notifyTyping = () => {
+                notifyTypingTrue();
+                notifyTypingFalse();
+            };
+        }
+
+        freshRequest() {
+            if (!this.$store.state.user || !this.cm) {
+                return;
             }
 
-            this.$onEcho(ChannelType.Private, name, 'MessageReceived', onMessageReceived);
-            this.$onEchoWhisper(ChannelType.Private, name, 'received', onMessageReceived);
+            this.nextFetch = this.cm.fetchMessages();
+            this.messages = [];
+            this.messagesByKey = {};
 
-            this.$onEchoWhisper(ChannelType.Private, name, 'typing', (data: TypingEvent) => {
-                if (data.username === this.user.username) {
-                    this.typing = data.typing;
-                    this.scrollDown();
+            this.request();
+        }
+
+        async request() {
+            if (this.nextFetch) {
+                this.busy = true;
+
+                const result = await this.nextFetch();
+
+                this.busy = false;
+                this.addMessages(result.data, true);
+                this.nextFetch = result.fetchMore;
+            }
+        }
+
+        destroyed() {
+            if(this.cm) {
+                this.cm.dispose();
+            }
+        }
+
+        sendInputMessage() {
+            if (this.message) {
+                this.sendMessage(this.message);
+                this.message = '';
+            }
+        }
+        
+        sendMessage(content: string, additional: MessageAdditional = {}, additionalPrivate: MessageAdditional = {}) {
+            if(this.cm) {
+                const intermediate = this.cm.sendMessage(content, additional);
+
+                const message: LocalMessage = {
+                    identifier: intermediate.identifier,
+                    content: content,
+                    additional: additional,
+                    additionalPrivate: additionalPrivate,
+                    mine: true,
+                    awaiting: true
+                };
+
+                // save to added messages
+                this.addedMessages = {
+                    ...this.addedMessages,
+                    [intermediate.identifier]: message
+                };
+
+                this.$nextTick(() => {
+                    this.scrollDown(true);
+                });
+
+                intermediate.promise
+                .then(message => {
+                    Vue.delete(this.addedMessages, intermediate.identifier);
+                    this.$nextTick(() => this.addMessages(message));
+                })
+                .catch(reason => {
+                    message.awaiting = false;
+                    message.error = true;
+                    Vue.set(this.addedMessages, intermediate.identifier, message);
+                    this.scrollDown(true);
+                });
+            }
+        }
+
+        resendFailed(identifier: string) {
+            const msg = this.addedMessages[identifier];
+            msg.awaiting = true;
+            msg.error = false;
+
+            Vue.set(this.addedMessages, identifier, msg);
+        }
+
+        removeFailed(identifier: string) {
+            Vue.delete(this.addedMessages, identifier);
+        }
+
+        addMessages(messages: NormalizedMessage[] | NormalizedMessage, toTop = false) {
+            if(!Array.isArray(messages))
+                messages = [messages];
+
+            // filter out existing messages
+            messages = messages
+                .filter(message => this.messagesByKey[message.id] === undefined
+                    && (!message.identifier || this.messagesByKey[message.identifier] === undefined))
+                .reverse();
+
+            let mine = false;
+
+            // add messages
+            if (messages.length > 0) {
+                if (toTop) {
+                    this.messages = [...messages, ...this.messages];
+                } else {
+                    this.messages = [...this.messages, ...messages];
                 }
-            });
-        },
 
-    });
+                for (let message of messages) {
+                    this.messagesByKey[message.id] = message;
+
+                    if (message.identifier) {
+                        this.messagesByKey[message.identifier] = message;
+                    }
+
+                    if (message.mine) {
+                        mine = true;
+                    }
+                }
+            }
+
+            // scroll down
+            this.scrollDown(mine);
+        }
+
+        async scrollDown(force = false) {
+            if (!force && !this.atBottom) {
+                return;
+            }
+
+            if (this.scroll === 0) {
+                this.scroll = 1;
+                await this.$nextTick();
+            }
+
+            this.scroll = 0;
+        }
+
+        onBottom(atBottom: boolean) {
+            this.atBottom = atBottom;
+        }
+
+        setReceived(messageID: number, read = false) {
+            const messages = this.messages;
+
+            // iterating backwards because the message we are looking for is likely to be close to the end
+            for (let i = messages.length - 1; i >= 0; --i) {
+                const message = messages[i];
+
+                if (message.id === messageID) {
+                    message.received = true;
+                    message.read = read;
+                    break;
+                }
+            }
+
+            this.messages = messages;
+        }
+    }
 </script>
 
 <style scoped lang="scss" type="text/scss">

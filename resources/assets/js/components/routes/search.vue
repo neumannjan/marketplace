@@ -29,7 +29,7 @@
         data: (): {
             input: string,
             loading: boolean,
-            results: PaginatedResponse<Offer> | null,
+            results: PaginatedResponse<Offer[]> | null,
             isTopLevelRoute: boolean
         } => ({
             input: '',
@@ -76,7 +76,7 @@
 
                 this.loading = true;
 
-                this.results = await api.requestSingle<PaginatedResponse<Offer>>('search', {
+                this.results = await api.requestSingle<PaginatedResponse<Offer[]>>('search', {
                     query: query
                 });
 

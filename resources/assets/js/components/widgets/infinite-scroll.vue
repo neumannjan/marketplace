@@ -80,7 +80,9 @@
                 default: 'div'
             },
             top: Boolean,
-            value: {}
+            value: {
+                type: Number
+            }
         },
         data: () => ({
             /** @type {(() => void) | null} */

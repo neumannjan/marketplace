@@ -3,9 +3,10 @@
 import ResizeSensor from 'css-element-queries/src/ResizeSensor';
 import echo from 'JS/echo';
 import Vue from "vue";
-import _EventListener from "JS/lib/event-listener";
+import EventListener, { EventListenerPayloads } from "JS/lib/event-listener";
 import {ChannelType} from "JS/lib/echo/channel";
-import Component from "vue-class-component";
+import Component from "JS/components/class-component";
+import events, { Events } from 'JS/events';
 
 interface Function {
     (...params: any[]): void
@@ -45,13 +46,11 @@ export interface EventsMixinInterface {
     /**
      * Bind an EventListener event to this Vue instance.
      * @param eventListener {EventListener} The event listener
-     * @param event {Names} The event name/type
+     * @param event {Events} The event name/type
      * @param listener {Function}
      */
-    $onEventListener<
-        EventListener extends _EventListener<string | number> = _EventListener<string | number>,
-        Names extends string | number = string | number>
-    (eventListener: EventListener, event: Names, listener: Function): void;
+    $onEventListener<Payloads extends EventListenerPayloads, Events extends keyof Payloads, T extends Events>
+    (eventListener: EventListener<Payloads, Events>, event: T, listener: (payload: any) => void, whisper?: boolean): void;
 
     /**
      * Bind an Echo event to this Vue instance.
@@ -111,10 +110,8 @@ export default class EventsMixin extends Vue implements EventsMixinInterface {
         );
     }
 
-    $onEventListener<
-        EventListener extends _EventListener<string | number> = _EventListener<string | number>,
-        Names extends string | number = string | number>
-    (eventListener: EventListener, event: Names, listener: Function) {
+    $onEventListener<Payloads extends EventListenerPayloads, Events extends keyof Payloads, T extends Events>
+    (eventListener: EventListener<Payloads, Events>, event: T, listener: (payload: any) => void, whisper?: boolean): void {
         this.$attachEvent(
             () => eventListener.on(event, listener),
             () => eventListener.off(event, listener),

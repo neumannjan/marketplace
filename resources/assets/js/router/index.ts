@@ -24,7 +24,8 @@ import OfferModal from '../components/routes/modal/offer-modal.vue';
 
 import store from 'JS/store';
 import EventListener from "JS/lib/event-listener";
-import { events } from 'JS/events';
+import { User } from 'JS/api/types';
+import events from 'JS/events';
 
 Vue.use(VueRouter);
 
@@ -59,10 +60,16 @@ export enum RouteEvents {
     UserNavigation = 'UserNavigation',
 }
 
+interface Payloads {
+    [RouteEvents.Loading]: undefined,
+    [RouteEvents.Loaded]: undefined,
+    [RouteEvents.UserNavigation]: User | null
+}
+
 /**
  * Route events
  */
-export const routeEvents = new EventListener<RouteEvents>();
+export const routeEvents = new EventListener<Payloads, RouteEvents>();
 
 /**
  * Interface for a router that displays modal windows based on route query parameters

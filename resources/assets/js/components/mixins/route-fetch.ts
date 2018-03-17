@@ -1,6 +1,6 @@
 import {routeEvents, RouteEvents, routesMatch} from 'JS/router';
 import Vue from "vue";
-import Component from 'vue-class-component';
+import Component from 'JS/components/class-component';
 import { Route, NavigationGuard, RawLocation } from 'vue-router';
 
 type Result = {
@@ -28,12 +28,12 @@ export default function <R extends Result, P extends object>
             await vm.$nextTick();
         }
 
-        routeEvents.dispatch(RouteEvents.Loaded);
+        routeEvents.dispatch(RouteEvents.Loaded, undefined);
     }
 
     function notifyLoading() {
         if (before)
-            routeEvents.dispatch(RouteEvents.Loading);
+            routeEvents.dispatch(RouteEvents.Loading, undefined);
     }
 
     @Component({})

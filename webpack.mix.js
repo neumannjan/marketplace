@@ -19,7 +19,7 @@ mix
     .sass('resources/assets/css/app.scss', 'public/css')
     .sourceMaps()
     .version()
-    .browserSync({proxy: {target: 'localhost:8080', ws: true}})
+    //.browserSync({proxy: {target: 'localhost:8080', ws: true}})
     .disableNotifications()
     .webpackConfig({
         plugins: [

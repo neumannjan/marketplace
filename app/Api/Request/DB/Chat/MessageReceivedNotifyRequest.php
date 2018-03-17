@@ -32,7 +32,7 @@ class MessageReceivedNotifyRequest extends Request
      */
     protected function shouldResolve()
     {
-        return parent::shouldResolve();
+        return $this->guard->check();
     }
 
     /**
@@ -87,7 +87,7 @@ class MessageReceivedNotifyRequest extends Request
 
             $message->save();
 
-            broadcast(new MessageReceived($message))->toOthers();
+            broadcast(new MessageReceived($message, $user))->toOthers();
         }
 
         return new Response(true, []);

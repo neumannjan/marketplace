@@ -19,7 +19,7 @@
 
 <script lang="ts">
     import { Prop, Vue } from "vue-property-decorator";
-    import Component from 'vue-class-component';
+    import Component from 'JS/components/class-component';
     import router,{ routesMatch } from 'JS/router';
     import { Location } from 'vue-router/types/router';
 
@@ -37,13 +37,13 @@
         params: {[index: string]: string} | undefined;
 
         @Prop({type: String, required: true})
-        label!: string | undefined;
+        label!: string;
 
         @Prop({type: String})
         icon: string | undefined;
 
         @Prop({type: Boolean, default: false})
-        activeAnyParams!: boolean | undefined;
+        activeAnyParams!: boolean;
 
         @Prop({})
         callback: ((e: MouseEvent) => void) | undefined;

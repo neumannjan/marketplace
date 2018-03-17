@@ -20,12 +20,16 @@
     import appEvents,{ Events, RequestPopupPayload } from 'JS/events';
     import router,{ getRouteMainComponent } from 'JS/router';
     import { Message, Conversation } from 'JS/api/types';
+    import messaging from 'JS/api/messaging';
+    import { NormalizedMessage } from 'JS/api/messaging/typings';
 
     import 'vue-awesome/icons/plus';
     import 'vue-awesome/icons/comment';
     import 'vue-awesome/icons/bell';
     import 'vue-awesome/icons/angle-left';
     import 'vue-awesome/icons/angle-up';
+    import notifications,{ NotificationTypes } from 'JS/notifications';
+    import { NotificationEvents } from 'JS/lib/notifications';
 
     enum ButtonTypes {
         Add = 'add',
@@ -72,7 +76,7 @@
             scrollY: number,
             backShown: boolean,
             popperEl: HTMLElement | null,
-            lastSelectedButton: string | null,
+            lastSelectedButton: ButtonTypes | null,
             buttonEls: HTMLElement[] | null,
             chatConversations: ChatConversations
         } => ({
@@ -93,9 +97,12 @@
                 this.isSideA = true;
             },
             buttons(buttons: Button[]) {
-                if (this.popperEl && !buttons.map(b => b.id).includes(<ButtonTypes>this.lastSelectedButton)) {
+                if (this.popperEl && (!this.lastSelectedButton || !buttons.map(b => b.id).includes(this.lastSelectedButton))) {
                     this.popperEl = null;
                 }
+            },
+            popperEl(val: boolean) {
+                notifications.forceHidden(NotificationTypes.NewMessages, val && this.lastSelectedButton === ButtonTypes.Chat);
             }
         },
         computed: {
@@ -191,7 +198,7 @@
                 }
             });
 
-            this.$onEventListener(appEvents, Events.MessageSentOther, (message: Message) => {
+            this.$onEventListener(appEvents, Events.MessageSent, (message: NormalizedMessage) => {
                 if (!this.isOpen(ButtonTypes.Chat)) {
                     this.$set(this.chatConversations, message.from.username, true);
                 }

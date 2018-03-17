@@ -94,7 +94,7 @@ class MessagesRequest extends MultiRequest
                 $message->read = true;
                 $message->save();
 
-                broadcast(new MessageReceived($message))->toOthers();
+                broadcast(new MessageReceived($message, $user))->toOthers();
             }
         }
     }

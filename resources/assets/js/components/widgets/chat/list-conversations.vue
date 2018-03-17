@@ -1,5 +1,5 @@
 <template>
-    <infinite-scroll as="ul" class="list-group list-group-flush"
+    <infinite-scroll as="ul" class="list-group list-group-flush overflow-scroll-y p-2"
                      :busy="busy" @request="request">
         <li v-for="conversation in conversations" :key="conversation.id" class="list-group-item px-2">
             <a href="#" @click.prevent="onSelect(conversation)" class="chat-user no-decoration">

@@ -9,13 +9,14 @@
     import router, {routeEvents, RouteEvents} from 'JS/router';
     import store,{ State } from 'JS/store';
     import {mapState} from 'vuex';
-    import Vue from 'vue';
     import { User, PaginatedResponse, Offer } from 'JS/api/types';
+    import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 
     import route from 'JS/components/mixins/route';
     import routeFetch,{ RouteFetchMixinInterface } from 'JS/components/mixins/route-fetch';
 
     import OfferMasonry from 'JS/components/widgets/masonry/data-aware/offer/offer-masonry.vue';
+    import { mixins } from 'JS/components/class-component';
 
     interface FetchResult {
         user: User | null,
@@ -60,50 +61,55 @@
         return result;
     }
 
-    const dataDef = {
+    const dataDef: FetchResult = {
         user: null,
         startOffers: null,
         nextUrl: null,
         shown: true
-    } as FetchResult;
+    };
 
-    export default Vue.extend({
+
+    @Component({
         name: 'user-route',
-        mixins: [route, routeFetch(fetch, dataDef)],
         components: {
             OfferMasonry
         },
-        props: {
-            username: {
-                type: String,
-                required: true
+    })
+    export default class UserRoute extends mixins(route, routeFetch(fetch, dataDef)) implements FetchResult {
+        @Prop({type: String, required: true})
+        username!: string;
+
+        user: User | null = null;
+        startOffers: Offer[] | null = null;
+        nextUrl: string | null = null;
+        shown: boolean = true;
+
+        @Watch('user')
+        onUserChange(val: User | null) {
+            routeEvents.dispatch(RouteEvents.UserNavigation, val);
+        }
+
+        @Watch('authenticated')
+        onAuthenticatedChange(auth: boolean, oldAuth: boolean) {
+            if (auth !== oldAuth) {
+                this.doFetch();
             }
-        },
-        data: (): FetchResult => ({...dataDef}),
-        watch: {
-            user(val: User | null) {
-                routeEvents.dispatch(RouteEvents.UserNavigation, val);
-            },
-            authenticated(auth: boolean, oldAuth: boolean) {
-                if (auth !== oldAuth) {
-                    const routeFetchMixin: RouteFetchMixinInterface = <any>this;
-                    routeFetchMixin.doFetch();
-                }
-            }
-        },
-        computed: {
-            title(): string {
-                return this.user ? this.user.display_name : this.username;
-            },
-            isThisUser(): boolean {
-                return this.$store.state.user && this.$store.state.user.username === this.username;
-            },
-            isTopLevelRoute() {
-                return this.isThisUser;
-            },
-            ...mapState({
-                authenticated: (state: State) => state.is_authenticated
-            })
-        },
-    });
+        }
+
+        get title(): string {
+            return this.user ? this.user.display_name : this.username;
+        }
+
+        get isThisUser(): boolean {
+            return this.$store.state.user && this.$store.state.user.username === this.username;
+        }
+
+        get isTopLevelRoute(): boolean {
+            return this.isThisUser;
+        }
+
+        get authenticated(): boolean {
+            return store.state.is_authenticated;
+        }
+    }
 </script>

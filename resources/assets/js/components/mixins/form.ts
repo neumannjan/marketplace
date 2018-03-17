@@ -1,8 +1,8 @@
 import Api from 'JS/api';
-import helpers from 'JS/lib/helpers';
+import { safeGet } from 'JS/lib/helpers';
 import debounce from 'lodash/debounce';
 import Vue from "vue";
-import Component from 'vue-class-component';
+import Component from 'JS/components/class-component';
 
 interface FormMixinData {
     validation: {
@@ -23,7 +23,7 @@ class FormMixin extends Vue implements FormMixinData {
         if (!<object>this.validation[first])
             this.$set(this.validation, first, {});
 
-        return helpers.safeGet(this.validation, key);
+        return safeGet(this.validation, key);
     }
 
     $submitForm(requestName: string, selectorKey: string, onSuccess: Function, data: FormData | false = false,

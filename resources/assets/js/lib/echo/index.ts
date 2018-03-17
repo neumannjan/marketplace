@@ -19,10 +19,20 @@ export enum ConnectionManagerEvents {
     ReconnectFailed = 'ReconnectFailed',
 }
 
+interface Payloads {
+    [ConnectionManagerEvents.Connect]: undefined,
+    [ConnectionManagerEvents.Reconnect]: undefined,
+    [ConnectionManagerEvents.Disconnect]: string,
+    [ConnectionManagerEvents.ConnectError]: any,
+    [ConnectionManagerEvents.ConnectTimeout]: any,
+    [ConnectionManagerEvents.Reconnecting]: number,
+    [ConnectionManagerEvents.ReconnectFailed]: any,
+}
+
 /**
  * Laravel Echo connection manager
  */
-export default class ConnectionManager extends EventListener<ConnectionManagerEvents> implements Iterable<Channel> {
+export default class ConnectionManager extends EventListener<Payloads, ConnectionManagerEvents> implements Iterable<Channel> {
     protected channels: ChannelMap = {
         presence: {},
         private: {},
@@ -81,13 +91,13 @@ export default class ConnectionManager extends EventListener<ConnectionManagerEv
         
                 if (echo.connector.socket) {
                     const socket: EventTarget = echo.connector.socket;
-                    socket.addEventListener('connect', () => this.dispatch(ConnectionManagerEvents.Connect));
+                    socket.addEventListener('connect', () => this.dispatch(ConnectionManagerEvents.Connect, undefined));
                     socket.addEventListener('connect_error', e => this.dispatch(ConnectionManagerEvents.ConnectError, e));
                     socket.addEventListener('connect_timeout', e => this.dispatch(ConnectionManagerEvents.ConnectTimeout, e));
-                    socket.addEventListener('reconnect', () => this.dispatch(ConnectionManagerEvents.Reconnect));
-                    socket.addEventListener('reconnecting', num => this.dispatch(ConnectionManagerEvents.Reconnecting, num));
+                    socket.addEventListener('reconnect', () => this.dispatch(ConnectionManagerEvents.Reconnect, undefined));
+                    socket.addEventListener('reconnecting', num => this.dispatch(ConnectionManagerEvents.Reconnecting, <any>num));
                     socket.addEventListener('reconnect_failed', e => this.dispatch(ConnectionManagerEvents.ReconnectFailed, e));
-                    socket.addEventListener('disconnect', reason => this.dispatch(ConnectionManagerEvents.Disconnect, reason));
+                    socket.addEventListener('disconnect', reason => this.dispatch(ConnectionManagerEvents.Disconnect, <any>reason));
                 }
             }
         } else {

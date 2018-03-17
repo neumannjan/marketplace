@@ -1,4 +1,5 @@
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
+import { ContinuousResponse, PaginatedResponse } from 'JS/api/types';
 
 /**
  * API error
@@ -222,5 +223,22 @@ export default abstract class Api<GlobalResponseData extends Data = object> {
                 .then(then)
                 .catch(this.promiseHttpErrorReject(reject));
         });
+    }
+
+    /**
+     * Request to an endpoint that returns a paginated response. Next results can be easily requested.
+     * @param url {string}
+     */
+    requestPaginated<ResponseData extends Data[] = Data[], OriginalResponseData extends Data[] = ResponseData>
+    (url: string, modifyDataCallback?: (data: OriginalResponseData) => ResponseData): () => Promise<ContinuousResponse<ResponseData>> {
+        return async () => {
+            const result = await this.requestByURL<PaginatedResponse<OriginalResponseData>>(url);
+            const nextUrl = result.next_page_url;
+
+            return {
+                data: modifyDataCallback ? modifyDataCallback(result.data) : <any>result.data,
+                fetchMore: nextUrl ? this.requestPaginated<ResponseData, OriginalResponseData>(nextUrl, modifyDataCallback) : null
+            };
+        }
     }
 }

@@ -44,8 +44,11 @@
     import { Conversation, Message } from 'JS/api/types';
     import {mapState} from 'vuex';
     import appEvents,{ Events } from "JS/events";
-    import store, {initialData, State} from 'JS/store';
+    import store, {State} from 'JS/store';
     import Vue from 'vue';
+    import notifications,{ NotificationTypes } from 'JS/notifications';
+    import { Route } from 'vue-router/types/router';
+    import initial from 'JS/store/initial';
 
     import TopNav from './widgets/nav/vertical/top-nav.vue';
     import BottomNav from './widgets/nav/vertical/bottom-nav.vue';
@@ -55,7 +58,6 @@
     import Modal from './widgets/modal.vue';
     import ModalRouter from "JS/components/widgets/modal-router.vue";
     import Notifications from "JS/components/widgets/notifications.vue";
-    import { Route } from 'vue-router/types/router';
 
     interface Has {
         navigation?: boolean
@@ -70,7 +72,7 @@
             BottomNav,
             FlashMessages,
             MainFloatingBtns,
-            Modal
+            Modal,
         },
         data: (): {
             keepAlive: typeof cached,
@@ -117,19 +119,22 @@
         },
         methods: {
             notifyConnection(isHttp: boolean, value: boolean) {
-                const type = isHttp ? 'http' : 'websocket';
+                const getID = (isHttp: boolean, value: boolean) => {
+                    if(isHttp) {
+                        return value ? NotificationTypes.HttpConnection : NotificationTypes.NoHttpConnection;
+                    } else {
+                        return value ? NotificationTypes.WebsocketConnection : NotificationTypes.NoWebsocketConnection;
+                    }
+                }
 
-                /** @param {boolean} value */
-                const getValue = (value: boolean) => value ? 'true' : 'false';
-
-                store.commit('addNotification', {
-                    id: `connection-${type}-${getValue(value)}`,
+                notifications.showNotification({
+                    id: getID(isHttp, value),
                     persistent: !value,
-                    message: `TODO message: ${type} connection ${value ? 'regained' : 'lost'}.`,
+                    message: `TODO message: ${isHttp ? 'http' : 'websocket'} connection ${value ? 'regained' : 'lost'}.`,
                     type: value ? 'success' : 'danger'
                 });
 
-                store.commit('removeNotification', `connection-${type}-${getValue(!value)}`);
+                notifications.hideNotification(getID(isHttp, !value));
 
                 if (isHttp && value) {
                     this.restoreConnection();
@@ -150,28 +155,30 @@
             this.$onEventListener(routeEvents, RouteEvents.Loading, () => this.loading = true);
             this.$onEventListener(routeEvents, RouteEvents.Loaded, () => this.loading = false);
 
-            if (initialData && initialData.unread_conversations && initialData.unread_conversations.length > 0) {
-                appEvents.dispatch(Events.UnreadConversations, initialData.unread_conversations);
+            const unreadConversations = initial.get('unread_conversations', []);
+
+            if(unreadConversations && unreadConversations.length > 0) {
+                appEvents.dispatch(Events.UnreadConversations, unreadConversations);
             }
         },
         created() {
-            const addConversationNotification = (plural: boolean) => {
+            const addNotification = (amount: number) => {
                 //TODO translate
-                store.commit('addNotification', {
-                    id: 'chat',
-                    message: plural ? 'You have new messages.' : 'You have a new message.',
+                notifications.showNotification({
+                    id: NotificationTypes.NewMessages,
+                    message: amount > 1 ? 'You have new messages.' : 'You have a new message.',
                     type: 'primary'
                 });
             };
 
             this.$onEventListener(appEvents, Events.MessageSent, (message: Message) => {
                 if(!message.mine) {
-                    addConversationNotification(false);
+                    addNotification(1);
                 }
             });
 
             this.$onEventListener(appEvents, Events.UnreadConversations, (conversations: Conversation[]) => {
-                addConversationNotification(conversations.length > 1);
+                addNotification(conversations.length);
             });
         }
     });

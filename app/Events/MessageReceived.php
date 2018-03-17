@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Message;
+use App\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -15,14 +16,22 @@ class MessageReceived implements ShouldBroadcast
     /** @var Message */
     protected $message;
 
+    /** 
+     * User that received the message
+     * @var User
+     */
+    protected $user;
+
     /**
      * Create a new event instance.
      *
      * @param Message $message
+     * @param User $user User that received the message
      */
-    public function __construct(Message $message)
+    public function __construct(Message $message, User $user)
     {
         $this->message = $message;
+        $this->user = $user;
     }
 
     /**
@@ -44,7 +53,8 @@ class MessageReceived implements ShouldBroadcast
     {
         return [
             'id' => $this->message->id,
-            'read' => $this->message->read
+            'read' => $this->message->read,
+            'username' => $this->user->username
         ];
     }
 }

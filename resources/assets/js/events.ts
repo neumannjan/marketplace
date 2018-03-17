@@ -1,4 +1,6 @@
 import EventListener from "JS/lib/event-listener";
+import { NormalizedMessage } from "JS/api/messaging/typings";
+import { Conversation } from "JS/api/types";
 
 export enum Events {
     MessageSent = 'MessageSent',
@@ -8,7 +10,15 @@ export enum Events {
     ViewportChange = 'ViewportChange',
 }
 
-export const events = new EventListener<Events>();
+interface Payloads {
+    [Events.MessageSent]: NormalizedMessage,
+    [Events.UnreadConversations]: Conversation[],
+    [Events.RequestPopup]: any,
+    [Events.RequestBuy]: any,
+    [Events.ViewportChange]: boolean,
+}
+
+export const events = new EventListener<Payloads, Events>();
 export default events;
 
 // event types

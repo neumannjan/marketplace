@@ -15,7 +15,7 @@
     import Blur from 'stackblur-canvas';
     import Velocity from 'velocity-animate';
     import throttle from 'lodash/throttle';
-    import helpers from 'JS/lib/helpers';
+    import { awaitEvent } from 'JS/lib/helpers';
     import appEvents,{ Events } from 'JS/events';
     import CanvasPool from 'JS/components/widgets/image/canvas-pool';
     import Vue from 'vue';
@@ -35,8 +35,8 @@
             return Promise.resolve(img);
 
         return new Promise((resolve, reject) => {
-            helpers.awaitEvent(img, 'load').then(e => resolve(img));
-            helpers.awaitEvent(img, 'error').then(e => reject(e));
+            awaitEvent(img, 'load').then(e => resolve(img));
+            awaitEvent(img, 'error').then(e => reject(e));
         });
     };
 

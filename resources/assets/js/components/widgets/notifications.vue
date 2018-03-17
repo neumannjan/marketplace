@@ -19,6 +19,7 @@
     import {mapState} from 'vuex';
 
     import Alert from "JS/components/widgets/alert.vue";
+import notifications from 'JS/notifications';
 
     export default {
         name: 'notifications',
@@ -53,7 +54,7 @@
              * @param {string} id
              */
             closeNotification(id) {
-                this.$store.commit('removeNotification', id);
+                notifications.hideNotification(id);
 
                 if (this.hoverNotificationID === id) {
                     this.hoverNotificationID = null;

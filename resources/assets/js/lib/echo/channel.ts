@@ -1,5 +1,5 @@
 import {Channel as LaravelEchoChannel, PresenceChannel as _PresenceChannel} from "JS/lib/types/laravel-echo/channel";
-import EventListener, {EventCallback} from "JS/lib/event-listener";
+import EventListener, { EventCallback } from "JS/lib/event-listener";
 import Echo from "laravel-echo";
 
 export enum ChannelType {
@@ -71,7 +71,7 @@ export class Channel extends EventListener {
         return this._echo;
     }
 
-    on(name: string, callback: EventCallback): void {
+    on(name: string, callback: EventCallback<any, any>): void {
         super.on(name, callback);
         this.attachListeners(name);
     }
@@ -93,13 +93,13 @@ export class Channel extends EventListener {
                     name = name.substr(WHISPER_EVENT_PREFIX.length);
 
                     //dispatch on websocket event
-                    this.channel.listenForWhisper(name, (...params: any[]) => {
-                        this.dispatchWhisper(name, ...params);
+                    this.channel.listenForWhisper(name, (payload: any) => {
+                        this.dispatchWhisper(name, payload);
                     });
                 } else {
                     //dispatch on websocket event
-                    this.channel.listen(name, (...params: any[]) => {
-                        this.dispatch(name, ...params);
+                    this.channel.listen(name, (payload: any) => {
+                        this.dispatch(name, payload);
                     });
                 }
             }
@@ -111,7 +111,7 @@ export class Channel extends EventListener {
      * @param {string} name
      * @param {EventCallback} callback
      */
-    onWhisper(name: string, callback: EventCallback) {
+    onWhisper(name: string, callback: EventCallback<any, any>) {
         this.on(WHISPER_EVENT_PREFIX + name, callback);
     }
 
@@ -120,7 +120,7 @@ export class Channel extends EventListener {
      * @param {string} name
      * @param {EventCallback} callback
      */
-    offWhisper(name: string, callback: EventCallback) {
+    offWhisper(name: string, callback: EventCallback<any, any>) {
         this.off(WHISPER_EVENT_PREFIX + name, callback);
     }
 
@@ -129,7 +129,7 @@ export class Channel extends EventListener {
      * @param {string} name
      * @param {EventCallback} callback
      */
-    onceWhisper(name: string, callback: EventCallback) {
+    onceWhisper(name: string, callback: EventCallback<any, any>) {
         this.once(WHISPER_EVENT_PREFIX + name, callback);
     }
 
@@ -138,8 +138,8 @@ export class Channel extends EventListener {
      * @param {string} name
      * @param params Parameters to pass to each callback.
      */
-    dispatchWhisper(name: string, ...params: any[]) {
-        this.dispatch(WHISPER_EVENT_PREFIX + name, ...params);
+    dispatchWhisper(name: string, payload: any) {
+        this.dispatch(WHISPER_EVENT_PREFIX + name, payload);
     }
 
     /**

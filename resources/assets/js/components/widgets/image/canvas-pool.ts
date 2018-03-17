@@ -1,4 +1,4 @@
-import Pool from 'JS/tools/pool';
+import Pool from 'JS/lib/pool';
 
 type CanvasPoolDefinition = [number, number];
 

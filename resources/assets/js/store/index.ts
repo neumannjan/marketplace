@@ -11,6 +11,8 @@ import {
     RequestScope
 } from "JS/api/types";
 import {StrictStore} from "JS/lib/strict-store";
+import { Notification } from "JS/lib/notifications/typings";
+import initial from './initial';
 
 Vue.use(Vuex);
 
@@ -38,15 +40,6 @@ function updateObject<T extends {[key: string]: any} = {[key: string]: any}>
     }
 
     return to;
-}
-
-/**
- * Notification interface
- */
-export interface Notification {
-    id: string,
-    message: string,
-    type: string
 }
 
 /**
@@ -181,11 +174,7 @@ const store: StrictStore<State, typeof mutations, typeof actions, typeof getters
     getters
 });
 
-export const initialData = window.data ? (<InitialResponse> JSON.parse(atob(window.data))) : null;
-
-if (initialData) {
-    store.commit('global', initialData);
-}
+store.commit('global', initial.state);
 
 export const helpers = {
     /**
