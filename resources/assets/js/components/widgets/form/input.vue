@@ -9,7 +9,7 @@
                   :placeholder="placeholder"
                   :title="label"
                   @input="onInput" @blur="touch()" v-focus="autofocus"
-                  v-model="value"
+                  :value="value"
                   :required="required" :aria-describedby="hint ? hintId : false"></textarea>
         <input v-else
                :id="id" :name="name" :type="type" :class="['form-control', {'is-invalid': error, 'is-valid': valid}]"
@@ -29,7 +29,10 @@
 <script>
     import ValidationMessage from "JS/components/widgets/form/validation-message.vue";
 
+    let nextID = 0;
+
     export default {
+        name: 'form-input',
         components: {ValidationMessage},
         data: () => ({
             /** @type {string | null} */
@@ -87,7 +90,7 @@
             },
         },
         mounted() {
-            this.id = 'input-' + this._uid;
+            this.id = 'input-' + nextID++;
         }
     };
 </script>

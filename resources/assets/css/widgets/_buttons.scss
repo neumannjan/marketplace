@@ -53,10 +53,8 @@
   line-height: 1;
 }
 
-.card-header {
-  .btn {
-    margin: #{-1*$btn-padding-y} #{-1*$btn-padding-x};
-  }
+.card-header .btn-wrapper {
+  margin: #{-1*$btn-padding-y} #{-1*$btn-padding-x};
 }
 
 a.no-decoration:hover {

@@ -64,6 +64,7 @@
     }
 
     export default Vue.extend({
+        name: 'app',
         components: {
             Notifications,
             ModalRouter,

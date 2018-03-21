@@ -1,17 +1,20 @@
 <template>
     <div>
-        <div :class="['form-check', {disabled: disabled}]">
-            <label class="form-check-label">
-                <input class="form-check-input" :type="type" :value="value"
+        <div :class="['custom-control custom-checkbox', {disabled: disabled}]">
+            <input class="custom-control-input" :type="type" :value="value" :id="id"
                        @change="$emit('input', $event.target.checked)" :disabled="disabled">
-                <slot/>
-            </label>
+            <label class="custom-control-label" :for="id"><slot/></label>
         </div>
     </div>
 </template>
 
-<script>
-    export default {
+<script lang="ts">
+    import Vue from "vue";
+
+    let nextID = 0;
+
+    export default Vue.extend({
+        name: 'form-select',
         props: {
             disabled: Boolean,
             value: Boolean,
@@ -19,6 +22,14 @@
                 type: String,
                 default: 'checkbox'
             }
+        },
+        data: (): {
+            id: string | null
+        } => ({
+            id: null
+        }),
+        created() {
+            this.id = 'select-' + nextID++;
         }
-    };
+    });
 </script>

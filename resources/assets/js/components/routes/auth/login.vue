@@ -31,8 +31,8 @@
 </template>
 
 <script lang="ts">
-    import InputComponent from 'JS/components/widgets/form/input.vue';
-    import SelectComponent from 'JS/components/widgets/form/select.vue';
+    import FormInput from 'JS/components/widgets/form/input.vue';
+    import FormSelect from 'JS/components/widgets/form/select.vue';
 
     import appEvents,{ Events } from "JS/events";
 
@@ -46,8 +46,8 @@
     export default Vue.extend({
         mixins: [route, FormMixin],
         components: {
-            'form-input': InputComponent,
-            'form-select': SelectComponent
+            FormInput,
+            FormSelect
         },
         data: () => ({
             isTopLevelRoute: true,

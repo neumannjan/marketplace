@@ -18,74 +18,81 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
     import ValidationMessage from "JS/components/widgets/form/validation-message.vue";
-    import Vue from "vue";
+    import { Vue, Component, Prop } from "vue-property-decorator";
+    import { Vuelidate } from "vuelidate";
 
-    export default Vue.extend({
-        components: {ValidationMessage},
+    let nextID = 0;
+
+    @Component({
         name: "file-select",
-        data: () => ({
-            /** @type {string | null} */
-            id: null,
-            /** @type {Array | null} */
-            files: null,
-            /** @type {boolean} */
-            valid: false,
-            /** @type {null | boolean} */
-            error: null,
-        }),
-        props: {
-            name: String,
-            label: {
-                type: String,
-                default: null
-            },
-            multiple: Boolean,
-            validation: Object,
-            serverValidation: Array,
-            errorLabel: String,
-            accept: String
+        components: {
+            ValidationMessage
         },
-        computed: {
-            fileInfo() {
-                //TODO
+    })
+    export default class FileSelect extends Vue {
+        id: string | null = null;
+        files: FileList | null = null;
+        valid: boolean = false;
+        error: null | boolean = null;
 
-                const amount = this.files ? this.files.length : 0;
+        @Prop({type: String})
+        name: string | undefined;
 
-                let amountStr;
+        @Prop({type: String, default: null})
+        label!: string | null;
 
-                switch (amount) {
-                    case 0:
-                        if (this.multiple)
-                            return "Choose files";
-                        else
-                            return "Choose file";
-                    case 1:
-                        amountStr = '1 file';
-                        break;
-                    default:
-                        //@ts-ignore
-                        amountStr = `${this.files.length} files`;
-                        break;
-                }
+        @Prop({type: Boolean})
+        multiple: boolean | undefined;
 
-                return `${amountStr}: ${Array.from(this.files).map(file => file.name).join(' | ')}`;
+        @Prop({type: Object})
+        validation: Vuelidate | undefined;
+
+        @Prop({type: Array})
+        serverValidation: Array<string> | undefined;
+
+        @Prop({type: String})
+        errorLabel: string | undefined
+
+        @Prop({type: String})
+        accept: string | undefined
+
+        get fileInfo() {
+            //TODO
+
+            const amount = this.files ? this.files.length : 0;
+
+            let amountStr;
+
+            switch (amount) {
+                case 0:
+                    if (this.multiple)
+                        return "Choose files";
+                    else
+                        return "Choose file";
+                case 1:
+                    amountStr = '1 file';
+                    break;
+                default:
+                    amountStr = `${amount} files`;
+                    break;
             }
-        },
-        methods: {
-            /** @param {any} e */
-            async onFileChange(e) {
-                this.files = null;
-                await this.$nextTick();
-                this.files = e.target.files || e.dataTransfer.files;
-                this.$emit('input', this.files);
-            }
-        },
-        mounted() {
-            this.id = 'input-' + this._uid;
+
+            return `${amountStr}: ${Array.from(this.files!).map(file => file.name).join(' | ')}`;
         }
-    });
+
+        async onFileChange(e: Event) {
+            this.files = null;
+            await this.$nextTick();
+            this.files = (e.target as HTMLInputElement).files || (e as DragEvent).dataTransfer.files;
+            this.$emit('input', this.files);
+        }
+
+        mounted() {
+            this.id = 'input-' + nextID++;
+        }
+    }
 </script>
 
 <style lang="scss" type="text/scss">

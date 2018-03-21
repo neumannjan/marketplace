@@ -3,7 +3,7 @@
         <div class="card-header">
             <div class="d-flex flex-row align-items-center">
                 <template v-if="user">
-                    <button class="btn btn-link btn-link-gray btn-icon mr-1" @click="user = null">
+                    <button class="btn btn-link btn-link-gray btn-wrapper btn-icon mr-1" @click="user = null">
                         <icon name="arrow-left" label="back"/>
                     </button>
                     <router-link :to="{name: 'user', params: {username: user.username}}"
@@ -16,7 +16,7 @@
                 <template v-else>
                     <h1 class="h6 m-0">Chat</h1>
                 </template>
-                <button class="btn btn-link btn-link-gray btn-icon ml-auto" @click="onClose">
+                <button class="btn btn-link btn-link-gray btn-icon btn-wrapper ml-auto" @click="onClose">
                     <icon name="close" label="close"/>
                 </button>
             </div>

@@ -1,23 +1,6 @@
 import router, {getRouteMainComponent} from 'JS/router';
-import Vue from "vue";
-import {Route} from "vue-router";
-
-interface RouteMixinData {
-    /**
-     * Saved horizontal scroll position
-     */
-    _scrollX: number,
-
-    /**
-     * Saved vertical scroll position
-     */
-    _scrollY: number,
-
-    /**
-     * Whether the Vue component is the main route component of the current route
-     */
-    _isMainRoute: boolean,
-}
+import {Route, RawLocation} from "vue-router";
+import { Vue, Component, Watch } from "vue-property-decorator";
 
 function determineActive(instance: Vue) {
     return instance === getRouteMainComponent();
@@ -38,43 +21,11 @@ function changeTitle(instance: Vue & {title?: string}, to?: Route) {
     }
 }
 
-const vm = Vue.extend({
-    data: (): RouteMixinData => ({
-        _scrollX: 0,
-        _scrollY: 0,
-        _isMainRoute: false,
-    }),
-    watch: {
-        title() {
-            changeTitle(this);
-        }
-    },
-    beforeRouteEnter(to, from, next) {
-        next((vm: Vue) => {
-            vm.$data._isMainRoute = determineActive(vm);
-            changeTitle(vm, to);
-        });
-    },
-    beforeRouteUpdate(to, from, next) {
-        this.$data._isMainRoute = determineActive(this);
-        putScroll(this);
-        changeTitle(this, to);
-        next();
-    },
-    beforeRouteLeave(to, from, next) {
-        putScroll(this);
-        next();
-    },
-    activated() {
-        this.$nextTick(() => retrieveScroll(this));
-    }
-});
-
 /**
  * Save current scroll position
  * @param {VM} instance
  */
-function putScroll(instance: RouteMixinData & Vue) {
+function putScroll(instance: RouteMixin) {
     if (instance.$data._isMainRoute) {
         instance.$data._scrollX = window.scrollX;
         instance.$data._scrollY = window.scrollY;
@@ -85,10 +36,54 @@ function putScroll(instance: RouteMixinData & Vue) {
  * Scroll to saved scroll position
  * @param {VM} instance
  */
-function retrieveScroll(instance: RouteMixinData & Vue) {
+function retrieveScroll(instance: RouteMixin) {
     if (instance.$data._isMainRoute) {
         window.scroll(instance.$data._scrollX, instance.$data._scrollY);
     }
 }
 
-export default vm;
+@Component({})
+export default class RouteMixin extends Vue {
+    /**
+     * Saved horizontal scroll position
+     */
+    _scrollX: number = 0;
+
+    /**
+     * Saved vertical scroll position
+     */
+    _scrollY: number = 0;
+
+    /**
+     * Whether the Vue component is the main route component of the current route
+     */
+    _isMainRoute: boolean = false;
+
+    @Watch('title')
+    onTitleChanged() {
+        changeTitle(this);
+    }
+
+    beforeRouteEnter(to: Route, from: Route, next: (to?: RawLocation | false | ((vm: Vue) => any) | void) => void) {
+        next((vm: Vue) => {
+            vm.$data._isMainRoute = determineActive(vm);
+            changeTitle(vm, to);
+        });
+    }
+
+    beforeRouteUpdate(to: Route, from: Route, next: (to?: RawLocation | false | ((vm: Vue) => any) | void) => void) {
+        this.$data._isMainRoute = determineActive(this);
+        putScroll(this);
+        changeTitle(this, to);
+        next();
+    }
+
+    beforeRouteLeave(to: Route, from: Route, next: (to?: RawLocation | false | ((vm: Vue) => any) | void) => void) {
+        putScroll(this);
+        next();
+    }
+
+    activated() {
+        this.$nextTick(() => retrieveScroll(this));
+    }
+};

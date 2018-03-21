@@ -11,16 +11,18 @@ declare module "vuelidate" {
         }
     }
 
+    export type Vuelidate = IValidator & {[index: string]: any};
+
     module "vue/types/vue" {
         interface Vue {
-            $v: Vuelidate<any> & IValidator;
+            $v: Vuelidate;
         }
     }
 
     /**
      * Represents an instance of validator class at runtime
      */
-    interface IValidator {
+    export interface IValidator {
         /**
          * Indicates the state of validation for given model. becomes true when any of it's child validators specified in options returns a falsy value. In case of validation groups, all grouped validators are considered.
          */
@@ -52,7 +54,7 @@ declare module "vuelidate" {
     /**
      * Builtin validators
      */
-    interface IDefaultValidators {
+    export interface IDefaultValidators {
         /**
          * Accepts only alphabet characters.
          */
@@ -95,32 +97,6 @@ declare module "vuelidate" {
         and?: boolean;
     }
 
-    type EachByKey<T> = {
-        [K in keyof T]: Validator<T[K]>
-        }
-
-    /**
-     * Holds all validation models of collection validator. Always preserves the keys of original model, so it can be safely referenced in the v-for loop iterating over your data using the same index.
-     */
-    type Each<T> =
-        & { [key: number]: EachByKey<T> }
-        & { $trackBy: string | Function }
-        & IValidator
-
-    global {
-        interface Array<T> {
-            /**
-             * Holds all validation models of collection validator. Always preserves the keys of original model, so it can be safely referenced in the v-for loop iterating over your data using the same index.
-             */
-            $each: Each<T> & Vuelidate<T>;
-        }
-    }
-
-    /**
-     * Represents an instance of validator class at runtime
-     */
-    type Validator<T> = IValidator & IDefaultValidators & Each<T>;
-
     interface IPredicate {
         (value: any, parentVm?: IValidationRule): boolean | Promise<boolean>
     }
@@ -136,55 +112,11 @@ declare module "vuelidate" {
     export type ValidationPredicate = IPredicateGenerator | IPredicate;
 
     /**
-     * Represents mixin data exposed by Vuelidate instance
-     */
-    export type Vuelidate<T> = {
-        [K in keyof T]?: Vuelidate<T[K]> & Validator<T[K]>;
-        };
-
-    /**
      * Represents component options used by Vuelidate
      */
     export type ValidationRuleset<T> = {
         [K in keyof T]?: ValidationPredicate | IValidationRule | IValidationRule[] | string[];
-        }
-
-    /**
-     * Represents Vuelidate mixin data extending a Vue component instance. Have your Vue component options implement this
-     * @param {Type} T - The interface or type being used to store model data requiring validation
-     *
-     * @example
-     * export class Foo implements IVuelidate<IBar> {
-     *  data() {
-     *      return { bar: { length: 0 } };
-     *  }
-     *  validations: {
-     *      bar: {
-     *          length: {
-     *              between: between(1,5)
-     *          }
-     *      }
-     *  }
-     *  $v: Vuelidate<IBar>;
-     * }
-     */
-    export interface IVuelidate<T> {
-        $v: Vuelidate<T>;
     }
-
-    /**
-     * Mixin object for supplying directly to components
-     */
-    export const validationMixin: {
-        beforeCreate(): void;
-    };
-
-    /**
-     * Vuelidate function that creates a validator directly, given a model, and a set of rules
-     */
-    export const validateModel: {
-        <T>(model: T, validations: ValidationRuleset<T>): IVuelidate<T>;
-    };
 
     /**
      * Vue plugin object

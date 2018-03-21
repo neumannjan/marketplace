@@ -11,18 +11,29 @@
             <slot name="header-end"/>
         </div>
 
+        <popper v-if="dropdownButtonEl" :root="true" :element="dropdownButtonEl" boundaries-element="scrollParent">
+            <div class="dropdown-menu show">
+                <h6 class="dropdown-header">Dropdown header</h6>
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+            </div>
+        </popper>
+
         <template v-if="!large">
 
             <router-link v-if="imgData" :to="toOffer" slot="post-header">
                 <lazy-img img-class="card-img-top" v-bind="imgData"/>
             </router-link>
 
-            <router-link :to="toOffer" :class="[color('text-', 'dark')]">
-                <h4 class="card-title">
+            <h4 class="card-title d-flex align-items-baseline">
+                <router-link :to="toOffer" :class="[color('text-', 'dark')]" style="flex-grow: 1">
                     <span>{{ value.name }} </span>
                     <badge class="ml-1 badge" v-for="(badge, index) in badges" :key="index" v-bind="badge"/>
-                </h4>
-            </router-link>
+                </router-link>
+                <button class="btn btn-link btn-link-gray ml-3" @click="toggleDropdown()" ref="dropdownButton">
+                    <icon name="ellipsis-v" label="" /> <!-- TODO label -->
+                </button>
+            </h4>
 
             <p class="card-text">{{ shortDesc }}</p>
             <p class="h5 card-text">{{ value.price }}</p>
@@ -80,6 +91,7 @@
     import Carousel from 'JS/components/widgets/carousel.vue';
     import Alert from "JS/components/widgets/alert.vue";
     import ProfileImg from "JS/components/widgets/image/profile-img.vue";
+    import Popper from "JS/components/widgets/popper.vue";
 
     import appEvents,{ Events } from 'JS/events';
     import router from 'JS/router';
@@ -88,6 +100,7 @@
     import 'vue-awesome/icons/shopping-cart';
     import 'vue-awesome/icons/expand';
     import 'vue-awesome/icons/user-circle';
+    import 'vue-awesome/icons/ellipsis-v';
 
     export default {
         name: "offer-card",
@@ -97,7 +110,8 @@
             Card,
             CardIconFooter,
             Badge,
-            Carousel
+            Carousel,
+            Popper
         },
         props: {
             value: {
@@ -113,7 +127,20 @@
                 default: false,
             }
         },
+        data: () => ({
+            /** @type {HTMLElement | null} */
+            dropdownButtonEl: null
+        }),
         methods: {
+            toggleDropdown() {
+                if(this.dropdownButtonEl) {
+                    this.dropdownButtonEl = null;
+                } else {
+                    //@ts-ignore
+                    this.dropdownButtonEl = this.$refs.dropdownButton;
+                }
+            },
+
             /**
              * @param {string} prefix
              * @param {string | null} defautColor
