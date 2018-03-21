@@ -2,6 +2,7 @@ import {routeEvents, RouteEvents, routesMatch} from 'JS/router';
 import Vue from "vue";
 import Component from 'JS/components/class-component';
 import { Route, NavigationGuard, RawLocation } from 'vue-router';
+import { events, Events } from 'JS/events';
 
 type Result = {
     [key: string]: any
@@ -80,12 +81,16 @@ export default function <R extends Result, P extends object>
             }
 
             if (!fetchLater) {
-                notifyLoading();
                 this.doFetch();
             }
+
+            this.$onEventListener(events, Events.AfterAppRefresh, () => {
+                this.doFetch();
+            });
         }
 
         doFetch() {
+            notifyLoading();
             fetchAsyncFunction(<any>this).then(result => handleResult(this, result ? result : nullObj));
         }
     }

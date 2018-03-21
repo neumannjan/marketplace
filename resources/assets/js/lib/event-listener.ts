@@ -14,6 +14,7 @@ export interface EventListenerPayloads {
  * EventListener class. Allows to bind and unbind event callbacks.
  */
 export default class EventListener<Payloads extends EventListenerPayloads = any, Name extends keyof Payloads = keyof Payloads> {
+    public debugEvents: boolean = false;
 
     /**
      * An array of callbacks per event name
@@ -69,6 +70,9 @@ export default class EventListener<Payloads extends EventListenerPayloads = any,
     dispatch<T extends Name>(name: T, payload: Payloads[T]) {
         if (this.callbacks[name]) {
             for (let callback of this.callbacks[name]) {
+                if(this.debugEvents) {
+                    console.log(`Dispatching: ${name}`);
+                }
                 callback(payload);
             }
         }

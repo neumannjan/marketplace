@@ -60,3 +60,9 @@
 a.no-decoration:hover {
   text-decoration: none;
 }
+
+// dropdown
+.dropdown-item {
+  display: flex;
+  align-items: center;
+}

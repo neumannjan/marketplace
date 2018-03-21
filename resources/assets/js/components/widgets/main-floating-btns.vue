@@ -30,6 +30,7 @@
     import 'vue-awesome/icons/angle-up';
     import notifications,{ NotificationTypes } from 'JS/notifications';
     import { NotificationEvents } from 'JS/lib/notifications';
+    import { Route } from 'vue-router';
 
     enum ButtonTypes {
         Add = 'add',
@@ -45,7 +46,7 @@
         class?: string,
         label?: string, //TODO make required
         badgeType?: string,
-        show?: () => boolean
+        show?: (route: Route) => boolean
     }
 
     type ChatConversations = {
@@ -54,7 +55,7 @@
 
     //TODO labels
     const mainButtons: Button[] = [
-        {id: ButtonTypes.Add, icon: 'plus', class: 'btn-primary', show: () => router.currentRoute.name !== 'offer-create'},
+        {id: ButtonTypes.Add, icon: 'plus', class: 'btn-primary', show: (route: Route) => route.name !== 'offer-create'},
         {id: ButtonTypes.Chat, icon: 'comment'},
         {id: ButtonTypes.Notifications, icon: 'bell'},
     ];

@@ -26,54 +26,54 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+    import { Vue, Component, Prop } from "vue-property-decorator";
+
     //TODO transition
 
-    export default {
-        name: "carousel",
-        props: {
-            items: {
-                type: Array,
-                required: true
-            },
-            timer: {
-                type: Number,
-                default: 5000,
-            }
-        },
-        data: () => ({
-            activeIndex: 0,
-            timerRunning: true
-        }),
-        methods: {
-            next(runByUser = true) {
-                if (runByUser)
-                    this.timerRunning = false;
+    @Component({
+        name: "carousel"
+    })
+    export default class Carousel extends Vue {
+        @Prop({type: Array, required: true})
+        items!: any[]
 
-                if (this.activeIndex < this.items.length - 1)
-                    ++this.activeIndex;
-                else
-                    this.activeIndex = 0;
-            },
-            prev(runByUser = true) {
-                if (runByUser)
-                    this.timerRunning = false;
+        @Prop({type: Number, default: 5000})
+        timer!: number
 
-                if (this.activeIndex > 0)
-                    --this.activeIndex;
-                else
-                    this.activeIndex = this.items.length - 1;
-            },
-            handleTimer() {
-                setTimeout(() => {
-                    if (!this.timerRunning || this.timer <= 0)
-                        return;
+        activeIndex: number = 0;
+        timerRunning: boolean = true;
 
-                    this.next(false);
-                    this.handleTimer();
-                }, this.timer);
-            }
-        },
+        next(runByUser = true) {
+            if (runByUser)
+                this.timerRunning = false;
+
+            if (this.activeIndex < this.items.length - 1)
+                ++this.activeIndex;
+            else
+                this.activeIndex = 0;
+        }
+
+        prev(runByUser = true) {
+            if (runByUser)
+                this.timerRunning = false;
+
+            if (this.activeIndex > 0)
+                --this.activeIndex;
+            else
+                this.activeIndex = this.items.length - 1;
+        }
+
+        handleTimer() {
+            setTimeout(() => {
+                if (!this.timerRunning || this.timer <= 0)
+                    return;
+
+                this.next(false);
+                this.handleTimer();
+            }, this.timer);
+        }
+
         mounted() {
             this.handleTimer();
         }

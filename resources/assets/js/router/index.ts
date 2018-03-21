@@ -205,7 +205,8 @@ const router = new VueRouter({
                 default: true
             },
             meta: {
-                async: true
+                async: true,
+                refreshOnReconnect: true
             }
         },
         {

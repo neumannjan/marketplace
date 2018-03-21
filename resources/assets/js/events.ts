@@ -8,6 +8,13 @@ export enum Events {
     RequestPopup = 'RequestPopup',
     RequestBuy = 'RequestBuy',
     ViewportChange = 'ViewportChange',
+
+    /**
+     * Dispatch to refresh current view
+     */
+    AppRefresh = 'AppRefresh',
+    
+    AfterAppRefresh = 'AfterAppRefresh',
 }
 
 interface Payloads {
@@ -16,6 +23,8 @@ interface Payloads {
     [Events.RequestPopup]: any,
     [Events.RequestBuy]: any,
     [Events.ViewportChange]: boolean,
+    [Events.AppRefresh]: undefined,
+    [Events.AfterAppRefresh]: undefined,
 }
 
 export const events = new EventListener<Payloads, Events>();

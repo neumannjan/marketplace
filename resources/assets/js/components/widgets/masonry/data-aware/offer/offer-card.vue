@@ -11,14 +11,6 @@
             <slot name="header-end"/>
         </div>
 
-        <popper v-if="dropdownButtonEl" :root="true" :element="dropdownButtonEl" boundaries-element="scrollParent">
-            <div class="dropdown-menu show">
-                <h6 class="dropdown-header">Dropdown header</h6>
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-            </div>
-        </popper>
-
         <template v-if="!large">
 
             <router-link v-if="imgData" :to="toOffer" slot="post-header">
@@ -30,9 +22,11 @@
                     <span>{{ value.name }} </span>
                     <badge class="ml-1 badge" v-for="(badge, index) in badges" :key="index" v-bind="badge"/>
                 </router-link>
-                <button class="btn btn-link btn-link-gray ml-3" @click="toggleDropdown()" ref="dropdownButton">
-                    <icon name="ellipsis-v" label="" /> <!-- TODO label -->
-                </button>
+                <b-dropdown class="ml-3" toggle-class="btn-link-gray" right variant="link" no-caret boundary="window">
+                    <offer-dropdown-contents :offer="value" />
+
+                    <icon slot="button-content" name="ellipsis-v" label="" /> <!-- TODO label -->
+                </b-dropdown>
             </h4>
 
             <p class="card-text">{{ shortDesc }}</p>
@@ -63,10 +57,12 @@
                     <badge class="ml-1 badge" v-for="(badge, index) in badges" :key="index" v-bind="badge"/>
                 </h1>
 
-                <p v-if="value.description" class="card-text">{{ value.description }}</p>
+                <div class="card-text">
+                    <p v-if="value.description">{{ value.description }}</p>
+                    <p class="price-resp card-text mt-auto">{{ value.price }}</p>
+                </div>
 
-                <p class="price-resp card-text mt-auto">{{ value.price }}</p>
-                <div class="btn-group btn-group-lg" role="group" aria-label="Basic example">
+                <div class="btn-group btn-group-lg mt-1" role="group" aria-label="Basic example">
                     <button type="button"
                             v-for="button in buttons"
                             :key="button.icon"
@@ -75,6 +71,9 @@
                             :class="['btn', color('btn-', 'primary', true)]">
                         <icon :name="button.icon" :label="button.label"/>
                     </button>
+                    <b-dropdown boundary="window" variant="primary">
+                        <offer-dropdown-contents :offer="value" />
+                    </b-dropdown>
                 </div>
             </div>
 
@@ -92,6 +91,11 @@
     import Alert from "JS/components/widgets/alert.vue";
     import ProfileImg from "JS/components/widgets/image/profile-img.vue";
     import Popper from "JS/components/widgets/popper.vue";
+    import BDropdown from "bootstrap-vue/src/components/dropdown/dropdown";
+    import BDropdownItem from "bootstrap-vue/src/components/dropdown/dropdown-item";
+    import BDropdownItemButton from "bootstrap-vue/src/components/dropdown/dropdown-item-button";
+    import BDropdownHeader from "bootstrap-vue/src/components/dropdown/dropdown-header";
+    import OfferDropdownContents from 'JS/components/widgets/masonry/data-aware/offer/offer-dropdown-contents.vue';
 
     import appEvents,{ Events } from 'JS/events';
     import router from 'JS/router';
@@ -111,7 +115,9 @@
             CardIconFooter,
             Badge,
             Carousel,
-            Popper
+            Popper,
+            BDropdown,
+            OfferDropdownContents
         },
         props: {
             value: {
@@ -132,15 +138,6 @@
             dropdownButtonEl: null
         }),
         methods: {
-            toggleDropdown() {
-                if(this.dropdownButtonEl) {
-                    this.dropdownButtonEl = null;
-                } else {
-                    //@ts-ignore
-                    this.dropdownButtonEl = this.$refs.dropdownButton;
-                }
-            },
-
             /**
              * @param {string} prefix
              * @param {string | null} defautColor

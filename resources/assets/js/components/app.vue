@@ -9,7 +9,7 @@
                   :style="loadingStyle"
                   :class="['main', {'navigation-shown': has.navigation, 'navigation-not-shown': !has.navigation}]">
                 <!-- NAVIGATION -->
-                <div v-if="shown && has.navigation" class="content-navigation">
+                <div v-if="(shown || !$route.meta.refreshOnReconnect) && has.navigation" class="content-navigation">
                     <keep-alive :include="keepAlive('navigation')">
                         <router-view class="content-navigation-inner" name="navigation"/>
                     </keep-alive>
@@ -141,16 +141,20 @@
                     this.restoreConnection();
                 }
             },
-            async restoreConnection() {
+            restoreConnection() {
                 if (!this.shown) return;
 
                 store.commit('httpConnection', true);
 
+                this.refresh();
+            },
+            async refresh() {
                 this.shown = false;
                 await this.$nextTick();
                 this.shown = true;
                 await this.$nextTick();
-            },
+                appEvents.dispatch(Events.AfterAppRefresh, undefined);
+            }
         },
         mounted() {
             this.$onEventListener(routeEvents, RouteEvents.Loading, () => this.loading = true);
@@ -181,6 +185,8 @@
             this.$onEventListener(appEvents, Events.UnreadConversations, (conversations: Conversation[]) => {
                 addNotification(conversations.length);
             });
+
+            this.$onEventListener(appEvents, Events.AppRefresh, () => this.refresh());
         }
     });
 </script>

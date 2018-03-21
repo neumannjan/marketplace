@@ -42,7 +42,7 @@ export default {
     computed: {
         filteredButtons() {
             //@ts-ignore
-            return this.buttons.filter(button => !button.show || button.show() !== false);
+            return this.buttons.filter(button => !button.show || button.show(this.$route) !== false);
         }
     },
     methods: {
