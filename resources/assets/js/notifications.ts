@@ -8,6 +8,8 @@ export enum NotificationTypes {
     NoHttpConnection = 'NoHttpConnection',
     WebsocketConnection = 'WebsocketConnection',
     NoWebsocketConnection = 'NoWebsocketConnection',
+    OfferRemoval = 'OfferRemoval',
+    OfferRemoved = 'OfferRemoved',
 }
 
 export default new class Notifications extends NotificationManager<NotificationTypes> {

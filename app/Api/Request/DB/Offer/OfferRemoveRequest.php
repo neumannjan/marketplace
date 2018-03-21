@@ -59,9 +59,6 @@ class OfferRemoveRequest extends Request
         ])->first(['id', 'name']);
 
         if($offer && $offer->delete() !== false) {
-            \Session::flash("success.offer-remove", trans('flash.success.offer-remove', [
-                'name' => $offer->name
-            ]));
             return new Response(true, []);
         } else {
             return new Response(false, []);

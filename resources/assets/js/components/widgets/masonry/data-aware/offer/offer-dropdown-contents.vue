@@ -30,6 +30,7 @@
     import api from 'JS/api';
     import events,{ Events } from 'JS/events';
     import { Location } from 'vue-router';
+import notifications,{ NotificationTypes } from 'JS/notifications';
 
     @Component({
         name: "offer-dropdown-contents",
@@ -49,8 +50,23 @@
         removeOffer() {
             // TODO translate
             if(confirm(`You are trying to remove "${this.offer.name}". Are you sure you want to continue?`)) {
+                notifications.showNotification({
+                    id: NotificationTypes.OfferRemoval,
+                    type: 'info',
+                    message: `"${this.offer.name}" is being removed.`,
+                    persistent: true
+                });
+
                 api.requestSingle('offer-remove', {id: this.offer.id})
                     .then(() => {
+                        notifications.hideNotification(NotificationTypes.OfferRemoval);
+                        notifications.showNotification({
+                            id: NotificationTypes.OfferRemoved,
+                            type: 'success',
+                            message: `"${this.offer.name}" was successfully removed.`,
+                            persistent: false
+                        });
+
                         let newRoute: Location = {};
 
                         // if the offer modal is open, close it
