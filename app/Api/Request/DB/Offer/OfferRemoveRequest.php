@@ -52,13 +52,17 @@ class OfferRemoveRequest extends Request
         /** @var User $user */
         $user = $this->guard->user();
 
+        /** @var Offer $offer */
         $offer = Offer::query()->where([
             'id' => $parameters['id'],
             'author_user_id' => $user->id
-        ])->first(['id']);
+        ])->first(['id', 'name']);
 
-        if($offer) {
-            return new Response($offer->delete() !== false, []);
+        if($offer && $offer->delete() !== false) {
+            \Session::flash("success.offer-remove", trans('flash.success.offer-remove', [
+                'name' => $offer->name
+            ]));
+            return new Response(true, []);
         } else {
             return new Response(false, []);
         }
