@@ -170,7 +170,7 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
      */
     public function scopeToBeRemoved(Builder $query)
     {
-        return $query->whereDate('listed_at', '>=', $this->removedFromTimestamp());
+        return $query->whereDate('listed_at', '<', $this->removedFromTimestamp());
     }
 
     /**
