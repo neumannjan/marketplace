@@ -71,7 +71,7 @@
                             :class="['btn', color('btn-', 'primary', true)]">
                         <icon :name="button.icon" :label="button.label"/>
                     </button>
-                    <b-dropdown boundary="window" variant="primary">
+                    <b-dropdown boundary="window" :variant="color('', 'primary', true)">
                         <offer-dropdown-contents :offer="value" />
                     </b-dropdown>
                 </div>
