@@ -102,7 +102,7 @@
     import { ConnectionManagerEvents } from 'JS/lib/echo';
     import { TypingEvent } from 'JS/echo/types';
     import appEvents,{ Events } from 'JS/events';
-    import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
+    import { Vue, Component, Prop, Watch } from 'JS/components/class-component';
     import { NormalizedMessage } from 'JS/api/messaging/typings';
     import { MessageSender } from 'JS/components/widgets/chat/types';
     import { ConversationMediator, ConversationEvents } from 'JS/api/messaging/conversation';

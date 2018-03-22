@@ -15,6 +15,7 @@
     import OfferMasonry from "JS/components/widgets/masonry/data-aware/offer/offer-masonry.vue";
     import Vue from "vue";
     import { PaginatedResponse, Offer } from "JS/api/types";
+    import { Dictionary } from "vue-router/types/router";
 
     export default Vue.extend({
         name: "search-route",
@@ -49,11 +50,16 @@
         },
         methods: {
             requestSearch() {
+                let params: Dictionary<string>;
+
+                if(this.input)
+                    params = {query: this.input};
+                else
+                    params = {};
+
                 this.$router.push({
                     name: 'search',
-                    params: {
-                        query: this.input ? this.input : ''
-                    }
+                    params: params
                 });
             },
 

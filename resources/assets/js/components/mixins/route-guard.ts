@@ -1,4 +1,4 @@
-import { Vue, Component, Watch } from "vue-property-decorator";
+import { Vue, Component, Watch } from "JS/components/class-component";
 import { Location, Route, NavigationGuard, RawLocation } from "vue-router";
 import router from "JS/router";
 

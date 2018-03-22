@@ -1,6 +1,6 @@
 import router, {getRouteMainComponent} from 'JS/router';
 import {Route, RawLocation} from "vue-router";
-import { Vue, Component, Watch } from "vue-property-decorator";
+import { Vue, Component, Watch } from "JS/components/class-component";
 
 function determineActive(instance: Vue) {
     return instance === getRouteMainComponent();

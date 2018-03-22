@@ -99,8 +99,8 @@
     import form from 'JS/components/mixins/form';
     import store from 'JS/store';
     import {cached} from 'JS/store';
-    import { mixins } from 'vue-class-component';
-    import Vue,{ Component } from 'vue-property-decorator';
+    import { mixins } from 'JS/components/class-component';
+    import Vue,{ Component } from 'JS/components/class-component';
 
     import Choices from "JS/components/widgets/form/choices.vue";
     import ValidationMessage from "JS/components/widgets/form/validation-message.vue";

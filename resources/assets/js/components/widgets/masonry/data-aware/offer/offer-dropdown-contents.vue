@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from 'vue-property-decorator';
+    import {Component, Prop, Vue} from 'JS/components/class-component';
     import BDropdownHeader from 'bootstrap-vue/src/components/dropdown/dropdown-header';
     import BDropdownItemButton from 'bootstrap-vue/src/components/dropdown/dropdown-item-button';
 

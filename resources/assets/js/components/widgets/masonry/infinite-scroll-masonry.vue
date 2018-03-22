@@ -27,7 +27,7 @@
     import Masonry from 'JS/components/widgets/masonry/masonry.vue';
     import Card from 'JS/components/widgets/masonry/card.vue';
     import InfiniteScroll from "JS/components/widgets/infinite-scroll.vue";
-    import { Vue, Component, Prop } from 'vue-property-decorator';
+    import { Vue, Component, Prop } from 'JS/components/class-component';
 
     @Component({
         name: 'infinite-scroll-masonry',

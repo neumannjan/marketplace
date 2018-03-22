@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-    import { Prop, Vue } from "vue-property-decorator";
+    import { Prop, Vue } from "JS/components/class-component";
     import Component from 'JS/components/class-component';
     import router,{ routesMatch } from 'JS/router';
     import { Location } from 'vue-router/types/router';

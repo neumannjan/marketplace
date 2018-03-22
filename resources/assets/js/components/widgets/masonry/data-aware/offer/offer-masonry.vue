@@ -14,7 +14,7 @@
     import InfiniteScrollMasonry from '../../infinite-scroll-masonry.vue';
     import OfferCard from './offer-card.vue';
     import LoadingOfferCard from './loading-offer-card.vue';
-    import {Vue, Component, Prop} from 'vue-property-decorator';
+    import {Vue, Component, Prop} from 'JS/components/class-component';
     import { events, Events } from 'JS/events';
 
     @Component({

@@ -10,7 +10,7 @@
     import store,{ State } from 'JS/store';
     import {mapState} from 'vuex';
     import { User, PaginatedResponse, Offer } from 'JS/api/types';
-    import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
+    import { Vue, Component, Prop, Watch } from 'JS/components/class-component';
 
     import route from 'JS/components/mixins/route';
     import routeFetch,{ RouteFetchMixinInterface } from 'JS/components/mixins/route-fetch';

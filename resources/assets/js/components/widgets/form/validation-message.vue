@@ -4,7 +4,7 @@
 
 <script lang="ts">
     import {helpers as storeHelpers} from 'JS/store';
-    import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
+    import { Vue, Component, Prop, Watch } from 'JS/components/class-component';
     import { Vuelidate } from 'vuelidate';
 
     @Component({

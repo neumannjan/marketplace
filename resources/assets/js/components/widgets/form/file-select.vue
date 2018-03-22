@@ -20,7 +20,7 @@
 
 <script lang="ts">
     import ValidationMessage from "JS/components/widgets/form/validation-message.vue";
-    import { Vue, Component, Prop } from "vue-property-decorator";
+    import { Vue, Component, Prop } from "JS/components/class-component";
     import { Vuelidate } from "vuelidate";
 
     let nextID = 0;
