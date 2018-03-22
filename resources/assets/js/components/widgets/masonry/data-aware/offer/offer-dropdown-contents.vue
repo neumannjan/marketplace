@@ -7,8 +7,10 @@
         </template>
         <template v-else>
             <b-dropdown-header>Owner options</b-dropdown-header>
-            <b-dropdown-item-button><icon name="pencil" class="mr-2" />Edit</b-dropdown-item-button>
-            <b-dropdown-item-button><icon name="clock-o" class="mr-2" />Bump up as new</b-dropdown-item-button>
+            <template v-if="!sold">
+                <b-dropdown-item-button><icon name="pencil" class="mr-2" />Edit</b-dropdown-item-button>
+                <b-dropdown-item-button v-if="!draft"><icon name="clock-o" class="mr-2" />Bump up as new</b-dropdown-item-button>
+            </template>
             <b-dropdown-item-button @click="removeOffer()"><icon name="trash-o" class="mr-2" />Remove</b-dropdown-item-button>
         </template>
     </div>
@@ -24,13 +26,13 @@
     import 'vue-awesome/icons/clock-o';
     import 'vue-awesome/icons/trash-o';
     
-    import { Offer } from 'JS/api/types';
+    import { Offer, OfferStatus } from 'JS/api/types';
     import store from 'JS/store';
     import router from 'JS/router';
     import api from 'JS/api';
     import events,{ Events } from 'JS/events';
     import { Location } from 'vue-router';
-import notifications,{ NotificationTypes } from 'JS/notifications';
+    import notifications, { NotificationTypes } from 'JS/notifications';
 
     @Component({
         name: "offer-dropdown-contents",
@@ -45,6 +47,14 @@ import notifications,{ NotificationTypes } from 'JS/notifications';
 
         get owned(): boolean {
             return !!store.state.user && store.state.user.username === this.offer.author.username;
+        }
+
+        get sold() {
+            return this.offer.status === OfferStatus.Sold;
+        }
+
+        get draft() {
+            return this.offer.status === OfferStatus.Draft;
         }
 
         removeOffer() {
@@ -83,11 +93,8 @@ import notifications,{ NotificationTypes } from 'JS/notifications';
                             // we should redirect to another route
                             router.replace(newRoute);
                         }
-                        
-                        if(newRoute.name === undefined) {
-                            // we should just refresh current route
-                            events.dispatch(Events.AppRefresh, undefined);
-                        }
+
+                        events.dispatch(Events.OfferRemoved, this.offer.id);
                     });
             }
         }

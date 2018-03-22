@@ -15,6 +15,7 @@ export enum Events {
     AppRefresh = 'AppRefresh',
     
     AfterAppRefresh = 'AfterAppRefresh',
+    OfferRemoved = 'OfferRemoved'
 }
 
 interface Payloads {
@@ -25,6 +26,7 @@ interface Payloads {
     [Events.ViewportChange]: boolean,
     [Events.AppRefresh]: undefined,
     [Events.AfterAppRefresh]: undefined,
+    [Events.OfferRemoved]: number
 }
 
 export const events = new EventListener<Payloads, Events>();

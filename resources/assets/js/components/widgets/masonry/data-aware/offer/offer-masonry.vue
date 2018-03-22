@@ -1,5 +1,5 @@
 <template>
-    <infinite-scroll-masonry masonry-class="row" :url="url" :start-cards="startCards">
+    <infinite-scroll-masonry masonry-class="row" :url="url" v-model="cards">
         <offer-card slot-scope="props" :value="props.data" :show-author="showAuthor"/>
         <div slot="loading" class="masonry-card col-flexible">
             <loading-offer-card/>
@@ -10,29 +10,49 @@
     </infinite-scroll-masonry>
 </template>
 
-<script>
+<script lang="ts">
     import InfiniteScrollMasonry from '../../infinite-scroll-masonry.vue';
     import OfferCard from './offer-card.vue';
     import LoadingOfferCard from './loading-offer-card.vue';
+    import {Vue, Component, Prop} from 'vue-property-decorator';
+    import { events, Events } from 'JS/events';
 
-    export default {
+    @Component({
         name: 'offer-masonry',
-        props: {
-            url: {
-                required: true
-            },
-            startCards: {
-                type: Array,
-            },
-            showAuthor: {
-                type: Boolean,
-                default: true,
-            }
-        },
         components: {
             InfiniteScrollMasonry,
             LoadingOfferCard,
             OfferCard
         }
-    };
+    })
+    export default class OfferMasonry extends Vue {
+        @Prop({required: true})
+        url!: string | null | false;
+
+        @Prop({type: Array})
+        startCards: any[] | undefined;
+
+        @Prop({type: Boolean, default: true})
+        showAuthor!: boolean;
+
+        cards: any[] = [];
+
+        created() {
+            if (this.startCards) {
+                this.cards = this.startCards;
+            }
+
+            this.$onEventListener(events, Events.OfferRemoved, (id: number) => {
+                const index = this.cards.findIndex(card => card.id === id);
+
+                if(index !== -1) {
+                    const cards = this.cards;
+
+                    cards.splice(index, 1);
+                    
+                    this.cards = cards;
+                }
+            });
+        }
+    }
 </script>
