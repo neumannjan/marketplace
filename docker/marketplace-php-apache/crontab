@@ -1,0 +1,1 @@
+* * * * * application . /get_app_root.sh; php $APP_ROOT/artisan schedule:run >> /dev/null 2>&1

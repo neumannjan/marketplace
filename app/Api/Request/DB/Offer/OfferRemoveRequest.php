@@ -56,7 +56,7 @@ class OfferRemoveRequest extends Request
         $offer = Offer::query()->where([
             'id' => $parameters['id'],
             'author_user_id' => $user->id
-        ])->first(['id', 'name']);
+        ])->first(['id']);
 
         if($offer && $offer->delete() !== false) {
             return new Response(true, []);

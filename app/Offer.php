@@ -125,13 +125,22 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
     }
 
     /**
-     * Determines the threshold of when orders are considered expired
+     * Returns the date that offers have to be newer than to not be considered expired
      * @return Carbon
      */
     protected function expiredFromTimestamp()
     {
         //TODO is 2 months too soon?
         return Carbon::now()->subMonths(2);
+    }
+
+    /**
+     * Returns the date that offers have to be newer than to not be removed
+     * @return Carbon
+     */
+    public function removedFromTimestamp()
+    {
+        return Carbon::now()->subYears(1);
     }
 
     /**
@@ -152,6 +161,16 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
         return !$this->expired
             && $this->status === self::STATUS_AVAILABLE
             && $this->author->status === User::STATUS_ACTIVE;
+    }
+
+    /**
+     * Limits the query to only return items that should be removed
+     * @param Builder $query
+     * @return Builder
+     */
+    public function scopeToBeRemoved(Builder $query)
+    {
+        return $query->whereDate('listed_at', '>=', $this->removedFromTimestamp());
     }
 
     /**

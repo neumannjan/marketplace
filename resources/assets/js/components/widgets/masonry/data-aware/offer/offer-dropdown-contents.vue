@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-    import { Component, Vue, Prop } from 'vue-property-decorator';
+    import {Component, Prop, Vue} from 'vue-property-decorator';
     import BDropdownHeader from 'bootstrap-vue/src/components/dropdown/dropdown-header';
     import BDropdownItemButton from 'bootstrap-vue/src/components/dropdown/dropdown-item-button';
 
@@ -25,14 +25,25 @@
     import 'vue-awesome/icons/pencil';
     import 'vue-awesome/icons/clock-o';
     import 'vue-awesome/icons/trash-o';
-    
-    import { Offer, OfferStatus } from 'JS/api/types';
+
+    import {Offer, OfferStatus} from 'JS/api/types';
     import store from 'JS/store';
     import router from 'JS/router';
     import api from 'JS/api';
-    import events,{ Events } from 'JS/events';
-    import { Location } from 'vue-router';
-    import notifications, { NotificationTypes } from 'JS/notifications';
+    import events, {Events} from 'JS/events';
+    import {Location} from 'vue-router';
+    import notifications, {NotificationTypes} from 'JS/notifications';
+
+    interface NotificationPayload {
+        id: NotificationTypes,
+        message: string
+    }
+
+    interface ActionPayload {
+        confirm?: string,
+        beforeNotification?: NotificationPayload,
+        afterNotification?: NotificationPayload,
+    }
 
     @Component({
         name: "offer-dropdown-contents",
@@ -57,46 +68,70 @@
             return this.offer.status === OfferStatus.Draft;
         }
 
-        removeOffer() {
-            // TODO translate
-            if(confirm(`You are trying to remove "${this.offer.name}". Are you sure you want to continue?`)) {
-                notifications.showNotification({
-                    id: NotificationTypes.OfferRemoval,
-                    type: 'info',
-                    message: `"${this.offer.name}" is being removed.`,
-                    persistent: true
-                });
+        /**
+         * Does a basic action that may require confirmation and may display notifications
+         *
+         */
+        private doAction(payload: ActionPayload, func: () => Promise<any>) {
+            if (!payload.confirm || confirm(payload.confirm)) {
+                if (payload.beforeNotification) {
+                    notifications.showNotification({
+                        id: payload.beforeNotification.id,
+                        type: 'info',
+                        message: payload.beforeNotification.message,
+                        persistent: true
+                    });
+                }
 
-                api.requestSingle('offer-remove', {id: this.offer.id})
-                    .then(() => {
-                        notifications.hideNotification(NotificationTypes.OfferRemoval);
+                func().then(() => {
+                    if (payload.beforeNotification) {
+                        notifications.hideNotification(payload.beforeNotification.id);
+                    }
+
+                    if (payload.afterNotification) {
                         notifications.showNotification({
-                            id: NotificationTypes.OfferRemoved,
+                            id: payload.afterNotification.id,
                             type: 'success',
-                            message: `"${this.offer.name}" was successfully removed.`,
+                            message: payload.afterNotification.message,
                             persistent: false
                         });
-
-                        let newRoute: Location = {};
-
-                        // if the offer modal is open, close it
-                        if(parseInt(this.$route.query['offer']) === this.offer.id) {
-                            newRoute = {...newRoute, query: {}};
-                        }
-                        
-                        // if the offer full window is open, redirect
-                        if(this.$route.name === 'offer' && parseInt(this.$route.params['id']) === this.offer.id) {
-                            newRoute = {...newRoute, name: 'index'};
-                        } 
-                        
-                        if (newRoute.query !== undefined || newRoute.name !== undefined) {
-                            // we should redirect to another route
-                            router.replace(newRoute);
-                        }
-
-                        events.dispatch(Events.OfferRemoved, this.offer.id);
-                    });
+                    }
+                });
             }
+        }
+
+        removeOffer() {
+            // TODO translate
+            this.doAction({
+                confirm: `You are trying to remove "${this.offer.name}". Are you sure you want to continue?`,
+                beforeNotification: {
+                    id: NotificationTypes.OfferRemoval,
+                    message: `"${this.offer.name}" is being removed.`,
+                },
+                afterNotification: {
+                    id: NotificationTypes.OfferRemoved,
+                    message: `"${this.offer.name}" was successfully removed.`,
+                }
+            }, () => api.requestSingle('offer-remove', {id: this.offer.id}).then(() => {
+                let newRoute: Location = {};
+
+                // if the offer modal is open, close it
+                if (parseInt(this.$route.query['offer']) === this.offer.id) {
+                    newRoute = {...newRoute, query: {}};
+                }
+
+                // if the offer full window is open, redirect
+                if (this.$route.name === 'offer' && parseInt(this.$route.params['id']) === this.offer.id) {
+                    newRoute = {...newRoute, name: 'index'};
+                }
+
+                if (newRoute.query !== undefined || newRoute.name !== undefined) {
+                    // we should redirect to another route
+                    router.replace(newRoute);
+                }
+
+                events.dispatch(Events.OfferRemoved, this.offer.id);
+            }));
         }
     }
 </script>
