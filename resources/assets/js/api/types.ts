@@ -42,6 +42,8 @@ export interface Offer {
     author: User,
     price: string,
     description: string,
+    bumps_left: number,
+    just_bumped: boolean,
     status: OfferStatus,
     expired: boolean,
     images: Image[]

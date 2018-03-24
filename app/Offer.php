@@ -34,6 +34,8 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
     const SCOPE_AUTH = 'auth';
     const SCOPE_UNLIMITED = 'unlimited';
 
+    const MAX_BUMP_TIMES = 2;
+
     protected $dates = [
         'created_at',
         'updated_at',
@@ -161,6 +163,24 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
         return !$this->expired
             && $this->status === self::STATUS_AVAILABLE
             && $this->author->status === User::STATUS_ACTIVE;
+    }
+
+    /**
+     * The amount of times this offer can be bumped
+     * @return int
+     */
+    public function getBumpsLeftAttribute()
+    {
+        return max(0, self::MAX_BUMP_TIMES - $this->bumped_times);
+    }
+
+    /**
+     * Whether this offer has just been created / bumped
+     * @return bool
+     */
+    public function getJustBumpedAttribute()
+    {
+        return $this->listed_at->addHours(1)->greaterThan(Carbon::now());
     }
 
     /**
@@ -331,5 +351,21 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
             'images' => '',
             'status' => Rule::in([Offer::STATUS_DRAFT, Offer::STATUS_AVAILABLE]),
         ];
+    }
+
+    /**
+     * 'Bump' the offer - make it appear as new. Returns the success.
+     * @return boolean
+     */
+    public function bump()
+    {
+        if($this->bumped_times < self::MAX_BUMP_TIMES) {
+            ++$this->bumped_times;
+            $this->listed_at = Carbon::now();
+
+            return true;
+        }
+
+        return false;
     }
 }

@@ -41,6 +41,11 @@ class DatabaseSeeder extends Seeder
                     }
                 }
 
+                //set bumped_times
+                $o->bumped_times = $faker->biasedNumberBetween(0, \App\Offer::MAX_BUMP_TIMES, function($i) {
+                    return 1 - sqrt($i);
+                });
+
                 //save offer
                 $o->save();
 

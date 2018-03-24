@@ -14,6 +14,7 @@ class Offer extends Resource
      */
     public function toArray($request)
     {
+        /** @var Offer | \App\Offer $this */
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -21,6 +22,8 @@ class Offer extends Resource
             'price' => $this->price,
             'description' => $this->description,
             'status' => $this->status,
+            'bumps_left' => $this->bumps_left,
+            'just_bumped' => $this->just_bumped,
             'expired' => $this->expired,
             'images' => Image::collection($this->images),
         ];

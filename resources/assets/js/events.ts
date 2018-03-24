@@ -1,6 +1,6 @@
 import EventListener from "JS/lib/event-listener";
 import { NormalizedMessage } from "JS/api/messaging/typings";
-import { Conversation } from "JS/api/types";
+import { Conversation, Offer } from "JS/api/types";
 
 export enum Events {
     MessageSent = 'MessageSent',
@@ -15,7 +15,8 @@ export enum Events {
     AppRefresh = 'AppRefresh',
     
     AfterAppRefresh = 'AfterAppRefresh',
-    OfferRemoved = 'OfferRemoved'
+    OfferRemoved = 'OfferRemoved',
+    OfferModified = 'OfferModified',
 }
 
 interface Payloads {
@@ -26,7 +27,8 @@ interface Payloads {
     [Events.ViewportChange]: boolean,
     [Events.AppRefresh]: undefined,
     [Events.AfterAppRefresh]: undefined,
-    [Events.OfferRemoved]: number
+    [Events.OfferRemoved]: number,
+    [Events.OfferModified]: Offer,
 }
 
 export const events = new EventListener<Payloads, Events>();

@@ -16,6 +16,7 @@
     import LoadingOfferCard from './loading-offer-card.vue';
     import {Vue, Component, Prop} from 'JS/components/class-component';
     import { events, Events } from 'JS/events';
+    import { Offer } from 'JS/api/types';
 
     @Component({
         name: 'offer-masonry',
@@ -50,6 +51,20 @@
 
                     cards.splice(index, 1);
                     
+                    this.cards = cards;
+                }
+            });
+
+            this.$onEventListener(events, Events.OfferModified, (offer: Offer) => {
+                const index = this.cards.findIndex(card => card.id === offer.id);
+
+                if(index !== -1) {
+                    const cards = this.cards;
+
+                    //put the card at the beginning of the masonry
+                    cards.splice(index, 1)
+                    cards.unshift(offer);
+
                     this.cards = cards;
                 }
             });

@@ -4,12 +4,16 @@ import { Notification } from "JS/lib/notifications/typings";
 
 export enum NotificationTypes {
     NewMessages = 'NewMessages',
+
     HttpConnection = 'HttpConnection',
     NoHttpConnection = 'NoHttpConnection',
     WebsocketConnection = 'WebsocketConnection',
     NoWebsocketConnection = 'NoWebsocketConnection',
-    OfferRemoval = 'OfferRemoval',
-    OfferRemoved = 'OfferRemoved',
+
+    RemovingOffer = 'RemovingOffer',
+    RemovedOffer = 'RemovedOffer',
+    BumpingOffer = 'BumpingOffer',
+    BumpedOffer = 'BumpedOffer',
 }
 
 export default new class Notifications extends NotificationManager<NotificationTypes> {

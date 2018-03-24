@@ -22,7 +22,7 @@
                     <span>{{ value.name }} </span>
                     <badge class="ml-1 badge" v-for="(badge, index) in badges" :key="index" v-bind="badge"/>
                 </router-link>
-                <b-dropdown class="ml-3" toggle-class="btn-link-gray" right variant="link" no-caret boundary="window">
+                <b-dropdown v-if="loggedIn" class="ml-3" toggle-class="btn-link-gray" right variant="link" no-caret boundary="window">
                     <offer-dropdown-contents :offer="value" />
 
                     <icon slot="button-content" name="ellipsis-v" label="" /> <!-- TODO label -->
@@ -71,7 +71,7 @@
                             :class="['btn', color('btn-', 'primary', true)]">
                         <icon :name="button.icon" :label="button.label"/>
                     </button>
-                    <b-dropdown boundary="window" :variant="color('', 'primary', true)">
+                    <b-dropdown v-if="loggedIn" boundary="window" :variant="color('', 'primary', true)">
                         <offer-dropdown-contents :offer="value" />
                     </b-dropdown>
                 </div>
@@ -83,7 +83,7 @@
     </card>
 </template>
 
-<script>
+<script lang="ts">
     import Card from "../../card.vue";
     import CardIconFooter from "../../card-icon-footer.vue";
     import Badge from 'JS/components/widgets/badge.vue';
@@ -97,16 +97,19 @@
     import BDropdownHeader from "bootstrap-vue/src/components/dropdown/dropdown-header";
     import OfferDropdownContents from 'JS/components/widgets/masonry/data-aware/offer/offer-dropdown-contents.vue';
 
-    import appEvents,{ Events } from 'JS/events';
+    import appEvents,{ Events, events } from 'JS/events';
     import router from 'JS/router';
     import api from 'JS/api';
+    import Vue from 'vue';
+    import { Image, Offer } from "JS/api/types";
+    import { Location } from "vue-router";
 
     import 'vue-awesome/icons/shopping-cart';
     import 'vue-awesome/icons/expand';
     import 'vue-awesome/icons/user-circle';
     import 'vue-awesome/icons/ellipsis-v';
 
-    export default {
+    export default Vue.extend({
         name: "offer-card",
         components: {
             ProfileImg,
@@ -138,16 +141,8 @@
             dropdownButtonEl: null
         }),
         methods: {
-            /**
-             * @param {string} prefix
-             * @param {string | null} defautColor
-             * @param {boolean} important
-             */
-            color(prefix = '', defaultColor = null, important = false) {
-                /**
-                 * @param {string | null} value
-                 */
-                const doReturn = (value = defaultColor) => {
+            color(prefix: string = '', defaultColor: string | null = null, important = false) {
+                const doReturn = (value: string | null = defaultColor) => {
                     if (!value)
                         return undefined;
                     return prefix + value;
@@ -182,17 +177,13 @@
             }
         },
         computed: {
-            /**
-             * @returns {boolean}
-             */
-            isThisUser() {
-                return this.$store.state.user && this.$store.state.user.username === this.value.author.username;
+            isThisUser(): boolean {
+                return !!this.$store.state.user && this.$store.state.user.username === this.value.author.username;
             },
-
-            /**
-             * @returns {object}
-             */
-            buttons() {
+            loggedIn(): boolean {
+                return !!this.$store.state.user;
+            },
+            buttons(): any {
                 const ubiquitous = [
                     {
                         icon: 'shopping-cart',
@@ -227,7 +218,7 @@
                 else
                     return [...ubiquitous, ...nonLarge];
             },
-            imgData() {
+            imgData(): any {
                 if (!this.value || this.value.images.length === 0)
                     return null;
 
@@ -241,7 +232,7 @@
                     height: image['height'],
                 };
             },
-            isAwaitingImages() {
+            isAwaitingImages(): boolean {
                 if (!this.value || this.value.images.length === 0)
                     return false;
 
@@ -252,7 +243,7 @@
 
                 return false;
             },
-            shortDesc() {
+            shortDesc(): string {
                 if (!this.value.description)
                     return '';
 
@@ -267,14 +258,14 @@
                     desc += '...';
                 return desc;
             },
-            profileImage() {
+            profileImage(): Image | null {
                 if (this.value.author.profile_image) {
                     return this.value.author.profile_image;
                 }
 
                 return null;
             },
-            toAuthor() {
+            toAuthor(): Location {
                 return {
                     name: 'user',
                     params: {
@@ -282,7 +273,7 @@
                     }
                 }
             },
-            toOffer() {
+            toOffer(): Location {
                 return {
                     query: {
                         ...this.$route.query,
@@ -312,8 +303,13 @@
 
                 return badges;
             }
+        },
+        created() {
+            this.$onEventListener(events, Events.OfferModified, (offer: Offer) => {
+                this.$emit('input', offer);
+            });
         }
-    }
+    });
 </script>
 
 <style scoped lang="scss" type="text/scss">
