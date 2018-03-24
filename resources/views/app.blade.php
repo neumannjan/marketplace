@@ -15,11 +15,11 @@
 
                     /**
                      * Base64 is used here to obfuscate the result, so that noobs don't think they are
-                     * world-class hackers just because they noticed a random "is_authenticated" boolean
+                     * world-class hackers just because they noticed a random "is_admin" boolean
                      * in the HTML of the frontend. :)
                      *
-                     * No, they will NOT gain unwanted access to anything just by modifying these values. The
-                     * JavaScript frontend will just be a bit confused.
+                     * No, they would NOT gain unrestricted access to anything just by modifying these values. The
+                     * JavaScript frontend would just become a bit confused.
                      */
                     $data = base64_encode(json_encode($data));
                 @endphp

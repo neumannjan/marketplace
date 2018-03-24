@@ -3,7 +3,7 @@ import NavigationGuard from "JS/router/navigation-guard";
 
 export default {
     beforeEnter(to, from, next) {
-        if (!store.state.is_authenticated) {
+        if (!store.state.user) {
             next();
         } else {
             next({name: 'index'});

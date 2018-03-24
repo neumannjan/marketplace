@@ -37,11 +37,11 @@ class GlobalDataRequest extends Request
 
         // authentication
 
-        $is_authenticated = \Auth::check();
-        $user = $is_authenticated ? new User(\Auth::user()) : null;
+        $_user = \Auth::user();
+        $user = $_user ? new User($_user) : null;
 
         // is admin
-        $is_admin = $is_authenticated && \Auth::user()->is_admin ? true : false;
+        $is_admin = $_user && $_user->is_admin ? true : false;
 
         // flash messages
 
@@ -60,7 +60,6 @@ class GlobalDataRequest extends Request
         return compact(
             'token',
             'locale',
-            'is_authenticated',
             'user',
             'is_admin',
             'flash',

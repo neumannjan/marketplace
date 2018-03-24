@@ -122,7 +122,6 @@ export type OfferRequestScope = RequestScope | 'auth';
 export interface GlobalResponse {
     token: null | string,
     locale: string,
-    is_authenticated: boolean,
     user: null | User,
     is_admin: boolean,
     flash: {[key: string]: FlashMessage},

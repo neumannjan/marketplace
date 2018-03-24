@@ -187,7 +187,7 @@
             }
         }
     })
-    export default class OfferFormRoute extends mixins(route, routeGuard('auth', () => store.state.is_authenticated), form) {
+    export default class OfferFormRoute extends mixins(route, routeGuard('auth', () => !!store.state.user), form) {
         currencies: Currencies = {};
         errors: {[index: string]: string | null} = {};
         valids: {[index: string]: boolean} = {};

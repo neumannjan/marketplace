@@ -109,7 +109,7 @@
         }
 
         get authenticated(): boolean {
-            return store.state.is_authenticated;
+            return !!store.state.user;
         }
     }
 </script>

@@ -69,7 +69,6 @@ export interface State extends InitialResponse {
 const state: State = {
     token: null,
     locale: 'en',
-    is_authenticated: false,
     user: null,
     is_admin: false,
     connection_http: null,
@@ -93,7 +92,7 @@ const mutations = {
         updateObject<GlobalResponse | InitialResponse>(state, data);
     },
     logout(state: State) {
-        state.is_authenticated = false;
+        state.user = null;
     },
     token(state: State, token: string) {
         state.token = token;
@@ -160,7 +159,7 @@ const getters = {
         return {
             user: considerAdmin<RequestScope>('public'),
             publicOffer: considerAdmin<RequestScope>('public'),
-            offer: considerAdmin<OfferRequestScope>(state.is_authenticated ? 'auth' : 'public'),
+            offer: considerAdmin<OfferRequestScope>(!!state.user ? 'auth' : 'public'),
         };
     }
 };

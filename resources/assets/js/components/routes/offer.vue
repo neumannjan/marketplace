@@ -25,7 +25,7 @@
         name: "offer-route",
         mixins: [
             route,
-            routeGuard('auth', (vm: Vue & VueData) => (store.state.is_authenticated || !vm.offer || (vm.offer.status === 1 && !vm.offer.expired)))
+            routeGuard('auth', (vm: Vue & VueData) => (!!store.state.user || !vm.offer || (vm.offer.status === 1 && !vm.offer.expired)))
         ],
         components: {
             OfferCard

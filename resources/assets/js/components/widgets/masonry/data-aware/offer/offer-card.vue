@@ -197,7 +197,7 @@
                     {
                         icon: 'shopping-cart',
                         label: 'Buy',
-                        disabled: this.isThisUser || !this.$store.state.is_authenticated,
+                        disabled: this.isThisUser || !this.$store.state.user,
                         callback: () => {
                             //TODO translate
                             if (!confirm(`Are you sure you want to send user ${this.value.author.display_name} a message?`)) {

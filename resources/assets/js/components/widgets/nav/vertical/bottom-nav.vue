@@ -40,7 +40,7 @@
         },
         computed: {
             ...mapState({
-                items: state => state.is_authenticated ? authItems : guestItems
+                items: state => !!state.user ? authItems : guestItems
             })
         }
     };

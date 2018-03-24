@@ -32,7 +32,7 @@
                         }
                     ];
 
-                    const authItems = state.is_authenticated ? [
+                    const authItems = !!state.user ? [
                         {
                             label: 'Admin',
                             icon: 'user',

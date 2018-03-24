@@ -213,7 +213,7 @@ const router = new VueRouter({
             path: '/me',
             name: 'me',
             redirect: to => {
-                if (store.state.is_authenticated && store.state.user)
+                if (!!store.state.user)
                     return {name: 'user', params: {username: store.state.user.username}};
                 else
                     return {name: 'login'}
