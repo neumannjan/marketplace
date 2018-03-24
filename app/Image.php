@@ -18,7 +18,8 @@ class Image extends Model
     const SIZES = [
         'tiny' => 0.05,
         'icon' => [40, 40],
-        'icon_2x' => [80, 80]
+        'icon_2x' => [80, 80],
+        'thumbnail' => [400, 400]
     ];
     const ORIGINAL_SIZE = 'original';
 

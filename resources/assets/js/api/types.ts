@@ -5,7 +5,13 @@ export interface Image {
     id: number,
     width: number,
     height: number,
-    urls: string[],
+    urls: {
+        original?: string,
+        tiny?: string,
+        icon?: string,
+        icon_2x?: string,
+        thumbnail?: string,
+    },
     ready: boolean
 }
 
@@ -41,6 +47,8 @@ export interface Offer {
     name: string,
     author: User,
     price: string,
+    price_value: number,
+    currency: string,
     description: string,
     bumps_left: number,
     just_bumped: boolean,
@@ -135,7 +143,8 @@ export interface GlobalResponse {
  */
 export interface InitialResponse extends GlobalResponse {
     messages: TranslationMessages,
-    unread_conversations?: Conversation[]
+    unread_conversations?: Conversation[],
+    max_file_uploads: number
 }
 
 /**

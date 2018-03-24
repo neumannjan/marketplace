@@ -14,6 +14,7 @@ $factory->define(\App\Image::class, function (Faker $faker) {
     $tiny = $faker->unsplashUrl($width / 20, floor($height / 20), $id);
     $icon = $faker->unsplashUrl(40, 40, $id);
     $icon_2x = $faker->unsplashUrl(80, 80, $id);
+    $thumbnail = $faker->unsplashUrl(400, 400, $id);
 
     return [
         'original' => $original,
@@ -21,6 +22,7 @@ $factory->define(\App\Image::class, function (Faker $faker) {
             'tiny' => $tiny,
             'icon' => $icon,
             'icon_2x' => $icon_2x,
+            'thumbnail' => $thumbnail
         ],
         'width' => $width,
         'height' => $height,

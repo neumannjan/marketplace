@@ -246,6 +246,13 @@ const router = new VueRouter({
             component: OfferFormRoute,
             ...AuthGuard
         },
+        {
+            path: '/offer/edit/:id(\\d+)',
+            name: 'offer-edit',
+            component: OfferFormRoute,
+            props: route => ({id: parseInt(route.params.id)}),
+            ...AuthGuard
+        },
 
         // error
         {

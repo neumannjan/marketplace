@@ -1,6 +1,5 @@
 import {routeEvents, RouteEvents, routesMatch} from 'JS/router';
-import Vue from "vue";
-import Component from 'JS/components/class-component';
+import { Component, Vue } from 'JS/components/class-component';
 import { Route, NavigationGuard, RawLocation } from 'vue-router';
 import { events, Events } from 'JS/events';
 
@@ -13,7 +12,7 @@ export interface RouteFetchMixinInterface {
 }
 
 export default function <R extends Result, P extends object>
-(fetchAsyncFunction: (params: P) => Promise<R | null>, nullObj: R, before: boolean = true) {
+(fetchAsyncFunction: (params: P) => Promise<R | null>, nullObj: R, before: boolean = true, after?: (vm: Vue) => void) {
 
     async function handleResult(vm: Vue, result: R) {
         function setValues(from: R) {
@@ -24,10 +23,11 @@ export default function <R extends Result, P extends object>
         setValues(nullObj);
         await vm.$nextTick();
 
-        if (result !== undefined) {
-            setValues(result);
-            await vm.$nextTick();
+        setValues(result);
+        if(after) {
+            after(vm);
         }
+        await vm.$nextTick();
 
         routeEvents.dispatch(RouteEvents.Loaded, undefined);
     }

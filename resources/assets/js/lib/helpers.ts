@@ -1,3 +1,5 @@
+import Vue from "vue";
+
 /**
  * Safely retrieves a value from a nested object. Returns defaultValue if the key is not present in the object.
  * @param {object} object
@@ -32,4 +34,64 @@ export function awaitEvent(target: EventTarget, type: string): Promise<any> {
             once: true
         });
     });
+}
+
+/**
+ * Function which takes an image file and returns its scaled down thumbnail.
+ * A callback is provided and first called for the URL of the original image, then for the thumbnail URL.
+ * @param image 
+ * @param maxWidth 
+ * @param maxHeight 
+ */
+export async function getImageFileThumbnailDataURL(image: File, maxWidth = 400, maxHeight = 400): Promise<string> {
+    const onLoad = (target: EventTarget, after: () => void) => {
+        return new Promise(resolve => {
+            target.addEventListener('load', resolve, {once: true});
+            after();
+        });
+    }
+
+    const reader = new FileReader();
+
+    await onLoad(reader, () => {
+        reader.readAsDataURL(image);
+    });
+
+    const fullURL = reader.result;
+
+    const img = document.createElement("img");
+    const canvas = document.createElement("canvas");
+
+    await onLoad(img, () => {
+        img.src = fullURL;
+    });
+
+    let width = img.width;
+    let height = img.height;
+
+    if (width > height) {
+        if (width > maxWidth) {
+            height *= maxWidth / width;
+            width = maxWidth;
+        }
+    } else {
+        if (height > maxHeight) {
+            width *= maxHeight / height;
+            height = maxHeight;
+        }
+    }
+
+    canvas.width = width;
+    canvas.height = height;
+
+    const ctx = canvas.getContext("2d");
+
+    if(ctx) {
+        ctx.drawImage(img, 0, 0, width, height);
+        const thumbURL = canvas.toDataURL(image.type);
+        return thumbURL;
+    }
+
+    console.warn('Failed to create an image thumbnail');
+    return fullURL;
 }

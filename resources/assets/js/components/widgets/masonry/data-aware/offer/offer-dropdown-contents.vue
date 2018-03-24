@@ -11,7 +11,7 @@
         <template v-else>
             <b-dropdown-header>Owner options</b-dropdown-header>
             <template v-if="!sold">
-                <b-dropdown-item-button>
+                <b-dropdown-item-button @click="editOffer()">
                     <icon name="pencil" class="mr-2" />
                     Edit
                 </b-dropdown-item-button>
@@ -168,6 +168,15 @@
             }, () => api.requestSingle<Offer>('offer-bump', {id: this.offer.id}).then((offer) => {
                 events.dispatch(Events.OfferModified, offer);
             }));
+        }
+
+        editOffer() {
+            this.$router.push({
+                name: 'offer-edit',
+                params: {
+                    id: this.offer.id.toString()
+                }
+            });
         }
     }
 </script>

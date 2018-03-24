@@ -1,3 +1,23 @@
+//floating badge
+.badge-float { 
+  position: absolute;
+  border-radius: 50%;
+  display: block;
+  top: 0;
+  right: 0;
+  width: 22px;
+  height: 22px;
+  transform-origin: center;
+
+  & > * {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+//floating buttons
 .btn-floating {
   @extend .rounded-circle;
   margin: 0 $btn-floating-margin $btn-floating-margin 0;
@@ -15,21 +35,9 @@
   }
 
   .badge {
-    position: absolute;
-    border-radius: 50%;
-    display: block;
+    @extend .badge-float;
     top: -5px;
     right: -5px;
-    width: 22px;
-    height: 22px;
-    transform-origin: center;
-
-    & > * {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
   }
 }
 

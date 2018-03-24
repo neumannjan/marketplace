@@ -10,14 +10,14 @@
                         :validation="$v.form.login"
                         v-model="form.login"
                         hint="Username or email"
-                        required autofocus/>
+                        autofocus/>
             <form-input class="form-group"
                         label="Password"
                         name="password"
                         :serverValidation="$serverValidationOn('form.password')"
                         :validation="$v.form.password"
                         v-model="form.password"
-                        type="password" required/>
+                        type="password"/>
 
             <form-select class="form-group" v-model="form.remember">Remember Me</form-select>
 

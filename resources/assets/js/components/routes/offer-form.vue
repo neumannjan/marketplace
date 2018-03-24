@@ -7,10 +7,11 @@
                         label="What are you selling?"
                         error-label="Offer name"
                         name="name"
+                        v-focus
                         :server-validation="$serverValidationOn('form.name')"
                         :validation="$v.form.name"
                         v-model="form.name"
-                        required autofocus/>
+                        autofocus/>
             <form-input class="form-group"
                         label="Describe the offer a little more"
                         error-label="Description"
@@ -29,6 +30,8 @@
                            autocomplete="off"
                            ref="price"
                            :class="['form-control', {'is-invalid': priceError, 'is-valid': priceValid}]"
+                           :value="form.price"
+                           :maxlength="15"
                            @input="onPriceInput"
                            type="tel"
                            inputmode="numeric"
@@ -69,12 +72,21 @@
             <div v-if="imageOrder && imageOrder.length > 0" class="form-group">
                 <div class="mb-2">Reorder the images (use drag & drop)</div>
                 <draggable class="d-flex flex-wrap thumbnail-container" v-model="imageOrder">
-                    <placeholder-img v-for="(image) of imageOrder"
-                                     :src="image.src"
-                                     :key="image.key"
-                                     class="thumbnail-wrapper p-2"
-                                     img-class="w-100 h-100 rounded"
-                                     :img-style="{objectFit: 'cover'}"/>
+                    <div v-for="(image) of imageOrder"
+                         :key="image.key"
+                         class="thumbnail-wrapper p-2">
+                        <placeholder-img :src="image.src"
+                                         class="w-100 h-100 rounded thumbnail-border"
+                                         img-class="w-100 h-100"
+                                         :img-style="{objectFit: 'cover'}"/>
+                        <button v-if="!image.new"
+                                @click="removeExistingMessage(image.id)"
+                                type="button"
+                                class="btn badge badge-float badge-danger"
+                                aria-label="Close">
+                            <icon name="times" label="Close"/>
+                        </button>
+                    </div>
                 </draggable>
             </div>
 
@@ -92,15 +104,16 @@
     import FormInput from 'JS/components/widgets/form/input.vue';
     import FormSelect from 'JS/components/widgets/form/select.vue';
 
-    import {minLength, required} from 'vuelidate/lib/validators';
+    import {minLength, required, maxLength} from 'vuelidate/lib/validators';
+    import withParams from 'vuelidate/lib/withParams';
 
     import route from 'JS/components/mixins/route';
     import routeGuard from 'JS/components/mixins/route-guard';
     import form from 'JS/components/mixins/form';
     import store from 'JS/store';
     import {cached} from 'JS/store';
-    import { mixins } from 'JS/components/class-component';
-    import Vue,{ Component } from 'JS/components/class-component';
+    import { mixins, Prop, Vue, Component, Watch } from 'JS/components/class-component';
+    import api from 'JS/api';
 
     import Choices from "JS/components/widgets/form/choices.vue";
     import ValidationMessage from "JS/components/widgets/form/validation-message.vue";
@@ -112,21 +125,25 @@
     //@ts-ignore
     import Draggable from 'vuedraggable';
     import PlaceholderImg from "JS/components/widgets/image/placeholder-img.vue";
-    import { Currencies, Offer } from 'JS/api/types';
+    import { Currencies, Offer, Image } from 'JS/api/types';
     import { Route, RawLocation } from 'vue-router';
+    import routeFetch from 'JS/components/mixins/route-fetch';
+    import { getImageFileThumbnailDataURL } from 'JS/lib/helpers';
+
+    import 'vue-awesome/icons/times';
 
     interface FormData {
         name?: string;
         description?: string;
         price?: string | number;
-        currency?: string | false;
+        currency?: string | 0;
         images?: Array<any> | FileList;
     }
 
     interface ImageOrderInstance {
-        src: string | null,
+        src: string | undefined,
         new: boolean,
-        index: number,
+        id: number,
         key: string
     }
 
@@ -136,6 +153,51 @@
         id?: number,
         selected?: boolean
         placeholder?: boolean
+    }
+
+    interface OfferFormRouteInterface {
+        form: FormData;
+        offer: Offer | null;
+    }
+
+    const emptyOfferForm: OfferFormRouteInterface = {
+        form: {
+            name: "",
+            description: "",
+            price: "",
+            currency: 0,
+            images: []
+        },
+        offer: null
+    };
+
+    function fetchOffer(params: {id: number | undefined}): Promise<OfferFormRouteInterface> {
+        if(params.id === undefined) {
+            return Promise.resolve(emptyOfferForm);
+        } else {
+            return api.requestSingle<Offer>('offer', {
+                    scope: store.getters.scope.offer,
+                    id: params.id
+                })
+                .then(offer => {
+                    return {
+                        form: {
+                            name: offer.name,
+                            description: offer.description,
+                            price: offer.price_value,
+                            currency: offer.currency,
+                            images: []
+                        },
+                        offer: offer
+                    }
+                })
+        }
+    }
+
+    async function afterFetch(vm: Vue) {
+        vm.$v.$reset();
+        await vm.$nextTick();
+        (vm as OfferFormRoute).formModified = false;
     }
 
     @Component({
@@ -160,11 +222,12 @@
                 },
                 price: {
                     required(val: number) {
-                        return (val || val === 0) && !isNaN(val);
+                        return (val || val === 0) && !isNaN(val) && isFinite(val);
                     },
                     numeric(val: number) {
                         return typeof val === "number";
-                    }
+                    },
+                    max: maxLength(15)
                 },
                 currency: {
                     required(value: string) {
@@ -172,8 +235,8 @@
                     },
                 },
                 images: {
-                    required(value: any[]) {
-                        return value && value.length > 0;
+                    required(images: any[]) {
+                        return images && images.length > 0;
                     },
                     image(images: any[]) {
                         for (let image of images) {
@@ -182,12 +245,25 @@
                         }
 
                         return true;
-                    }
+                    },
+                    maxArray: withParams({
+                        max: store.state.max_file_uploads
+                    },
+                    (images: any[]) => {
+                        return images && images.length <= store.state.max_file_uploads;
+                    })
                 }
             }
         }
     })
-    export default class OfferFormRoute extends mixins(route, routeGuard('auth', () => !!store.state.user), form) {
+    export default class OfferFormRoute extends mixins(route, routeFetch(fetchOffer, emptyOfferForm, false, afterFetch),
+        routeGuard('auth', () => !!store.state.user), form) implements OfferFormRouteInterface {
+
+        @Prop({type: Number})
+        id: number | undefined;
+
+        offer: Offer | null = null;
+
         currencies: Currencies = {};
         errors: {[index: string]: string | null} = {};
         valids: {[index: string]: boolean} = {};
@@ -195,12 +271,10 @@
         priceCleave: any | null;
 
         form: FormData = {
-            name: "",
-            description: "",
-            price: "",
-            currency: false,
-            images: []
-        }
+            currency: 0
+        };
+
+        formModified: boolean = false;
 
         imageOrder: ImageOrderInstance[] = [];
 
@@ -209,37 +283,78 @@
             this.$v.form.currency.$touch();
         }
 
+        @Watch('form')
+        onFormModified() {
+            this.formModified = true;
+        }
+
+        @Watch('offer')
+        onOfferModified(offer: Offer | null) {
+            const imageOrder = this.imageOrder.filter(image => image.new);
+
+            if(offer) {
+                for(let [index, image] of offer.images.entries()) {
+                    imageOrder.push({
+                        src: image.urls.thumbnail ? image.urls.thumbnail : image.urls.original,
+                        new: false,
+                        id: image.id,
+                        key: index.toString()
+                    });
+                }
+            }
+
+            this.imageOrder = imageOrder;
+        }
+
         onPriceInput() {
             this.touchPrice();
-            this.form = {...this.form, price: parseFloat(this.priceCleave.getRawValue())};
+            let price: string | number = parseFloat(this.priceCleave.getRawValue());
+
+            if(isNaN(price) || !isFinite(price))
+                price = '';
+
+            this.form = {...this.form, price: price};
         }
 
         onFileInput(f: FileList) {
             this.form = {...this.form, images: f};
 
-            let imageOrder: ImageOrderInstance[] = [];
+            let imageOrder: ImageOrderInstance[] = this.imageOrder.filter(image => !image.new);
 
+            //add new images
             for (let [index, image] of Array.from(f).entries()) {
-                const entry = {src: null, new: true, index: index, key: `new|${index}`};
+                const entry = {
+                    src: undefined,
+                    new: true,
+                    id: index,
+                    key: `new|${index}`
+                };
+
                 imageOrder.push(entry);
 
-                const reader = new FileReader();
-                reader.addEventListener("load", () => {
-                    const is = imageOrder === this.imageOrder;
-                    const i = imageOrder.indexOf(entry);
+                getImageFileThumbnailDataURL(image)
+                    .then(url => {
+                        const imageOrder = this.imageOrder;
+                        const i = imageOrder.indexOf(entry);
 
-                    if (i >= 0) {
-                        imageOrder[i].src = reader.result;
-                    }
-
-                    if (is) {
-                        this.imageOrder = imageOrder;
-                    }
-                });
-                reader.readAsDataURL(image);
+                        if (i >= 0) {
+                            imageOrder[i].src = url;
+                            this.imageOrder = imageOrder;
+                        }
+                    });
             }
 
             this.imageOrder = imageOrder;
+        }
+
+        removeExistingMessage(id: number) {
+            const imageOrder = this.imageOrder;
+            const index = imageOrder.findIndex(image => !image.new && image.id === id);
+
+            if(index >= 0) {
+                imageOrder.splice(index, 1);
+                this.imageOrder = imageOrder;
+            }
         }
 
         submit(asDraft = false) {
@@ -249,7 +364,7 @@
 
             const imageOrder = Object.values(this.imageOrder).map(val => ({
                 new: val.new,
-                index: val.index
+                id: val.id
             }));
 
             formData.set('imageOrder', JSON.stringify(imageOrder));
@@ -273,7 +388,7 @@
         
         get title() {
             //TODO
-            return 'Create offer';
+            return this.id ? `Edit offer` : 'Create offer';
         }
 
         get price() {
@@ -312,14 +427,6 @@
         get priceError() {
             return this.errors.price || this.errors.currency;
         }
-
-        get formEmpty() {
-            for (let field of Object.values(this.form)) {
-                if (field) return false;
-            }
-
-            return true;
-        }
         
         async mounted() {
             this.priceCleave = new Cleave(this.$refs.price, {
@@ -328,7 +435,6 @@
                 numeralIntegerScale: 30,
                 numeralDecimalScale: 8,
                 numeralPositiveOnly: true,
-
             });
             this.currencies = (await cached()).currencies;
         }
@@ -338,7 +444,7 @@
         }
 
         beforeRouteLeave(to: Route, from: Route, next: (to?: RawLocation | false | ((vm: any) => any) | void) => void) {
-            if (this.formEmpty || window.confirm('Are you sure you want to leave? You have unsaved changes!')) {
+            if (!this.formModified || window.confirm('Are you sure you want to leave? You have unsaved changes!')) {
                 next()
             } else {
                 next(false)
@@ -368,5 +474,10 @@
         width: 150px;
         height: 150px;
         position: relative;
+    }
+
+    .thumbnail-border {
+        overflow: hidden;
+        border: 1px solid $primary;
     }
 </style>

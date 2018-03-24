@@ -73,6 +73,7 @@ const state: State = {
     is_admin: false,
     connection_http: null,
     connection_websocket: null,
+    max_file_uploads: 0,
     flash: {},
     notifications: {},
     messages: {},

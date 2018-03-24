@@ -181,3 +181,7 @@ declare module "vuelidate/lib/validators" {
      */
     function and(...validators: ValidationPredicate[]): () => boolean;
 }
+
+declare module "vuelidate/lib/withParams" {
+    export default function withParams(params: {[index: string]: any}, validator: (...params: any[]) => boolean): any
+}

@@ -9,7 +9,7 @@
                         :serverValidation="$serverValidationOn('form.email')"
                         :validation="$v.form.email"
                         v-model="form.email"
-                        type="email" required autofocus/>
+                        type="email" autofocus/>
 
             <div class="form-group">
                 <button type="submit" id="submit" class="btn btn-primary" @click.prevent="submit">Send Password Reset

@@ -10,14 +10,16 @@
                   :title="label"
                   @input="onInput" @blur="touch()" v-focus="autofocus"
                   :value="value"
-                  :required="required" :aria-describedby="hint ? hintId : false"></textarea>
+                  :maxlength="maxlength"
+                  :aria-describedby="hint ? hintId : false"></textarea>
         <input v-else
                :id="id" :name="name" :type="type" :class="['form-control', {'is-invalid': error, 'is-valid': valid}]"
                :value="value"
                :placeholder="placeholder"
+               :maxlength="maxlength"
                :title="label"
                @input="onInput" @blur="touch()" v-focus="autofocus"
-               :required="required" :aria-describedby="hint ? hintId : false">
+               :aria-describedby="hint ? hintId : false">
         <validation-message :validation="validation" :server-validation="serverValidation"
                             :label="errorLabel ? errorLabel : label" :input="input"
                             @valid="v => valid = v"
@@ -68,7 +70,7 @@
             errorLabel: String,
             value: String,
             autofocus: Boolean,
-            required: Boolean,
+            maxlength: Number
         },
         methods: {
             touch() {

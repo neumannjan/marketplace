@@ -83,7 +83,14 @@ export default class RouteMixin extends Vue {
         next();
     }
 
+    created() {
+        this.$data._isMainRoute = determineActive(this);
+        changeTitle(this);
+    }
+
     activated() {
+        this.$data._isMainRoute = determineActive(this);
+        changeTitle(this);
         this.$nextTick(() => retrieveScroll(this));
     }
 };

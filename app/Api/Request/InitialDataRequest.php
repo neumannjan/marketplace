@@ -22,6 +22,7 @@ class InitialDataRequest extends GlobalDataRequest
             'validation' => [
                 'min' => trans('validation.min.string'),
                 'max' => trans('validation.max.string'),
+                'maxArray' => trans('validation.max.array'),
                 'required' => trans('validation.required'),
                 'slug' => trans('validation.slug'),
                 'numeric' => trans('validation.numeric'),
@@ -48,6 +49,9 @@ class InitialDataRequest extends GlobalDataRequest
 
             $array['unread_conversations'] = Conversation::collection($conversations);
         }
+
+        // upload limits
+        $array['max_file_uploads'] = (int) ini_get('max_file_uploads');
 
         return $array;
     }

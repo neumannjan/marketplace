@@ -44,7 +44,7 @@ class OfferCreateRequest extends Request
         return [
                 'imageOrder' => 'required|array',
                 'imageOrder.*.new' => 'required|boolean',
-                'imageOrder.*.index' => 'required|integer',
+                'imageOrder.*.id' => 'required|integer',
             ] + Offer::getValidationRules($validator);
     }
 
@@ -86,7 +86,7 @@ class OfferCreateRequest extends Request
         /** @var Collection $imageDesc */
         foreach ($imageOrder as $key => $imageDesc) {
             if ($imageDesc['new']) {
-                $uploadedFile = $images->get($imageDesc['index'], null);
+                $uploadedFile = $images->get($imageDesc['id'], null);
 
                 if (!$uploadedFile)
                     continue;

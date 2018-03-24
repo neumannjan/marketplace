@@ -39,17 +39,11 @@ declare module "vue/types/vue" {
 }
 
 Vue.directive('focus', {
-    bind(el: HTMLElement, binding: VNodeDirective) {
-        if (binding.value)
-            el.focus();
-    },
     inserted(el: HTMLElement, binding: VNodeDirective) {
-        if (binding.value)
+        if (binding.value) {
+            console.log('inserted');
             el.focus();
-    },
-    update(el: HTMLElement, binding: VNodeDirective) {
-        if (binding.value)
-            el.focus();
+        }
     }
 });
 

@@ -4,57 +4,62 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
     //@ts-ignore
     import Choices from 'choices.js';
-    import Vue from 'vue';
+    import { Vue, Component, Prop, Watch } from 'JS/components/class-component';
 
-    export default Vue.extend({
+    @Component({
         name: "choices",
-        props: {
-            items: {
-                type: Array,
-                default: () => []
-            },
-            options: {
-                type: Object,
-                default: () => ({})
-            },
-            value: {},
-            elemClass: {},
-            name: String
-        },
-        watch: {
-            async elemClass() {
-                /** @type {HTMLElement} */
-                const wrapper = this.$refs.wrapper;
-                /** @type {HTMLElement | null} */
-                const el = this.el;
+    })
+    export default class ChoicesComponent extends Vue {
+        @Prop({type: Array, default: () => []})
+        items!: any[];
 
-                if (!el) return;
+        @Prop({type: Object, default: () => ({})})
+        options!: {[index: string]: any};
 
-                const oldClass = wrapper.className.split(' ');
-                await this.$nextTick();
-                const newClass = wrapper.className.split(' ');
+        @Prop({})
+        value: any;
 
-                el.className = [...el.className.split(' '), ...newClass]
-                    .filter((v, i, a) => a.indexOf(v) === i && (newClass.indexOf(v) >= 0 || oldClass.indexOf(v) < 0))
-                    .join(' ');
-            },
-            items(val) {
-                this.choices.setChoices(val, 'value', 'label', true);
-            },
-            value(val) {
-                if (val !== this.choices.getValue(true))
-                    this.choices.setValueByChoice(val);
-            }
-        },
-        data: () => ({
-            choices: null,
-            el: null
-        }),
+        @Prop({})
+        elemClass: any;
+
+        @Prop({type: String})
+        name: string | undefined;
+
+        choices: any = null;
+        el: Element | undefined;
+
+        @Watch('elemClass')
+        async onElemClassChanged() {
+            const wrapper = <Element> this.$refs.wrapper;
+            const el = this.el;
+
+            if (!el) return;
+
+            const oldClass = wrapper.className.split(' ');
+            await this.$nextTick();
+            const newClass = wrapper.className.split(' ');
+
+            el.className = [...el.className.split(' '), ...newClass]
+                .filter((v, i, a) => a.indexOf(v) === i && (newClass.indexOf(v) >= 0 || oldClass.indexOf(v) < 0))
+                .join(' ');
+        }
+
+        @Watch('items')
+        onItemsChanged(val: any[]) {
+            this.choices.setChoices(val, 'value', 'label', true);
+        }
+
+        @Watch('value')
+        onValueChanged(val: any) {
+            if (val !== this.choices.getValue(true))
+                this.choices.setValueByChoice(val);
+        }
+
         mounted() {
-            const wrapper = this.$refs.wrapper;
+            const wrapper = <HTMLElement> this.$refs.wrapper;
 
             const options = this.options;
             const clss = wrapper.className;
@@ -63,111 +68,39 @@
                 noResultsText: 'No results found',
                 noChoicesText: 'No choices to choose from',
                 itemSelectText: 'Press to select',
-                //@ts-ignore
-                addItemText: value => `Press Enter to add <b>"${value}"</b>`,
-                //@ts-ignore
-                maxItemText: maxItemCount => `Only ${maxItemCount} values can be added.`, //TODO translate
-                //@ts-ignore
-                callbackOnCreateTemplates(template) {
+                addItemText: (value: string) => `Press Enter to add <b>"${value}"</b>`,
+                maxItemText: (maxItemCount: number) => `Only ${maxItemCount} values can be added.`, //TODO translate
+                callbackOnCreateTemplates(template: any) {
                     const classNames = this.config.classNames;
                     return {
-                        //@ts-ignore
-                        containerOuter: (direction) => {
+                        containerOuter: (direction: string) => {
                             return template(`
             <div class="${classNames.containerOuter} ${clss}" data-type="${this.passedElement.type}" ${this.passedElement.type === 'select-one' ? 'tabindex="0"' : ''} aria-haspopup="true" aria-expanded="false" dir="${direction}"></div>
           `);
                         },
-                        /*containerInner: () => {
-                            return template(`
-            <div class="${classNames.containerInner}"></div>
-          `);
-                        },*/
-                        /*itemList: () => {
-                            return template(`
-            <div class="${classNames.list} ${this.passedElement.type === 'select-one' ? classNames.listSingle : classNames.listItems}"></div>
-          `);
-                        },*/
-                        /*placeholder: (value) => {
-                            return template(`
-            <div class="${classNames.placeholder}">${value}</div>
-          `);
-                        },*/
-                        /*item: (data) => {
-                            if (this.config.removeItemButton) {
-                                return template(`
-              <div class="${classNames.item} ${data.highlighted ? classNames.highlightedState : ''} ${!data.disabled ? classNames.itemSelectable : ''}" data-item data-id="${data.id}" data-value="${data.value}" ${data.active ? 'aria-selected="true"' : ''} ${data.disabled ? 'aria-disabled="true"' : ''} data-deletable>
-              ${data.label}<button class="${classNames.button}" data-button>Remove item</button>
-              </div>
-            `);
-                            }
-                            return template(`
-          <div class="${classNames.item} ${data.highlighted ? classNames.highlightedState : classNames.itemSelectable}"  data-item data-id="${data.id}" data-value="${data.value}" ${data.active ? 'aria-selected="true"' : ''} ${data.disabled ? 'aria-disabled="true"' : ''}>
-            ${data.label}
-          </div>
-          `);
-                        },*/
-                        /*choiceList: () => {
-                            return template(`
-            <div class="${classNames.list}" dir="ltr" role="listbox" ${this.passedElement.type !== 'select-one' ? 'aria-multiselectable="true"' : ''}></div>
-          `);
-                        },*/
-                        /*choiceGroup: (data) => {
-                            return template(`
-            <div class="${classNames.group} ${data.disabled ? classNames.itemDisabled : ''}" data-group data-id="${data.id}" data-value="${data.value}" role="group" ${data.disabled ? 'aria-disabled="true"' : ''}>
-              <div class="${classNames.groupHeading}">${data.value}</div>
-            </div>
-          `);
-                        },*/
-                        /*choice: (data) => {
-                            return template(`
-          <div class="${classNames.item} ${classNames.itemChoice} ${data.disabled ? classNames.itemDisabled : classNames.itemSelectable}" data-select-text="${this.config.itemSelectText}" data-choice ${data.disabled ? 'data-choice-disabled aria-disabled="true"' : 'data-choice-selectable'} data-id="${data.id}" data-value="${data.value}" ${data.groupId > 0 ? 'role="treeitem"' : 'role="option"'}>
-              ${data.label}
-            </div>
-          `);
-                        },*/
-                        /*input: () => {
-                            return template(`
-          <input type="text" class="${classNames.input} ${classNames.inputCloned}" autocomplete="off" autocapitalize="off" spellcheck="false" role="textbox" aria-autocomplete="list">
-          `);
-                        },*/
-                        /*dropdown: () => {
-                            return template(`
-            <div class="${classNames.list} ${classNames.listDropdown}" aria-expanded="false"></div>
-          `);
-                        },*/
-                        /*notice: (label) => {
-                            return template(`
-            <div class="${classNames.item} ${classNames.itemChoice}">${label}</div>
-          `);
-                        },*/
-                        /*option: (data) => {
-                            return template(`
-            <option value="${data.value}" selected>${data.label}</option>
-          `);
-                        },*/
                     }
                 },
                 ...options
             });
 
             this.el = wrapper.children[0];
-            wrapper.parentNode.insertBefore(this.el, wrapper.nextSibling);
+            if(wrapper.parentNode) {
+                wrapper.parentNode.insertBefore(this.el, wrapper.nextSibling);
+            }
             wrapper.style.display = 'none';
 
-            /**
-             * @param {UIEvent} e
-             */
-            const onChoice = e => {
+            const onChoice = (e: Event) => {
                 //@ts-ignore
                 this.$emit('input', e.detail.choice.value);
             };
 
             this.$onJS(choices.passedElement, 'choice', onChoice);
-        },
+        }
+
         beforeDestroy() {
             this.choices.destroy();
         }
-    });
+    }
 </script>
 
 <style lang="scss" type="text/scss">

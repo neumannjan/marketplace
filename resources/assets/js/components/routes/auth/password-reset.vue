@@ -9,21 +9,21 @@
                         :serverValidation="$serverValidationOn('form.email')"
                         :validation="$v.form.email"
                         v-model="form.email"
-                        type="email" required autofocus=""/>
+                        type="email" autofocus=""/>
             <form-input class="form-group"
                         label="Password"
                         name="password"
                         :serverValidation="$serverValidationOn('form.password')"
                         :validation="$v.form.password"
                         v-model="form.password"
-                        type="password" required/>
+                        type="password"/>
             <form-input class="form-group"
                         label="Confirm Password"
                         name="password_confirmation"
                         :serverValidation="$serverValidationOn('form.password_confirmation')"
                         :validation="$v.form.password_confirmation"
                         v-model="form.password_confirmation"
-                        type="password" required/>
+                        type="password"/>
 
             <div class="form-group">
                 <button type="submit" id="submit" class="btn btn-primary" @click.prevent="submit">Reset Password

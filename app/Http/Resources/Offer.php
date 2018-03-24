@@ -20,6 +20,8 @@ class Offer extends Resource
             'name' => $this->name,
             'author' => User::make($this->author),
             'price' => $this->price,
+            'price_value' => $this->price_value,
+            'currency' => $this->currency_code,
             'description' => $this->description,
             'status' => $this->status,
             'bumps_left' => $this->bumps_left,
