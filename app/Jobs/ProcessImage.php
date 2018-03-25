@@ -24,6 +24,12 @@ class ProcessImage implements ShouldQueue
     protected $image;
 
     /**
+     * How many times this job should be attempted
+     * @var int
+     */
+    public $tries = 1; //try only once
+
+    /**
      * Create a new job instance.
      *
      * @param Image $image
@@ -50,7 +56,7 @@ class ProcessImage implements ShouldQueue
         $origPath = $laravelStoragePath . DIRECTORY_SEPARATOR . $this->image->original;
 
         if (!file_exists($origPath)) {
-            throw new \InvalidArgumentException("The Image's file does not exist");
+            throw new \InvalidArgumentException("The Image's file does not exist (not found at $origPath");
         }
 
         $availableSizes = $this->image->available_sizes;
@@ -61,6 +67,9 @@ class ProcessImage implements ShouldQueue
 
         // create image
         $iImgOrig = $imageManager->make($origPath);
+
+        $origWidth = $iImgOrig->getWidth();
+        $origHeight = $iImgOrig->getHeight();
 
         // ensure original is jpg and not too large
 
@@ -78,11 +87,11 @@ class ProcessImage implements ShouldQueue
 
         $this->image->original = $this->getRelativePath($path, $laravelStoragePath);
 
+        $this->image->width = $origWidth; //TODO set resized size ?
+        $this->image->height = $origHeight;
+
         //remove old file
         unlink($origPath);
-
-        $this->image->width = $iImgOrig->getWidth();
-        $this->image->height = $iImgOrig->getHeight();
 
         $sizes = [];
 
@@ -91,18 +100,24 @@ class ProcessImage implements ShouldQueue
 
             $size = Image::SIZES[$sizeName];
 
-            if ($size[0] === null) {
-                $size[0] = $size[1] * $this->image->width / $this->image->height;
-            } elseif ($size[0] === null) {
-                $size[1] = $size[0] * $this->image->height / $this->image->width;
+            if (is_array($size)) {
+                $iImg->fit($size[0], $size[1], function ($constraint) {
+                    /** @var Constraint $constraint */
+
+                    //prevent image from being upsized
+                    $constraint->upsize();
+                });
+            } else {
+                $iImg->resize($size, $size, function ($constraint) {
+                    /** @var Constraint $constraint */
+
+                    //keep aspect ratio
+                    $constraint->aspectRatio();
+
+                    //prevent image from being upsized
+                    $constraint->upsize();
+                });
             }
-
-            $iImg->fit(round($size[0]), round($size[1]), function ($constraint) {
-                /** @var Constraint $constraint */
-
-                //prevent image from being upsized
-                $constraint->upsize();
-            });
 
             $relativePath = Image::STORAGE_DIR . DIRECTORY_SEPARATOR . Str::random(40) . '.jpg';
             $path = $laravelStoragePath . DIRECTORY_SEPARATOR . $relativePath;

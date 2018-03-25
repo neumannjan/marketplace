@@ -16,7 +16,7 @@ class Image extends Model
     const STORAGE_DIR = 'public' . DIRECTORY_SEPARATOR . 'images';
 
     const SIZES = [
-        'tiny' => [24, null],
+        'tiny' => 24,
         'icon' => [40, 40],
         'icon_2x' => [80, 80],
         'thumbnail' => [400, 400]
