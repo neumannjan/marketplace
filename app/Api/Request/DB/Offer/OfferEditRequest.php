@@ -10,7 +10,7 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Validator;
 
-class OfferCreateRequest extends Request
+class OfferEditRequest extends Request
 {
     use ProcessImages;
 
@@ -40,10 +40,11 @@ class OfferCreateRequest extends Request
     protected function rules(Validator $validator = null)
     {
         return [
+                'id' => 'required|integer',
                 'imageOrder' => 'required|array',
                 'imageOrder.*.new' => 'required|boolean',
                 'imageOrder.*.id' => 'required|integer',
-            ] + Offer::getValidationRules($validator);
+            ] + Offer::getValidationRules($validator, false);
     }
 
     /**
@@ -59,20 +60,26 @@ class OfferCreateRequest extends Request
      */
     protected function doResolve($name, Collection $parameters)
     {
-        $offer = new Offer([
-            'name' => $parameters['name'],
-            'description' => $parameters->get('description'),
-            'price_value' => $parameters->get('price', 0),
-            'currency' => $parameters->get('currency'),
-            'status' => $parameters->get('status', Offer::STATUS_AVAILABLE),
+        $offer = Offer::query()->where([
+            'id' => $parameters['id'],
             'author_user_id' => $this->guard->id()
-        ]);
+        ])->first();
 
-        $offer->save();
+        if ($offer) {
+            /** @var Offer $offer */
+            $offer->fill([
+                'name' => $parameters['name'],
+                'description' => $parameters->get('description'),
+                'price_value' => $parameters->get('price', 0),
+                'currency' => $parameters->get('currency'),
+            ]);
 
-        $this->processImages($offer, $parameters['imageOrder'], $parameters['images'], false);
+            $offer->save();
 
-        return new Response(true, ['id' => $offer->id]);
+            $this->processImages($offer, $parameters['imageOrder'], $parameters->get('images'), true);
+
+            return new Response(true, ['id' => $offer->id]);
+        }
     }
 
 }

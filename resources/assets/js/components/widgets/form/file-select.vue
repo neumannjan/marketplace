@@ -1,15 +1,20 @@
 <template>
     <div class="form-group">
-        <label v-if="label" :for="id">
+        <label v-if="label || $slots.default" :for="id">
             <slot>{{ label }}</slot>
         </label>
-        <div class="custom-file">
-            <input type="file" :name="name" :multiple="multiple" @change="onFileChange"
-                   :accept="accept"
-                   :class="['custom-file-input', {'is-invalid': error, 'is-valid': valid}]"
-                   :id="id" ref="file">
-            <!-- TODO -->
-            <label class="custom-file-label" :data-button="'Browse'" :for="id"><span>{{ fileInfo }}</span></label>
+        <div class="input-group">
+            <div :class="['custom-file', $slots.append ? 'custom-file-append' : '']">
+                <input type="file" :name="name" :multiple="multiple" @change="onFileChange"
+                       :accept="accept"
+                       :class="['custom-file-input', {'is-invalid': error, 'is-valid': valid}]"
+                       :id="id" ref="file">
+                <!-- TODO -->
+                <label class="custom-file-label" :data-button="'Browse'" :for="id"><span>{{ fileInfo }}</span></label>
+            </div>
+            <div v-if="$slots.append" class="input-group-append">
+                <slot name="append"/>
+            </div>
         </div>
         <validation-message :validation="validation" :server-validation="serverValidation"
                             :label="errorLabel ? errorLabel : label" :input="files"
@@ -20,8 +25,8 @@
 
 <script lang="ts">
     import ValidationMessage from "JS/components/widgets/form/validation-message.vue";
-    import { Vue, Component, Prop } from "JS/components/class-component";
-    import { Vuelidate } from "vuelidate";
+    import {Component, Prop, Vue} from "JS/components/class-component";
+    import {Vuelidate} from "vuelidate";
 
     let nextID = 0;
 

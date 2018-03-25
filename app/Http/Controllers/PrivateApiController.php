@@ -16,6 +16,7 @@ use App\Api\Request\DB\Chat\MessagesRequest;
 use App\Api\Request\DB\MultiRequest;
 use App\Api\Request\DB\Offer\OfferBumpRequest;
 use App\Api\Request\DB\Offer\OfferCreateRequest;
+use App\Api\Request\DB\Offer\OfferEditRequest;
 use App\Api\Request\DB\Offer\OfferRemoveRequest;
 use App\Api\Request\DB\Offer\OfferSearchRequest;
 use App\Api\Request\DB\SingleRequest;
@@ -85,6 +86,7 @@ class PrivateApiController extends Controller
             // DB set
             'offer-create' => OfferCreateRequest::class,
             'offer-remove' => OfferRemoveRequest::class,
+            'offer-edit' => OfferEditRequest::class,
             'offer-bump' => OfferBumpRequest::class,
         ];
     }

@@ -316,7 +316,7 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
      * @param Validator $validator
      * @return array
      */
-    public static function getValidationRules(Validator $validator = null)
+    public static function getValidationRules(Validator $validator = null, $requireImages = true)
     {
         if ($validator) {
             $validator->sometimes('currency', resolve(CurrencyRule::class), function ($input) {
@@ -327,10 +327,12 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
                 return intval($input->status) === Offer::STATUS_AVAILABLE;
             });
 
-            $validator->sometimes('images', 'required', function ($input) {
-                $val = intval($input->status) === Offer::STATUS_AVAILABLE;
-                return $val;
-            });
+            if ($requireImages) {
+                $validator->sometimes('images', 'required', function ($input) {
+                    $val = intval($input->status) === Offer::STATUS_AVAILABLE;
+                    return $val;
+                });
+            }
 
             $validator->sometimes('images', 'file|image', function ($input) {
                 $val = intval($input->status) === Offer::STATUS_AVAILABLE && !is_array($input->images);

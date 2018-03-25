@@ -8,11 +8,11 @@ import Vuelidate from 'vuelidate';
 import IconComponent from 'vue-awesome/components/Icon.vue';
 import * as ElementQueries from 'css-element-queries/src/ElementQueries';
 
-import store, {State} from 'JS/store';
+import store from 'JS/store';
 import router from 'JS/router';
 import {Store} from "vuex";
 
-import EventsMixin, { EventsMixinInterface } from 'JS/components/mixins/events';
+import EventsMixin, {EventsMixinInterface} from 'JS/components/mixins/events';
 import AppComponent from './components/app.vue';
 import LazyImgComponent from './components/widgets/image/lazy-img.vue';
 
@@ -41,7 +41,6 @@ declare module "vue/types/vue" {
 Vue.directive('focus', {
     inserted(el: HTMLElement, binding: VNodeDirective) {
         if (binding.value) {
-            console.log('inserted');
             el.focus();
         }
     }

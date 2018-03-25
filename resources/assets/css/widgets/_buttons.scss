@@ -74,3 +74,13 @@ a.no-decoration:hover {
   display: flex;
   align-items: center;
 }
+
+// icons
+.btn svg {
+  vertical-align: middle;
+}
+
+//file select
+.custom-file-append .custom-file-label::after {
+  border-radius: 0;
+}

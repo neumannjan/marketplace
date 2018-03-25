@@ -61,13 +61,19 @@
             </div>
 
             <file-select name="images[]"
+                         v-if="!resettingFileInput"
                          accept="image/*"
                          multiple
                          label="Add some images"
                          error-label="File"
                          :server-validation="$serverValidationOn('form.images')"
                          :validation="$v.form.images"
-                         @input="onFileInput"/>
+                         @input="onFileInput">
+                <button slot="append" v-if="offer" class="btn btn-danger" @click.prevent="resetImageOrder()"
+                        title="Revert original images">
+                    <icon name="refresh"/>
+                </button>
+            </file-select>
 
             <div v-if="imageOrder && imageOrder.length > 0" class="form-group">
                 <div class="mb-2">Reorder the images (use drag & drop)</div>
@@ -104,33 +110,31 @@
     import FormInput from 'JS/components/widgets/form/input.vue';
     import FormSelect from 'JS/components/widgets/form/select.vue';
 
-    import {minLength, required, maxLength} from 'vuelidate/lib/validators';
+    import {maxLength, minLength, required} from 'vuelidate/lib/validators';
     import withParams from 'vuelidate/lib/withParams';
 
     import route from 'JS/components/mixins/route';
     import routeGuard from 'JS/components/mixins/route-guard';
     import form from 'JS/components/mixins/form';
-    import store from 'JS/store';
-    import {cached} from 'JS/store';
-    import { mixins, Prop, Vue, Component, Watch } from 'JS/components/class-component';
+    import store, {cached} from 'JS/store';
+    import {Component, mixins, Prop, Vue, Watch} from 'JS/components/class-component';
     import api from 'JS/api';
 
     import Choices from "JS/components/widgets/form/choices.vue";
     import ValidationMessage from "JS/components/widgets/form/validation-message.vue";
-
     //@ts-ignore
     import Cleave from 'cleave.js';
     import FileSelect from "JS/components/widgets/form/file-select.vue";
-
     //@ts-ignore
     import Draggable from 'vuedraggable';
     import PlaceholderImg from "JS/components/widgets/image/placeholder-img.vue";
-    import { Currencies, Offer, Image } from 'JS/api/types';
-    import { Route, RawLocation } from 'vue-router';
+    import {Currencies, Offer} from 'JS/api/types';
+    import {RawLocation, Route} from 'vue-router';
     import routeFetch from 'JS/components/mixins/route-fetch';
-    import { getImageFileThumbnailDataURL } from 'JS/lib/helpers';
+    import {getImageFileThumbnailDataURL} from 'JS/lib/helpers';
 
     import 'vue-awesome/icons/times';
+    import 'vue-awesome/icons/refresh';
 
     interface FormData {
         name?: string;
@@ -235,10 +239,10 @@
                     },
                 },
                 images: {
-                    required(images: any[]) {
-                        return images && images.length > 0;
+                    required(images: File[]) {
+                        return (images && images.length > 0 || (<any>this).offer);
                     },
-                    image(images: any[]) {
+                    image(images: File[]) {
                         for (let image of images) {
                             if (!image.type.startsWith('image/'))
                                 return false;
@@ -248,8 +252,7 @@
                     },
                     maxArray: withParams({
                         max: store.state.max_file_uploads
-                    },
-                    (images: any[]) => {
+                    }, (images: File[]) => {
                         return images && images.length <= store.state.max_file_uploads;
                     })
                 }
@@ -276,6 +279,8 @@
 
         formModified: boolean = false;
 
+        resettingFileInput: boolean = false;
+
         imageOrder: ImageOrderInstance[] = [];
 
         touchPrice() {
@@ -283,17 +288,16 @@
             this.$v.form.currency.$touch();
         }
 
-        @Watch('form')
-        onFormModified() {
-            this.formModified = true;
-        }
+        addExistingImages(forceNewArray: boolean = false) {
+            let imageOrder: ImageOrderInstance[];
 
-        @Watch('offer')
-        onOfferModified(offer: Offer | null) {
-            const imageOrder = this.imageOrder.filter(image => image.new);
+            if (forceNewArray)
+                imageOrder = [];
+            else
+                imageOrder = this.imageOrder.filter(image => image.new);
 
-            if(offer) {
-                for(let [index, image] of offer.images.entries()) {
+            if (this.offer) {
+                for (let [index, image] of this.offer.images.entries()) {
                     imageOrder.push({
                         src: image.urls.thumbnail ? image.urls.thumbnail : image.urls.original,
                         new: false,
@@ -304,6 +308,24 @@
             }
 
             this.imageOrder = imageOrder;
+        }
+
+        async resetImageOrder() {
+            this.resettingFileInput = true;
+            await this.$nextTick();
+            this.resettingFileInput = false;
+
+            this.addExistingImages(true);
+        }
+
+        @Watch('form')
+        onFormModified() {
+            this.formModified = true;
+        }
+
+        @Watch('offer')
+        onOfferModified() {
+            this.addExistingImages();
         }
 
         onPriceInput() {
@@ -362,6 +384,9 @@
             formData.set('price', this.form.price ? this.form.price.toString() : '0');
             formData.set('status', asDraft ? '0' : '1');
 
+            if (this.offer)
+                formData.set('id', this.offer.id.toString());
+
             const imageOrder = Object.values(this.imageOrder).map(val => ({
                 new: val.new,
                 id: val.id
@@ -369,16 +394,19 @@
 
             formData.set('imageOrder', JSON.stringify(imageOrder));
 
-            const onSubmitSuccess = (result: Offer) => {
+            const onSubmitSuccess = (result: { id?: number }) => {
                 this.form = {};
 
                 if (result && result.id)
                     this.$router.replace({name: 'offer', params: {id: result.id.toString()}});
+                else if (this.offer)
+                    this.$router.replace({name: 'offer', params: {id: this.offer.id.toString()}});
                 else
                     this.$router.replace({name: 'index'});
             };
 
-            this.$submitForm('offer-create', 'form', onSubmitSuccess, formData, asDraft);
+            this.formModified = false;
+            this.$submitForm(this.offer ? 'offer-edit' : 'offer-create', 'form', onSubmitSuccess, formData, asDraft);
         }
 
         setObjArg(objName: string, key: string, value: any) {
@@ -397,10 +425,14 @@
 
             const price = typeof this.form.price === 'number' ? this.form.price : parseFloat(this.form.price);
 
-            const val = new Intl.NumberFormat(this.$store.state.locale,
+            try {
+                const val = new Intl.NumberFormat(this.$store.state.locale,
                 {style: 'currency', currency: this.form.currency}).format(price);
 
-            return val.substr(0, 3) !== 'NaN' ? val : '';
+                return val.substr(0, 3) !== 'NaN' ? val : '';
+            } catch (error) {
+                return '';
+            }
         }
 
         get choicesCurrencies(): ChoicesCurrencies[] {
