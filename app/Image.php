@@ -16,12 +16,13 @@ class Image extends Model
     const STORAGE_DIR = 'public' . DIRECTORY_SEPARATOR . 'images';
 
     const SIZES = [
-        'tiny' => 0.05,
+        'tiny' => [24, null],
         'icon' => [40, 40],
         'icon_2x' => [80, 80],
         'thumbnail' => [400, 400]
     ];
     const ORIGINAL_SIZE = 'original';
+    const ORIGINAL_SIZE_LIMIT = 1024;
 
     protected $casts = [
         'sizes' => 'array',

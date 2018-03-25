@@ -61,20 +61,28 @@ class ProcessImage implements ShouldQueue
 
         // create image
         $iImgOrig = $imageManager->make($origPath);
+
+        // ensure original is jpg and not too large
+
+        $path = $iImgOrig->dirname . DIRECTORY_SEPARATOR . $iImgOrig->filename . '.jpg';
+        $iImgOrig->resize(Image::ORIGINAL_SIZE_LIMIT, Image::ORIGINAL_SIZE_LIMIT, function ($constraint) {
+            /** @var Constraint $constraint */
+
+            //keep aspect ratio
+            $constraint->aspectRatio();
+
+            //prevent image from being upsized
+            $constraint->upsize();
+        });
+        $iImgOrig->save($path);
+
+        $this->image->original = $this->getRelativePath($path, $laravelStoragePath);
+
+        //remove old file
+        unlink($origPath);
+
         $this->image->width = $iImgOrig->getWidth();
         $this->image->height = $iImgOrig->getHeight();
-
-        // ensure original is jpg
-        $ext = $iImgOrig->extension ? strtolower($iImgOrig->extension) : null;
-        if ($ext !== 'jpg' && $ext !== 'jpeg') {
-            $path = $iImgOrig->dirname . DIRECTORY_SEPARATOR . $iImgOrig->filename . '.jpg';
-            $iImgOrig->save($path);
-
-            $this->image->original = $this->getRelativePath($path, $laravelStoragePath);
-
-            //remove old file
-            unlink($origPath);
-        }
 
         $sizes = [];
 
@@ -83,19 +91,16 @@ class ProcessImage implements ShouldQueue
 
             $size = Image::SIZES[$sizeName];
 
-            if (!is_array($size)) {
-                $size = [$size, $size];
-            }
-
-            if ($size[0] < 1) {
-                $size[0] *= $iImg->getWidth();
-            }
-            if ($size[1] < 1) {
-                $size[1] *= $iImg->getHeight();
+            if ($size[0] === null) {
+                $size[0] = $size[1] * $this->image->width / $this->image->height;
+            } elseif ($size[0] === null) {
+                $size[1] = $size[0] * $this->image->height / $this->image->width;
             }
 
             $iImg->fit(round($size[0]), round($size[1]), function ($constraint) {
                 /** @var Constraint $constraint */
+
+                //prevent image from being upsized
                 $constraint->upsize();
             });
 
