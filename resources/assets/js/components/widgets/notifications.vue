@@ -19,7 +19,7 @@
     import {mapState} from 'vuex';
 
     import Alert from "JS/components/widgets/alert.vue";
-import notifications from 'JS/notifications';
+    import notifications from 'JS/notifications';
 
     export default {
         name: 'notifications',
@@ -132,31 +132,19 @@ import notifications from 'JS/notifications';
         }
     }
 
-    .notification-disappearing:not(.tr-enter):not(.tr-enter-active):not(.tr-leave):not(.tr-leave-active) {
+    .notification-disappearing:not(.tr-enter):not(.tr-enter-active) {
         animation: disappear 15000ms normal forwards ease-in;
     }
 
-    .tr-leave-to {
-        &:not(.notification-disappearing) {
-            opacity: 0 !important;
-        }
-    }
-
-    .tr-leave {
-        &:not(.notification-disappearing) {
-            opacity: $opacity-max !important;
-        }
-    }
-
-    .tr-enter, .tr-leave-to {
+    .tr-enter {
         opacity: 0 !important;
     }
 
-    .tr-enter-to, .tr-leave {
+    .tr-enter-to {
         opacity: $opacity-max !important;
     }
 
-    .tr-leave-active, .tr-enter-active {
+    .tr-enter-active {
         transition-delay: .1s;
     }
 </style>
