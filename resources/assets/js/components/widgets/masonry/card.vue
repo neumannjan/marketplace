@@ -1,6 +1,6 @@
-<template>
+<template functional>
     <div class="card">
-        <div v-if="$slots.header" :class="['card-header', headerClass]">
+        <div v-if="slots().header" :class="['card-header', props.headerClass]">
             <slot name="header"/>
         </div>
         <slot name="post-header"/>
@@ -8,7 +8,7 @@
             <slot/>
         </div>
         <slot name="pre-footer"/>
-        <div v-if="$slots.footer" :class="['card-footer', footerClass]">
+        <div v-if="slots().footer" :class="['card-footer', props.footerClass]">
             <slot name="footer"/>
         </div>
     </div>

@@ -1,5 +1,5 @@
-<template>
-    <span :class="['badge', `badge-${type}`]"><slot>{{ message }}</slot></span>
+<template functional>
+    <span :class="['badge', `badge-${props.type}`]"><slot>{{ props.message }}</slot></span>
 </template>
 
 <script>

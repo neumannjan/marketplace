@@ -1,5 +1,5 @@
 <template>
-    <card class="text-muted">
+    <card class="text-muted" footer-class="bg-white border-light">
         <div slot="post-header" class="img-dummy card-img-top"></div>
 
         <div class="placeholder-loading placeholder-loading-title"></div>
@@ -8,7 +8,7 @@
         <div class="placeholder-loading"></div>
         <div class="placeholder-loading placeholder-loading-short"></div>
 
-        <card-icon-footer :buttons="buttons" slot="footer" class="bg-white border-light" button-class="text-muted"
+        <card-icon-footer :buttons="buttons" slot="footer" button-class="text-muted"
                           :gray="false"/>
     </card>
 </template>

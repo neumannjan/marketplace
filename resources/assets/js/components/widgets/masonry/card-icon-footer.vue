@@ -1,11 +1,11 @@
-<template>
-    <div :class="['card-footer-icons d-flex', `justify-content-${justifyContent}`]">
-        <button v-for="button in buttons"
+<template functional>
+    <div :class="['card-footer-icons d-flex', `justify-content-${props.justifyContent}`]">
+        <button v-for="button in props.buttons"
                 :key="button.icon"
                 type="button"
                 @click="button.callback && !button.disabled ? button.callback() : null"
                 :disabled="button.disabled ? 'true' : undefined"
-                :class="['btn btn-link', buttonClass, {'btn-link-gray': gray}]">
+                :class="['btn btn-link', props.buttonClass, {'btn-link-gray': props.gray}]">
             <icon :name="button.icon" :label="button.label"/>
         </button>
     </div>

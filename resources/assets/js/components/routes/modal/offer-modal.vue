@@ -29,9 +29,6 @@
         props: {
             offer: {}
         },
-        data: () => ({
-            size: 'xl'
-        }),
         methods: {
             goToFull() {
                 router.push({name: 'offer', params: {id: this.$route.query.offer}});
