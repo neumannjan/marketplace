@@ -20,6 +20,7 @@ use App\Api\Request\DB\Offer\OfferEditRequest;
 use App\Api\Request\DB\Offer\OfferRemoveRequest;
 use App\Api\Request\DB\Offer\OfferSearchRequest;
 use App\Api\Request\DB\SingleRequest;
+use App\Api\Request\DB\User\UserAdminRequest;
 use App\Api\Request\DummyRequest;
 use App\Api\Request\GlobalDataRequest;
 use App\Api\Request\Request as ApiRequest;
@@ -88,6 +89,8 @@ class PrivateApiController extends Controller
             'offer-remove' => OfferRemoveRequest::class,
             'offer-edit' => OfferEditRequest::class,
             'offer-bump' => OfferBumpRequest::class,
+
+            'user-admin' => UserAdminRequest::class
         ];
     }
 

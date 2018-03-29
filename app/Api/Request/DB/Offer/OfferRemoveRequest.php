@@ -52,11 +52,14 @@ class OfferRemoveRequest extends Request
         /** @var User $user */
         $user = $this->guard->user();
 
-        /** @var Offer $offer */
-        $offer = Offer::query()->where([
-            'id' => $parameters['id'],
-            'author_user_id' => $user->id
-        ])->first(['id']);
+        $query = Offer::query()
+            ->where(['id' => $parameters['id']]);
+
+        if (!$user->is_admin) {
+            $query = $query->where(['author_user_id' => $this->guard->id()]);
+        }
+
+        $offer = $query->first();
 
         if($offer && $offer->delete() !== false) {
             return new Response(true, []);

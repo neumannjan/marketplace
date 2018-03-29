@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- TODO translate -->
-        <template v-if="!owned">
+        <template v-if="!owned && !admin">
             <b-dropdown-header>Additional options</b-dropdown-header>
             <b-dropdown-item-button>
                 <icon name="flag-o" class="mr-2" />
@@ -9,13 +9,13 @@
             </b-dropdown-item-button>
         </template>
         <template v-else>
-            <b-dropdown-header>Owner options</b-dropdown-header>
+            <b-dropdown-header>{{ owned ? 'Owner options' : 'Administrator options' }}</b-dropdown-header>
             <template v-if="!sold">
                 <b-dropdown-item-button @click="editOffer()">
                     <icon name="pencil" class="mr-2" />
                     Edit
                 </b-dropdown-item-button>
-                <b-dropdown-item-button v-if="!draft" :disabled="!bumpable" @click="bumpOffer()">
+                <b-dropdown-item-button v-if="!draft && owned" :disabled="!bumpable" @click="bumpOffer()">
                     <icon name="clock-o" class="mr-2" />
                     <template v-if="offer.bumps_left === 0">No bumps left!</template>
                     <template v-else-if="offer.just_bumped">Bumped recently</template>
@@ -46,18 +46,8 @@
     import api from 'JS/api';
     import events, {Events} from 'JS/events';
     import {Location} from 'vue-router';
-    import notifications, {NotificationTypes} from 'JS/notifications';
-
-    interface NotificationPayload {
-        id: NotificationTypes,
-        message: string
-    }
-
-    interface ActionPayload {
-        confirm?: string,
-        beforeNotification?: NotificationPayload,
-        afterNotification?: NotificationPayload,
-    }
+    import {NotificationTypes} from 'JS/notifications';
+    import {doAction} from 'JS/lib/helpers';
 
     @Component({
         name: "offer-dropdown-contents",
@@ -69,6 +59,10 @@
     export default class OfferDropdownContents extends Vue {
         @Prop({type: Object, required: true})
         offer!: Offer;
+
+        get admin(): boolean {
+            return store.state.is_admin;
+        }
 
         get owned(): boolean {
             return !!store.state.user && store.state.user.username === this.offer.author.username;
@@ -86,50 +80,12 @@
             return this.offer.bumps_left > 0 && !this.offer.just_bumped;
         }
 
-        /**
-         * Does a basic action that may require confirmation and may display notifications
-         *
-         */
-        private doAction(payload: ActionPayload, func: () => Promise<any>) {
-            if (!payload.confirm || confirm(payload.confirm)) {
-                if (payload.beforeNotification) {
-                    notifications.showNotification({
-                        id: payload.beforeNotification.id,
-                        type: 'info',
-                        message: payload.beforeNotification.message,
-                        persistent: true
-                    });
-                }
-
-                func().then(() => {
-                    if (payload.beforeNotification) {
-                        notifications.hideNotification(payload.beforeNotification.id);
-                    }
-
-                    if (payload.afterNotification) {
-                        notifications.showNotification({
-                            id: payload.afterNotification.id,
-                            type: 'success',
-                            message: payload.afterNotification.message,
-                            persistent: false
-                        });
-                    }
-                });
-            }
-        }
-
         removeOffer() {
             // TODO translate
-            this.doAction({
+            doAction({
                 confirm: `You are trying to remove "${this.offer.name}". Are you sure you want to continue?`,
-                beforeNotification: {
-                    id: NotificationTypes.RemovingOffer,
-                    message: `"${this.offer.name}" is being removed.`,
-                },
-                afterNotification: {
-                    id: NotificationTypes.RemovedOffer,
-                    message: `"${this.offer.name}" was successfully removed.`,
-                }
+                beforeNotification: `"${this.offer.name}" is being removed.`,
+                afterNotification: `"${this.offer.name}" was successfully removed.`
             }, () => api.requestSingle('offer-remove', {id: this.offer.id}).then(() => {
                 let newRoute: Location = {};
 
@@ -154,15 +110,13 @@
 
         bumpOffer() {
             //TODO translate
-            this.doAction({
+            doAction({
                 confirm: `Are you sure you want to make "${this.offer.name}" reappear on top as a new offer? `
                     + `You can do this only ${this.offer.bumps_left} times!`,
                 beforeNotification: {
-                    id: NotificationTypes.BumpingOffer,
                     message: `Bumping "${this.offer.name}".`
                 },
                 afterNotification: {
-                    id: NotificationTypes.BumpedOffer,
                     message: `"${this.offer.name}" has been bumped.`
                 }
             }, () => api.requestSingle<Offer>('offer-bump', {id: this.offer.id}).then((offer) => {

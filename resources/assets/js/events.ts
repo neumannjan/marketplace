@@ -1,12 +1,13 @@
 import EventListener from "JS/lib/event-listener";
-import { NormalizedMessage } from "JS/api/messaging/typings";
-import { Conversation, Offer } from "JS/api/types";
+import {NormalizedMessage} from "JS/api/messaging/typings";
+import {Conversation, Offer, User} from "JS/api/types";
 
 export enum Events {
     MessageSent = 'MessageSent',
     UnreadConversations = 'UnreadConversations',
     RequestPopup = 'RequestPopup',
     RequestBuy = 'RequestBuy',
+    RequestChat = 'RequestChat',
     ViewportChange = 'ViewportChange',
 
     /**
@@ -24,6 +25,7 @@ interface Payloads {
     [Events.UnreadConversations]: Conversation[],
     [Events.RequestPopup]: any,
     [Events.RequestBuy]: any,
+    [Events.RequestChat]: User,
     [Events.ViewportChange]: boolean,
     [Events.AppRefresh]: undefined,
     [Events.AfterAppRefresh]: undefined,

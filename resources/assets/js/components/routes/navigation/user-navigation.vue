@@ -13,8 +13,12 @@
                     width: `${imgSize}px`,
                     height: `${imgSize}px`}"/>
             </div>
-            <h1 class="h2 text-center">{{ user.display_name }}</h1>
-            <p class="text-muted text-center"><i>@{{ user.username }}</i></p>
+            <h1 :class="['h2 text-center', {'text-danger': isBanned}]">
+                {{ user.display_name }}
+                <span v-if="isBanned" class="badge badge-danger">Banned</span>
+            </h1>
+            <p :class="['text-center', isBanned ? 'text-danger' : 'text-muted']"><i>@{{ user.username }}</i></p>
+            <user-menu class="mx-auto" v-model="user"/>
         </div>
     </div>
 </template>
@@ -22,8 +26,9 @@
 <script lang="ts">
     import BlurredImg from 'JS/components/widgets/image/blurred-img.vue';
     import ProfileImg from "JS/components/widgets/image/profile-img.vue";
+    import UserMenu from "./user-menu.vue";
 
-    import { User, Image } from 'JS/api/types';
+    import {Image, User, UserStatus} from 'JS/api/types';
     import {routeEvents, RouteEvents} from 'JS/router';
     import Vue from 'vue';
 
@@ -41,7 +46,8 @@
         },
         components: {
             ProfileImg,
-            BlurredImg
+            BlurredImg,
+            UserMenu
         },
         computed: {
             img(): Image | null {
@@ -53,6 +59,9 @@
             },
             crossOrigin() {
                 return process.env.NODE_ENV === 'development' ? 'anonymous' : undefined;
+            },
+            isBanned(): boolean {
+                return !!this.user && this.user.status === UserStatus.Banned;
             }
         },
         data: (): {
@@ -79,7 +88,6 @@
 
                 return contrastImage(imageData, 70);
             },
-
             onImg(el: HTMLElement) {
                 this.imgEl = el;
             }

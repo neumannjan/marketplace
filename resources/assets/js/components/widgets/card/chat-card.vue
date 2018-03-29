@@ -31,14 +31,13 @@
 </template>
 
 <script lang="ts">
-    import echo from 'JS/echo';
-    import appEvents, { Events } from 'JS/events';
-    import { User, Offer } from 'JS/api/types';
+    import appEvents, {Events} from 'JS/events';
+    import {Offer, User} from 'JS/api/types';
     import Vue from 'vue';
     import store from 'JS/store';
-    import { ConversationMediatorInterface } from 'JS/api/messaging/typings';
-    import { MessageSender } from 'JS/components/widgets/chat/types';
-    
+    import {ConversationMediatorInterface} from 'JS/api/messaging/typings';
+    import {MessageSender} from 'JS/components/widgets/chat/types';
+
     import ListConversations from "JS/components/widgets/chat/list-conversations.vue";
     import ListMessages from "JS/components/widgets/chat/list-messages.vue";
     import ProfileImg from "JS/components/widgets/image/profile-img.vue";
@@ -81,6 +80,23 @@
 
             onMessageSender(sender: MessageSender) {
                 this.sender = sender;
+            },
+
+            async openChat(user: User): Promise<boolean> {
+                if (!store.state.user || user.username === store.state.user.username) {
+                    return false;
+                }
+
+                if (this.user) {
+                    this.user = null;
+                    await this.$nextTick();
+                }
+
+                this.user = user;
+
+                await this.$nextTick();
+
+                return true;
             }
         },
         watch: {
@@ -91,29 +107,21 @@
             }
         },
         created() {
-            const buy = async (offer: Offer) => {
-                if (!store.state.user || offer.author.username === store.state.user.username) {
-                    return;
-                }
+            this.$onEventListener(appEvents, Events.RequestChat, (user: User) => {
+                this.openChat(user);
+            });
 
-                if (this.user) {
-                    this.user = null;
-                    await this.$nextTick();
-                }
-
-                this.user = offer.author;
-
-                if(this.sender) {
-                    await this.$nextTick();
-                    this.sender('', {
-                        offer: offer.id
-                    }, {
-                        offer: offer
-                    });
-                }
-            }
-
-            this.$onEventListener(appEvents, Events.RequestBuy, buy);
+            this.$onEventListener(appEvents, Events.RequestBuy, (offer: Offer) => {
+                this.openChat(offer.author).then(isOpen => {
+                    if (isOpen && this.sender) {
+                        this.sender('', {
+                            offer: offer.id
+                        }, {
+                            offer: offer
+                        });
+                    }
+                });
+            });
         }
     });
 </script>

@@ -1,4 +1,4 @@
-import Vue from "vue";
+import notifications, {NotificationTypes} from "JS/notifications";
 
 /**
  * Safely retrieves a value from a nested object. Returns defaultValue if the key is not present in the object.
@@ -94,4 +94,47 @@ export async function getImageFileThumbnailDataURL(image: File, maxWidth = 400, 
 
     console.warn('Failed to create an image thumbnail');
     return fullURL;
+}
+
+interface NotificationConfiguration {
+    id?: NotificationTypes | string;
+    message: string
+}
+
+interface ActionConfiguration {
+    confirm?: string,
+    beforeNotification?: NotificationConfiguration | string,
+    afterNotification?: NotificationConfiguration | string,
+}
+
+/**
+ * Does a basic action that may require confirmation and may display notifications
+ * @param config
+ * @param func
+ */
+export function doAction(config: ActionConfiguration, func: () => Promise<any>) {
+    if (!config.confirm || confirm(config.confirm)) {
+        let notificationID: string;
+        if (config.beforeNotification) {
+            notificationID = notifications.showNotification({
+                type: 'info',
+                message: typeof config.beforeNotification === 'string' ? config.beforeNotification : config.beforeNotification.message,
+                persistent: true
+            });
+        }
+
+        func().then(() => {
+            if (config.beforeNotification) {
+                notifications.hideNotification(notificationID);
+            }
+
+            if (config.afterNotification) {
+                notifications.showNotification({
+                    type: 'success',
+                    message: typeof config.afterNotification === 'string' ? config.afterNotification : config.afterNotification.message,
+                    persistent: false
+                });
+            }
+        });
+    }
 }

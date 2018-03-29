@@ -7,16 +7,14 @@
 <script lang="ts">
     import api from 'JS/api';
     import router, {routeEvents, RouteEvents} from 'JS/router';
-    import store,{ State } from 'JS/store';
-    import {mapState} from 'vuex';
-    import { User, PaginatedResponse, Offer } from 'JS/api/types';
-    import { Vue, Component, Prop, Watch } from 'JS/components/class-component';
+    import store from 'JS/store';
+    import {Offer, PaginatedResponse, User} from 'JS/api/types';
+    import {Component, mixins, Prop, Watch} from 'JS/components/class-component';
 
     import route from 'JS/components/mixins/route';
-    import routeFetch,{ RouteFetchMixinInterface } from 'JS/components/mixins/route-fetch';
+    import routeFetch from 'JS/components/mixins/route-fetch';
 
     import OfferMasonry from 'JS/components/widgets/masonry/data-aware/offer/offer-masonry.vue';
-    import { mixins } from 'JS/components/class-component';
 
     interface FetchResult {
         user: User | null,

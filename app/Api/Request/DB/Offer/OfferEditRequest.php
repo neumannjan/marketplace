@@ -6,6 +6,7 @@ namespace App\Api\Request\DB\Offer;
 use App\Api\Request\Request;
 use App\Api\Response\Response;
 use App\Offer;
+use App\User;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Validator;
@@ -60,10 +61,17 @@ class OfferEditRequest extends Request
      */
     protected function doResolve($name, Collection $parameters)
     {
-        $offer = Offer::query()->where([
-            'id' => $parameters['id'],
-            'author_user_id' => $this->guard->id()
-        ])->first();
+        /** @var User $user */
+        $user = $this->guard->user();
+
+        $query = Offer::query()
+            ->where(['id' => $parameters['id']]);
+
+        if (!$user->is_admin) {
+            $query = $query->where(['author_user_id' => $this->guard->id()]);
+        }
+
+        $offer = $query->first();
 
         if ($offer) {
             /** @var Offer $offer */

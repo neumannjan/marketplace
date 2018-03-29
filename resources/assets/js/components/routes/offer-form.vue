@@ -162,6 +162,10 @@
     interface OfferFormRouteInterface {
         form: FormData;
         offer: Offer | null;
+        formModified: boolean;
+        imageOrder: ImageOrderInstance[];
+        errors: { [index: string]: string | null };
+        valids: { [index: string]: boolean };
     }
 
     const emptyOfferForm: OfferFormRouteInterface = {
@@ -172,10 +176,14 @@
             currency: 0,
             images: []
         },
-        offer: null
+        offer: null,
+        formModified: false,
+        imageOrder: [],
+        errors: {},
+        valids: {},
     };
 
-    function fetchOffer(params: {id: number | undefined}): Promise<OfferFormRouteInterface> {
+    function fetchOffer(params: { id?: number }): Promise<OfferFormRouteInterface> {
         if(params.id === undefined) {
             return Promise.resolve(emptyOfferForm);
         } else {
@@ -192,7 +200,11 @@
                             currency: offer.currency,
                             images: []
                         },
-                        offer: offer
+                        offer: offer,
+                        formModified: false,
+                        imageOrder: [],
+                        errors: {},
+                        valids: {}
                     }
                 })
         }
@@ -266,22 +278,17 @@
         id: number | undefined;
 
         offer: Offer | null = null;
-
-        currencies: Currencies = {};
-        errors: {[index: string]: string | null} = {};
-        valids: {[index: string]: boolean} = {};
-
-        priceCleave: any | null;
-
         form: FormData = {
             currency: 0
         };
-
         formModified: boolean = false;
-
-        resettingFileInput: boolean = false;
-
         imageOrder: ImageOrderInstance[] = [];
+        errors: { [index: string]: string | null } = {};
+        valids: { [index: string]: boolean } = {};
+
+        currencies: Currencies = {};
+        priceCleave: any | null;
+        resettingFileInput: boolean = false;
 
         touchPrice() {
             this.$v.form.price.$touch();
