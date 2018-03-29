@@ -1,13 +1,14 @@
 import {routeEvents, RouteEvents, routesMatch} from 'JS/router';
-import { Component, Vue } from 'JS/components/class-component';
-import { Route, NavigationGuard, RawLocation } from 'vue-router';
-import { events, Events } from 'JS/events';
+import {Component, Vue} from 'JS/components/class-component';
+import {RawLocation, Route} from 'vue-router';
+import {events, Events} from 'JS/events';
 
 type Result = {
     [key: string]: any
 };
 
 export interface RouteFetchMixinInterface {
+    $lastRouteFetch: Route | null;
     doFetch(): void;
 }
 
@@ -39,6 +40,8 @@ export default function <R extends Result, P extends object>
 
     @Component({})
     class RouteFetchMixin extends Vue implements RouteFetchMixinInterface {
+        $lastRouteFetch: Route | null = null;
+
         beforeRouteEnter(to: Route, from: Route, next: (to?: RawLocation | false | ((vm: RouteFetchMixin & Vue) => any) | void) => void) {
             if (before) {
                 notifyLoading();
@@ -48,7 +51,9 @@ export default function <R extends Result, P extends object>
                     });
                 });
             } else {
-                next();
+                next((vm: RouteFetchMixin & Vue) => {
+                    vm.doFetch();
+                });
             }
         }
 
@@ -90,8 +95,11 @@ export default function <R extends Result, P extends object>
         }
 
         doFetch() {
-            notifyLoading();
-            fetchAsyncFunction(<any>this).then(result => handleResult(this, result ? result : nullObj));
+            if (!this.$lastRouteFetch || !routesMatch(this.$lastRouteFetch, this.$route)) {
+                this.$lastRouteFetch = this.$route;
+                notifyLoading();
+                fetchAsyncFunction(<any>this).then(result => handleResult(this, result ? result : nullObj));
+            }
         }
     }
 

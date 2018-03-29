@@ -18,6 +18,39 @@ declare module "bootstrap-vue/src/components/*" {
     export default Vue;
 }
 
+// Vue class component
+declare module "vue-property-decorators" {
+    import {NavigationGuard} from 'vue-router';
+
+    class Vue {
+        beforeRouteEnter?: NavigationGuard;
+        beforeRouteLeave?: NavigationGuard;
+        beforeRouteUpdate?: NavigationGuard;
+
+        beforeCreate?(this: ThisType<Vue>): void;
+
+        created?(): void;
+
+        beforeDestroy?(): void;
+
+        destroyed?(): void;
+
+        beforeMount?(): void;
+
+        mounted?(): void;
+
+        beforeUpdate?(): void;
+
+        updated?(): void;
+
+        activated?(): void;
+
+        deactivated?(): void;
+
+        errorCaptured?(): boolean | void;
+    }
+}
+
 // CSS Element Queries
 declare module "css-element-queries/src/ElementQueries" {
     function listen(): void;
