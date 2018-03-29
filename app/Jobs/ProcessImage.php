@@ -68,9 +68,6 @@ class ProcessImage implements ShouldQueue
         // create image
         $iImgOrig = $imageManager->make($origPath);
 
-        $origWidth = $iImgOrig->getWidth();
-        $origHeight = $iImgOrig->getHeight();
-
         // ensure original is jpg and not too large
 
         $path = $iImgOrig->dirname . DIRECTORY_SEPARATOR . $iImgOrig->filename . '.jpg';
@@ -87,8 +84,8 @@ class ProcessImage implements ShouldQueue
 
         $this->image->original = $this->getRelativePath($path, $laravelStoragePath);
 
-        $this->image->width = $origWidth; //TODO set resized size ?
-        $this->image->height = $origHeight;
+        $this->image->width = $iImgOrig->getWidth();
+        $this->image->height = $iImgOrig->getHeight();
 
         //remove old file
         unlink($origPath);
