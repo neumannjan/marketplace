@@ -285,15 +285,18 @@ const router: VueRouter = new VueRouter({
                     name: 'admin-reported',
                     component: AdminReportedRoute,
                     meta: {
-                        parent: 'admin'
+                        parent: 'admin',
+                        refreshOnReconnect: true,
                     }
                 },
                 {
-                    path: 'banned',
+                    path: 'banned/:query?',
                     name: 'admin-banned',
                     component: AdminBannedRoute,
+                    props: true,
                     meta: {
-                        parent: 'admin'
+                        parent: 'admin',
+                        refreshOnReconnect: true,
                     }
                 },
             ]

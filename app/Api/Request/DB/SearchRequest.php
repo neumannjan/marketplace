@@ -22,35 +22,44 @@ abstract class SearchRequest extends PaginatedRequest
         // empty constructor. Should not have the `modelClass` and `resourceClass` parameters.
     }
 
-
-    /**
-     * @inheritDoc
-     */
-    protected function rules(Validator $validator = null)
-    {
-        return [
-            'query' => 'required|string'
-        ];
-    }
-
     /**
      * @inheritDoc
      */
     protected function urlParameters(Collection $parameters)
     {
-        return $this
-            ->getDBParameters($parameters)
-            ->keys()
-            ->push('query')
-            ->toArray();
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function _rules(Validator $validator = null)
+    {
+        return [
+            'query' => 'required|string'
+        ] + parent::_rules($validator);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function _urlParameters(Collection $parameters)
+    {
+        return array_merge([
+                'query'
+            ],
+            $this->getDBParameters($parameters)->keys()->toArray(),
+            parent::_urlParameters($parameters)
+        );
     }
 
     /**
      * Return whether a result can be shown
      * @param Model $model
+     * @param Collection $parameters
      * @return bool
      */
-    abstract function filterResult($model);
+    protected abstract function filterResult($model, Collection $parameters);
 
     /**
      * @inheritDoc
@@ -63,7 +72,9 @@ abstract class SearchRequest extends PaginatedRequest
         $query = $modelClass::search($parameters['query']);
 
         $results = $query->get();
-        $results = $results->filter([$this, 'filterResult']);
+        $results = $results->filter(function ($model) use ($parameters) {
+            return $this->filterResult($model, $parameters);
+        });
 
         return new LengthAwarePaginator($results->forPage($pageOrAfter, $perPage),
             $results->count(), $perPage, $pageOrAfter);

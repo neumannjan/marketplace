@@ -75,6 +75,7 @@
         data: (): {
             isSideA: boolean,
             scrollY: number,
+            backShown: boolean,
             popperEl: HTMLElement | null,
             lastSelectedButton: ButtonTypes | null,
             buttonEls: HTMLElement[] | null,
@@ -82,6 +83,7 @@
         } => ({
             isSideA: true,
             scrollY: window.scrollY,
+            backShown: false,
             popperEl: null,
             lastSelectedButton: null,
             buttonEls: null,
@@ -91,6 +93,26 @@
             '$route'() {
                 this.scrollY = window.scrollY;
                 this.isSideA = true;
+
+                this.$nextTick(() => {
+                    this.backShown = (() => {
+                        if(store.state.reRoutedTimes <= 0)
+                            return false;
+
+                        const matched = this.$route.matched;
+
+                        if(matched.length === 0)
+                            return true;
+
+                        const instance = matched[matched.length - 1].instances.default;
+                        console.log(matched[matched.length - 1].instances.default);
+                        
+                        if(!instance)
+                            return true;
+
+                        return (<any>instance).isTopLevelRoute === false;
+                    })();
+                });
             },
             buttons(buttons: Button[]) {
                 if (this.popperEl && (!this.lastSelectedButton || !buttons.map(b => b.id).includes(this.lastSelectedButton))) {
@@ -102,24 +124,6 @@
             }
         },
         computed: {
-            async backShown(): Promise<boolean> {
-                await this.$nextTick();
-                if(store.state.reRoutedTimes <= 0)
-                    return false;
-
-                const matched = this.$route.matched;
-
-                if(matched.length === 0)
-                    return true;
-
-                const instance = matched[matched.length - 1].instances.default;
-                console.log(matched[matched.length - 1].instances.default);
-                
-                if(!instance)
-                    return true;
-
-                return (<any>instance).isTopLevelRoute === false;
-            },
             buttons(): Button[] {
                 if (this.isSideA) {
                     if (this.isAuthenticated) {

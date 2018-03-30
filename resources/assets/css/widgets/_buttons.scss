@@ -75,12 +75,16 @@ a.no-decoration:hover {
   align-items: center;
 }
 
-// icons
-.btn svg {
-  vertical-align: middle;
-}
-
-//file select
+// file select
 .custom-file-append .custom-file-label::after {
   border-radius: 0;
+}
+
+// navigation links
+.nav-link {
+  line-height: 100%;
+
+  svg {
+    vertical-align: top;
+  }
 }

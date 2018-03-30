@@ -12,14 +12,16 @@ use App\Rules\SlugRule;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Laravel\Scout\Searchable;
 
 /**
  * User model. Manages users in the database.
  */
 class User extends Authenticatable implements AuthorizationAwareModel
 {
-    use Notifiable;
+    use Notifiable, Searchable;
 
     const ACTIVATION_TOKEN_LENGTH = 32;
 
@@ -29,6 +31,7 @@ class User extends Authenticatable implements AuthorizationAwareModel
 
     const SCOPE_PUBLIC = 'public';
     const SCOPE_UNLIMITED = 'unlimited';
+    const SCOPE_BANNED = 'banned';
 
     /**
      * The attributes that are mass assignable.
@@ -162,11 +165,22 @@ class User extends Authenticatable implements AuthorizationAwareModel
     }
 
     /**
+     * Limits the query to only return users that are banned
+     * @param Builder $query
+     * @return Builder
+     */
+    public function scopeBanned(Builder $query)
+    {
+        return $query
+            ->where(['status' => self::STATUS_BANNED]);
+    }
+
+    /**
      * @inheritDoc
      */
     public function getPublicScopes()
     {
-        return [self::SCOPE_PUBLIC, self::SCOPE_UNLIMITED];
+        return [self::SCOPE_PUBLIC, self::SCOPE_UNLIMITED, self::SCOPE_BANNED];
     }
 
     /**
@@ -178,6 +192,7 @@ class User extends Authenticatable implements AuthorizationAwareModel
             case self::SCOPE_PUBLIC:
                 return true;
             case self::SCOPE_UNLIMITED:
+            case self::SCOPE_BANNED:
                 return $user->is_admin ? true : false;
         }
 
@@ -195,11 +210,19 @@ class User extends Authenticatable implements AuthorizationAwareModel
                     ->diff(Collection::make(['id', 'username', 'email']))
                     ->isEmpty();
             case self::SCOPE_UNLIMITED:
+            case self::SCOPE_BANNED:
                 return true;
         }
 
         return false;
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function toSearchableArray()
+    {
+        return Arr::only($this->toArray(), ['username', 'email', 'description', 'display_name']);
+    }
 
 }

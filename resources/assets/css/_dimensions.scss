@@ -12,8 +12,13 @@ body, .wrapper {
   min-height: 100%;
 }
 
+.wrapper, .main-container {
+  min-width: 0;
+}
+
 body {
   overflow-y: scroll;
+  flex-direction: row;
 }
 
 .aside-navbar-vertical, .wrapper {

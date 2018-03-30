@@ -21,6 +21,7 @@ use App\Api\Request\DB\Offer\OfferRemoveRequest;
 use App\Api\Request\DB\Offer\OfferSearchRequest;
 use App\Api\Request\DB\SingleRequest;
 use App\Api\Request\DB\User\UserAdminRequest;
+use App\Api\Request\DB\User\UserSearchRequest;
 use App\Api\Request\DummyRequest;
 use App\Api\Request\GlobalDataRequest;
 use App\Api\Request\Request as ApiRequest;
@@ -71,6 +72,12 @@ class PrivateApiController extends Controller
                 'resourceClass' => \App\Http\Resources\Offer::class
             ],
 
+            'users' => [
+                MultiRequest::class,
+                'modelClass' => User::class,
+                'resourceClass' => \App\Http\Resources\User::class
+            ],
+
             'user' => [
                 SingleRequest::class,
                 'modelClass' => User::class,
@@ -90,7 +97,9 @@ class PrivateApiController extends Controller
             'offer-edit' => OfferEditRequest::class,
             'offer-bump' => OfferBumpRequest::class,
 
-            'user-admin' => UserAdminRequest::class
+            // Admin
+            'user-admin' => UserAdminRequest::class,
+            'user-search' => UserSearchRequest::class,
         ];
     }
 

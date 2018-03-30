@@ -5,6 +5,7 @@ namespace App\Api\Request\DB\Offer;
 
 use App\Api\Request\DB\SearchRequest;
 use App\Offer;
+use Illuminate\Support\Collection;
 
 class OfferSearchRequest extends SearchRequest
 {
@@ -15,7 +16,7 @@ class OfferSearchRequest extends SearchRequest
      * @inheritDoc
      * @param Offer $model
      */
-    function filterResult($model)
+    protected function filterResult($model, Collection $parameters)
     {
         return $model->displayable;
     }
