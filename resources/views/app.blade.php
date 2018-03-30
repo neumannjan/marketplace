@@ -27,6 +27,8 @@
     </script>
 @endpush
 
+@section('title', config('app.name'))
+
 @section('body')
     <div id="app">
         Loading...

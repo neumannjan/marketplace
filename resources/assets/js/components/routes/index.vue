@@ -18,7 +18,6 @@
             OfferMasonry
         },
         data: () => ({
-            title: "Index page",
             query: '',
             isTopLevelRoute: true
         }),

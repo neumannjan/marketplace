@@ -22,7 +22,7 @@ function changeTitle(instance: Vue & {title?: string}) {
     if(!instance.$data._isMainRoute)
         return;
 
-    let title = null;
+    let title = 'Marketplace'; //TODO default title
 
     for(let i = matched.length - 1; i >= 0; --i) {
         const inst = matched[i].instances.default;

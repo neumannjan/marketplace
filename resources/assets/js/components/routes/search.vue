@@ -40,7 +40,7 @@
         }),
         computed: {
             title(): string {
-                return (this.query ? `${this.query} - ` : '') + 'Search';
+                return (this.query ? `${this.query} | ` : '') + 'Search';
             }
         },
         watch: {
