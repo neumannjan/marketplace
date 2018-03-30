@@ -16,6 +16,8 @@ import PasswordEmailRoute from './components/routes/auth/password-email.vue';
 import PasswordResetRoute from './components/routes/auth/password-reset.vue';
 
 import AdminRoute from './components/routes/admin/index.vue';
+import AdminReportedRoute from './components/routes/admin/reported.vue';
+import AdminBannedRoute from './components/routes/admin/banned.vue';
 
 import UserNavigation from 'JS/components/routes/navigation/user-navigation.vue';
 import AdminNavigation from 'JS/components/routes/navigation/admin-navigation';
@@ -281,6 +283,7 @@ const router: VueRouter = new VueRouter({
                 {
                     path: 'reported',
                     name: 'admin-reported',
+                    component: AdminReportedRoute,
                     meta: {
                         parent: 'admin'
                     }
@@ -288,6 +291,7 @@ const router: VueRouter = new VueRouter({
                 {
                     path: 'banned',
                     name: 'admin-banned',
+                    component: AdminBannedRoute,
                     meta: {
                         parent: 'admin'
                     }

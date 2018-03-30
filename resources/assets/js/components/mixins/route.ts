@@ -1,5 +1,5 @@
 import router, {getRouteMainComponent} from 'JS/router';
-import {Route, RawLocation} from "vue-router";
+import {Route, RawLocation, RouteRecord} from "vue-router";
 import { Vue, Component, Watch } from "JS/components/class-component";
 
 function determineActive(instance: Vue) {
@@ -11,14 +11,32 @@ function determineActive(instance: Vue) {
  * @param {VM} instance
  * @param {Route} to
  */
-function changeTitle(instance: Vue & {title?: string}, to?: Route) {
-    if (instance.$data._isMainRoute) {
-        if(instance.title) {
-            document.title = instance.title;
-        } else if(to) {
-            document.title = to.meta.title;
+function changeTitle(instance: Vue & {title?: string}) {
+    const route = instance.$route;
+    const matched = route.matched.slice(0);
+    
+    if (matched.length === 0) {
+        return;
+    }
+
+    if(!instance.$data._isMainRoute)
+        return;
+
+    let title = null;
+
+    for(let i = matched.length - 1; i >= 0; --i) {
+        const inst = matched[i].instances.default;
+        if(inst && (<any>inst).title) {
+            if(title)
+                title = `${(<any>inst).title} | ${title}`;
+            else
+                title = (<any>inst).title;
+
         }
     }
+
+    if(title)
+        document.title = title;
 }
 
 /**
@@ -67,14 +85,14 @@ export default class RouteMixin extends Vue {
     beforeRouteEnter(to: Route, from: Route, next: (to?: RawLocation | false | ((vm: Vue) => any) | void) => void) {
         next((vm: Vue) => {
             vm.$data._isMainRoute = determineActive(vm);
-            changeTitle(vm, to);
+            changeTitle(vm);
         });
     }
 
     beforeRouteUpdate(to: Route, from: Route, next: (to?: RawLocation | false | ((vm: Vue) => any) | void) => void) {
         this.$data._isMainRoute = determineActive(this);
         putScroll(this);
-        changeTitle(this, to);
+        changeTitle(this);
         next();
     }
 

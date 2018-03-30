@@ -107,7 +107,7 @@
                 return this.loading ? {visibility: 'hidden'} : {};
             },
             has(): Has {
-                if(!this.$route.matched)
+                if(this.$route.matched.length === 0)
                     return {};
 
                 const has: Has = {
