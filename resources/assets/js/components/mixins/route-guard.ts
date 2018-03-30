@@ -20,13 +20,13 @@ export default function<V extends Vue>(name: string, get: (vm: V) => boolean, go
 
         beforeRouteEnter(to: Route, from: Route, next: (to?: RawLocation | false | ((vm: Vue) => any) | void) => void) {
             next((vm: any) => {
-                if (vm[name] && vm[name] !== true)
+                if (!get(<any>this))
                     router.push(goTo);
             });
         }
 
         beforeRouteUpdate(to: Route, from: Route, next: (to?: RawLocation | false | ((vm: Vue) => any) | void) => void) {
-            if ((<any>this)[name] === true)
+            if (get(<any>this))
                 next();
             else
                 next(goTo);

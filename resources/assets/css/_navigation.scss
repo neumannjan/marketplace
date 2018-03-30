@@ -55,6 +55,18 @@
   flex-direction: column;
   width: $v-nav-broad-width;
   border-right: $content-navigation-border;
+
+  .nav .nav-link {
+    color: $gray-700;
+  
+    &:not([disabled]):hover {
+      color: $gray-900;
+    }
+
+    &.active {
+      color: $black;
+    }
+  }
 }
 
 .content-navigation-inner {

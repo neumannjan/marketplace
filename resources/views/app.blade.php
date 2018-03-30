@@ -1,11 +1,11 @@
 @extends('layouts.base')
 
 @push('stylesheets')
-    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+    <link rel="stylesheet" href="{{ hashedAsset('app.css') }}">
 @endpush
 
 @push('javascripts')
-    <script src="{{ mix('js/app.js') }}"></script>
+    <script src="{{ hashedAsset('app.js') }}"></script>
 @endpush
 
 @push('meta')
@@ -28,7 +28,7 @@
 @endpush
 
 @section('body')
-    <div id="app" is="app">
+    <div id="app">
         Loading...
     </div>
 @endsection

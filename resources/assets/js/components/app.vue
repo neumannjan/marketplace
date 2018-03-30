@@ -78,26 +78,15 @@
         data: (): {
             keepAlive: typeof cached,
             shown: boolean,
-            has: Has,
             modals: QueryModalRouter,
             loading: boolean,
         } => ({
             keepAlive: cached,
             shown: true,
-            has: {},
             modals: queryModalRouter,
             loading: false,
         }),
         watch: {
-            $route(to: Route) {
-                if (!to.matched) return;
-
-                const has: Has = {
-                    navigation: !!to.matched[0].components['navigation']
-                } as Has;
-
-                this.has = has;
-            },
             httpConnection(val: State['connection_http'], oldVal: State['connection_http']) {
                 if (oldVal !== undefined && oldVal !== null && val !== oldVal) {
                     this.notifyConnection(true, val ? true : false);
@@ -116,6 +105,16 @@
             }),
             loadingStyle(): object {
                 return this.loading ? {visibility: 'hidden'} : {};
+            },
+            has(): Has {
+                if(!this.$route.matched)
+                    return {};
+
+                const has: Has = {
+                    navigation: !!this.$route.matched[0].components['navigation']
+                } as Has;
+
+                return has;
             }
         },
         methods: {

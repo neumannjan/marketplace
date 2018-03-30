@@ -42,9 +42,11 @@
     import FormMixin from 'JS/components/mixins/form';
     import { LoginResponse } from 'JS/api/types';
     import Vue from 'vue';
+    import store from 'JS/store';
+    import routeGuard from 'JS/components/mixins/route-guard';
 
     export default Vue.extend({
-        mixins: [route, FormMixin],
+        mixins: [route, FormMixin, routeGuard('guest', () => !store.state.user)],
         components: {
             FormInput,
             FormSelect

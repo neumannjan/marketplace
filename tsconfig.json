@@ -10,6 +10,8 @@
     "checkJs": true,
     "strict": true,
     "baseUrl": ".",
+    "jsx": "preserve",
+    "jsxFactory": "h",
     "paths": {
       "CSS/*": [
         "resources/assets/css/*"

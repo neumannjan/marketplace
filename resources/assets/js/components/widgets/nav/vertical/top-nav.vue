@@ -2,52 +2,59 @@
     <base-nav :items="items"/>
 </template>
 
-<script>
+<script lang="ts">
     import NavComponent from '../nav.vue';
-    import {mapState} from 'vuex';
+    import store from 'JS/store';
+    import Vue from 'vue';
 
     import 'vue-awesome/icons/home';
     import 'vue-awesome/icons/search';
     import 'vue-awesome/icons/user';
+    import 'vue-awesome/icons/flag';
 
-    export default {
+    export default Vue.extend({
         name: 'top-nav',
         components: {
             'base-nav': NavComponent
         },
         computed: {
-            ...mapState({
-                items: state => {
-                    const items = [
-                        {
-                            label: 'Dashboard',
-                            icon: 'home',
-                            route: 'index'
-                        },
-                        {
-                            label: 'Search',
-                            icon: 'search',
-                            route: 'search',
-                            activeAnyParams: true,
+            items() {
+                const items = [
+                    {
+                        label: 'Dashboard',
+                        icon: 'home',
+                        route: 'index'
+                    },
+                    {
+                        label: 'Search',
+                        icon: 'search',
+                        route: 'search',
+                        activeAnyParams: true,
+                    }
+                ];
+
+                const authItems = !!store.state.user ? [
+                    {
+                        label: 'Profile',
+                        icon: 'user',
+                        route: 'user',
+                        params: {
+                            username: store.state.user.username
                         }
-                    ];
+                    }
+                ] : [];
 
-                    const authItems = !!state.user ? [
-                        {
-                            label: 'Admin',
-                            icon: 'user',
-                            route: 'user',
-                            params: {
-                                username: state.user.username
-                            }
-                        }
-                    ] : [];
+                const adminItems = store.state.is_admin ? [
+                    {
+                        label: 'Administration',
+                        icon: 'flag',
+                        route: 'admin',
+                        activeAnyParams: true,
+                    }
+                ] : [];
 
-                    const adminItems = state.is_admin ? [] : [];
-
-                    return [...items, ...authItems, ...adminItems];
-                }
-            })
+                return [...items, ...authItems, ...adminItems];
+            }
         }
-    };
+    });
 </script>

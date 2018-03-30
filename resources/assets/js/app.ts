@@ -1,9 +1,11 @@
 ///<reference path="./lib/types/index.d.ts" />
 
+import "../css/app.scss";
+
 import './lib/polyfill';
 import 'babel-polyfill';
 
-import Vue, {VNodeDirective} from 'vue';
+import Vue, {VNodeDirective, VNode} from 'vue';
 import Vuelidate from 'vuelidate';
 import IconComponent from 'vue-awesome/components/Icon.vue';
 import * as ElementQueries from 'css-element-queries/src/ElementQueries';
@@ -19,6 +21,15 @@ import LazyImgComponent from './components/widgets/image/lazy-img.vue';
 declare global {
     interface Window {
         data: string | undefined
+    }
+
+    // JSX
+    namespace JSX {
+        interface Element extends VNode {}
+        interface ElementClass extends Vue {}
+        interface IntrinsicElements {
+            [elem: string]: any;
+        }
     }
 }
 
@@ -51,6 +62,9 @@ Vue.directive('focus', {
 export const app = new Vue({
     el: '#app',
     store: <Store<any>> store,
+    render(h): VNode {
+        return h('app');
+    },
     router,
     components: {
         app: AppComponent,

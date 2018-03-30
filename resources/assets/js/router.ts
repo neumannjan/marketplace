@@ -1,26 +1,26 @@
 import Vue, {VueConstructor} from 'vue';
 import VueRouter, { Route, Location } from 'vue-router';
 
-import IndexRoute from '../components/routes/index.vue';
-import TestRoute from '../components/routes/test.vue';
-import ErrorRoute from '../components/routes/404.vue';
-import UserRoute from '../components/routes/user.vue';
-import OfferRoute from '../components/routes/offer.vue';
-import SearchRoute from '../components/routes/search.vue';
+import IndexRoute from './components/routes/index.vue';
+import TestRoute from './components/routes/test.vue';
+import ErrorRoute from './components/routes/404.vue';
+import UserRoute from './components/routes/user.vue';
+import OfferRoute from './components/routes/offer.vue';
+import SearchRoute from './components/routes/search.vue';
 
-import OfferFormRoute from '../components/routes/offer-form.vue';
+import OfferFormRoute from './components/routes/offer-form.vue';
 
-import LoginRoute from '../components/routes/auth/login.vue';
-import RegisterRoute from '../components/routes/auth/register.vue';
-import PasswordEmailRoute from '../components/routes/auth/password-email.vue';
-import PasswordResetRoute from '../components/routes/auth/password-reset.vue';
+import LoginRoute from './components/routes/auth/login.vue';
+import RegisterRoute from './components/routes/auth/register.vue';
+import PasswordEmailRoute from './components/routes/auth/password-email.vue';
+import PasswordResetRoute from './components/routes/auth/password-reset.vue';
+
+import AdminRoute from './components/routes/admin/index.vue';
 
 import UserNavigation from 'JS/components/routes/navigation/user-navigation.vue';
+import AdminNavigation from 'JS/components/routes/navigation/admin-navigation';
 
-import GuestGuard from './guards/guest';
-import AuthGuard from './guards/auth';
-
-import OfferModal from '../components/routes/modal/offer-modal.vue';
+import OfferModal from './components/routes/modal/offer-modal.vue';
 
 import store from 'JS/store';
 import EventListener from "JS/lib/event-listener";
@@ -105,21 +105,39 @@ export function getRouteMainComponent(route: Route = router.currentRoute): null 
     }
 }
 
+interface ChildRoute extends Route {
+    meta: {
+        [index: string]: any,
+        parent: string
+    }
+}
+
 /**
  * Check whether two routes are identical
  * @param {Route | Location} route1
  * @param {Route | Location} route2
  * @param {boolean} ignoreParams
+ * @param {boolean} checkParent
  * @return {boolean}
  */
-export function routesMatch(route1: Route | Location, route2: Route | Location = router.currentRoute, ignoreParams: boolean = false): boolean {
+export function routesMatch(route1: Route | Location,
+    route2: Route | Location = router.currentRoute,
+    ignoreParams: boolean = false,
+    checkParent: boolean = false): boolean {
     if (!route1 || !route2)
         return false;
 
     if (route1.path === route2.path)
         return true;
 
-    if (route1.name !== route2.name)
+    function isChildRoute(route: Route | Location): route is ChildRoute {
+        return !!(<Route>route).fullPath && !!(<ChildRoute>route).meta.parent;
+    }
+
+    if (route1.name !== route2.name
+        && !(checkParent && isChildRoute(route1) && isChildRoute(route2) && route1.meta.parent === route2.meta.parent)
+        && !(checkParent && isChildRoute(route1) && route1.meta.parent === route2.name)
+        && !(checkParent && isChildRoute(route2) && route2.meta.parent === route1.name))
         return false;
 
     if (ignoreParams)
@@ -134,7 +152,7 @@ export function routesMatch(route1: Route | Location, route2: Route | Location =
     return match;
 }
 
-const router = new VueRouter({
+const router: VueRouter = new VueRouter({
     mode: 'history',
     scrollBehavior(to, from, savedPosition) {
         const promise = to.meta.async ?
@@ -171,26 +189,22 @@ const router = new VueRouter({
             path: '/login',
             name: 'login',
             component: LoginRoute,
-            ...GuestGuard
         },
         {
             path: '/register',
             name: 'register',
             component: RegisterRoute,
-            ...GuestGuard
         },
         {
             path: '/password/reset',
             name: 'password-email',
             component: PasswordEmailRoute,
-            ...GuestGuard
         },
         {
             path: '/password/reset/:token',
             name: 'password-reset',
             component: PasswordResetRoute,
             props: true,
-            ...GuestGuard
         },
 
         // Display pages
@@ -218,7 +232,6 @@ const router = new VueRouter({
                 else
                     return {name: 'login'}
             },
-            ...AuthGuard
         },
         {
             path: '/offer/:id(\\d+)',
@@ -244,14 +257,42 @@ const router = new VueRouter({
             path: '/offer/create',
             name: 'offer-create',
             component: OfferFormRoute,
-            ...AuthGuard
         },
         {
             path: '/offer/edit/:id(\\d+)',
             name: 'offer-edit',
             component: OfferFormRoute,
             props: route => ({id: parseInt(route.params.id)}),
-            ...AuthGuard
+        },
+
+        //administration
+        {
+            path: '/admin',
+            components: {
+                default: AdminRoute,
+                navigation: AdminNavigation,
+            },
+            children: [
+                {
+                    path: '/',
+                    name: 'admin',
+                    redirect: () => ({name: 'admin-reported'})
+                },
+                {
+                    path: 'reported',
+                    name: 'admin-reported',
+                    meta: {
+                        parent: 'admin'
+                    }
+                },
+                {
+                    path: 'banned',
+                    name: 'admin-banned',
+                    meta: {
+                        parent: 'admin'
+                    }
+                },
+            ]
         },
 
         // error

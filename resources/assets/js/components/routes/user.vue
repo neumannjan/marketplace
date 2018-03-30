@@ -15,6 +15,7 @@
     import routeFetch from 'JS/components/mixins/route-fetch';
 
     import OfferMasonry from 'JS/components/widgets/masonry/data-aware/offer/offer-masonry.vue';
+    import routeGuard from 'JS/components/mixins/route-guard';
 
     interface FetchResult {
         user: User | null,
@@ -73,7 +74,10 @@
             OfferMasonry
         },
     })
-    export default class UserRoute extends mixins(route, routeFetch(fetch, dataDef)) implements FetchResult {
+    export default class UserRoute extends mixins(
+        route,
+        routeFetch(fetch, dataDef),
+    ) implements FetchResult {
         @Prop({type: String, required: true})
         username!: string;
 

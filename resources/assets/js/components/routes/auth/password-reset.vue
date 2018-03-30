@@ -42,9 +42,11 @@
 
     import route from 'JS/components/mixins/route';
     import form from 'JS/components/mixins/form';
+    import store from 'JS/store';
+    import routeGuard from 'JS/components/mixins/route-guard';
 
     export default {
-        mixins: [route, form],
+        mixins: [route, form, routeGuard('guest', () => !store.state.user)],
         props: {
             token: String
         },
