@@ -87,7 +87,7 @@ abstract class PaginatedRequest extends Request
 
             /** @var ResourceCollection $resource */
             $array = $paginator->toArray();
-            $array['data'] = $resource->toArray(null);
+            $array['data'] = $resource->resolve();
             $result = $array;
         } else {
             $result = $paginator->toArray();

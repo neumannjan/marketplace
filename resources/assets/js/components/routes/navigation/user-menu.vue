@@ -39,7 +39,7 @@
         value!: User;
 
         get isAdmin(): boolean {
-            return store.state.is_admin;
+            return this.$store.state.is_admin;
         }
 
         get isBanned(): boolean {
@@ -47,7 +47,7 @@
         }
 
         get loggedUser(): User | null {
-            return store.state.user;
+            return this.$store.state.user;
         }
 
         get isMe(): boolean {

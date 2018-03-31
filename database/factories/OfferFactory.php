@@ -13,7 +13,13 @@ $factory->define(\App\Offer::class, function (Faker $faker) {
         'currency_code' => $faker->currencyCode,
         'status' => $faker->biasedNumberBetween(0, 2, function ($i) {
             return sin($i * M_PI);
-        })
+        }),
+        'bumped_times' => $faker->biasedNumberBetween(0, \App\Offer::MAX_BUMP_TIMES, function($i) {
+            return 1 - sqrt($i);
+        }),
+        'reported_times' => $faker->biasedNumberBetween(0, 15, function($i) {
+            return $i === 0 ? 1 : log(1/$i, 1000);
+        }),
     ];
 });
 

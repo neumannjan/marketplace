@@ -21,4 +21,11 @@ class OfferObserver
 
         return true;
     }
+
+    function updating(Offer $offer)
+    {
+        if ($offer->isDirty(['name', 'description'])) {
+            $offer->resetAppropriateness();
+        }
+    }
 }

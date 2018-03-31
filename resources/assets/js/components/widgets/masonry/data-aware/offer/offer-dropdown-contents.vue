@@ -3,7 +3,7 @@
         <!-- TODO translate -->
         <template v-if="!owned && !admin">
             <b-dropdown-header>Additional options</b-dropdown-header>
-            <b-dropdown-item-button>
+            <b-dropdown-item-button @click="reportOffer()">
                 <icon name="flag-o" class="mr-2" />
                 Report
             </b-dropdown-item-button>
@@ -26,6 +26,10 @@
                 <icon name="trash-o" class="mr-2" />
                 Remove
             </b-dropdown-item-button>
+            <b-dropdown-item-button v-if="admin && reported" @click="markOfferAppropriate()">
+                <icon name="check" class="mr-2" />
+                Mark as appropriate
+            </b-dropdown-item-button>
         </template>
     </div>
 </template>
@@ -39,8 +43,9 @@
     import 'vue-awesome/icons/pencil';
     import 'vue-awesome/icons/clock-o';
     import 'vue-awesome/icons/trash-o';
+    import 'vue-awesome/icons/check';
 
-    import {ExtendedOffer, isExtendedOffer, Offer, OfferStatus} from 'JS/api/types';
+    import {ExtendedOffer, isExtendedOffer, Offer, OfferStatus, isAdminOffer} from 'JS/api/types';
     import store from 'JS/store';
     import router from 'JS/router';
     import api from 'JS/api';
@@ -61,11 +66,11 @@
         offer!: Offer;
 
         get admin(): boolean {
-            return store.state.is_admin;
+            return this.$store.state.is_admin;
         }
 
         get owned(): boolean {
-            return !!store.state.user && store.state.user.username === this.offer.author.username;
+            return !!this.$store.state.user && this.$store.state.user.username === this.offer.author.username;
         }
 
         get sold() {
@@ -74,6 +79,10 @@
 
         get draft() {
             return this.offer.status === OfferStatus.Draft;
+        }
+
+        get reported() {
+            return isAdminOffer(this.offer) && this.offer.reported_times > 0;
         }
 
         get bumpable() {
@@ -134,6 +143,38 @@
                     id: this.offer.id.toString()
                 }
             });
+        }
+
+        reportOffer() {
+            //TODO translate            
+            doAction({
+                confirm: `Are you sure you want to report "${this.offer.name}" as inappropriate?`,
+                beforeNotification: {
+                    message: `Reporting "${this.offer.name}".`
+                },
+                afterNotification: {
+                    message: `"${this.offer.name}" has been reported.`
+                },
+                errorNotification: {
+                    type: 'warning',
+                    message: `You have already reported "${this.offer.name}".`
+                }
+            }, () => api.requestSingle<Offer>('offer-report', {id: this.offer.id}));
+        }
+
+        markOfferAppropriate() {
+            //TODO translate            
+            doAction({
+                confirm: `Are you sure you want to mark "${this.offer.name}" as appropriate?`,
+                beforeNotification: {
+                    message: `Marking "${this.offer.name}" as appropriate.`
+                },
+                afterNotification: {
+                    message: `"${this.offer.name}" has been marked as appropriate.`
+                }
+            }, () => api.requestSingle<Offer>('offer-mark-appropriate', {id: this.offer.id}).then((offer) => {
+                events.dispatch(Events.OfferModified, offer);
+            }));
         }
     }
 </script>

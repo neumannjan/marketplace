@@ -31,12 +31,15 @@
         url!: string | null | false;
 
         @Prop({type: Array})
-        startCards: any[] | undefined;
+        startCards: Offer[] | undefined;
 
         @Prop({type: Boolean, default: true})
         showAuthor!: boolean;
 
-        cards: any[] = [];
+        @Prop()
+        shouldShow: ((offer: Offer) => boolean) | undefined;
+
+        cards: Offer[] = [];
 
         created() {
             if (this.startCards) {
@@ -59,11 +62,23 @@
                 const index = this.cards.findIndex(card => card.id === offer.id);
 
                 if(index !== -1) {
-                    const cards = this.cards;
+                    let cards: Offer[] = this.cards;
 
-                    //put the card at the beginning of the masonry
-                    cards.splice(index, 1)
-                    cards.unshift(offer);
+                    //remove old offer
+                    const [oldOffer] = cards.splice(index, 1);
+
+                    if(!this.shouldShow || this.shouldShow(offer)) {
+                        if(oldOffer.listed_at === offer.listed_at) {
+                            cards = [
+                                ...cards.slice(0, index),
+                                offer,
+                                ...cards.slice(index)
+                            ];
+                        } else {
+                            //put the card at the beginning of the masonry
+                            cards.unshift(offer);
+                        }
+                    }
 
                     this.cards = cards;
                 }

@@ -95,7 +95,7 @@
 
                 this.$nextTick(() => {
                     this.backShown = (() => {
-                        if(store.state.reRoutedTimes <= 0)
+                        if(this.$store.state.reRoutedTimes <= 0)
                             return false;
 
                         const matched = this.$route.matched;
@@ -104,7 +104,6 @@
                             return true;
 
                         const instance = matched[matched.length - 1].instances.default;
-                        console.log(matched[matched.length - 1].instances.default);
                         
                         if(!instance)
                             return true;
@@ -140,7 +139,7 @@
                 }
             },
             isAuthenticated(): boolean {
-                return !!store.state.user;
+                return !!this.$store.state.user;
             }
         },
         methods: {

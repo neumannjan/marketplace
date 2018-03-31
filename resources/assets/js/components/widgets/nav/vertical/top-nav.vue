@@ -18,7 +18,7 @@
             'base-nav': NavComponent
         },
         computed: {
-            items() {
+            items(): any[] {
                 const items = [
                     {
                         label: 'Dashboard',
@@ -33,18 +33,20 @@
                     }
                 ];
 
-                const authItems = !!store.state.user ? [
+                const user = (<typeof store> this.$store).state.user;
+
+                const authItems = !!user ? [
                     {
                         label: 'Profile',
                         icon: 'user',
                         route: 'user',
                         params: {
-                            username: store.state.user.username
+                            username: user.username
                         }
                     }
                 ] : [];
 
-                const adminItems = store.state.is_admin ? [
+                const adminItems = (<typeof store>this.$store).state.is_admin ? [
                     {
                         label: 'Administration',
                         icon: 'flag',

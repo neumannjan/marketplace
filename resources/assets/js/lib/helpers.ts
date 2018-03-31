@@ -1,4 +1,5 @@
 import notifications, {NotificationTypes} from "JS/notifications";
+import { NotificationType } from "JS/lib/notifications/typings";
 
 /**
  * Safely retrieves a value from a nested object. Returns defaultValue if the key is not present in the object.
@@ -98,13 +99,15 @@ export async function getImageFileThumbnailDataURL(image: File, maxWidth = 400, 
 
 interface NotificationConfiguration {
     id?: NotificationTypes | string;
-    message: string
+    message: string;
+    type?: NotificationType
 }
 
 interface ActionConfiguration {
     confirm?: string,
     beforeNotification?: NotificationConfiguration | string,
     afterNotification?: NotificationConfiguration | string,
+    errorNotification?: NotificationConfiguration | string,
 }
 
 /**
@@ -114,11 +117,29 @@ interface ActionConfiguration {
  */
 export function doAction(config: ActionConfiguration, func: () => Promise<any>) {
     if (!config.confirm || confirm(config.confirm)) {
+        function notificationType(notification: NotificationConfiguration | string | undefined, defaultValue: NotificationType) {
+            if(typeof notification === 'string')
+                return defaultValue;
+            else if(notification && notification.type)
+                return notification.type;
+            else
+                return defaultValue;
+        }
+
+        function notificationMessage(notification: NotificationConfiguration | string | undefined, defaultValue: string = '') {
+            if(typeof notification === 'string')
+                return notification;
+            else if(notification && notification.message)
+                return notification.message;
+            else
+                return defaultValue;
+        }
+
         let notificationID: string;
         if (config.beforeNotification) {
             notificationID = notifications.showNotification({
-                type: 'info',
-                message: typeof config.beforeNotification === 'string' ? config.beforeNotification : config.beforeNotification.message,
+                type: notificationType(config.beforeNotification, 'info'),
+                message: notificationMessage(config.beforeNotification),
                 persistent: true
             });
         }
@@ -130,11 +151,21 @@ export function doAction(config: ActionConfiguration, func: () => Promise<any>) 
 
             if (config.afterNotification) {
                 notifications.showNotification({
-                    type: 'success',
-                    message: typeof config.afterNotification === 'string' ? config.afterNotification : config.afterNotification.message,
+                    type: notificationType(config.afterNotification, 'success'),
+                    message: notificationMessage(config.afterNotification),
                     persistent: false
                 });
             }
+        }).catch(() => {
+            if (config.beforeNotification) {
+                notifications.hideNotification(notificationID);
+            }
+
+            notifications.showNotification({
+                type: notificationType(config.errorNotification, 'danger'),
+                message: notificationMessage(config.errorNotification, 'ERROR'), //TODO translate
+                persistent: false
+            });
         });
     }
 }

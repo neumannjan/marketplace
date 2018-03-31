@@ -21,6 +21,10 @@
                 <router-link :to="toOffer" :class="[color('text-', 'dark')]" style="flex-grow: 1">
                     <span>{{ value.name }} </span>
                     <badge class="ml-1 badge" v-for="(badge, index) in badges" :key="index" v-bind="badge"/>
+                    <badge class="ml-1 badge" v-if="reportedTimes > 0" type="danger">
+                        <icon class="mr-1" name="flag" :scale="0.8" :label="`Reported ${reportedTimes} times`"/>
+                        {{ reportedTimes }}
+                    </badge>
                 </router-link>
                 <b-dropdown v-if="loggedIn" class="ml-3" toggle-class="btn-link-gray" right variant="link" no-caret boundary="window">
                     <offer-dropdown-contents :offer="value" />
@@ -55,6 +59,10 @@
                 <h1 :class="['card-title heading-resp', color('text-', 'dark')]">
                     <span>{{ value.name }} </span>
                     <badge class="ml-1 badge" v-for="(badge, index) in badges" :key="index" v-bind="badge"/>
+                    <badge class="ml-1 badge" v-if="reportedTimes > 0" type="danger">
+                        <icon class="mr-1" name="flag" :scale="1.2" :label="`Reported ${reportedTimes} times`"/>
+                        {{ reportedTimes }}
+                    </badge>
                 </h1>
 
                 <div class="card-text">
@@ -100,14 +108,16 @@
     import appEvents,{ Events, events } from 'JS/events';
     import router from 'JS/router';
     import api from 'JS/api';
+    import store from "JS/store";
     import Vue from 'vue';
-    import { Image, Offer } from "JS/api/types";
+    import { Image, Offer, isAdminOffer } from "JS/api/types";
     import { Location } from "vue-router";
 
     import 'vue-awesome/icons/shopping-cart';
     import 'vue-awesome/icons/expand';
     import 'vue-awesome/icons/user-circle';
     import 'vue-awesome/icons/ellipsis-v';
+    import 'vue-awesome/icons/flag';
 
     export default Vue.extend({
         name: "offer-card",
@@ -170,7 +180,7 @@
 
                 api.requestSingle('offer', {
                     id: this.value.id,
-                    scope: this.$store.getters.scope.offer
+                    scope: (<typeof store>this.$store).getters.scope.offer
                 }).then(result => {
                     this.$emit('input', result);
                 });
@@ -178,17 +188,21 @@
         },
         computed: {
             isThisUser(): boolean {
-                return !!this.$store.state.user && this.$store.state.user.username === this.value.author.username;
+                const user = (<typeof store>this.$store).state.user;
+                return !!user && user.username === this.value.author.username;
+            },
+            reportedTimes(): number {
+                return (<typeof store>this.$store).state.is_admin && isAdminOffer(this.value) ? this.value.reported_times : 0;
             },
             loggedIn(): boolean {
-                return !!this.$store.state.user;
+                return !!(<typeof store>this.$store).state.user;
             },
             buttons(): any {
                 const ubiquitous = [
                     {
                         icon: 'shopping-cart',
                         label: 'Buy',
-                        disabled: this.isThisUser || !this.$store.state.user,
+                        disabled: this.isThisUser || !(<typeof store>this.$store).state.user,
                         callback: () => {
                             //TODO translate
                             if (!confirm(`Are you sure you want to send user ${this.value.author.display_name} a message?`)) {

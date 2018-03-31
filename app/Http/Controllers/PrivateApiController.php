@@ -17,7 +17,9 @@ use App\Api\Request\DB\MultiRequest;
 use App\Api\Request\DB\Offer\OfferBumpRequest;
 use App\Api\Request\DB\Offer\OfferCreateRequest;
 use App\Api\Request\DB\Offer\OfferEditRequest;
+use App\Api\Request\DB\Offer\OfferMarkAppropriateRequest;
 use App\Api\Request\DB\Offer\OfferRemoveRequest;
+use App\Api\Request\DB\Offer\OfferReportRequest;
 use App\Api\Request\DB\Offer\OfferSearchRequest;
 use App\Api\Request\DB\SingleRequest;
 use App\Api\Request\DB\User\UserAdminRequest;
@@ -96,6 +98,8 @@ class PrivateApiController extends Controller
             'offer-remove' => OfferRemoveRequest::class,
             'offer-edit' => OfferEditRequest::class,
             'offer-bump' => OfferBumpRequest::class,
+            'offer-report' => OfferReportRequest::class,
+            'offer-mark-appropriate' => OfferMarkAppropriateRequest::class,
 
             // Admin
             'user-admin' => UserAdminRequest::class,

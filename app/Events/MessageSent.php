@@ -53,6 +53,6 @@ class MessageSent implements ShouldBroadcastNow
         if ($this->identifier) {
             $this->message->identifier = $this->identifier;
         }
-        return \App\Http\Resources\Message::make($this->message)->toArray(null);
+        return \App\Http\Resources\Message::make($this->message)->resolve();
     }
 }

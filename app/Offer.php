@@ -33,6 +33,7 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
     const SCOPE_PUBLIC = 'public';
     const SCOPE_AUTH = 'auth';
     const SCOPE_UNLIMITED = 'unlimited';
+    const SCOPE_REPORTED = 'reported';
 
     const MAX_BUMP_TIMES = 2;
 
@@ -67,6 +68,11 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
     public function soldTo()
     {
         return $this->belongsTo(User::class, 'sold_to_user_id');
+    }
+
+    public function reportedBy()
+    {
+        return $this->belongsToMany(User::class, 'user_offer_reports', 'offer_id', 'user_id', 'id', 'id');
     }
 
     /**
@@ -237,11 +243,23 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
     }
 
     /**
+     * Limits the query to only return items that have been reported to administrators.
+     * @param Builder $query
+     * @return Builder
+     */
+    public function scopeReported(Builder $query)
+    {
+        return $query
+            ->where('reported_times', '>', 0)
+            ->orderByDesc('reported_times');
+    }
+
+    /**
      * @inheritDoc
      */
     public function getPublicScopes()
     {
-        return [self::SCOPE_PUBLIC, self::SCOPE_AUTH, self::SCOPE_UNLIMITED];
+        return [self::SCOPE_PUBLIC, self::SCOPE_AUTH, self::SCOPE_UNLIMITED, self::SCOPE_REPORTED];
     }
 
     /**
@@ -255,6 +273,7 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
             case self::SCOPE_AUTH:
                 return $user && \Auth::check() && $user->id === \Auth::id();
             case self::SCOPE_UNLIMITED:
+            case self::SCOPE_REPORTED:
                 return $user && $user->is_admin ? true : false;
         }
 
@@ -297,6 +316,7 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
                     ]))
                     ->isEmpty();
             case self::SCOPE_UNLIMITED:
+            case self::SCOPE_REPORTED:
                 return true;
         }
 
@@ -369,5 +389,43 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
         }
 
         return false;
+    }
+
+    /**
+     * Report the offer to administrators
+     * @param integer $userId
+     * @return boolean
+     */
+    public function report($userId)
+    {
+        /** @var User|null $user */
+        $user = $this->reportedBy()->where(['user_id' => $userId])->first();
+
+        if(!$user) {
+            ++$this->reported_times;
+            $this->reportedBy()->attach($userId);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Mark the reported offer as appropriate
+     * @return boolean
+     */
+    public function markAppropriate()
+    {
+        $this->reported_times = 0;
+        return true;
+    }
+
+    /**
+     * Clear the list of users that have reported this offer
+     * @return boolean
+     */
+    public function resetAppropriateness()
+    {
+        return $this->reportedBy()->detach() > 0;
     }
 }

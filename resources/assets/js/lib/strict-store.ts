@@ -5,12 +5,12 @@ interface PayloadWithType<T> {
     [index: string]: any;
 }
 
-export declare class StrictStore<
+export declare interface StrictStore<
     State,
     M extends MutationTree<State>,
     A extends ActionTree<State, State>,
     G extends GetterTree<State, State>>
-    extends Store<State> {
+    extends Store<any> {
 
     readonly getters: {
         [index in keyof G]: any

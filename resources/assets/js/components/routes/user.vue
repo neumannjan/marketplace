@@ -111,7 +111,7 @@
         }
 
         get authenticated(): boolean {
-            return !!store.state.user;
+            return !!this.$store.state.user;
         }
     }
 </script>

@@ -28,6 +28,7 @@ class CreateOffersTable extends Migration
             $table->unsignedInteger('price_value')->nullable();
             $table->unsignedInteger('bumped_times')->comment('2 max')->default(0);
             $table->string('currency_code', 3)->nullable();
+            $table->unsignedInteger('reported_times')->default(0);
 
             $table->foreign('author_user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('sold_to_user_id')->references('id')->on('users')->onDelete('set null');

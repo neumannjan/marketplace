@@ -46,6 +46,7 @@ export interface Offer {
     id: number,
     name: string,
     author: User,
+    listed_at: string,
     price: string,
     price_value: number,
     currency: string,
@@ -67,7 +68,7 @@ export interface ExtendedOffer extends Offer {
  * Offer with additional information available to admins
  */
 export interface AdminOffer extends ExtendedOffer {
-
+    reported_times: number
 }
 
 /**
@@ -83,7 +84,7 @@ export function isExtendedOffer(offer: Offer): offer is ExtendedOffer {
  * @param offer {Offer}
  */
 export function isAdminOffer(offer: Offer): offer is AdminOffer {
-    return isExtendedOffer(offer);
+    return (<AdminOffer>offer).reported_times !== undefined;
 }
 
 export interface MessageAdditional {
