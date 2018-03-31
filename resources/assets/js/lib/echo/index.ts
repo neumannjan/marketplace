@@ -3,9 +3,9 @@ import * as io from 'socket.io-client';
 import Echo from "laravel-echo";
 import EventListener from "JS/lib/event-listener";
 
-type ChannelMap = {
+type ChannelMap<T = Channel> = {
     [type in ChannelType]: {
-        [name: string]: Channel
+        [name: string]: T
     };
 }
 
@@ -39,6 +39,12 @@ export default class ConnectionManager extends EventListener<Payloads, Connectio
         public: {}
     };
 
+    protected rejoinOnReconnect: ChannelMap<boolean | undefined> = {
+        presence: {},
+        private: {},
+        public: {}
+    };
+
     public* [Symbol.iterator](): Iterator<Channel> {
         for(let channels of Object.values(this.channels)) {
             for(let channel of Object.values(channels)) {
@@ -67,7 +73,10 @@ export default class ConnectionManager extends EventListener<Payloads, Connectio
         this.csrfToken = csrfToken;
 
         for(let channel of this) {
-            channel.echo = echo;
+            if(this.rejoinOnReconnect[channel.type][channel.name] !== false)
+                channel.echo = echo;
+            else
+                delete this.channels[channel.type][channel.name];
         }
     }
 
@@ -123,11 +132,15 @@ export default class ConnectionManager extends EventListener<Payloads, Connectio
      * Get a Channel instance.
      * @param {ChannelType} type Channel type.
      * @param {string} name Channel name.
+     * @param {boolean | undefined} rejoinOnReconnect Whether this channel should automatically rejoin on echo reconnect.
      * @returns {Channel}
      */
-    channel(type: ChannelType, name: string) {
+    channel(type: ChannelType, name: string, rejoinOnReconnect?: boolean) {
+        if(rejoinOnReconnect !== undefined)
+            this.rejoinOnReconnect[type][name] = rejoinOnReconnect;
+
         if(!this.channels[type][name]) {
-            return this.channels[type][name] = new Channel(type, name, this.echo);
+            return this.channels[type][name] = new Channel(type, name, this.echo, () => this.leave(name));
         } else {
             return this.channels[type][name];
         }
@@ -140,12 +153,12 @@ export default class ConnectionManager extends EventListener<Payloads, Connectio
     leave(name: string) {
         for(let type of [ChannelType.Private, ChannelType.Presence, ChannelType.Public]) {
             if(this.channels[type][name]) {
-                if(this.echo) {
-                    this.echo.leave(name);
-                }
-
                 delete this.channels[type][name];
             }
+        }
+
+        if(this.echo) {
+            this.echo.leave(name);
         }
     }
 }

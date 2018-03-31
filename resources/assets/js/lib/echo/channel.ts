@@ -50,15 +50,17 @@ export function getLaravelEchoChannelByType(echo: Echo, type: ChannelType, name:
 export class Channel extends EventListener {
     private _echo: Echo | null = null;
     private channel: LaravelEchoChannel | null = null;
+    private readonly leaveFunc: () => void;
 
     readonly type: ChannelType;
     readonly name: string;
 
-    constructor(type: ChannelType, name: string, echo: Echo | null) {
+    constructor(type: ChannelType, name: string, echo: Echo | null, leaveFunc: () => void) {
         super();
         this.type = type;
         this.name = name;
         this.echo = echo;
+        this.leaveFunc = leaveFunc;
     }
 
     public set echo(echo: Echo | null) {
@@ -74,6 +76,10 @@ export class Channel extends EventListener {
     on(name: string, callback: EventCallback<any, any>): void {
         super.on(name, callback);
         this.attachListeners(name);
+    }
+
+    leave(): void {
+        this.leaveFunc();
     }
 
     /**

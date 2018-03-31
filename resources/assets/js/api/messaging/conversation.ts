@@ -47,7 +47,7 @@ export class ConversationMediator extends EventPropagator<Payloads, Conversation
         
         this.me = store.state.user;
         this.them = user;
-        this.channel = echo.channel(ChannelType.Private, getConversationChannelName(this.me.username, user.username));
+        this.channel = echo.channel(ChannelType.Private, getConversationChannelName(this.me.username, user.username), false);
 
         this.doAttachSelf();
     }
@@ -154,5 +154,10 @@ export class ConversationMediator extends EventPropagator<Payloads, Conversation
 
         this.channel.whisper('received', payload);
         api.requestSingle('message-received-notify', payload);
+    }
+
+    detach() {
+        super.detach();
+        this.channel.leave();
     }
 }

@@ -89,7 +89,7 @@ storeWatcher.onStoreState('user', (payload) => {
         echo.reconnect();
         
         if (username) {
-            const channel = echo.channel(ChannelType.Private, getUserChannelName(username));
+            const channel = echo.channel(ChannelType.Private, getUserChannelName(username), false);
             
             channel.on('MessageSent', (message: Message) => {
                 events.dispatch(Events.MessageSent, normalizeMessage(message));
