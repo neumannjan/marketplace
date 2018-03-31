@@ -222,7 +222,7 @@ class User extends Authenticatable implements AuthorizationAwareModel
      */
     public function toSearchableArray()
     {
-        return Arr::only($this->toArray(), ['username', 'email', 'description', 'display_name']);
+        return Arr::only($this->toArray(), ['id', 'username', 'email', 'description', 'display_name']);
     }
 
 }

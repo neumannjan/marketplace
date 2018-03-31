@@ -11,16 +11,16 @@
 </template>
 
 <script lang="ts">
-    import { Vue, Component, Prop } from 'JS/components/class-component';
-    import { User, UserStatus } from 'JS/api/types';
-    import { Location } from 'vue-router';
-    import { events, Events } from 'JS/events';
+    import {Component, Prop, Vue} from 'JS/components/class-component';
+    import {User, UserStatus} from 'JS/api/types';
+    import {Location} from 'vue-router';
+    import {events, Events} from 'JS/events';
     import store from 'JS/store';
     import api from 'JS/api';
 
     import 'vue-awesome/icons/comment';
     import 'vue-awesome/icons/ban';
-    import { doAction } from 'JS/lib/helpers';
+    import {doAction} from 'JS/lib/helpers';
 
     //TODO translate labels
     interface Button {
@@ -70,7 +70,7 @@
             let loggedButtons: Button[] = [];
             let adminButtons: Button[] = [];
 
-            if(!!this.loggedUser) {
+            if (!!this.loggedUser && !this.isBanned) {
                 loggedButtons = [
                     {
                         label: 'Contact',

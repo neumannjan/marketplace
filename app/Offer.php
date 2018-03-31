@@ -225,7 +225,7 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
     }
 
     /**
-     * Limits the query to only return items that are accessible publicly and items that the current user owns.
+     * Limits the query to only return items that are accessible publicly and that the current user owns.
      * @param Builder $query
      * @return Builder
      */

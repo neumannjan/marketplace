@@ -16,21 +16,20 @@
     import NotificationsCard from "JS/components/widgets/card/notifications-card.vue";
 
     import Vue from 'vue';
-    import store, { State } from 'JS/store';
-    import appEvents,{ Events, RequestPopupPayload } from 'JS/events';
-    import router,{ getRouteMainComponent } from 'JS/router';
-    import { Message, Conversation } from 'JS/api/types';
-    import messaging from 'JS/api/messaging';
-    import { NormalizedMessage } from 'JS/api/messaging/typings';
+    import store, {State} from 'JS/store';
+    import appEvents, {Events, RequestPopupPayload} from 'JS/events';
+    import router, {getRouteMainComponent} from 'JS/router';
+    import {Conversation, Message} from 'JS/api/types';
+    import {NormalizedMessage} from 'JS/api/messaging/typings';
 
     import 'vue-awesome/icons/plus';
     import 'vue-awesome/icons/comment';
     import 'vue-awesome/icons/bell';
     import 'vue-awesome/icons/angle-left';
     import 'vue-awesome/icons/angle-up';
-    import notifications,{ NotificationTypes } from 'JS/notifications';
-    import { NotificationEvents } from 'JS/lib/notifications';
-    import { Route } from 'vue-router';
+    import notifications, {NotificationTypes} from 'JS/notifications';
+    import {NotificationEvents} from 'JS/lib/notifications';
+    import {Route} from 'vue-router';
 
     enum ButtonTypes {
         Add = 'add',
@@ -110,7 +109,7 @@
                         if(!instance)
                             return true;
 
-                        return (<any>instance).isTopLevelRoute === false;
+                        return !(<any>instance).isTopLevelRoute;
                     })();
                 });
             },

@@ -12,7 +12,7 @@
     import api from 'JS/api';
     import store from 'JS/store';
     import router from 'JS/router';
-    import { Offer } from 'JS/api/types';
+    import {ExtendedOffer, Offer} from 'JS/api/types';
     import Vue from 'vue';
 
     import OfferCard from 'JS/components/widgets/masonry/data-aware/offer/offer-card.vue';
@@ -25,7 +25,7 @@
         name: "offer-route",
         mixins: [
             route,
-            routeGuard('auth', (vm: Vue & VueData) => (!!store.state.user || !vm.offer || (vm.offer.status === 1 && !vm.offer.expired)))
+            routeGuard('auth', (vm: Vue & VueData) => (!!store.state.user || !vm.offer || (vm.offer.status === 1 && !(<ExtendedOffer>vm.offer).expired)))
         ],
         components: {
             OfferCard

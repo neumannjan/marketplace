@@ -40,7 +40,7 @@
     import 'vue-awesome/icons/clock-o';
     import 'vue-awesome/icons/trash-o';
 
-    import {Offer, OfferStatus} from 'JS/api/types';
+    import {ExtendedOffer, isExtendedOffer, Offer, OfferStatus} from 'JS/api/types';
     import store from 'JS/store';
     import router from 'JS/router';
     import api from 'JS/api';
@@ -77,7 +77,7 @@
         }
 
         get bumpable() {
-            return this.offer.bumps_left > 0 && !this.offer.just_bumped;
+            return isExtendedOffer(this.offer) && this.offer.bumps_left > 0 && !this.offer.just_bumped;
         }
 
         removeOffer() {
@@ -109,6 +109,9 @@
         }
 
         bumpOffer() {
+            if (!isExtendedOffer(this.offer))
+                return;
+
             //TODO translate
             doAction({
                 confirm: `Are you sure you want to make "${this.offer.name}" reappear on top as a new offer? `

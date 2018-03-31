@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 /**
- * @property-read integer|null $user_username
+ * App\Message
  */
 class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
 {

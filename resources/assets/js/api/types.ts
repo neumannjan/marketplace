@@ -50,11 +50,40 @@ export interface Offer {
     price_value: number,
     currency: string,
     description: string,
+    status: OfferStatus,
+    images: Image[]
+}
+
+/**
+ * Offer with additional information available to its owners
+ */
+export interface ExtendedOffer extends Offer {
     bumps_left: number,
     just_bumped: boolean,
-    status: OfferStatus,
     expired: boolean,
-    images: Image[]
+}
+
+/**
+ * Offer with additional information available to admins
+ */
+export interface AdminOffer extends ExtendedOffer {
+
+}
+
+/**
+ * Determine whether an offer is ExtendedOffer
+ * @param offer {Offer}
+ */
+export function isExtendedOffer(offer: Offer): offer is ExtendedOffer {
+    return (<ExtendedOffer>offer).expired !== undefined;
+}
+
+/**
+ * Determine whether an offer is AdminOffer
+ * @param offer {Offer}
+ */
+export function isAdminOffer(offer: Offer): offer is AdminOffer {
+    return isExtendedOffer(offer);
 }
 
 export interface MessageAdditional {
