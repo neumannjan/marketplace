@@ -10,7 +10,7 @@ export declare interface StrictStore<
     M extends MutationTree<State>,
     A extends ActionTree<State, State>,
     G extends GetterTree<State, State>>
-    extends Store<any> {
+    extends Store<State> {
 
     readonly getters: {
         [index in keyof G]: any

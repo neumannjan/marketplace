@@ -252,7 +252,7 @@
                 },
                 images: {
                     required(images: File[]) {
-                        return (images && images.length > 0 || (<any>this).offer);
+                        return (<OfferFormRoute>(<any>this)).imageOrder.length > 0;
                     },
                     image(images: File[]) {
                         for (let image of images) {

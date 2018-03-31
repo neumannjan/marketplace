@@ -21,7 +21,7 @@ $factory->define(App\User::class, function (Faker $faker) {
     return [
         'username' => str_replace('.', '_', $faker->unique()->userName),
         'email' => $faker->unique()->safeEmail,
-        'password' => $password ?: $password = bcrypt('secret999'),
+        'password' => $password ?: $password = Hash::make('secret999'),
         'description' => $faker->boolean ? $faker->realText($faker->numberBetween(100, 200)) : '',
         'display_name' => $faker->boolean ? $faker->name : '',
         'remember_token' => str_random(10),

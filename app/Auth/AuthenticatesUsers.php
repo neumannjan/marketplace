@@ -55,7 +55,7 @@ trait AuthenticatesUsers
 
         $limiter = $this->limiter();
 
-        if ($limiter->tooManyAttempts($throttleKey, $this->maxAttempts, $this->decayMinutes)) {
+        if ($limiter->tooManyAttempts($throttleKey, $this->maxAttempts)) {
             // disable access
             event(new Lockout($request));
 

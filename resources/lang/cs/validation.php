@@ -71,6 +71,7 @@ return [
         'array' => ':attribute musí obsahovat více než :min prvků.',
     ],
     'not_in' => 'Zvolená hodnota pro :attribute je neplatná.',
+    'not_regex' => ':attribute má neplatný formát.',
     'numeric' => ':attribute musí být číslo.',
     'present' => ':attribute musí být vyplněno.',
     'regex' => ':attribute nemá správný formát.',

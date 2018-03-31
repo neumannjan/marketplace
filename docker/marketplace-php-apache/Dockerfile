@@ -1,4 +1,4 @@
-FROM webdevops/php-apache-dev:ubuntu-16.04
+FROM webdevops/php-apache-dev:7.1
 
 RUN apt-get install -y supervisor
 

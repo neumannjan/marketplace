@@ -71,6 +71,7 @@ return [
         'array' => ':attribute must have at least :min items.',
     ],
     'not_in' => 'selected :attribute is invalid.',
+    'not_regex' => 'The :attribute format is invalid.',
     'numeric' => ':attribute must be a number.',
     'present' => ':attribute field must be present.',
     'regex' => ':attribute format is invalid.',
