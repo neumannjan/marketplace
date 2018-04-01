@@ -21,6 +21,7 @@
     import 'vue-awesome/icons/comment';
     import 'vue-awesome/icons/ban';
     import {doAction} from 'JS/lib/helpers';
+    import { FloatingButtonTypes } from 'JS/components/types';
 
     //TODO translate labels
     interface Button {
@@ -78,7 +79,7 @@
                         type: 'muted',
                         action: () => {
                             events.dispatch(Events.RequestPopup, {
-                                type: 'chat',
+                                type: FloatingButtonTypes.Chat,
                                 then: () => {
                                     events.dispatch(Events.RequestChat, this.value);
                                 }

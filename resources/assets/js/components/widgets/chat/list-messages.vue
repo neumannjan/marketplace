@@ -84,7 +84,7 @@
 
 <script lang="ts">
     import ProfileImg from 'JS/components/widgets/image/profile-img.vue';
-    import ChatMessageContent from "JS/components/widgets/chat/chat-message-content.vue";
+    import ChatMessageContent from "JS/components/widgets/chat/chat-message-content";
     import InfiniteScroll from "JS/components/widgets/infinite-scroll.vue";
 
     import "vue-awesome/icons/spinner";

@@ -30,7 +30,7 @@
 
     import "vue-awesome/icons/spinner";
     import InfiniteScroll from "JS/components/widgets/infinite-scroll.vue";
-    import ChatMessageContent from "JS/components/widgets/chat/chat-message-content.vue";
+    import ChatMessageContent from "JS/components/widgets/chat/chat-message-content";
 
     type Conversations = {
         [index: string]: Conversation
