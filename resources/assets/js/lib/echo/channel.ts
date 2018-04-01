@@ -73,7 +73,7 @@ export class Channel extends EventListener {
         return this._echo;
     }
 
-    on(name: string, callback: EventCallback<any, any>): void {
+    on(name: string, callback: EventCallback<any, string>): void {
         super.on(name, callback);
         this.attachListeners(name);
     }

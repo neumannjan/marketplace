@@ -93,8 +93,7 @@
             }
         },
         created() {
-
-            const setUser = async (user: User) => {
+            this.$onEventListener(routeEvents, RouteEvents.UserNavigation, async user => {
                 if (this.user && this.user === user) return;
 
                 if (this.user && user) {
@@ -104,9 +103,7 @@
                 }
 
                 this.user = user;
-            }
-
-            this.$onEventListener(routeEvents, RouteEvents.UserNavigation, setUser);
+            });
         }
     });
 </script>

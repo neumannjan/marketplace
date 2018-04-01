@@ -46,7 +46,7 @@
                 this.cards = this.startCards;
             }
 
-            this.$onEventListener(events, Events.OfferRemoved, (id: number) => {
+            this.$onEventListener(events, Events.OfferRemoved, id => {
                 const index = this.cards.findIndex(card => card.id === id);
 
                 if(index !== -1) {
@@ -58,7 +58,7 @@
                 }
             });
 
-            this.$onEventListener(events, Events.OfferModified, (offer: Offer) => {
+            this.$onEventListener(events, Events.OfferModified, offer => {
                 const index = this.cards.findIndex(card => card.id === offer.id);
 
                 if(index !== -1) {

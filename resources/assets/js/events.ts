@@ -1,6 +1,7 @@
 import EventListener from "JS/lib/event-listener";
 import {NormalizedMessage} from "JS/api/messaging/typings";
 import {Conversation, Offer, User} from "JS/api/types";
+import { FloatingButtonTypes } from "JS/components/types";
 
 export enum Events {
     MessageSent = 'MessageSent',
@@ -23,14 +24,14 @@ export enum Events {
 interface Payloads {
     [Events.MessageSent]: NormalizedMessage,
     [Events.UnreadConversations]: Conversation[],
-    [Events.RequestPopup]: any,
-    [Events.RequestBuy]: any,
+    [Events.RequestPopup]: RequestPopupPayload,
+    [Events.RequestBuy]: Offer,
     [Events.RequestChat]: User,
     [Events.ViewportChange]: boolean,
     [Events.AppRefresh]: undefined,
     [Events.AfterAppRefresh]: undefined,
     [Events.OfferRemoved]: number,
-    [Events.OfferModified]: Offer,
+    [Events.OfferModified]: Offer
 }
 
 export const events = new EventListener<Payloads, Events>();
@@ -38,7 +39,7 @@ export default events;
 
 // event types
 
-export interface RequestPopupPayload<T extends string = string> {
-    type: T,
+export interface RequestPopupPayload {
+    type: FloatingButtonTypes,
     then(): void
 }

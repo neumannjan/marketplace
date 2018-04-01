@@ -49,8 +49,8 @@ export interface EventsMixinInterface {
      * @param event {Events} The event name/type
      * @param listener {Function}
      */
-    $onEventListener<Payloads extends EventListenerPayloads, Events extends keyof Payloads, T extends Events>
-    (eventListener: EventListener<Payloads, Events>, event: T, listener: (payload: any) => void, whisper?: boolean): void;
+    $onEventListener<Payloads extends EventListenerPayloads, T extends keyof Payloads>
+    (eventListener: EventListener<Payloads, string>, event: T, listener: (payload: Payloads[T]) => void): void;
 
     /**
      * Bind an Echo event to this Vue instance.
@@ -110,15 +110,15 @@ export default class EventsMixin extends Vue implements EventsMixinInterface {
         );
     }
 
-    $onEventListener<Payloads extends EventListenerPayloads, Events extends keyof Payloads, T extends Events>
-    (eventListener: EventListener<Payloads, Events>, event: T, listener: (payload: any) => void, whisper?: boolean): void {
+    $onEventListener<Payloads extends EventListenerPayloads, T extends keyof Payloads>
+    (eventListener: EventListener<Payloads, string>, event: T, listener: (payload: Payloads[T]) => void): void {
         this.$attachEvent(
             () => eventListener.on(event, listener),
             () => eventListener.off(event, listener),
         );
     }
 
-    $onEcho(type: ChannelType, channel: string, event: string, listener: Function) {
+    $onEcho(type: ChannelType, channel: string, event: string, listener: (payload: any) => void) {
         const channelListener = echo.channel(type, channel);
         this.$onEventListener(channelListener, event, listener);
     }

@@ -30,17 +30,10 @@
     import notifications, {NotificationTypes} from 'JS/notifications';
     import {NotificationEvents} from 'JS/lib/notifications';
     import {Route} from 'vue-router';
-
-    enum ButtonTypes {
-        Add = 'add',
-        Chat = 'chat',
-        Notifications = 'notifications',
-        Back = 'back',
-        Up = 'up',
-    }
+import { FloatingButtonTypes } from 'JS/components/types';
 
     interface Button {
-        id: ButtonTypes,
+        id: FloatingButtonTypes,
         icon: string,
         class?: string,
         label?: string, //TODO make required
@@ -54,13 +47,13 @@
 
     //TODO labels
     const mainButtons: Button[] = [
-        {id: ButtonTypes.Add, icon: 'plus', class: 'btn-primary', show: (route: Route) => route.name !== 'offer-create'},
-        {id: ButtonTypes.Chat, icon: 'comment'},
-        {id: ButtonTypes.Notifications, icon: 'bell'},
+        {id: FloatingButtonTypes.Add, icon: 'plus', class: 'btn-primary', show: (route: Route) => route.name !== 'offer-create'},
+        {id: FloatingButtonTypes.Chat, icon: 'comment'},
+        {id: FloatingButtonTypes.Notifications, icon: 'bell'},
     ];
 
-    const backButton = {id: ButtonTypes.Back, icon: 'angle-left'};
-    const upButton = {id: ButtonTypes.Up, icon: 'angle-up', class: 'btn-danger'};
+    const backButton = {id: FloatingButtonTypes.Back, icon: 'angle-left'};
+    const upButton = {id: FloatingButtonTypes.Up, icon: 'angle-up', class: 'btn-danger'};
 
     export default Vue.extend({
         name: 'main-floating-btns',
@@ -76,7 +69,7 @@
             scrollY: number,
             backShown: boolean,
             popperEl: HTMLElement | null,
-            lastSelectedButton: ButtonTypes | null,
+            lastSelectedButton: FloatingButtonTypes | null,
             buttonEls: HTMLElement[] | null,
             chatConversations: ChatConversations
         } => ({
@@ -118,7 +111,7 @@
                 }
             },
             popperEl(val: boolean) {
-                notifications.forceHidden(NotificationTypes.NewMessages, val && this.lastSelectedButton === ButtonTypes.Chat);
+                notifications.forceHidden(NotificationTypes.NewMessages, val && this.lastSelectedButton === FloatingButtonTypes.Chat);
             }
         },
         computed: {
@@ -133,9 +126,9 @@
                     return [upButton];
                 }
             },
-            badges(): {[type in ButtonTypes]?: number | string} {
+            badges(): {[type in FloatingButtonTypes]?: number | string} {
                 return {
-                    [ButtonTypes.Chat]: Object.keys(this.chatConversations).length
+                    [FloatingButtonTypes.Chat]: Object.keys(this.chatConversations).length
                 }
             },
             isAuthenticated(): boolean {
@@ -143,24 +136,24 @@
             }
         },
         methods: {
-            isOpen(buttonId: ButtonTypes) {
+            isOpen(buttonId: FloatingButtonTypes) {
                 return this.popperEl && this.lastSelectedButton === buttonId;
             },
             onClick(button: Button, element: HTMLElement | null) {
                 this.click(button.id, element);
             },
-            click(buttonId: ButtonTypes, element: HTMLElement | null = null, toggle = true) {
+            click(buttonId: FloatingButtonTypes, element: HTMLElement | null = null, toggle = true) {
                 const result = (() => {
                     const lastPopperEl = this.popperEl;
                     this.popperEl = null;
                     this.lastSelectedButton = buttonId;
 
                     switch (buttonId) {
-                        case ButtonTypes.Add:
+                        case FloatingButtonTypes.Add:
                             router.push({name: 'offer-create'});
                             return true;
-                        case ButtonTypes.Chat:
-                        case ButtonTypes.Notifications:
+                        case FloatingButtonTypes.Chat:
+                        case FloatingButtonTypes.Notifications:
                             if (element) {
                                 if (toggle && lastPopperEl === element)
                                     this.popperEl = null;
@@ -174,10 +167,10 @@
                                 return true;
                             }
                             return false;
-                        case ButtonTypes.Back:
+                        case FloatingButtonTypes.Back:
                             router.back();
                             return true;
-                        case ButtonTypes.Up:
+                        case FloatingButtonTypes.Up:
                             window.scrollTo(window.scrollX, 0);
                             return true;
                     }
@@ -187,7 +180,7 @@
 
                 if (result) {
                     switch (buttonId) {
-                        case ButtonTypes.Chat:
+                        case FloatingButtonTypes.Chat:
                             this.chatConversations = {};
                             break;
                     }
@@ -208,19 +201,19 @@
                 this.scrollY = scrollY;
             });
 
-            this.$onEventListener(appEvents, Events.RequestPopup, (data: RequestPopupPayload<ButtonTypes>) => {
+            this.$onEventListener(appEvents, Events.RequestPopup, data => {
                 if (this.click(data.type, null, false)) {
                     this.$nextTick(data.then);
                 }
             });
 
-            this.$onEventListener(appEvents, Events.MessageSent, (message: NormalizedMessage) => {
-                if (!this.isOpen(ButtonTypes.Chat)) {
+            this.$onEventListener(appEvents, Events.MessageSent, message => {
+                if (!this.isOpen(FloatingButtonTypes.Chat)) {
                     this.$set(this.chatConversations, message.from.username, true);
                 }
             });
 
-            this.$onEventListener(appEvents, Events.UnreadConversations, (conversations: Conversation[]) => {
+            this.$onEventListener(appEvents, Events.UnreadConversations, conversations => {
                 const c: ChatConversations = {};
 
                 for (let conversation of conversations) {

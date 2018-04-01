@@ -107,11 +107,11 @@
             }
         },
         created() {
-            this.$onEventListener(appEvents, Events.RequestChat, (user: User) => {
+            this.$onEventListener(appEvents, Events.RequestChat, user => {
                 this.openChat(user);
             });
 
-            this.$onEventListener(appEvents, Events.RequestBuy, (offer: Offer) => {
+            this.$onEventListener(appEvents, Events.RequestBuy, offer => {
                 this.openChat(offer.author).then(isOpen => {
                     if (isOpen && this.sender) {
                         this.sender('', {

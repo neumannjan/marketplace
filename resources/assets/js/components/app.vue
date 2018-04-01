@@ -175,13 +175,13 @@
                 });
             };
 
-            this.$onEventListener(appEvents, Events.MessageSent, (message: Message) => {
+            this.$onEventListener(appEvents, Events.MessageSent, message => {
                 if(!message.mine) {
                     addNotification(1);
                 }
             });
 
-            this.$onEventListener(appEvents, Events.UnreadConversations, (conversations: Conversation[]) => {
+            this.$onEventListener(appEvents, Events.UnreadConversations, conversations => {
                 addNotification(conversations.length);
             });
 

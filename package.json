@@ -45,7 +45,7 @@
     "stackblur-canvas": "^1.4.0",
     "svg-sprite-loader": "^3.7.3",
     "ts-loader": "^4.1.0",
-    "typescript": "^2.7.2",
+    "typescript": "^2.8.1",
     "uglifyjs-webpack-plugin": "^1.2.4",
     "velocity-animate": "^1.5.0",
     "vue": "^2.5.16",

@@ -12,8 +12,8 @@ interface EventPropagatorCallback {
  * Function that EventPropagator classes should call to attach to EventListeners and listen to events
  */
 export interface EventPropagatorAttachFunction {
-    <Payloads extends EventListenerPayloads, Events extends keyof Payloads, T extends Events>
-    (listener: EventListener<Payloads, Events>, event: T, func: (payload: any) => void, whisper?: boolean): void
+    <Payloads extends EventListenerPayloads, T extends keyof Payloads>
+    (listener: EventListener<Payloads, string>, event: T, func: (payload: Payloads[T]) => void, whisper?: boolean): void
 }
 
 /**

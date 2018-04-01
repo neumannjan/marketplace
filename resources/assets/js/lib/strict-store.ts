@@ -5,6 +5,11 @@ interface PayloadWithType<T> {
     [index: string]: any;
 }
 
+type PayloadType<T> =
+    T extends (a: any, payload: infer P) => any ? P :
+    T extends {root?: boolean; handler: (a: any, payload: infer P) => any} ? P :
+    never;
+
 export declare interface StrictStore<
     State,
     M extends MutationTree<State>,
@@ -13,16 +18,16 @@ export declare interface StrictStore<
     extends Store<State> {
 
     readonly getters: {
-        [index in keyof G]: any
+        [index in keyof G]: ReturnType<G[index]>
     };
 
     dispatch: {
-        (type: keyof A, payload?: any, options?: DispatchOptions): Promise<any>,
+        <T extends keyof A>(type: T, payload?: PayloadType<A[T]>, options?: DispatchOptions): Promise<any>,
         (payloadWithType: PayloadWithType<A>, options?: DispatchOptions): Promise<any>;
     };
 
     commit: {
-        (type: keyof M, payload?: any, options?: CommitOptions): void,
+        <T extends keyof M>(type: T, payload?: PayloadType<M[T]>, options?: CommitOptions): void,
         (payloadWithType: PayloadWithType<M>, options?: CommitOptions): void;
     };
 }

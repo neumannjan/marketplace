@@ -13,7 +13,7 @@ export interface EventListenerPayloads {
 /**
  * EventListener class. Allows to bind and unbind event callbacks.
  */
-export default class EventListener<Payloads extends EventListenerPayloads = any, Name extends keyof Payloads = keyof Payloads> {
+export default class EventListener<Payloads extends EventListenerPayloads = any, Names extends keyof Payloads = keyof Payloads> {
     public debugEvents: boolean = false;
 
     /**
@@ -26,7 +26,7 @@ export default class EventListener<Payloads extends EventListenerPayloads = any,
      * @param {string} name
      * @param {Function} callback
      */
-    on<T extends Name>(name: T, callback: EventCallback<Payloads, T>) {
+    on<T extends Names>(name: T, callback: EventCallback<Payloads, T>) {
         if (this.callbacks[name] === undefined) {
             this.callbacks[name] = [];
         }
@@ -39,7 +39,7 @@ export default class EventListener<Payloads extends EventListenerPayloads = any,
      * @param {string} name
      * @param {Function} callback
      */
-    off<T extends Name>(name: T, callback: EventCallback<Payloads, T>) {
+    off<T extends Names>(name: T, callback: EventCallback<Payloads, T>) {
         if (this.callbacks[name]) {
             const index = this.callbacks[name].indexOf(callback);
             if (index >= 0) {
@@ -53,7 +53,7 @@ export default class EventListener<Payloads extends EventListenerPayloads = any,
      * @param {string} name
      * @param {Function} callback
      */
-    once<T extends Name>(name: T, callback: EventCallback<Payloads, T>) {
+    once<T extends Names>(name: T, callback: EventCallback<Payloads, T>) {
         const c = (payload: Payloads[T]) => {
             callback(payload);
             this.off(name, c);
@@ -67,7 +67,7 @@ export default class EventListener<Payloads extends EventListenerPayloads = any,
      * @param {string | number} name
      * @param params Parameters to pass to each callback.
      */
-    dispatch<T extends Name>(name: T, payload: Payloads[T]) {
+    dispatch<T extends Names>(name: T, payload: Payloads[T]) {
         if (this.callbacks[name]) {
             for (let callback of this.callbacks[name]) {
                 if(this.debugEvents) {

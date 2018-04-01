@@ -118,6 +118,7 @@
     import 'vue-awesome/icons/user-circle';
     import 'vue-awesome/icons/ellipsis-v';
     import 'vue-awesome/icons/flag';
+import { FloatingButtonTypes } from "JS/components/types";
 
     export default Vue.extend({
         name: "offer-card",
@@ -210,7 +211,7 @@
                             }
 
                             appEvents.dispatch(Events.RequestPopup, {
-                                type: 'chat',
+                                type: FloatingButtonTypes.Chat,
                                 then: () => {
                                     appEvents.dispatch(Events.RequestBuy, this.value);
                                 }
@@ -319,7 +320,7 @@
             }
         },
         created() {
-            this.$onEventListener(events, Events.OfferModified, (offer: Offer) => {
+            this.$onEventListener(events, Events.OfferModified, offer => {
                 this.$emit('input', offer);
             });
         }

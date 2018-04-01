@@ -20,7 +20,7 @@ interface Payloads {
 export default new class Messaging extends EventPropagator<Payloads, MessagingEvents> implements MessagingInterface {
 
     protected attachSelf(on: EventPropagatorAttachFunction): void {
-        on(allEvents, AppEvents.MessageSent, (message: NormalizedMessage) => {
+        on(allEvents, AppEvents.MessageSent, (message) => {
             this.dispatch(MessagingEvents.Message, message);
             this.sendReceived(message, false);
         });
