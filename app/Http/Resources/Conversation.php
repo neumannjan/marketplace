@@ -19,7 +19,7 @@ class Conversation extends Resource
         return [
             'id' => $this->id,
             'content' => $this->content,
-            'additional' => MessageAdditional::make($this->resource->additional),
+            'additional' => MessageAdditional::make($this->resource),
             'user' => User::make($this->user),
             'from' => User::make($this->from),
             'read' => $this->read

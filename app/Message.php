@@ -36,6 +36,11 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
         'additional' => 'array'
     ];
 
+    protected $with = [
+        'from',
+        'to'
+    ];
+
     protected $appends = ['identifier'];
 
     /**
@@ -82,6 +87,19 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
     public function user()
     {
         return $this->belongsTo(User::class, 'user_username', 'username');
+    }
+
+    public function offer()
+    {
+        return $this->belongsTo(Offer::class, 'offer_id', 'id');
+    }
+
+    /**
+     * @return null|int
+     */
+    public function getOfferIdAttribute()
+    {
+        return isset($this->additional['offer']) ? $this->additional['offer'] : null;
     }
 
     public function scopeConversationsWith(Builder $query, $user_username)

@@ -17,6 +17,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 use Laravel\Scout\Searchable;
+use Money\Currency;
 use Money\Money;
 
 /**
@@ -41,6 +42,11 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
         'created_at',
         'updated_at',
         'listed_at'
+    ];
+
+    protected $with = [
+        'images',
+        'author'
     ];
 
     protected $fillable = [
@@ -107,7 +113,7 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
             return null;
         }
 
-        return \Money::getDecimalParser()->parse((string)$this->price_value, $this->currency_code);
+        return \Money::getDecimalParser()->parse((string)$this->price_value, new Currency($this->currency_code));
     }
 
     /**

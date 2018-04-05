@@ -57,6 +57,10 @@ class User extends Authenticatable implements AuthorizationAwareModel
         'remember_token',
     ];
 
+    protected $with = [
+        'profile_image'
+    ];
+
     protected $casts = [
         'options' => 'array'
     ];

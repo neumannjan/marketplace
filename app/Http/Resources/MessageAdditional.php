@@ -14,12 +14,10 @@ class MessageAdditional extends Resource
      */
     public function toArray($request)
     {
-        $additional = $this->resource;
+        /** @var MessageAdditional|\App\Message $this */
 
-        if (isset($additional['offer'])) {
-            $additional['offer'] = Offer::make(\App\Offer::find($additional['offer']));
-        }
-
-        return $additional;
+        return [
+            'offer' => $this->when($this->offer, new Offer($this->offer))
+        ];
     }
 }

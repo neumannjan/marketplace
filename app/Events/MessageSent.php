@@ -20,14 +20,39 @@ class MessageSent implements ShouldBroadcastNow
     protected $identifier;
 
     /**
+     * Whether this message is the first in a while sent in the conversation by this user.
+     * @var boolean
+     */
+    protected $first;
+
+    /**
      * Create a new event instance.
      *
      * @param Message $message
+     * @param boolean $first
      */
-    public function __construct(Message $message)
+    public function __construct(Message $message, $first)
     {
         $this->message = $message;
         $this->identifier = $message->identifier;
+        $this->first = $first;
+    }
+
+    /**
+     * Get whether this message is the first in a while sent in the conversation by this user.
+     * @return bool
+     */
+    public function isFirst()
+    {
+        return $this->first;
+    }
+
+    /**
+     * @return Message
+     */
+    public function getMessage()
+    {
+        return $this->message;
     }
 
     /**

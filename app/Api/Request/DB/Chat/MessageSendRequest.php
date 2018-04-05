@@ -8,6 +8,7 @@ use App\Api\Response\Response;
 use App\Events\MessageSent;
 use App\Message;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Validator;
@@ -63,9 +64,17 @@ class MessageSendRequest extends Request
             'identifier' => $parameters->get('identifier', null)
         ]);
 
+        $first = (Message::orderByDesc('created_at')
+                ->whereDate('created_at', '>=', Carbon::today())
+                ->where([
+                    'from_username' => $user->username,
+                    'to_username' => $parameters['to'],
+                ])
+                ->count()) === 0;
+
         $message->save();
 
-        broadcast(new MessageSent($message))->toOthers();
+        broadcast(new MessageSent($message, $first))->toOthers();
 
         return new Response(true, \App\Http\Resources\Message::make($message));
     }
