@@ -102,7 +102,7 @@ return [
     
     '$keys[0]' => null
 ];
-PHP;;
+PHP;
             } else {
                 $this->error("The file $locale/$firstKey.php does not exist.");
                 continue;
@@ -110,6 +110,7 @@ PHP;;
 
             try {
                 $ast = $parser->parse($data);
+
             } catch (Error $error) {
                 echo "Parse error: {$error->getMessage()}\n";
                 return;
