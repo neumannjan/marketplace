@@ -14,6 +14,7 @@ class OfferSearchRequest extends SearchRequest
 
     /**
      * @inheritDoc
+     *
      * @param Offer $model
      */
     protected function filterResult($model, Collection $parameters)

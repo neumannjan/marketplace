@@ -18,12 +18,13 @@ class TestHelper
 
     /**
      * TestHelper constructor.
+     *
      * @param string $testsDir
      */
     public function __construct($testsDir)
     {
         $this->testsDir = $testsDir;
-        $this->tempFile = $testsDir . '/_output/' . self::TEMP_FILE_NAME;
+        $this->tempFile = $testsDir.'/_output/'.self::TEMP_FILE_NAME;
     }
 
     /**
@@ -36,6 +37,7 @@ class TestHelper
 
     /**
      * Whether the Laravel instance is run the Codeception test runner itself
+     *
      * @return bool
      */
     public function isRunner()
@@ -45,6 +47,7 @@ class TestHelper
 
     /**
      * Whether the request is a Selenium request
+     *
      * @return bool
      */
     public function isSeleniumRequest()
@@ -62,11 +65,14 @@ class TestHelper
 
     /**
      * Which user ID to authorize as
+     *
      * @return int|null
      */
     public function authAs()
     {
-        if ($this->isSeleniumRequest() && isset($_COOKIE[self::COOKIE_AUTH_NAME])) {
+        if ($this->isSeleniumRequest()
+            && isset($_COOKIE[self::COOKIE_AUTH_NAME])
+        ) {
             return (int)$_COOKIE[self::COOKIE_AUTH_NAME];
         }
 
@@ -92,7 +98,7 @@ class TestHelper
      */
     public function disableSeleniumRequests()
     {
-        if (!$this->tempFileExists) {
+        if ( ! $this->tempFileExists) {
             return;
         }
 

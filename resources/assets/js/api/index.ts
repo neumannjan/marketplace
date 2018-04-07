@@ -1,6 +1,6 @@
 import BaseApi from "JS/lib/api";
 import store from "JS/store";
-import {GlobalResponse, User} from "JS/api/types";
+import {GlobalResponse} from "JS/api/types";
 
 /**
  * API class that supports the app's store instance

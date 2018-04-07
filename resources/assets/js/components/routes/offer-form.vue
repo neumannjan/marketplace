@@ -186,13 +186,13 @@
     });
 
     function fetchOffer(params: { id?: number }): Promise<OfferFormRouteInterface> {
-        if(params.id === undefined) {
+        if (params.id === undefined) {
             return Promise.resolve(emptyOfferForm());
         } else {
             return api.requestSingle<Offer>('offer', {
-                    scope: store.getters.scope.offer,
-                    id: params.id
-                })
+                scope: store.getters.scope.offer,
+                id: params.id
+            })
                 .then(offer => {
                     return {
                         form: {
@@ -341,7 +341,7 @@
             this.touchPrice();
             let price: string | number = parseFloat(this.priceCleave.getRawValue());
 
-            if(isNaN(price) || !isFinite(price))
+            if (isNaN(price) || !isFinite(price))
                 price = '';
 
             this.form = {...this.form, price: price};
@@ -382,7 +382,7 @@
             const imageOrder = this.imageOrder;
             const index = imageOrder.findIndex(image => !image.new && image.id === id);
 
-            if(index >= 0) {
+            if (index >= 0) {
                 imageOrder.splice(index, 1);
                 this.imageOrder = imageOrder;
             }
@@ -422,7 +422,7 @@
             const obj = (<any>this)[objName];
             (<any>this)[objName] = {...obj, [key]: value};
         }
-        
+
         get title() {
             return this.$store.getters.trans(`interface.page.offer-${this.id ? 'edit' : 'create'}`);
         }
@@ -435,7 +435,7 @@
 
             try {
                 const val = new Intl.NumberFormat(this.$store.state.locale,
-                {style: 'currency', currency: this.form.currency}).format(price);
+                    {style: 'currency', currency: this.form.currency}).format(price);
 
                 return val.substr(0, 3) !== 'NaN' ? val : '';
             } catch (error) {
@@ -490,7 +490,7 @@
         get priceError() {
             return this.errors.price || this.errors.currency;
         }
-        
+
         async mounted() {
             this.priceCleave = new Cleave(this.$refs.price, {
                 numeral: true,

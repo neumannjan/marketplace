@@ -16,12 +16,16 @@ class MultiRequest extends PaginatedRequest
 
     /**
      * MultiRequest constructor.
+     *
      * @param string $modelClass
      * @param string $resourceClass
-     * @param bool $orderBased
+     * @param bool   $orderBased
      */
-    public function __construct($modelClass, $resourceClass, $orderBased = false)
-    {
+    public function __construct(
+        $modelClass,
+        $resourceClass,
+        $orderBased = false
+    ) {
         $this->modelClass = $modelClass;
         $this->resourceClass = $resourceClass;
         $this->orderBased = $orderBased;
@@ -41,8 +45,9 @@ class MultiRequest extends PaginatedRequest
     protected function _urlParameters(Collection $parameters)
     {
         $result = array_merge([
-            'scope'
-        ], $this->getDBParameters($parameters)->keys()->toArray(), parent::_urlParameters($parameters));
+            'scope',
+        ], $this->getDBParameters($parameters)->keys()->toArray(),
+            parent::_urlParameters($parameters));
 
         return $result;
     }

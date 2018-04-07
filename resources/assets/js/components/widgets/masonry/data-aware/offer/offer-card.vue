@@ -32,7 +32,7 @@
                 </router-link>
                 <b-dropdown v-if="loggedIn" :title="translations.dropdown" class="ml-3" toggle-class="btn-link-gray"
                             right variant="link" no-caret boundary="window">
-                    <offer-dropdown-contents :offer="value" />
+                    <offer-dropdown-contents :offer="value"/>
                     <icon slot="button-content" name="ellipsis-v"/>
                 </b-dropdown>
             </h4>
@@ -90,7 +90,7 @@
                     </button>
                     <b-dropdown v-if="loggedIn" boundary="window" :variant="color('', 'primary', true)"
                                 :title="translations.dropdown">
-                        <offer-dropdown-contents :offer="value" />
+                        <offer-dropdown-contents :offer="value"/>
                     </b-dropdown>
                 </div>
             </div>

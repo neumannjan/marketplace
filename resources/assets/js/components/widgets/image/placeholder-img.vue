@@ -88,11 +88,11 @@
                 /**
                  * @type {HTMLImageElement}
                  */
-                //@ts-ignore
+                    //@ts-ignore
                 const img = this.$refs.img;
 
                 img.addEventListener('load', () => this.ready = true, {once: true});
-                
+
                 if (srcset)
                     img.srcset = srcset;
 

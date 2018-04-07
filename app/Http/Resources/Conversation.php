@@ -11,6 +11,7 @@ class Conversation extends Resource
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request
+     *
      * @return array
      */
     public function toArray($request)
@@ -22,7 +23,7 @@ class Conversation extends Resource
             'additional' => MessageAdditional::make($this->resource),
             'user' => User::make($this->user),
             'from' => User::make($this->from),
-            'read' => $this->read
+            'read' => $this->read,
         ];
     }
 }

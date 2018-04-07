@@ -13,7 +13,15 @@ class FlashMessages implements Passable
 {
     public $messages;
 
-    const TYPES = ['success', 'status', 'danger', 'warning', 'primary', 'secondary'];
+    const TYPES
+        = [
+            'success',
+            'status',
+            'danger',
+            'warning',
+            'primary',
+            'secondary',
+        ];
 
     /**
      * FlashMessages constructor.
@@ -27,7 +35,7 @@ class FlashMessages implements Passable
         foreach (self::TYPES as $type) {
             $messages = $session->get($type);
 
-            if (!$messages) {
+            if ( ! $messages) {
                 continue;
             }
 

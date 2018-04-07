@@ -12,23 +12,23 @@ function determineActive(instance: Vue) {
  * @param {VM} instance
  * @param {Route} to
  */
-function changeTitle(instance: Vue & {title?: string}) {
+function changeTitle(instance: Vue & { title?: string }) {
     const route = instance.$route;
     const matched = route.matched.slice(0);
-    
+
     if (matched.length === 0) {
         return;
     }
 
-    if(!instance.$data._isMainRoute)
+    if (!instance.$data._isMainRoute)
         return;
 
     let title = store.state.name;
 
-    for(let i = matched.length - 1; i >= 0; --i) {
+    for (let i = matched.length - 1; i >= 0; --i) {
         const inst = matched[i].instances.default;
-        if(inst && (<any>inst).title) {
-            if(title)
+        if (inst && (<any>inst).title) {
+            if (title)
                 title = `${(<any>inst).title} | ${title}`;
             else
                 title = (<any>inst).title;
@@ -36,7 +36,7 @@ function changeTitle(instance: Vue & {title?: string}) {
         }
     }
 
-    if(title)
+    if (title)
         document.title = title;
 }
 

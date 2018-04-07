@@ -37,7 +37,7 @@
 </script>
 
 <style scoped lang="scss" type="text/scss">.img-dummy {
-        height: 200px;
-        position: relative;
-    }
+    height: 200px;
+    position: relative;
+}
 </style>

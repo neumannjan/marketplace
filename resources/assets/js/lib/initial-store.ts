@@ -10,7 +10,7 @@ export default class InitialStore<State extends InitialState> {
     }
 
     get<T extends keyof State>(index: T, instead: State[T]): State[T] {
-        if(this.state[index] !== undefined) {
+        if (this.state[index] !== undefined) {
             return this.state[index];
         } else {
             return instead;

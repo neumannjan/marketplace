@@ -2,10 +2,10 @@ import ConnectionManager, {ConnectionManagerEvents} from "JS/lib/echo";
 import api from "JS/api";
 import store from "JS/store";
 import {ChannelType} from "JS/lib/echo/channel";
-import {Message, User} from "JS/api/types";
+import {Message} from "JS/api/types";
 import events, {Events} from "JS/events";
-import { StoreWatcher } from "JS/echo/store-watcher";
-import { normalizeMessage } from "JS/api/messaging/helpers";
+import {StoreWatcher} from "JS/echo/store-watcher";
+import {normalizeMessage} from "JS/api/messaging/helpers";
 
 const echo = new ConnectionManager();
 const storeWatcher = new StoreWatcher(echo, store);
@@ -87,10 +87,10 @@ storeWatcher.onStoreState('user', (payload) => {
         }
 
         echo.reconnect();
-        
+
         if (username) {
             const channel = echo.channel(ChannelType.Private, getUserChannelName(username), false);
-            
+
             channel.on('MessageSent', (message: Message) => {
                 events.dispatch(Events.MessageSent, normalizeMessage(message));
             });

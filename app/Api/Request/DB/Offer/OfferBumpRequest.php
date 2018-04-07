@@ -39,7 +39,7 @@ class OfferBumpRequest extends Request
     protected function rules(Validator $validator = null)
     {
         return [
-            'id' => 'required|integer'
+            'id' => 'required|integer',
         ];
     }
 
@@ -56,10 +56,10 @@ class OfferBumpRequest extends Request
         $offer = Offer::query()->where([
             'id' => $parameters['id'],
             'author_user_id' => $user->id,
-            'status' => Offer::STATUS_AVAILABLE
+            'status' => Offer::STATUS_AVAILABLE,
         ])->first();
 
-        if($offer && $offer->bump() && $offer->save()) {
+        if ($offer && $offer->bump() && $offer->save()) {
             return new Response(true, new \App\Http\Resources\Offer($offer));
         } else {
             return new Response(false, []);

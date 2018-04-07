@@ -20,6 +20,7 @@ class OfferEditRequest extends Request
 
     /**
      * OfferCreateRequest constructor.
+     *
      * @param Guard $guard
      */
     public function __construct(Guard $guard)
@@ -68,7 +69,7 @@ class OfferEditRequest extends Request
         $query = Offer::query()
             ->where(['id' => $parameters['id']]);
 
-        if (!$user->is_admin) {
+        if ( ! $user->is_admin) {
             $query = $query->where(['author_user_id' => $this->guard->id()]);
         }
 
@@ -85,7 +86,8 @@ class OfferEditRequest extends Request
 
             $offer->save();
 
-            $this->processImages($offer, $parameters['imageOrder'], $parameters->get('images'), true);
+            $this->processImages($offer, $parameters['imageOrder'],
+                $parameters->get('images'), true);
 
             return new Response(true, ['id' => $offer->id]);
         }

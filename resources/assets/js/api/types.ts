@@ -104,7 +104,7 @@ export interface MessageBase {
  * Message interface
  */
 export interface Message extends MessageBase {
-    identifier?: string,    
+    identifier?: string,
     to: User,
     received: boolean,
 }
@@ -156,7 +156,7 @@ export interface GlobalResponse {
     available_locales: string[],
     user: null | User,
     is_admin: boolean,
-    flash: {[key: string]: FlashMessage},
+    flash: { [key: string]: FlashMessage },
     socket_host: null | string
 }
 
@@ -167,7 +167,7 @@ export interface InitialResponse extends GlobalResponse {
     messages: TranslationMessages,
     unread_conversations?: Conversation[],
     max_file_uploads: number,
-    locale_names: {[locale: string]: string},
+    locale_names: { [locale: string]: string },
     currency_default: string | 0
 }
 
@@ -206,4 +206,4 @@ export type ContinuousResponse<T> = {
     fetchMore: (() => Promise<ContinuousResponse<T>>) | null;
 }
 
-export type MessageReceivedNotifyRequest = {read?: boolean} & ({id: number} | {ids: number[]})
+export type MessageReceivedNotifyRequest = { read?: boolean } & ({ id: number } | { ids: number[] })

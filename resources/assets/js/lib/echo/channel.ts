@@ -1,5 +1,5 @@
 import {Channel as LaravelEchoChannel, PresenceChannel as _PresenceChannel} from "JS/lib/types/laravel-echo/channel";
-import EventListener, { EventCallback } from "JS/lib/event-listener";
+import EventListener, {EventCallback} from "JS/lib/event-listener";
 import Echo from "laravel-echo";
 
 export enum ChannelType {

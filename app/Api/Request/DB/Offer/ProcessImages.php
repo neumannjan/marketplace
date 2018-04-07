@@ -16,10 +16,15 @@ trait ProcessImages
      * @param array $imageOrder
      * @param UploadedFile|UploadedFile[] $newImages
      * @param boolean $handleExisting
+     *
      * @throws \Exception
      */
-    protected function processImages($offer, $imageOrder, $newImages, $handleExisting)
-    {
+    protected function processImages(
+        $offer,
+        $imageOrder,
+        $newImages,
+        $handleExisting
+    ) {
         if ($newImages && (array)$newImages !== $newImages) {
             $newImages = [$newImages];
         }
@@ -28,7 +33,8 @@ trait ProcessImages
 
         if ($handleExisting) {
             // fetch all existing images
-            $existingImages = Image::query()->where(['offer_id' => $offer->id])->get();
+            $existingImages = Image::query()->where(['offer_id' => $offer->id])
+                ->get();
         }
 
         /** @var Collection $imageDesc */
@@ -36,18 +42,19 @@ trait ProcessImages
             if ($imageDesc['new']) {
                 $uploadedFile = $newImages->get($imageDesc['id'], null);
 
-                if (!$uploadedFile) {
+                if ( ! $uploadedFile) {
                     continue;
                 }
 
                 /** @var UploadedFile $uploadedFile */
-                $originalFile = $uploadedFile->storePublicly(Image::STORAGE_DIR);
+                $originalFile
+                    = $uploadedFile->storePublicly(Image::STORAGE_DIR);
 
                 $image = new Image([
                     'original' => $originalFile,
                     'offer_id' => $offer->id,
                     'available_sizes' => ['tiny'],
-                    'order' => $key
+                    'order' => $key,
                 ]);
 
                 $image->save();
@@ -56,7 +63,8 @@ trait ProcessImages
             } elseif ($handleExisting) {
                 // update the existing image and remove it from the array
 
-                $k = $existingImages->search(function ($image) use ($imageDesc) {
+                $k = $existingImages->search(function ($image) use ($imageDesc
+                ) {
                     return ((int)$image['id']) === ((int)$imageDesc['id']);
                 });
 

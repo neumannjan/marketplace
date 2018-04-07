@@ -10,6 +10,7 @@ class MessageAdditional extends Resource
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request
+     *
      * @return array
      */
     public function toArray($request)
@@ -17,7 +18,7 @@ class MessageAdditional extends Resource
         /** @var MessageAdditional|\App\Message $this */
 
         return [
-            'offer' => $this->when($this->offer, new Offer($this->offer))
+            'offer' => $this->when($this->offer, new Offer($this->offer)),
         ];
     }
 }

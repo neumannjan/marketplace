@@ -4,12 +4,12 @@
         <div class="table-responsive">
             <table class="table">
                 <thead>
-                    <tr>
-                        <th>{{ translations.username }}</th>
-                        <th>{{ translations.display_name }}</th>
-                        <th>{{ translations.email }}</th>
-                        <th>{{ translations.profile }}</th>
-                    </tr>
+                <tr>
+                    <th>{{ translations.username }}</th>
+                    <th>{{ translations.display_name }}</th>
+                    <th>{{ translations.email }}</th>
+                    <th>{{ translations.profile }}</th>
+                </tr>
                 </thead>
                 <infinite-scroll as="tbody" :busy="busy" @request="request">
                     <tr v-for="user of users" :key="user.username">
@@ -24,7 +24,9 @@
                         </td>
                     </tr>
                     <tr v-if="nextUrl">
-                        <td colspan="3" class="text-center"><icon name="spinner" label="Loading" pulse/></td>
+                        <td colspan="3" class="text-center">
+                            <icon name="spinner" label="Loading" pulse/>
+                        </td>
                     </tr>
                 </infinite-scroll>
             </table>
@@ -71,11 +73,11 @@
         users: User[] = [];
 
         search: string = '';
-        
+
         requestSearch() {
             let params: Dictionary<string>;
 
-            if(this.search)
+            if (this.search)
                 params = {query: this.search};
             else
                 params = {};
@@ -99,7 +101,7 @@
             return this.requestBusy || this.masonryBusy;
         }
 
-        request(to?: string, params?: {[index: string]: any}) {
+        request(to?: string, params?: { [index: string]: any }) {
             if (this.active === false || this.requestBusy === true)
                 return;
 
@@ -124,7 +126,7 @@
 
         requestNew() {
             this.users = [];
-            if(this.query) {
+            if (this.query) {
                 this.search = this.query;
                 this.request('user-search', {
                     query: this.query,

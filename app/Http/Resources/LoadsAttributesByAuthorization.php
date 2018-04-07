@@ -11,20 +11,26 @@ trait LoadsAttributesByAuthorization
 
     /**
      * Get currently authorized user
+     *
      * @return \App\User|null
      */
-    protected function getUser() {
+    protected function getUser()
+    {
         return \Auth::user();
     }
 
     /**
      * Retrieve a value based on whether the user has admin privileges
+     *
      * @param mixed $value
      * @param mixed $default
+     *
      * @return \Illuminate\Http\Resources\MissingValue|mixed
      */
-    protected function whenAdmin($value, $default = null) {
+    protected function whenAdmin($value, $default = null)
+    {
         $user = $this->getUser();
+
         return $this->when(
             $user && $user->is_admin,
             $value,
@@ -34,26 +40,33 @@ trait LoadsAttributesByAuthorization
 
     /**
      * Retrieve a value based on whether the user is logged in
+     *
      * @param mixed $value
      * @param mixed $default
+     *
      * @return \Illuminate\Http\Resources\MissingValue|mixed
      */
-    protected function whenLoggedIn($value, $default = null) {
+    protected function whenLoggedIn($value, $default = null)
+    {
         return $this->when(
-            !!$this->getUser(),
+            ! ! $this->getUser(),
             $value,
-            func_num_args() === 2? $default : new MissingValue
+            func_num_args() === 2 ? $default : new MissingValue
         );
     }
 
     /**
      * Retrieve a value based on whether the model is owned by the logged in user
+     *
      * @param mixed $value
      * @param mixed $default
+     *
      * @return \Illuminate\Http\Resources\MissingValue|mixed
      */
-    protected function whenOwned($value, $default = null) {
+    protected function whenOwned($value, $default = null)
+    {
         $user = $this->getUser();
+
         return $this->when(
             $user && ($user->is_admin || $this->getOwnedBy($user)),
             $value,
@@ -63,6 +76,7 @@ trait LoadsAttributesByAuthorization
 
     /**
      * @param \App\User $user
+     *
      * @return boolean
      */
     protected abstract function getOwnedBy(\App\User $user);

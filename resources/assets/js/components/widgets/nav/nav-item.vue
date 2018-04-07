@@ -34,7 +34,7 @@
         path: string | undefined;
 
         @Prop({type: Object})
-        params: {[index: string]: string} | undefined;
+        params: { [index: string]: string } | undefined;
 
         @Prop({type: String, required: true})
         label!: string;

@@ -10,6 +10,7 @@ class Message extends Resource
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request
+     *
      * @return array
      */
     public function toArray($request)
@@ -23,7 +24,7 @@ class Message extends Resource
             'from' => User::make($this->from),
             'to' => User::make($this->to),
             'received' => $this->received,
-            'read' => $this->read
+            'read' => $this->read,
         ];
     }
 }

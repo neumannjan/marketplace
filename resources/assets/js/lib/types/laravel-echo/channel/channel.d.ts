@@ -8,6 +8,7 @@ export declare abstract class Channel {
      * @type {any}
      */
     options: any;
+
     /**
      * Listen for an event on the channel instance.
      *
@@ -16,6 +17,7 @@ export declare abstract class Channel {
      * @return {Channel}
      */
     abstract listen(event: string, callback: Function): Channel;
+
     /**
      * Listen for an event on the channel instance.
      *
@@ -24,6 +26,7 @@ export declare abstract class Channel {
      * @return {Channel}
      */
     notification(callback: Function): Channel;
+
     /**
      * Listen for a whisper event on the channel instance.
      *

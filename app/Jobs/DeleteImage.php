@@ -41,7 +41,7 @@ class DeleteImage implements ShouldQueue
     {
         $images = $this->images;
 
-        if (!$images) {
+        if ( ! $images) {
             return;
         }
 

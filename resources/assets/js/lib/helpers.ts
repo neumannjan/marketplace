@@ -41,9 +41,9 @@ export function awaitEvent(target: EventTarget, type: string): Promise<any> {
 /**
  * Function which takes an image file and returns its scaled down thumbnail.
  * A callback is provided and first called for the URL of the original image, then for the thumbnail URL.
- * @param image 
- * @param maxWidth 
- * @param maxHeight 
+ * @param image
+ * @param maxWidth
+ * @param maxHeight
  */
 export async function getImageFileThumbnailDataURL(image: File, maxWidth = 400, maxHeight = 400): Promise<string> {
     const onLoad = (target: EventTarget, after: () => void) => {
@@ -88,7 +88,7 @@ export async function getImageFileThumbnailDataURL(image: File, maxWidth = 400, 
 
     const ctx = canvas.getContext("2d");
 
-    if(ctx) {
+    if (ctx) {
         ctx.drawImage(img, 0, 0, width, height);
         const thumbURL = canvas.toDataURL(image.type);
         return thumbURL;
@@ -119,18 +119,18 @@ interface ActionConfiguration {
 export function doAction(config: ActionConfiguration, func: () => Promise<any>) {
     if (!config.confirm || confirm(config.confirm)) {
         function notificationType(notification: NotificationConfiguration | string | undefined, defaultValue: NotificationType) {
-            if(typeof notification === 'string')
+            if (typeof notification === 'string')
                 return defaultValue;
-            else if(notification && notification.type)
+            else if (notification && notification.type)
                 return notification.type;
             else
                 return defaultValue;
         }
 
         function notificationMessage(notification: NotificationConfiguration | string | undefined, defaultValue: string = '') {
-            if(typeof notification === 'string')
+            if (typeof notification === 'string')
                 return notification;
-            else if(notification && notification.message)
+            else if (notification && notification.message)
                 return notification.message;
             else
                 return defaultValue;

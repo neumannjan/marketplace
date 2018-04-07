@@ -9,6 +9,7 @@ export interface PresenceChannel {
      * @return {object} PresenceChannel
      */
     here(callback: Function): PresenceChannel;
+
     /**
      * Listen for someone joining the channel.
      *
@@ -16,6 +17,7 @@ export interface PresenceChannel {
      * @return {PresenceChannel}
      */
     joining(callback: Function): PresenceChannel;
+
     /**
      * Listen for someone leaving the channel.
      *

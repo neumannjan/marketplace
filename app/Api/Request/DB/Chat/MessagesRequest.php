@@ -29,11 +29,13 @@ class MessagesRequest extends MultiRequest
 
     /**
      * MessagesRequest constructor.
+     *
      * @param Guard $guard
      */
     public function __construct(Guard $guard)
     {
-        parent::__construct($this->modelClass, $this->resourceClass, $this->orderBased);
+        parent::__construct($this->modelClass, $this->resourceClass,
+            $this->orderBased);
         $this->guard = $guard;
     }
 
@@ -51,7 +53,7 @@ class MessagesRequest extends MultiRequest
     protected function rules(Validator $validator = null)
     {
         return [
-            'with' => 'sometimes|string'
+            'with' => 'sometimes|string',
         ];
     }
 
@@ -89,9 +91,11 @@ class MessagesRequest extends MultiRequest
         $user = $this->guard->user();
         foreach ($results as $message) {
             /** @var Message $message */
-            if (!$message->read && $message->to_username === $user->username) {
+            if ( ! $message->read
+                && $message->to_username === $user->username
+            ) {
                 $message->received = true;
-                $message->read = true;
+                $message->read     = true;
                 $message->save();
 
                 broadcast(new MessageReceived($message, $user))->toOthers();

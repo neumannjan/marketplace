@@ -3,7 +3,9 @@
         <div :class="['custom-control custom-checkbox', {disabled: disabled}]">
             <input class="custom-control-input" :type="type" :value="value" :id="id" :name="name"
                    @change="$emit('input', $event.target.checked)" :disabled="disabled">
-            <label class="custom-control-label" :for="id"><slot/></label>
+            <label class="custom-control-label" :for="id">
+                <slot/>
+            </label>
         </div>
     </div>
 </template>

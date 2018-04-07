@@ -16,7 +16,7 @@ export default new class Notifications extends NotificationManager<NotificationT
     protected doShowNotification(notification: Notification<NotificationTypes | string>): void {
         store.commit('addNotification', notification);
     }
-    
+
     protected doHideNotification(identifier: string): void {
         store.commit('removeNotification', identifier);
     }

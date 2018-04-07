@@ -39,7 +39,7 @@ class OfferRemoveRequest extends Request
     protected function rules(Validator $validator = null)
     {
         return [
-            'id' => 'required|integer'
+            'id' => 'required|integer',
         ];
     }
 
@@ -55,13 +55,13 @@ class OfferRemoveRequest extends Request
         $query = Offer::query()
             ->where(['id' => $parameters['id']]);
 
-        if (!$user->is_admin) {
+        if ( ! $user->is_admin) {
             $query = $query->where(['author_user_id' => $this->guard->id()]);
         }
 
         $offer = $query->first();
 
-        if($offer && $offer->delete() !== false) {
+        if ($offer && $offer->delete() !== false) {
             return new Response(true, []);
         } else {
             return new Response(false, []);

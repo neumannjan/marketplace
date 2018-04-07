@@ -36,38 +36,40 @@ class Kernel extends HttpKernel
      *
      * @var array
      */
-    protected $middleware = [
-        CheckForMaintenanceMode::class,
-        ValidatePostSize::class,
-        TrimStrings::class,
-        ConvertEmptyStringsToNull::class,
-        TrustProxies::class,
-    ];
+    protected $middleware
+        = [
+            CheckForMaintenanceMode::class,
+            ValidatePostSize::class,
+            TrimStrings::class,
+            ConvertEmptyStringsToNull::class,
+            TrustProxies::class,
+        ];
 
     /**
      * The application's route middleware groups.
      *
      * @var array
      */
-    protected $middlewareGroups = [
-        'web' => [
-            EncryptCookies::class,
-            AddQueuedCookiesToResponse::class,
-            StartSession::class,
-            AuthenticateSession::class,
-            HandleAcceptanceTestRequest::class,
-            ShareErrorsFromSession::class,
-            VerifyCsrfToken::class,
-            SubstituteBindings::class,
-            LogoutInactiveUser::class,
-            ApplyUserOptions::class,
-        ],
+    protected $middlewareGroups
+        = [
+            'web' => [
+                EncryptCookies::class,
+                AddQueuedCookiesToResponse::class,
+                StartSession::class,
+                AuthenticateSession::class,
+                HandleAcceptanceTestRequest::class,
+                ShareErrorsFromSession::class,
+                VerifyCsrfToken::class,
+                SubstituteBindings::class,
+                LogoutInactiveUser::class,
+                ApplyUserOptions::class,
+            ],
 
-        'api' => [
-            'throttle:60,1',
-            'bindings',
-        ],
-    ];
+            'api' => [
+                'throttle:60,1',
+                'bindings',
+            ],
+        ];
 
     /**
      * The application's route middleware.
@@ -76,17 +78,18 @@ class Kernel extends HttpKernel
      *
      * @var array
      */
-    protected $routeMiddleware = [
-        'auth' => Authenticate::class,
-        'auth.basic' => AuthenticateWithBasicAuth::class,
-        'bindings' => SubstituteBindings::class,
-        'cache.headers' => SetCacheHeaders::class,
-        'can' => Authorize::class,
-        'guest' => RedirectIfAuthenticated::class,
-        'signed' => ValidateSignature::class,
-        'throttle' => ThrottleRequests::class,
+    protected $routeMiddleware
+        = [
+            'auth' => Authenticate::class,
+            'auth.basic' => AuthenticateWithBasicAuth::class,
+            'bindings' => SubstituteBindings::class,
+            'cache.headers' => SetCacheHeaders::class,
+            'can' => Authorize::class,
+            'guest' => RedirectIfAuthenticated::class,
+            'signed' => ValidateSignature::class,
+            'throttle' => ThrottleRequests::class,
 
-        // custom
-        'dev' => DevOnly::class
-    ];
+            // custom
+            'dev' => DevOnly::class,
+        ];
 }

@@ -6,7 +6,6 @@ namespace App\Api\Request\DB\User;
 use App\Api\Request\DB\SearchRequest;
 use App\User;
 use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 class UserSearchRequest extends SearchRequest
@@ -42,16 +41,18 @@ class UserSearchRequest extends SearchRequest
     protected function urlParameters(Collection $parameters)
     {
         return [
-            'status' => 'sometimes|integer'
+            'status' => 'sometimes|integer',
         ];
     }
 
     /**
      * @param User $model
+     *
      * @inheritDoc
      */
     protected function filterResult($model, Collection $parameters)
     {
-        return $parameters->has('status') ? $model->status === $parameters['status'] : true;
+        return $parameters->has('status') ? $model->status
+            === $parameters['status'] : true;
     }
 }

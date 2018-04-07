@@ -19,7 +19,7 @@ export default class EventListener<Payloads extends EventListenerPayloads = any,
     /**
      * An array of callbacks per event name
      */
-    protected callbacks: {[eventName: string]: ((payload: keyof Payloads) => void)[]} = {};
+    protected callbacks: { [eventName: string]: ((payload: keyof Payloads) => void)[] } = {};
 
     /**
      * Attach an event listener to an event.
@@ -70,7 +70,7 @@ export default class EventListener<Payloads extends EventListenerPayloads = any,
     dispatch<T extends Names>(name: T, payload: Payloads[T]) {
         if (this.callbacks[name]) {
             for (let callback of this.callbacks[name]) {
-                if(this.debugEvents) {
+                if (this.debugEvents) {
                     console.log(`Dispatching: ${name}`);
                 }
                 callback(payload);

@@ -43,7 +43,11 @@ class UserAdminRequest extends Request
     {
         return [
             'username' => 'required|string',
-            'status' => ['required', 'integer', Rule::in([User::STATUS_ACTIVE, User::STATUS_BANNED])]
+            'status' => [
+                'required',
+                'integer',
+                Rule::in([User::STATUS_ACTIVE, User::STATUS_BANNED]),
+            ],
         ];
     }
 
@@ -54,14 +58,14 @@ class UserAdminRequest extends Request
     {
         /** @var User | null $user */
         $user = User::query()->where([
-            'username' => $parameters['username']
+            'username' => $parameters['username'],
         ])->first();
 
         $success = false;
 
         if ($user) {
             $user->status = $parameters['status'];
-            $success = $user->save();
+            $success      = $user->save();
         }
 
         return new Response($success, new \App\Http\Resources\User($user));

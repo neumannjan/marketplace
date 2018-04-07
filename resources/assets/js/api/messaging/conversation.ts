@@ -41,10 +41,10 @@ export class ConversationMediator extends EventPropagator<Payloads, Conversation
 
     constructor(user: User) {
         super(false);
-        if(!store.state.user) {
+        if (!store.state.user) {
             throw "Cannot join a conversation: user not logged in";
         }
-        
+
         this.me = store.state.user;
         this.them = user;
         this.channel = echo.channel(ChannelType.Private, getConversationChannelName(this.me.username, user.username), false);
@@ -57,7 +57,7 @@ export class ConversationMediator extends EventPropagator<Payloads, Conversation
         // typing event
 
         on(this.channel, 'typing', (payload: TypingEventPayload) => {
-            if(payload.username === this.them.username) {
+            if (payload.username === this.them.username) {
                 this.dispatch(ConversationEvents.Typing, payload.typing);
             }
         }, true);
@@ -66,7 +66,7 @@ export class ConversationMediator extends EventPropagator<Payloads, Conversation
         // message received event
 
         const onMessageReceived = (payload: ReceivedEventPayload) => {
-            if(payload.username === this.them.username) {
+            if (payload.username === this.them.username) {
                 this.dispatch(ConversationEvents.Received, payload);
             }
         };
@@ -76,10 +76,10 @@ export class ConversationMediator extends EventPropagator<Payloads, Conversation
 
 
         // message sent event
-        
+
         on(this.channel, 'MessageSent', (message: Message) => {
             this.dispatch(ConversationEvents.Message, normalizeMessage(message));
-            if(!message.mine) {
+            if (!message.mine) {
                 this.sendReceived(message, true);
             }
         });
@@ -115,7 +115,7 @@ export class ConversationMediator extends EventPropagator<Payloads, Conversation
             additional: additional,
             identifier: identifier
         })
-        .then(normalizeMessage);
+            .then(normalizeMessage);
 
         return {
             identifier: identifier,
@@ -142,7 +142,7 @@ export class ConversationMediator extends EventPropagator<Payloads, Conversation
      * @param read {boolean} Whether the user has read the message or only received it.
      */
     sendReceived(message: number | Message, read: boolean): void {
-        if(typeof message === 'object' && isMine(message)) {
+        if (typeof message === 'object' && isMine(message)) {
             return;
         }
 

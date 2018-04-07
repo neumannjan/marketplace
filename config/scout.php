@@ -71,7 +71,7 @@ return [
         'fuzzy' => [
             'prefix_length' => 2,
             'max_expansions' => 50,
-            'distance' => 2
+            'distance' => 2,
         ],
         'asYouType' => false,
         'searchBoolean' => true,

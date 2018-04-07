@@ -23,9 +23,9 @@
         </div>
 
         <list-messages v-if="user" :user="user" :img-size="imgSize"
-                        @sender="onMessageSender"
-                        class="d-flex flex-grow flex-column overflow-hidden-y"
-                        :indicator-size="indicatorSize"/>
+                       @sender="onMessageSender"
+                       class="d-flex flex-grow flex-column overflow-hidden-y"
+                       :indicator-size="indicatorSize"/>
         <list-conversations v-else @select="onSelectUser" :img-size="imgSize"/>
     </div>
 </template>
@@ -109,7 +109,7 @@
         },
         watch: {
             user(user) {
-                if(!user) {
+                if (!user) {
                     this.sender = null;
                 }
             }

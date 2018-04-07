@@ -45,7 +45,7 @@ class RegisterRequest extends Request
             'email' => $parameters['email'],
             'password' => \Hash::make($parameters['password']),
             'display_name' => $parameters['display_name'],
-            'status' => User::STATUS_INACTIVE
+            'status' => User::STATUS_INACTIVE,
         ]);
 
         event(new Registered($user));
@@ -58,7 +58,7 @@ class RegisterRequest extends Request
 
         // display a flash message
         \Session::flash('success.register', __('flash.success.register', [
-            'email' => $user->email
+            'email' => $user->email,
         ]));
 
         return new Response(true, []);

@@ -21,6 +21,7 @@ class MessageSent implements ShouldBroadcastNow
 
     /**
      * Whether this message is the first in a while sent in the conversation by this user.
+     *
      * @var boolean
      */
     protected $first;
@@ -33,13 +34,14 @@ class MessageSent implements ShouldBroadcastNow
      */
     public function __construct(Message $message, $first)
     {
-        $this->message = $message;
+        $this->message    = $message;
         $this->identifier = $message->identifier;
-        $this->first = $first;
+        $this->first      = $first;
     }
 
     /**
      * Get whether this message is the first in a while sent in the conversation by this user.
+     *
      * @return bool
      */
     public function isFirst()
@@ -64,7 +66,8 @@ class MessageSent implements ShouldBroadcastNow
     {
         return [
             new PrivateChannel("user.{$this->message->to_username}"),
-            $this->getConversationChannel($this->message->from_username, $this->message->to_username)
+            $this->getConversationChannel($this->message->from_username,
+                $this->message->to_username),
         ];
     }
 
@@ -78,6 +81,7 @@ class MessageSent implements ShouldBroadcastNow
         if ($this->identifier) {
             $this->message->identifier = $this->identifier;
         }
+
         return \App\Http\Resources\Message::make($this->message)->resolve();
     }
 }

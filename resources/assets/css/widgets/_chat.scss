@@ -1,16 +1,16 @@
 .chat-message {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    word-break: break-word;
-    min-width: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
 }
 
 .chat-message-content {
-    display: block;
-    padding: .25em .75em;
+  display: block;
+  padding: .25em .75em;
 }
 
 .chat-message-image {
-    margin: -3px -1px -1px;
-    overflow: hidden;
+  margin: -3px -1px -1px;
+  overflow: hidden;
 }

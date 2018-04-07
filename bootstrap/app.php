@@ -12,7 +12,7 @@
 */
 
 $app = new Illuminate\Foundation\Application(
-    realpath(__DIR__ . '/../')
+    realpath(__DIR__.'/../')
 );
 
 /*
@@ -35,7 +35,7 @@ $app->instance(\App\Tests\TestHelper::class, $testHelper);
 // set environment
 if ($testHelper->isRunner()) {
     $app->loadEnvironmentFrom('.env.testing');
-} else if ($testHelper->isSeleniumRequest()) {
+} elseif ($testHelper->isSeleniumRequest()) {
     $app->loadEnvironmentFrom('.env.testingserver');
 }
 

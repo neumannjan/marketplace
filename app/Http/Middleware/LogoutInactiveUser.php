@@ -14,7 +14,8 @@ class LogoutInactiveUser
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
+     * @param  \Closure                 $next
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -27,10 +28,11 @@ class LogoutInactiveUser
                 \Auth::logout();
                 \Session::invalidate();
 
-                \Session::flash('warning.session-expired', __('flash.warning.session-expired'));
+                \Session::flash('warning.session-expired',
+                    __('flash.warning.session-expired'));
 
                 // do not redirect if this is an API request
-                if (!$request->isXmlHttpRequest()) {
+                if ( ! $request->isXmlHttpRequest()) {
                     return \Response::redirectToRoute('app');
                 }
             }

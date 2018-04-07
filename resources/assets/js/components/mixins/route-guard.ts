@@ -1,15 +1,15 @@
-import { Vue, Component, Watch } from "JS/components/class-component";
-import { Location, Route, NavigationGuard, RawLocation } from "vue-router";
+import {Component, Vue, Watch} from "JS/components/class-component";
+import {Location, RawLocation, Route} from "vue-router";
 import router from "JS/router";
 
-export default function<V extends Vue>(name: string, get: (vm: V) => boolean, goTo: Location = {name: 'index'}) {
+export default function <V extends Vue>(name: string, get: (vm: V) => boolean, goTo: Location = {name: 'index'}) {
     name = `guard_${name}`;
 
     @Component({})
     class RouteGuardMixin extends Vue {
         @Watch(name)
         onGuardValueChange(val: boolean) {
-            if(val !== true) {
+            if (val !== true) {
                 router.push(goTo);
             }
         }

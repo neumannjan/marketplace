@@ -56,11 +56,11 @@
             this.$onEventListener(events, Events.OfferRemoved, id => {
                 const index = this.cards.findIndex(card => card.id === id);
 
-                if(index !== -1) {
+                if (index !== -1) {
                     const cards = this.cards;
 
                     cards.splice(index, 1);
-                    
+
                     this.cards = cards;
                 }
             });
@@ -68,14 +68,14 @@
             this.$onEventListener(events, Events.OfferModified, offer => {
                 const index = this.cards.findIndex(card => card.id === offer.id);
 
-                if(index !== -1) {
+                if (index !== -1) {
                     let cards: Offer[] = this.cards;
 
                     //remove old offer
                     const [oldOffer] = cards.splice(index, 1);
 
-                    if(!this.shouldShow || this.shouldShow(offer)) {
-                        if(oldOffer.listed_at === offer.listed_at) {
+                    if (!this.shouldShow || this.shouldShow(offer)) {
+                        if (oldOffer.listed_at === offer.listed_at) {
                             cards = [
                                 ...cards.slice(0, index),
                                 offer,

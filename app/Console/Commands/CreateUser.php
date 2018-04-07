@@ -19,11 +19,12 @@ class CreateUser extends Command
      *
      * @var string
      */
-    protected $signature = 'user:create {username} {email} '
-    . '{password} '
-    . '{--d|display-name= : The user\'s display name} '
-    . '{--s|status=active : active, banned, inactive} '
-    . '{--a|admin : Give the user admin privileges}';
+    protected $signature
+        = 'user:create {username} {email} '
+        .'{password} '
+        .'{--d|display-name= : The user\'s display name} '
+        .'{--s|status=active : active, banned, inactive} '
+        .'{--a|admin : Give the user admin privileges}';
 
     /**
      * The console command description.
@@ -48,9 +49,9 @@ class CreateUser extends Command
         $is_admin = $this->option('admin');
 
         // set validation rules
-        $rules = User::getValidationRules();
+        $rules           = User::getValidationRules();
         $rules['status'] = [
-            Rule::in(['active', 'banned', 'inactive'])
+            Rule::in(['active', 'banned', 'inactive']),
         ];
 
         // validate input
@@ -58,23 +59,26 @@ class CreateUser extends Command
         try {
             $validator->validate();
         } catch (ValidationException $e) {
-            $this->error(json_encode($validator->messages()->getMessages(), JSON_PRETTY_PRINT));
+            $this->error(json_encode($validator->messages()->getMessages(),
+                JSON_PRETTY_PRINT));
             throw new ValidationException($validator);
         }
 
         // modify input
         $data['password'] = Hash::make($data['password']);
-        $data['status'] = $this->getStatusValue($data['status']);
+        $data['status']   = $this->getStatusValue($data['status']);
 
         // create the user
-        $u = new User($data);
+        $u           = new User($data);
         $u->is_admin = $is_admin;
         $u->save();
     }
 
     /**
      * Convert a string status to its integer counterpart
+     *
      * @param string $stringValue
+     *
      * @return int
      */
     protected function getStatusValue($stringValue)

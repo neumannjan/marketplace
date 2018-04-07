@@ -17,8 +17,10 @@ class AppRoutes
 
     /**
      * URL to a frontend app route
+     *
      * @param string $route
-     * @param bool $absolute
+     * @param bool   $absolute
+     *
      * @return string
      */
     public static final function route($route, $absolute = true)
@@ -28,7 +30,9 @@ class AppRoutes
 
     /**
      * URL to frontend app index route
+     *
      * @param bool $absolute
+     *
      * @return string
      */
     public static final function index($absolute = true)
@@ -38,8 +42,10 @@ class AppRoutes
 
     /**
      * URL to frontend app password reset route
+     *
      * @param string $token password reset token
-     * @param bool $absolute
+     * @param bool   $absolute
+     *
      * @return string
      */
     public static final function passwordReset($token, $absolute = true)

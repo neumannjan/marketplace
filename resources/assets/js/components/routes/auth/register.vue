@@ -73,7 +73,7 @@
                     min: minLength(5),
 
                     slug(value: string) {
-                        if(value === '') return true;
+                        if (value === '') return true;
 
                         return (value.match(/^[a-zA-Z0-9-_]+$/) !== null);
                     }

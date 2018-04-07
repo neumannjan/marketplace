@@ -1,5 +1,5 @@
-import EventListener, { EventListenerPayloads } from "JS/lib/event-listener";
-import { Channel } from "JS/lib/echo/channel";
+import EventListener, {EventListenerPayloads} from "JS/lib/event-listener";
+import {Channel} from "JS/lib/echo/channel";
 
 interface EventPropagatorCallback {
     listener: EventListener<any, any>,
@@ -20,7 +20,7 @@ export interface EventPropagatorAttachFunction {
  * Class that attaches to EventListener and listens to its events only throughout its lifetime.
  */
 export default abstract class EventPropagator<Payloads extends EventListenerPayloads = any, Events extends keyof Payloads = keyof Payloads>
-extends EventListener<Payloads, Events> {
+    extends EventListener<Payloads, Events> {
     private watchedCallbacks: Array<EventPropagatorCallback> = [];
 
     /**
@@ -30,12 +30,12 @@ extends EventListener<Payloads, Events> {
     protected abstract attachSelf(on: EventPropagatorAttachFunction): void;
 
     /**
-     * 
+     *
      * @param doAttachSelf {boolean} Whether the constructor should call the attachSelf function. If false, doAttachSelf should be called in constructor.
      */
     constructor(doAttachSelf: boolean = true) {
         super();
-        if(doAttachSelf) {
+        if (doAttachSelf) {
             this.doAttachSelf();
         }
     }
@@ -51,8 +51,8 @@ extends EventListener<Payloads, Events> {
                 func: func,
                 whisper: whisper
             });
-    
-            if(whisper)
+
+            if (whisper)
                 (<Channel>listener).onWhisper(event, func);
             else
                 listener.on(event, func);
@@ -63,8 +63,8 @@ extends EventListener<Payloads, Events> {
      * Detach from all EventListeners.
      */
     protected detach() {
-        for(let callback of this.watchedCallbacks) {
-            if(callback.whisper)
+        for (let callback of this.watchedCallbacks) {
+            if (callback.whisper)
                 (<Channel>callback.listener).offWhisper(callback.name, callback.func);
             else
                 callback.listener.off(callback.name, callback.func);

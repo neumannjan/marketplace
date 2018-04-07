@@ -16,6 +16,7 @@ class TranslationFileNodeVisitor implements NodeVisitor
 
     /**
      * Keys to search for
+     *
      * @var string[]
      */
     protected $keys;
@@ -31,12 +32,13 @@ class TranslationFileNodeVisitor implements NodeVisitor
 
     /**
      * TranslationFileNodeVisitor constructor.
-     * @param string[] $keys
+     *
+     * @param string[]    $keys
      * @param string|null $newValue Null if the node is supposed to be removed.
      */
     public function __construct(array $keys, $newValue)
     {
-        $this->keys = $keys;
+        $this->keys     = $keys;
         $this->newValue = $newValue;
     }
 
@@ -45,7 +47,8 @@ class TranslationFileNodeVisitor implements NodeVisitor
      */
     protected function getCurrentKey()
     {
-        return $this->keysPosition === null ? null : $this->keys[$this->keysPosition];
+        return $this->keysPosition === null ? null
+            : $this->keys[$this->keysPosition];
     }
 
     /**
@@ -86,7 +89,7 @@ class TranslationFileNodeVisitor implements NodeVisitor
 
     public function beforeTraverse(array $nodes)
     {
-        $this->found = false;
+        $this->found        = false;
         $this->keysPosition = null;
     }
 
@@ -95,8 +98,9 @@ class TranslationFileNodeVisitor implements NodeVisitor
         if ($node instanceof Node\Expr\ArrayItem) {
             $key = $node->key->value;
 
-            $currentKey = $this->getCurrentKey();
-            $searchedKey = $currentKey === null ? $this->nextKey() : $currentKey;
+            $currentKey  = $this->getCurrentKey();
+            $searchedKey = $currentKey === null ? $this->nextKey()
+                : $currentKey;
 
             if ($key === $searchedKey) {
                 if ($this->nextKey() === null) {
@@ -122,21 +126,26 @@ class TranslationFileNodeVisitor implements NodeVisitor
 
     public function afterTraverse(array $nodes)
     {
-        if (!$this->found && $this->newValue !== null) {
+        if ( ! $this->found && $this->newValue !== null) {
             /** @var Node\Expr\Array_ $node */
             $node = $nodes[0]->expr;
 
             $this->keysPosition = null;
             while (($key = $this->nextKey()) !== null) {
                 /** @var Node\Expr\ArrayItem $arrayItem */
-                $arrayItem = Arr::first($node->items, function ($node) use ($key) {
-                    return ($node instanceof Node\Expr\ArrayItem) && $node->key && $node->key->value === $key;
-                });
+                $arrayItem = Arr::first($node->items,
+                    function ($node) use ($key) {
+                        return ($node instanceof Node\Expr\ArrayItem)
+                            && $node->key
+                            && $node->key->value === $key;
+                    });
 
                 if ($this->isKeyLast()) {
                     $val = new Node\Scalar\String_($this->newValue);
                 } else {
-                    if ($arrayItem && $arrayItem->value instanceof Node\Expr\Array_) {
+                    if ($arrayItem
+                        && $arrayItem->value instanceof Node\Expr\Array_
+                    ) {
                         $val = $arrayItem->value;
                     } else {
                         $val = new Node\Expr\Array_([]);
@@ -144,7 +153,9 @@ class TranslationFileNodeVisitor implements NodeVisitor
                 }
 
                 if ($arrayItem === null) {
-                    $arrayItem = $node->items[] = new Node\Expr\ArrayItem($val, new Node\Scalar\String_($key));
+                    $arrayItem
+                        = $node->items[] = new Node\Expr\ArrayItem($val,
+                        new Node\Scalar\String_($key));
                 } else {
                     $arrayItem->value = $val;
                 }

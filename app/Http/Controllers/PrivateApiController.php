@@ -66,25 +66,25 @@ class PrivateApiController extends Controller
                 MultiRequest::class,
                 'modelClass' => Offer::class,
                 'resourceClass' => \App\Http\Resources\Offer::class,
-                'orderBased' => true
+                'orderBased' => true,
             ],
 
             'offer' => [
                 SingleRequest::class,
                 'modelClass' => Offer::class,
-                'resourceClass' => \App\Http\Resources\Offer::class
+                'resourceClass' => \App\Http\Resources\Offer::class,
             ],
 
             'users' => [
                 MultiRequest::class,
                 'modelClass' => User::class,
-                'resourceClass' => \App\Http\Resources\User::class
+                'resourceClass' => \App\Http\Resources\User::class,
             ],
 
             'user' => [
                 SingleRequest::class,
                 'modelClass' => User::class,
-                'resourceClass' => \App\Http\Resources\User::class
+                'resourceClass' => \App\Http\Resources\User::class,
             ],
 
             'search' => OfferSearchRequest::class,
@@ -110,9 +110,10 @@ class PrivateApiController extends Controller
     }
 
     /**
-     * @param array $data
-     * @param Request $request
+     * @param array       $data
+     * @param Request     $request
      * @param Application $app
+     *
      * @return JsonResponse
      */
     protected function resolve($data, Request $request, Application $app)
@@ -128,7 +129,7 @@ class PrivateApiController extends Controller
                     $apiRequest = null;
 
                     if (is_array($requestDefinition)) {
-                        $class = array_shift($requestDefinition);
+                        $class      = array_shift($requestDefinition);
                         $apiRequest = $app->make($class, $requestDefinition);
                     } else {
                         $apiRequest = $app->make($requestDefinition);
@@ -142,7 +143,7 @@ class PrivateApiController extends Controller
                         $parameters = [];
                     }
 
-                    $parameters = $parameters + $request->allFiles();
+                    $parameters  = $parameters + $request->allFiles();
                     $responses[] = $apiRequest->resolve($name, $parameters);
                 } else {
                     $response = new ApiResponse(false, "Unknown request.");
@@ -160,14 +161,16 @@ class PrivateApiController extends Controller
 
     public function index(Request $request, Application $app)
     {
-        return $this->resolve(json_decode($request->input("api"), true), $request, $app);
+        return $this->resolve(json_decode($request->input("api"), true),
+            $request, $app);
     }
 
     public function single($name, Request $request, Application $app)
     {
         return $this->resolve([
             $name => $request->input(),
-            'global' => '' //add global request automatically for single requests
+            'global' => ''
+            //add global request automatically for single requests
         ], $request, $app);
     }
 }

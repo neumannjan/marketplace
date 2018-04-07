@@ -21,7 +21,8 @@ class User extends Resource
             'display_name' => $this->display_name,
             'status' => $this->status,
             'description' => $this->description,
-            'profile_image' => $this->profile_image ? Image::make($this->profile_image) : null
+            'profile_image' => $this->profile_image
+                ? Image::make($this->profile_image) : null,
         ];
     }
 }

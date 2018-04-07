@@ -35,6 +35,7 @@ abstract class LocalizedMailNotification extends Notification
 
     protected function __($key)
     {
-        return __($this->getKeyBase() . '.' . $key, $this->getLocalizationParameters());
+        return __($this->getKeyBase().'.'.$key,
+            $this->getLocalizationParameters());
     }
 }

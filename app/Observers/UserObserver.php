@@ -24,6 +24,7 @@ class UserObserver
 
     /**
      * @param User $user
+     *
      * @return bool
      * @throws \Exception
      */

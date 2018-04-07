@@ -29,6 +29,7 @@ class MessageNotification extends LocalizedMailNotification
      * Get the mail representation of the notification.
      *
      * @param  mixed $notifiable
+     *
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
@@ -44,7 +45,8 @@ class MessageNotification extends LocalizedMailNotification
      */
     protected function getKeyBase()
     {
-        return $this->message->offer_id !== null ? 'email.message-offer' : 'email.message';
+        return $this->message->offer_id !== null ? 'email.message-offer'
+            : 'email.message';
     }
 
     /**
@@ -55,7 +57,8 @@ class MessageNotification extends LocalizedMailNotification
         return [
             'site' => config('app.name'),
             'from' => $this->message->from->display_name,
-            'offer' => $this->message->offer_id !== null ? $this->message->offer->name : null
+            'offer' => $this->message->offer_id !== null
+                ? $this->message->offer->name : null,
         ];
     }
 }

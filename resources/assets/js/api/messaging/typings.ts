@@ -1,4 +1,4 @@
-import { ContinuousResponse, PaginatedResponse, Message, User, Conversation, MessageAdditional } from "JS/api/types";
+import {ContinuousResponse, Conversation, Message, MessageAdditional, User} from "JS/api/types";
 
 export interface NormalizedMessage extends Message {
     mine: boolean

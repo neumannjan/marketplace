@@ -25,7 +25,8 @@ class ImageCest
 
     /**
      * @param UnitTester $I
-     * @param array $images
+     * @param array      $images
+     *
      * @throws Exception
      */
     public function offerSaveAndDelete(UnitTester $I, $images = [self::JPG_IMG])
@@ -34,7 +35,8 @@ class ImageCest
 
         //set absolute paths
         foreach ($images as $key => $image) {
-            $images[$key] = \Illuminate\Http\UploadedFile::fake()->image($image, 400, 400);
+            $images[$key] = \Illuminate\Http\UploadedFile::fake()->image($image,
+                400, 400);
         }
 
         if (count($images) === 1) {
@@ -49,10 +51,10 @@ class ImageCest
                 'description' => '',
                 'price' => 0,
                 'currency' => 0,
-                'status' => \App\Offer::STATUS_AVAILABLE
-            ]
+                'status' => \App\Offer::STATUS_AVAILABLE,
+            ],
         ], [
-            'images' => $images
+            'images' => $images,
         ]);
 
         $data = $response->getData(true);
@@ -78,6 +80,7 @@ class ImageCest
 
     /**
      * @param UnitTester $I
+     *
      * @throws Exception
      */
     public function offerSaveAndDeletePNG(UnitTester $I)
@@ -87,6 +90,7 @@ class ImageCest
 
     /**
      * @param UnitTester $I
+     *
      * @throws Exception
      */
     public function offerSaveAndDeleteMultiple(UnitTester $I)

@@ -10,6 +10,7 @@ class Image extends Resource
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request
+     *
      * @return array
      */
     public function toArray($request)
@@ -19,7 +20,7 @@ class Image extends Resource
             'width' => $this->width,
             'height' => $this->height,
             'urls' => $this->urls,
-            'ready' => $this->ready
+            'ready' => $this->ready,
         ];
 
         return $array;

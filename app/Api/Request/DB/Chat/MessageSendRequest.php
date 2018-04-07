@@ -20,6 +20,7 @@ class MessageSendRequest extends Request
 
     /**
      * MessageSendRequest constructor.
+     *
      * @param Guard $guard
      */
     public function __construct(Guard $guard)
@@ -44,7 +45,7 @@ class MessageSendRequest extends Request
             'to' => 'required|string|min:1|max:2000',
             'content' => 'required_if:additional,null|sometimes|string',
             'additional' => 'required_if:content,null|sometimes|array',
-            'identifier' => 'sometimes|string'
+            'identifier' => 'sometimes|string',
         ];
     }
 
@@ -61,7 +62,7 @@ class MessageSendRequest extends Request
             'to_username' => $parameters['to'],
             'content' => $parameters['content'],
             'additional' => $parameters->get('additional', null),
-            'identifier' => $parameters->get('identifier', null)
+            'identifier' => $parameters->get('identifier', null),
         ]);
 
         $first = (Message::orderByDesc('created_at')

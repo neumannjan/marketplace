@@ -1,4 +1,5 @@
-import { PresenceChannel, SocketIoPrivateChannel } from './';
+import {PresenceChannel, SocketIoPrivateChannel} from './';
+
 /**
  * This class represents a Socket.io presence channel.
  */
@@ -10,6 +11,7 @@ export declare class SocketIoPresenceChannel extends SocketIoPrivateChannel impl
      * @return {object} SocketIoPresenceChannel
      */
     here(callback: Function): SocketIoPresenceChannel;
+
     /**
      * Listen for someone joining the channel.
      *
@@ -17,6 +19,7 @@ export declare class SocketIoPresenceChannel extends SocketIoPrivateChannel impl
      * @return {SocketIoPresenceChannel}
      */
     joining(callback: Function): SocketIoPresenceChannel;
+
     /**
      * Listen for someone leaving the channel.
      *

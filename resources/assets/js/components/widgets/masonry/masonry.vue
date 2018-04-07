@@ -1,6 +1,7 @@
 <template>
     <div class="masonry" ref="masonry">
-        <div class="masonry-card col-flexible" v-for="(card, index) in cards" :key="card.id ? card.id : `fallback-${index}`">
+        <div class="masonry-card col-flexible" v-for="(card, index) in cards"
+             :key="card.id ? card.id : `fallback-${index}`">
             <slot :data="card"/>
         </div>
         <slot name="below"/>
@@ -9,10 +10,9 @@
 
 <script>
     import CardComponent from './card.vue';
-
     //@ts-ignore
     import Masonry from 'masonry-layout';
-    import appEvents,{ Events } from 'JS/events';
+    import appEvents, {Events} from 'JS/events';
 
     export default {
         name: "masonry",

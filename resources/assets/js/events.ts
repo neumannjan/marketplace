@@ -1,7 +1,7 @@
 import EventListener from "JS/lib/event-listener";
 import {NormalizedMessage} from "JS/api/messaging/typings";
 import {Conversation, Offer, User} from "JS/api/types";
-import { FloatingButtonTypes } from "JS/components/types";
+import {FloatingButtonTypes} from "JS/components/types";
 
 export enum Events {
     MessageSent = 'MessageSent',
@@ -15,7 +15,7 @@ export enum Events {
      * Dispatch to refresh current view
      */
     AppRefresh = 'AppRefresh',
-    
+
     AfterAppRefresh = 'AfterAppRefresh',
     OfferRemoved = 'OfferRemoved',
     OfferModified = 'OfferModified',
@@ -41,5 +41,6 @@ export default events;
 
 export interface RequestPopupPayload {
     type: FloatingButtonTypes,
+
     then(): void
 }

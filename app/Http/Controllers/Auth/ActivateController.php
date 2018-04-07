@@ -20,7 +20,9 @@ class ActivateController extends Controller
     {
         $user = User::where('username', $username)->first();
 
-        if ($user == null || $user->activate($token) === false) { //activation done here
+        if ($user == null
+            || $user->activate($token) === false
+        ) { //activation done here
             return $this->redirectInvalidLink();
         }
 
@@ -36,7 +38,8 @@ class ActivateController extends Controller
     protected function redirectInvalidLink()
     {
         return $this->redirectToLogin()
-            ->with('danger.activate-link-invalid', __('flash.danger.activate-link-invalid'));
+            ->with('danger.activate-link-invalid',
+                __('flash.danger.activate-link-invalid'));
     }
 
     protected function redirectSuccess()

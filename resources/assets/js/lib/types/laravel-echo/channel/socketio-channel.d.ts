@@ -1,5 +1,6 @@
-import { EventFormatter } from './../util';
-import { Channel } from './channel';
+import {EventFormatter} from './../util';
+import {Channel} from './channel';
+
 /**
  * This class represents a Socket.io channel.
  */
@@ -34,6 +35,7 @@ export declare class SocketIoChannel extends Channel {
      * @type {any}
      */
     events: any;
+
     /**
      * Create a new class instance.
      *
@@ -42,18 +44,21 @@ export declare class SocketIoChannel extends Channel {
      * @param  {any} options
      */
     constructor(socket: any, name: string, options: any);
+
     /**
      * Subscribe to a Socket.io channel.
      *
      * @return {object}
      */
     subscribe(): any;
+
     /**
      * Unsubscribe from channel and ubind event callbacks.
      *
      * @return {void}
      */
     unsubscribe(): void;
+
     /**
      * Listen for an event on the channel instance.
      *
@@ -62,6 +67,7 @@ export declare class SocketIoChannel extends Channel {
      * @return {SocketIoChannel}
      */
     listen(event: string, callback: Function): SocketIoChannel;
+
     /**
      * Bind the channel's socket to an event and store the callback.
      *
@@ -69,10 +75,12 @@ export declare class SocketIoChannel extends Channel {
      * @param  {Function} callback
      */
     on(event: string, callback: Function): void;
+
     /**
      * Attach a 'reconnect' listener and bind the event.
      */
     configureReconnector(): void;
+
     /**
      * Bind the channel's socket to an event and store the callback.
      *
@@ -81,6 +89,7 @@ export declare class SocketIoChannel extends Channel {
      * @return {void}
      */
     bind(event: string, callback: Function): void;
+
     /**
      * Unbind the channel's socket from all stored event callbacks.
      *

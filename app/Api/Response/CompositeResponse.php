@@ -4,6 +4,7 @@ namespace App\Api\Response;
 
 /**
  * API Response that is able to combine multiple {@see \App\Api\Response\Response Responses} into one.
+ *
  * @see \App\Api\Response\ResponseInterface
  */
 class CompositeResponse implements ResponseInterface
@@ -35,7 +36,7 @@ class CompositeResponse implements ResponseInterface
         $result = [];
 
         foreach ($this->responses as $response) {
-            $r = $response->toArray();
+            $r                            = $response->toArray();
             $result[$response->getName()] = array_first($r);
         }
 
@@ -55,15 +56,15 @@ class CompositeResponse implements ResponseInterface
                 $r = substr($response->toJson($options), 1, -1);
 
                 if ($first) {
-                    $result = '{' . $r;
+                    $result = '{'.$r;
                 } else {
-                    $result .= ',' . $r;
+                    $result .= ','.$r;
                 }
 
                 $first = false;
             }
 
-            return $result . '}';
+            return $result.'}';
         }
 
         return json_encode(new \stdClass());

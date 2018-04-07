@@ -21,45 +21,45 @@
 </template>
 
 <script>
-export default {
-    name: 'floating-btns',
-    props: {
-        buttons: {
-            type: Array,
-            required: true
-        },
-        badges: {
-            type: Object,
-            default: () => ({})
-        }
-    },
-    watch: {
-        filteredButtons(val, oldVal) {
-            if (val !== oldVal) {
-                this.$emit('buttons', this.$refs.buttons);
+    export default {
+        name: 'floating-btns',
+        props: {
+            buttons: {
+                type: Array,
+                required: true
+            },
+            badges: {
+                type: Object,
+                default: () => ({})
             }
+        },
+        watch: {
+            filteredButtons(val, oldVal) {
+                if (val !== oldVal) {
+                    this.$emit('buttons', this.$refs.buttons);
+                }
+            }
+        },
+        computed: {
+            filteredButtons() {
+                //@ts-ignore
+                return this.buttons.filter(button => !button.show || button.show(this.$route) !== false);
+            }
+        },
+        methods: {
+            /**
+             * @param {object} button
+             * @param {number} index
+             */
+            onClick(button, index) {
+                //@ts-ignore
+                this.$emit('click', button, this.$refs.buttons[index]);
+            }
+        },
+        mounted() {
+            this.$emit('buttons', this.$refs.buttons);
         }
-    },
-    computed: {
-        filteredButtons() {
-            //@ts-ignore
-            return this.buttons.filter(button => !button.show || button.show(this.$route) !== false);
-        }
-    },
-    methods: {
-        /**
-         * @param {object} button
-         * @param {number} index
-         */
-        onClick(button, index) {
-            //@ts-ignore
-            this.$emit('click', button, this.$refs.buttons[index]);
-        }
-    },
-    mounted() {
-        this.$emit('buttons', this.$refs.buttons);
-    }
-};
+    };
 
 </script>
 

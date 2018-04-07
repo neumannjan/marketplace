@@ -1,5 +1,6 @@
-import { Connector } from './connector';
-import { SocketIoChannel, SocketIoPrivateChannel, SocketIoPresenceChannel } from './../channel';
+import {Connector} from './connector';
+import {SocketIoChannel, SocketIoPresenceChannel, SocketIoPrivateChannel} from './../channel';
+
 /**
  * This class creates a connnector to a Socket.io server.
  */
@@ -16,18 +17,21 @@ export declare class SocketIoConnector extends Connector {
      * @type {any}
      */
     channels: any;
+
     /**
      * Create a fresh Socket.io connection.
      *
      * @return void
      */
     connect(): void;
+
     /**
      * Get socket.io module from global scope or options.
      *
      * @type {object}
      */
     getSocketIO(): any;
+
     /**
      * Listen for an event on a channel instance.
      *
@@ -37,6 +41,7 @@ export declare class SocketIoConnector extends Connector {
      * @return {SocketIoChannel}
      */
     listen(name: string, event: string, callback: Function): SocketIoChannel;
+
     /**
      * Get a channel instance by name.
      *
@@ -44,6 +49,7 @@ export declare class SocketIoConnector extends Connector {
      * @return {SocketIoChannel}
      */
     channel(name: string): SocketIoChannel;
+
     /**
      * Get a private channel instance by name.
      *
@@ -51,6 +57,7 @@ export declare class SocketIoConnector extends Connector {
      * @return {SocketIoChannel}
      */
     privateChannel(name: string): SocketIoPrivateChannel;
+
     /**
      * Get a presence channel instance by name.
      *
@@ -58,6 +65,7 @@ export declare class SocketIoConnector extends Connector {
      * @return {SocketIoPresenceChannel}
      */
     presenceChannel(name: string): SocketIoPresenceChannel;
+
     /**
      * Leave the given channel.
      *
@@ -65,12 +73,14 @@ export declare class SocketIoConnector extends Connector {
      * @return {void}
      */
     leave(name: string): void;
+
     /**
      * Get the socket ID for the connection.
      *
      * @return {string}
      */
     socketId(): string;
+
     /**
      * Disconnect Socketio connection.
      *

@@ -20,6 +20,7 @@ class MessageReceivedNotifyRequest extends Request
 
     /**
      * MessageReceivedNotifyRequest constructor.
+     *
      * @param Guard $guard
      */
     public function __construct(Guard $guard)
@@ -43,7 +44,7 @@ class MessageReceivedNotifyRequest extends Request
         return [
             'id' => 'required_if:ids,null|sometimes|integer',
             'ids' => 'required_if:id,null|sometimes|array',
-            'read' => 'sometimes|boolean'
+            'read' => 'sometimes|boolean',
         ];
     }
 
@@ -54,7 +55,7 @@ class MessageReceivedNotifyRequest extends Request
     {
         /** @var User $user */
         $user = $this->guard->user();
-        $ids = $parameters->get('ids', null);
+        $ids  = $parameters->get('ids', null);
         $read = $parameters->get('read', false);
 
         if ($ids === null) {

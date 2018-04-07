@@ -2,16 +2,16 @@ import {ActionTree, CommitOptions, DispatchOptions, GetterTree, MutationTree, St
 
 interface PayloadWithType<T> {
     type: keyof T;
+
     [index: string]: any;
 }
 
 type PayloadType<T> =
     T extends (a: any, payload: infer P) => any ? P :
-    T extends {root?: boolean; handler: (a: any, payload: infer P) => any} ? P :
-    never;
+        T extends { root?: boolean; handler: (a: any, payload: infer P) => any } ? P :
+            never;
 
-export declare interface StrictStore<
-    State,
+export declare interface StrictStore<State,
     M extends MutationTree<State>,
     A extends ActionTree<State, State>,
     G extends GetterTree<State, State>>

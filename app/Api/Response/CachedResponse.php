@@ -32,16 +32,22 @@ class CachedResponse extends Response
 
     /**
      * @inheritDoc
-     * @param string $cacheKey
-     * @param \Closure $buildCallback
-     * @param Repository $cache
+     *
+     * @param string                                     $cacheKey
+     * @param \Closure                                   $buildCallback
+     * @param Repository                                 $cache
      * @param \DateTimeInterface|\DateInterval|float|int $rememberMinutes
      */
-    public function __construct($success, $cacheKey, $buildCallback, Repository $cache, $rememberMinutes = null)
-    {
+    public function __construct(
+        $success,
+        $cacheKey,
+        $buildCallback,
+        Repository $cache,
+        $rememberMinutes = null
+    ) {
         $this->cacheRepository = $cache;
-        $this->cacheKey = $cacheKey;
-        $this->buildCallback = $buildCallback;
+        $this->cacheKey        = $cacheKey;
+        $this->buildCallback   = $buildCallback;
 
         parent::__construct($success, null);
     }
@@ -51,8 +57,10 @@ class CachedResponse extends Response
      *
      * If `$callback` and `$as` are null, uses the {@see CachedResponse::$buildCallback} and saves/retrieves as
      * the main response content. Otherwise, saves as an entry that is derived from the main response content.
+     *
      * @param \Closure|null $callback
-     * @param string|null $as
+     * @param string|null   $as
+     *
      * @return mixed
      */
     protected function remember($callback = null, $as = null)
@@ -60,16 +68,18 @@ class CachedResponse extends Response
         $isMain = ($callback === null && $as === null);
 
         $contentKey = "api_response_{$this->cacheKey}";
-        $thisKey = $isMain ? $contentKey : "{$contentKey}_{$as}";
+        $thisKey    = $isMain ? $contentKey : "{$contentKey}_{$as}";
 
         if ($isMain) {
             $callback = $this->buildCallback;
 
-            if ($this->content !== null && $this->cacheRepository->has($thisKey)) {
+            if ($this->content !== null
+                && $this->cacheRepository->has($thisKey)
+            ) {
                 return $this->content;
             }
         } else {
-            if (!$this->cacheRepository->has($contentKey)) {
+            if ( ! $this->cacheRepository->has($contentKey)) {
                 $this->cacheRepository->delete($thisKey);
                 $this->remember();
             }
@@ -77,9 +87,11 @@ class CachedResponse extends Response
 
         $result = null;
         if ($this->rememberMinutes !== null) {
-            $result = $this->cacheRepository->remember($thisKey, $this->rememberMinutes, $callback);
+            $result = $this->cacheRepository->remember($thisKey,
+                $this->rememberMinutes, $callback);
         } else {
-            $result = $this->cacheRepository->rememberForever($thisKey, $callback);
+            $result = $this->cacheRepository->rememberForever($thisKey,
+                $callback);
         }
 
         if ($isMain) {

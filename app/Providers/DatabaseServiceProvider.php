@@ -30,8 +30,11 @@ class DatabaseServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton(FakerGenerator::class, function ($app) {
-            $faker = FakerFactory::create($app['config']->get('app.faker_locale', 'en_US'));
+            $faker
+                = FakerFactory::create($app['config']->get('app.faker_locale',
+                'en_US'));
             $faker->addProvider(new UnsplashImageFakerProvider($faker));
+
             return $faker;
         });
     }

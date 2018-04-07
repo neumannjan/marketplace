@@ -3,7 +3,7 @@
         <template v-if="!owned && !admin">
             <b-dropdown-header>{{ translations.options.additional }}</b-dropdown-header>
             <b-dropdown-item-button @click="reportOffer()">
-                <icon name="flag-o" class="mr-2" />
+                <icon name="flag-o" class="mr-2"/>
                 {{ translations.button.report }}
             </b-dropdown-item-button>
         </template>
@@ -11,11 +11,11 @@
             <b-dropdown-header>{{ owned ? translations.options.owned : translations.options.admin }}</b-dropdown-header>
             <template v-if="!sold">
                 <b-dropdown-item-button @click="editOffer()">
-                    <icon name="pencil" class="mr-2" />
+                    <icon name="pencil" class="mr-2"/>
                     {{ translations.button.edit }}
                 </b-dropdown-item-button>
                 <b-dropdown-item-button v-if="!draft && owned" :disabled="!bumpable" @click="bumpOffer()">
-                    <icon name="clock-o" class="mr-2" />
+                    <icon name="clock-o" class="mr-2"/>
                     <template v-if="offer.bumps_left === 0">{{ translations.notice.bumpsnone }}</template>
                     <template v-else-if="offer.just_bumped">{{ translations.notice.bumpedrecently }}</template>
                     <template v-else>{{ translations.button.bump }}&#160;<small>{{ translations.button.bumptimes }}
@@ -24,11 +24,11 @@
                 </b-dropdown-item-button>
             </template>
             <b-dropdown-item-button @click="removeOffer()">
-                <icon name="trash-o" class="mr-2" />
+                <icon name="trash-o" class="mr-2"/>
                 {{ translations.button.remove }}
             </b-dropdown-item-button>
             <b-dropdown-item-button v-if="admin && reported" @click="markOfferAppropriate()">
-                <icon name="check" class="mr-2" />
+                <icon name="check" class="mr-2"/>
                 {{ translations.button.appropriate }}
             </b-dropdown-item-button>
         </template>

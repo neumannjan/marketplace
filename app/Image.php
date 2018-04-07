@@ -13,33 +13,36 @@ use Illuminate\Support\Str;
  */
 class Image extends Model
 {
-    const STORAGE_DIR = 'public' . DIRECTORY_SEPARATOR . 'images';
+    const STORAGE_DIR = 'public'.DIRECTORY_SEPARATOR.'images';
 
-    const SIZES = [
-        'tiny' => 24,
-        'icon' => [40, 40],
-        'icon_2x' => [80, 80],
-        'thumbnail' => [400, 400]
-    ];
+    const SIZES
+        = [
+            'tiny' => 24,
+            'icon' => [40, 40],
+            'icon_2x' => [80, 80],
+            'thumbnail' => [400, 400],
+        ];
     const ORIGINAL_SIZE = 'original';
     const ORIGINAL_SIZE_LIMIT = 1024;
 
-    protected $casts = [
-        'sizes' => 'array',
-        'available_sizes' => 'array',
-        'ready' => 'boolean'
-    ];
+    protected $casts
+        = [
+            'sizes' => 'array',
+            'available_sizes' => 'array',
+            'ready' => 'boolean',
+        ];
 
-    protected $fillable = [
-        'sizes',
-        'original',
-        'ready',
-        'width',
-        'height',
-        'offer_id',
-        'available_sizes',
-        'order'
-    ];
+    protected $fillable
+        = [
+            'sizes',
+            'original',
+            'ready',
+            'width',
+            'height',
+            'offer_id',
+            'available_sizes',
+            'order',
+        ];
 
     /**
      * @inheritDoc
@@ -68,7 +71,9 @@ class Image extends Model
 
     /**
      * Return only images that can be displayed
+     *
      * @param Builder $query
+     *
      * @return Builder
      */
     public function scopeDisplayable(Builder $query)
@@ -78,6 +83,7 @@ class Image extends Model
 
     /**
      * Array combining `sizes` and `original`
+     *
      * @return string[]
      */
     public function getAllSizesAttribute()
@@ -85,24 +91,25 @@ class Image extends Model
         $sizes = $this->sizes ?: [];
 
         return [
-                self::ORIGINAL_SIZE => $this->attributes['original']
+                self::ORIGINAL_SIZE => $this->attributes['original'],
             ] + $sizes;
     }
 
     /**
      * Array of image URLs
+     *
      * @return string[]
      */
     public function getUrlsAttribute()
     {
         $urls = $this->all_sizes;
 
-        if (!$urls) {
+        if ( ! $urls) {
             return $urls;
         }
 
         foreach ($urls as $key => $url) {
-            if (!Str::startsWith($url, ['http://', 'https://'])) {
+            if ( ! Str::startsWith($url, ['http://', 'https://'])) {
                 $urls[$key] = \Storage::url($url);
             }
         }
@@ -112,13 +119,14 @@ class Image extends Model
 
     /**
      * Array of image absolute paths
+     *
      * @return string[]
      */
     public function getAbsolutePathsAttribute()
     {
         $paths = $this->all_sizes;
 
-        if (!$paths) {
+        if ( ! $paths) {
             return $paths;
         }
 
@@ -126,7 +134,8 @@ class Image extends Model
             if (Str::startsWith($path, ['http://', 'https://'])) {
                 unset($paths[$key]);
             } else {
-                $paths[$key] = \App::storagePath() . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . $path;
+                $paths[$key] = \App::storagePath().DIRECTORY_SEPARATOR.'app'
+                    .DIRECTORY_SEPARATOR.$path;
             }
         }
 

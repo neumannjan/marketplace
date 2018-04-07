@@ -1,5 +1,6 @@
-import { PusherChannel } from './pusher-channel';
-import { PresenceChannel } from './presence-channel';
+import {PusherChannel} from './pusher-channel';
+import {PresenceChannel} from './presence-channel';
+
 /**
  * This class represents a Pusher presence channel.
  */
@@ -11,6 +12,7 @@ export declare class PusherPresenceChannel extends PusherChannel implements Pres
      * @return {object} this
      */
     here(callback: any): PusherPresenceChannel;
+
     /**
      * Listen for someone joining the channel.
      *
@@ -18,6 +20,7 @@ export declare class PusherPresenceChannel extends PusherChannel implements Pres
      * @return {PusherPresenceChannel}
      */
     joining(callback: any): PusherPresenceChannel;
+
     /**
      * Listen for someone leaving the channel.
      *
@@ -25,6 +28,7 @@ export declare class PusherPresenceChannel extends PusherChannel implements Pres
      * @return {PusherPresenceChannel}
      */
     leaving(callback: any): PusherPresenceChannel;
+
     /**
      * Trigger client event on the channel.
      *

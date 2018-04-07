@@ -5,7 +5,7 @@ declare module "vuex-persistedstate" {
         [name: string]: any
     }
 
-    export default function<State extends {[index: string]: any}>(options: {
+    export default function <State extends { [index: string]: any }>(options: {
         key?: string,
         paths?: Array<keyof State>,
         reducer?: (state: State, paths: string[]) => any,

@@ -33,13 +33,13 @@ class PasswordResetRequest extends Request
     {
         $baseRules = User::getValidationRules();
 
-        $passwordRules = $baseRules['password'];
+        $passwordRules   = $baseRules['password'];
         $passwordRules[] = 'confirmed';
 
         return [
             'token' => 'required',
             'password' => $passwordRules,
-            'email' => 'required|email'
+            'email' => 'required|email',
         ];
     }
 
@@ -68,10 +68,11 @@ class PasswordResetRequest extends Request
         switch ($response) {
             case PasswordBroker::PASSWORD_RESET:
                 \Session::flash("success.password-reset", trans($response));
+
                 return new Response(true, []);
             default:
                 throw ValidationException::withMessages([
-                    'email' => [trans($response)]
+                    'email' => [trans($response)],
                 ]);
         }
     }

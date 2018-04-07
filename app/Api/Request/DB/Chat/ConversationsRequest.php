@@ -24,11 +24,13 @@ class ConversationsRequest extends MultiRequest
 
     /**
      * ConversationsRequest constructor.
+     *
      * @param Guard $guard
      */
     public function __construct(Guard $guard)
     {
-        parent::__construct($this->modelClass, $this->resourceClass, $this->orderBased);
+        parent::__construct($this->modelClass, $this->resourceClass,
+            $this->orderBased);
         $this->guard = $guard;
     }
 
@@ -38,7 +40,7 @@ class ConversationsRequest extends MultiRequest
     protected function rules(Validator $validator = null)
     {
         return [
-            'unread' => 'sometimes|boolean'
+            'unread' => 'sometimes|boolean',
         ];
     }
 
@@ -69,7 +71,8 @@ class ConversationsRequest extends MultiRequest
         $query->scopes(['conversationsWith' => $user->username]);
 
         if ($parameters->get('unread', false)) {
-            $query->where(['read' => false])->where(['to_username' => $user->username]);
+            $query->where(['read' => false])
+                ->where(['to_username' => $user->username]);
         }
 
         return $query;

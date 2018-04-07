@@ -1,6 +1,6 @@
 <template>
     <div>
-        <offer-masonry url="/api/offers?scope=reported" :shouldShow="shouldShow" />
+        <offer-masonry url="/api/offers?scope=reported" :shouldShow="shouldShow"/>
     </div>
 </template>
 
@@ -21,6 +21,7 @@
     })
     export default class AdminRoute extends mixins(route, routeGuard('admin', () => store.state.is_admin)) {
         readonly isTopLevelRoute: boolean = true;
+
         get title(): string {
             return this.$store.getters.trans('interface.page.reported');
         }

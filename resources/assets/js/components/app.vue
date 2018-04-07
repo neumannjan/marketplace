@@ -105,7 +105,7 @@
                 return this.loading ? {visibility: 'hidden'} : {};
             },
             has(): Has {
-                if(this.$route.matched.length === 0)
+                if (this.$route.matched.length === 0)
                     return {};
 
                 const has: Has = {
@@ -121,7 +121,7 @@
         methods: {
             notifyConnection(isHttp: boolean, value: boolean) {
                 const getID = (isHttp: boolean, value: boolean) => {
-                    if(isHttp) {
+                    if (isHttp) {
                         return value ? NotificationTypes.HttpConnection : NotificationTypes.NoHttpConnection;
                     } else {
                         return value ? NotificationTypes.WebsocketConnection : NotificationTypes.NoWebsocketConnection;
@@ -162,7 +162,7 @@
 
             const unreadConversations = initial.get('unread_conversations', []);
 
-            if(unreadConversations && unreadConversations.length > 0) {
+            if (unreadConversations && unreadConversations.length > 0) {
                 appEvents.dispatch(Events.UnreadConversations, unreadConversations);
             }
         },
@@ -178,7 +178,7 @@
             };
 
             this.$onEventListener(appEvents, Events.MessageSent, message => {
-                if(!message.mine) {
+                if (!message.mine) {
                     addNotification(1);
                 }
             });

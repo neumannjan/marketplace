@@ -36,14 +36,14 @@ class GlobalDataRequest extends Request
         $name = config('app.name');
 
         // locale
-        $locale = config('app.locale');
-        $fallback_locale = config('app.fallback_locale');
+        $locale            = config('app.locale');
+        $fallback_locale   = config('app.fallback_locale');
         $available_locales = config('app.available_locales');
 
         // authentication
 
         $_user = \Auth::user();
-        $user = $_user ? new User($_user) : null;
+        $user  = $_user ? new User($_user) : null;
 
         // is admin
         $is_admin = $_user && $_user->is_admin ? true : false;
@@ -56,10 +56,10 @@ class GlobalDataRequest extends Request
         $flash = $flashMessages->toPassable();
 
         // websocket host
-        $socket_host = env('WEBSOCKET_PROTOCOL', 'http') .
-            '://' .
-            env('WEBSOCKET_HOST', $request->getHost()) .
-            ':' .
+        $socket_host = env('WEBSOCKET_PROTOCOL', 'http').
+            '://'.
+            env('WEBSOCKET_HOST', $request->getHost()).
+            ':'.
             env('WEBSOCKET_PORT', 6001);
 
         return compact(

@@ -25,6 +25,7 @@ class ProcessImage implements ShouldQueue
 
     /**
      * How many times this job should be attempted
+     *
      * @var int
      */
     public $tries = 1; //try only once
@@ -43,25 +44,28 @@ class ProcessImage implements ShouldQueue
      * Execute the job.
      *
      * @param ImageManager $imageManager
-     * @param Application $application
+     * @param Application  $application
+     *
      * @return void
      */
     public function handle(ImageManager $imageManager, Application $application)
     {
-        if (!$this->image->original) {
+        if ( ! $this->image->original) {
             throw new \InvalidArgumentException("Image does not have a file");
         }
 
-        $laravelStoragePath = $application->storagePath() . DIRECTORY_SEPARATOR . 'app';
-        $origPath = $laravelStoragePath . DIRECTORY_SEPARATOR . $this->image->original;
+        $laravelStoragePath = $application->storagePath().DIRECTORY_SEPARATOR
+            .'app';
+        $origPath           = $laravelStoragePath.DIRECTORY_SEPARATOR
+            .$this->image->original;
 
-        if (!file_exists($origPath)) {
+        if ( ! file_exists($origPath)) {
             throw new \InvalidArgumentException("The Image's file does not exist (not found at $origPath");
         }
 
         $availableSizes = $this->image->available_sizes;
 
-        if (!is_array($availableSizes) && !$availableSizes) {
+        if ( ! is_array($availableSizes) && ! $availableSizes) {
             $availableSizes = array_keys(Image::SIZES);
         }
 
@@ -70,21 +74,24 @@ class ProcessImage implements ShouldQueue
 
         // ensure original is jpg and not too large
 
-        $path = $iImgOrig->dirname . DIRECTORY_SEPARATOR . $iImgOrig->filename . '.jpg';
-        $iImgOrig->resize(Image::ORIGINAL_SIZE_LIMIT, Image::ORIGINAL_SIZE_LIMIT, function ($constraint) {
-            /** @var Constraint $constraint */
+        $path = $iImgOrig->dirname.DIRECTORY_SEPARATOR.$iImgOrig->filename
+            .'.jpg';
+        $iImgOrig->resize(Image::ORIGINAL_SIZE_LIMIT,
+            Image::ORIGINAL_SIZE_LIMIT, function ($constraint) {
+                /** @var Constraint $constraint */
 
-            //keep aspect ratio
-            $constraint->aspectRatio();
+                //keep aspect ratio
+                $constraint->aspectRatio();
 
-            //prevent image from being upsized
-            $constraint->upsize();
-        });
+                //prevent image from being upsized
+                $constraint->upsize();
+            });
         $iImgOrig->save($path);
 
-        $this->image->original = $this->getRelativePath($path, $laravelStoragePath);
+        $this->image->original = $this->getRelativePath($path,
+            $laravelStoragePath);
 
-        $this->image->width = $iImgOrig->getWidth();
+        $this->image->width  = $iImgOrig->getWidth();
         $this->image->height = $iImgOrig->getHeight();
 
         //remove old file
@@ -116,8 +123,10 @@ class ProcessImage implements ShouldQueue
                 });
             }
 
-            $relativePath = Image::STORAGE_DIR . DIRECTORY_SEPARATOR . Str::random(40) . '.jpg';
-            $path = $laravelStoragePath . DIRECTORY_SEPARATOR . $relativePath;
+            $relativePath = Image::STORAGE_DIR.DIRECTORY_SEPARATOR
+                .Str::random(40).'.jpg';
+            $path         = $laravelStoragePath.DIRECTORY_SEPARATOR
+                .$relativePath;
 
             $iImg->save($path);
             $sizes[$sizeName] = $relativePath;
@@ -136,6 +145,7 @@ class ProcessImage implements ShouldQueue
         if (Str::startsWith($path, $base)) {
             return Str::replaceFirst($base, '', $path);
         }
+
         return $path;
     }
 }

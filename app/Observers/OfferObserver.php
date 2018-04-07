@@ -9,6 +9,7 @@ class OfferObserver
 {
     /**
      * @param Offer $offer
+     *
      * @return bool
      * @throws \Exception
      */

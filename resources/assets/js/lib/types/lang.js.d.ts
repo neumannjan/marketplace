@@ -15,13 +15,21 @@ declare module 'lang.js' {
 
     export default class {
         constructor(options?: TranslationOptions);
+
         setMessages(messages: TranslationMessages): void;
+
         getLocale(): string;
+
         setLocale(locale: string): void;
+
         getFallback(): string;
+
         setFallback(fallback: string): void;
+
         has(key: string, locale?: string): boolean;
+
         get(key: string, replacements?: TranslationReplacements, locale?: string): string;
+
         choice(key: string, number: number, replacements?: TranslationReplacements, locale?: string): string;
     }
 }

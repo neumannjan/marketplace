@@ -9,11 +9,12 @@ type Result = {
 
 export interface RouteFetchMixinInterface {
     $lastRouteFetch: Route | null;
+
     doFetch(): void;
 }
 
 function get<R>(from: R | (() => R)) {
-    if(typeof from === 'function')
+    if (typeof from === 'function')
         return from();
     else
         return from;
@@ -34,7 +35,7 @@ export default function <R extends Result, P extends object>
         await vm.$nextTick();
 
         setValues(result);
-        if(after) {
+        if (after) {
             after(vm);
         }
         await vm.$nextTick();

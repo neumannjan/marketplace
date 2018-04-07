@@ -24,7 +24,7 @@ class SingleRequest extends Request
         $model = $query->first();
         $this->onResults($model);
 
-        if (!$model) {
+        if ( ! $model) {
             return new Response(true, null);
         }
 

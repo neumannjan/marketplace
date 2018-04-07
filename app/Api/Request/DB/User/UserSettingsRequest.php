@@ -21,6 +21,7 @@ class UserSettingsRequest extends Request
 
     /**
      * UserSettingsRequest constructor.
+     *
      * @param Guard $guard
      */
     public function __construct(Guard $guard)
@@ -43,10 +44,14 @@ class UserSettingsRequest extends Request
     {
         $rules = User::getValidationRules(true);
 
-        $rules['password'][] = 'confirmed';
-        $rules['image'] = ['sometimes', 'file', 'image'];
+        $rules['password'][]   = 'confirmed';
+        $rules['image']        = ['sometimes', 'file', 'image'];
         $rules['remove_image'] = ['sometimes', 'boolean'];
-        $rules['locale'] = ['required', 'string', Rule::in(config('app.available_locales'))];
+        $rules['locale']       = [
+            'required',
+            'string',
+            Rule::in(config('app.available_locales')),
+        ];
 
         return $rules;
     }
@@ -58,19 +63,19 @@ class UserSettingsRequest extends Request
     protected function doResolve($name, Collection $parameters)
     {
         /** @var User $user */
-        $user = $this->guard->user();
-        $user->email = $parameters['email'];
+        $user               = $this->guard->user();
+        $user->email        = $parameters['email'];
         $user->display_name = $parameters->get('display_name');
 
         $passwordChanged = null;
         if ($parameters->has('password')) {
-            $user->password = \Hash::make($parameters['password']);
+            $user->password  = \Hash::make($parameters['password']);
             $passwordChanged = true;
         }
 
-        $options = $user->options;
+        $options           = $user->options;
         $options['locale'] = $parameters['locale'];
-        $user->options = $options;
+        $user->options     = $options;
 
         $imageChanged = null;
         if ($parameters->has('image') || $parameters->get('remove_image')) {
@@ -81,12 +86,13 @@ class UserSettingsRequest extends Request
             /** @var UploadedFile $uploadedFile */
             $uploadedFile = $parameters->get('image');
             if ($uploadedFile) {
-                $originalFile = $uploadedFile->storePublicly(Image::STORAGE_DIR);
+                $originalFile
+                    = $uploadedFile->storePublicly(Image::STORAGE_DIR);
 
                 $image = new Image([
                     'original' => $originalFile,
                     'available_sizes' => ['icon', 'icon_2x'],
-                    'order' => 0
+                    'order' => 0,
                 ]);
 
                 $imageChanged = $image->save() ? true : false;

@@ -12,9 +12,10 @@ class ComposerScripts
     {
         $dev = $event->isDevMode() ? 'true' : 'false';
 
-        $laravel = new Application(getcwd());
+        $laravel  = new Application(getcwd());
         $fileName = DevPackages::FILENAME;
 
-        file_put_contents($laravel->bootstrapPath("cache/$fileName"), "<?php return $dev;");
+        file_put_contents($laravel->bootstrapPath("cache/$fileName"),
+            "<?php return $dev;");
     }
 }

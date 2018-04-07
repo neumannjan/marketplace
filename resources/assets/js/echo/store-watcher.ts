@@ -1,7 +1,6 @@
 import ConnectionManager from 'JS/lib/echo';
-import { Store } from 'vuex';
-import { StrictStore } from 'JS/lib/strict-store';
-import { State } from 'vuex-persistedstate';
+import {Store} from 'vuex';
+import {StrictStore} from 'JS/lib/strict-store';
 
 type Payload<State, T extends keyof State> = {
     [key in T]: {
@@ -10,7 +9,7 @@ type Payload<State, T extends keyof State> = {
     }
 }
 
-export class StoreWatcher<State = {[index: string]: any}> {
+export class StoreWatcher<State = { [index: string]: any }> {
     protected echo: ConnectionManager;
     protected store: Store<State> | StrictStore<State, any, any, any>;
 
@@ -20,13 +19,13 @@ export class StoreWatcher<State = {[index: string]: any}> {
     }
 
     onStoreState<T extends keyof State>(watching: Array<T> | T, listener: (payload: Payload<State, T>) => void): void {
-        if(!Array.isArray(watching)) {
+        if (!Array.isArray(watching)) {
             watching = [watching];
         }
 
         const retrieveData = (): Payload<State, T> => {
             let data = {} as Payload<State, T>;
-            for(let key of watching) {
+            for (let key of watching) {
                 data[<T>key] = {
                     current: this.store.state[<T>key]
                 };
@@ -37,7 +36,7 @@ export class StoreWatcher<State = {[index: string]: any}> {
 
         listener(retrieveData());
 
-        for(let key of watching) {
+        for (let key of watching) {
             this.store.watch(state => state[key], (currentValue: any, oldValue: any) => {
                 let data = retrieveData();
                 data[key].old = oldValue;

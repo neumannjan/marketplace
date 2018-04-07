@@ -1,10 +1,9 @@
 import Vue from "vue";
-import { Location } from "vue-router";
+import {Location} from "vue-router";
 
 import 'vue-awesome/icons/flag';
 import 'vue-awesome/icons/ban';
-import router, { routesMatch } from "JS/router";
-import store from "JS/store";
+import router, {routesMatch} from "JS/router";
 
 export interface VerticalButton {
     icon: string,
@@ -30,7 +29,7 @@ export default Vue.extend({
                             'nav-link btn-link-gray',
                             {'active': routesMatch(b.location, router.currentRoute)}
                         ]}>
-                            <icon name={b.icon} class="mr-3" />
+                            <icon name={b.icon} class="mr-3"/>
                             <span>{b.label}</span>
                         </router-link>
                     </li>

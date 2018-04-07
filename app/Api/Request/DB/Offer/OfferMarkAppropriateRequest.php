@@ -32,6 +32,7 @@ class OfferMarkAppropriateRequest extends Request
     {
         /** @var User|null $user */
         $user = $this->guard->user();
+
         return $user && $user->is_admin;
     }
 
@@ -41,7 +42,7 @@ class OfferMarkAppropriateRequest extends Request
     protected function rules(Validator $validator = null)
     {
         return [
-            'id' => 'required|integer'
+            'id' => 'required|integer',
         ];
     }
 
@@ -53,10 +54,10 @@ class OfferMarkAppropriateRequest extends Request
     {
         /** @var Offer $offer */
         $offer = Offer::query()->where([
-            'id' => $parameters['id']
+            'id' => $parameters['id'],
         ])->first();
 
-        if($offer && $offer->markAppropriate() && $offer->save()) {
+        if ($offer && $offer->markAppropriate() && $offer->save()) {
             return new Response(true, new \App\Http\Resources\Offer($offer));
         } else {
             return new Response(false, []);

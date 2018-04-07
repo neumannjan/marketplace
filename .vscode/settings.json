@@ -1,16 +1,16 @@
 {
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "sqltools.connections": [
-        {
-            "name": "Marketplace",
-            "server": "127.0.0.1",
-            "dialect": "MySQL",
-            "port": 3307,
-            "database": "marketplace_laravel",
-            "username": "root",
-            "askForPassword": false,
-            "password": "root",
-            "connectionTimeout": 15
-        }
-    ]
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "sqltools.connections": [
+    {
+      "name": "Marketplace",
+      "server": "127.0.0.1",
+      "dialect": "MySQL",
+      "port": 3307,
+      "database": "marketplace_laravel",
+      "username": "root",
+      "askForPassword": false,
+      "password": "root",
+      "connectionTimeout": 15
+    }
+  ]
 }

@@ -40,7 +40,7 @@
         //@ts-ignore
         return element.scrollTop;
     };
-    
+
     /**
      * @param {HTMLElement | Window} element
      */
@@ -52,7 +52,7 @@
         //@ts-ignore
         return element.clientHeight;
     };
-    
+
     /**
      * @param {HTMLElement | Window} element
      */
@@ -148,7 +148,7 @@
                 /**
                  * @type {HTMLElement}
                  */
-                //@ts-ignore
+                    //@ts-ignore
                 const element = this.$refs.container;
                 const distance = this.distance;
 

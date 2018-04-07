@@ -24,8 +24,8 @@
 <script lang="ts">
     import ProfileImg from "JS/components/widgets/image/profile-img.vue";
     import api from "JS/api";
-    import { Conversation, Message, User } from 'JS/api/types';
-    import appEvents,{ Events } from 'JS/events';
+    import {Conversation, Message, User} from 'JS/api/types';
+    import appEvents, {Events} from 'JS/events';
     import Vue from 'vue';
 
     import "vue-awesome/icons/spinner";
@@ -91,8 +91,8 @@
         created() {
             this.request();
 
-            this.$onEventListener(appEvents, Events.MessageSent, (message: Message & {user?: User}) => {
-                if(!message.mine) {
+            this.$onEventListener(appEvents, Events.MessageSent, (message: Message & { user?: User }) => {
+                if (!message.mine) {
                     message.user = message.from;
                     this.$delete(this.conversations, message.user.username);
                     this.conversations = {[message.user.username]: (<Conversation>message), ...this.conversations};

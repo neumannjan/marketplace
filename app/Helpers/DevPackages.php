@@ -17,6 +17,7 @@ class DevPackages
      * Get whether composer dev packages are available.
      * Allows us to use dev packages safely without having to call functions such as `class_exists`.
      * See the source code of {@see \App\Console\Kernel::commands} to see how it is used.
+     *
      * @return boolean
      */
     public function available()
@@ -26,7 +27,7 @@ class DevPackages
         }
 
         $fileName = self::FILENAME;
-        $file = app()->bootstrapPath("cache/$fileName");
+        $file     = app()->bootstrapPath("cache/$fileName");
 
         return $this->available = file_exists($file) ? include $file : false;
     }

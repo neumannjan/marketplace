@@ -3,10 +3,10 @@
 import ResizeSensor from 'css-element-queries/src/ResizeSensor';
 import echo from 'JS/echo';
 import Vue from "vue";
-import EventListener, { EventListenerPayloads } from "JS/lib/event-listener";
+import EventListener, {EventListenerPayloads} from "JS/lib/event-listener";
 import {ChannelType} from "JS/lib/echo/channel";
 import Component from "JS/components/class-component";
-import events, { Events } from 'JS/events';
+import {Events} from 'JS/events';
 
 interface Function {
     (...params: any[]): void

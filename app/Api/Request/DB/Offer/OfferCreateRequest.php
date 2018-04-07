@@ -19,6 +19,7 @@ class OfferCreateRequest extends Request
 
     /**
      * OfferCreateRequest constructor.
+     *
      * @param Guard $guard
      */
     public function __construct(Guard $guard)
@@ -66,12 +67,13 @@ class OfferCreateRequest extends Request
             'price_value' => $parameters->get('price', 0),
             'currency' => $parameters->get('currency'),
             'status' => $parameters->get('status', Offer::STATUS_AVAILABLE),
-            'author_user_id' => $this->guard->id()
+            'author_user_id' => $this->guard->id(),
         ]);
 
         $offer->save();
 
-        $this->processImages($offer, $parameters['imageOrder'], $parameters['images'], false);
+        $this->processImages($offer, $parameters['imageOrder'],
+            $parameters['images'], false);
 
         return new Response(true, ['id' => $offer->id]);
     }

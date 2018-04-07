@@ -5,7 +5,7 @@
                 :title="button.label"
                 @click="onClick(button)"
                 :class="['btn btn-link', `text-${button.type}`]">
-            <icon :name="button.icon" />
+            <icon :name="button.icon"/>
         </button>
     </div>
 </template>
@@ -54,9 +54,9 @@
         }
 
         onClick(button: Button) {
-            if(button.action) {
+            if (button.action) {
                 button.action();
-            } else if(button.location) {
+            } else if (button.location) {
                 this.$router.push(button.location);
             }
         }

@@ -1,5 +1,5 @@
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
-import { ContinuousResponse, PaginatedResponse } from 'JS/api/types';
+import {ContinuousResponse, PaginatedResponse} from 'JS/api/types';
 
 /**
  * API error
@@ -38,9 +38,8 @@ type RawCompositeApiResponse<ResponseData extends Data, RequestData extends Matc
 /**
  * Raw composite API response containing global request.
  */
-type RawCompositeApiResponseWithGlobal
-    <GlobalResponseData extends Data, ResponseData extends Data, RequestData extends MatchingData<ResponseData> = MatchingData<ResponseData>>
-    = RawCompositeApiResponse<ResponseData, RequestData> & {global: RawSingleApiResponse<GlobalResponseData>};
+type RawCompositeApiResponseWithGlobal<GlobalResponseData extends Data, ResponseData extends Data, RequestData extends MatchingData<ResponseData> = MatchingData<ResponseData>>
+    = RawCompositeApiResponse<ResponseData, RequestData> & { global: RawSingleApiResponse<GlobalResponseData> };
 
 /**
  * Response returned by Axios for an API request.
@@ -68,7 +67,7 @@ export default abstract class Api<GlobalResponseData extends Data = object> {
     protected get axiosConfig(): AxiosRequestConfig {
         const token = this.getCsrfToken();
 
-        if(token === null) {
+        if (token === null) {
             throw "Missing CSRF token";
         }
 
@@ -155,7 +154,7 @@ export default abstract class Api<GlobalResponseData extends Data = object> {
         return new Promise<ResponseData>
         ((resolve: (data: ResponseData) => any, reject: (error: ApiError) => any) => {
 
-            const then = (response: RawCompositeApiResponse<{[name: string]: ResponseData}>) => {
+            const then = (response: RawCompositeApiResponse<{ [name: string]: ResponseData }>) => {
                 // Notify that we have access to the internet
                 this.onConnection(true);
 
@@ -175,7 +174,7 @@ export default abstract class Api<GlobalResponseData extends Data = object> {
                 [name]: params
             };
 
-            this.requestComposite<{[name: string]: ResponseData}>(data, includeGlobal)
+            this.requestComposite<{ [name: string]: ResponseData }>(data, includeGlobal)
                 .then(then)
                 .catch(reject);
         });
@@ -199,7 +198,7 @@ export default abstract class Api<GlobalResponseData extends Data = object> {
                     let name: string | null = null;
                     for (let [key, data] of Object.entries(response.data)) {
                         if (key === 'global') {
-                            if(data.success) {
+                            if (data.success) {
                                 this.onGlobalResponse(data.result);
                             }
                         } else {

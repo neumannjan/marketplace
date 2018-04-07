@@ -19,17 +19,19 @@ trait BasicDBRequest
 
     /**
      * BasicDBRequest constructor.
+     *
      * @param string $modelClass
      * @param string $resourceClass
      */
     public function __construct($modelClass, $resourceClass)
     {
-        $this->modelClass = $modelClass;
+        $this->modelClass    = $modelClass;
         $this->resourceClass = $resourceClass;
     }
 
     /**
      * Returns name of a Model class to be used.
+     *
      * @return string
      */
     protected function modelClass()
@@ -39,7 +41,9 @@ trait BasicDBRequest
 
     /**
      * Returns name of a Resource class to be used. If false, no Resource class used
+     *
      * @param Collection $parameters
+     *
      * @return string|false
      */
     protected function resourceClass(Collection $parameters)
@@ -49,7 +53,9 @@ trait BasicDBRequest
 
     /**
      * Get a Collection of parameters related to the database
+     *
      * @param Collection $parameters
+     *
      * @return Collection
      */
     protected function getDBParameters(Collection $parameters)

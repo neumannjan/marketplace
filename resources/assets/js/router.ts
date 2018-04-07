@@ -45,7 +45,7 @@ const cachedRouteComponents = [
  * @returns {CachedRouteComponents}
  */
 export function cached(suffix = ''): CachedRouteComponents {
-    if(suffix) {
+    if (suffix) {
         return cachedRouteComponents.map((route) => `${route}-${suffix}`);
     } else {
         return cachedRouteComponents;
@@ -97,7 +97,7 @@ export const queryModalRouter: QueryModalRouter = {
  * Get the main Vue component of route
  * @param {Route} route
  */
-export function getRouteMainComponent(route: Route = router.currentRoute): null | (Vue & {isTopLevelRoute?: boolean}) {
+export function getRouteMainComponent(route: Route = router.currentRoute): null | (Vue & { isTopLevelRoute?: boolean }) {
     const matched = route.matched;
     if (matched.length > 0) {
         return matched[matched.length - 1].instances.default;
@@ -122,9 +122,9 @@ interface ChildRoute extends Route {
  * @return {boolean}
  */
 export function routesMatch(route1: Route | Location,
-    route2: Route | Location = router.currentRoute,
-    ignoreParams: boolean = false,
-    checkParent: boolean = false): boolean {
+                            route2: Route | Location = router.currentRoute,
+                            ignoreParams: boolean = false,
+                            checkParent: boolean = false): boolean {
     if (!route1 || !route2)
         return false;
 

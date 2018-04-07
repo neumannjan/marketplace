@@ -36,8 +36,8 @@ abstract class SearchRequest extends PaginatedRequest
     protected function _rules(Validator $validator = null)
     {
         return [
-            'query' => 'required|string'
-        ] + parent::_rules($validator);
+                'query' => 'required|string',
+            ] + parent::_rules($validator);
     }
 
     /**
@@ -46,8 +46,8 @@ abstract class SearchRequest extends PaginatedRequest
     protected function _urlParameters(Collection $parameters)
     {
         return array_merge([
-                'query'
-            ],
+            'query',
+        ],
             $this->getDBParameters($parameters)->keys()->toArray(),
             parent::_urlParameters($parameters)
         );
@@ -55,8 +55,10 @@ abstract class SearchRequest extends PaginatedRequest
 
     /**
      * Return whether a result can be shown
-     * @param Model $model
+     *
+     * @param Model      $model
      * @param Collection $parameters
+     *
      * @return bool
      */
     protected abstract function filterResult($model, Collection $parameters);
@@ -76,7 +78,8 @@ abstract class SearchRequest extends PaginatedRequest
             return $this->filterResult($model, $parameters);
         });
 
-        return new LengthAwarePaginator($results->forPage($pageOrAfter, $perPage),
+        return new LengthAwarePaginator($results->forPage($pageOrAfter,
+            $perPage),
             $results->count(), $perPage, $pageOrAfter);
     }
 

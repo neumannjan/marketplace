@@ -1,11 +1,10 @@
-import { MessagingInterface, ConversationMediatorInterface, NormalizedMessage } from "JS/api/messaging/typings";
-import { ContinuousResponse, PaginatedResponse, Conversation, User, Message, MessageReceivedNotifyRequest } from "JS/api/types";
+import {MessagingInterface, NormalizedMessage} from "JS/api/messaging/typings";
+import {ContinuousResponse, Conversation, Message, MessageReceivedNotifyRequest, User} from "JS/api/types";
 import api from "JS/api";
 import allEvents, {Events as AppEvents} from 'JS/events';
-import { ConversationMediator } from "JS/api/messaging/conversation";
-import EventListener from "JS/lib/event-listener";
-import EventPropagator, { EventPropagatorAttachFunction } from "JS/lib/event-propagator";
-import { isMine, normalizeMessage } from "JS/api/messaging/helpers";
+import {ConversationMediator} from "JS/api/messaging/conversation";
+import EventPropagator, {EventPropagatorAttachFunction} from "JS/lib/event-propagator";
+import {isMine} from "JS/api/messaging/helpers";
 
 const CONVERSATIONS_URL = '/api/conversations';
 
@@ -47,7 +46,7 @@ export default new class Messaging extends EventPropagator<Payloads, MessagingEv
      * @param read {boolean} Whether the user has read the message or only received it.
      */
     sendReceived(message: Message | number, read: boolean): void {
-        if(typeof message === 'object' && isMine(message)) {
+        if (typeof message === 'object' && isMine(message)) {
             return;
         }
 

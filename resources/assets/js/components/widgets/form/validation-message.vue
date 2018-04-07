@@ -34,12 +34,12 @@
         onValidChanged(val: boolean) {
             this.$emit('valid', val);
         };
-        
+
         @Watch('error')
         onErrorChanged(val: string | null) {
             this.$emit('error', val);
         };
-        
+
         @Watch('input')
         onInputChanged() {
             if (this.validation !== undefined) {

@@ -19,6 +19,7 @@ class ResetPassword extends LocalizedMailNotification
 
     /**
      * ResetPassword constructor.
+     *
      * @param $token
      */
     public function __construct($token)
@@ -34,7 +35,8 @@ class ResetPassword extends LocalizedMailNotification
         return (new MailMessage())
             ->subject($this->__('subject'))
             ->line($this->__('line1'))
-            ->action($this->__('action'), url(AppRoutes::passwordReset($this->token)))
+            ->action($this->__('action'),
+                url(AppRoutes::passwordReset($this->token)))
             ->line($this->__('line2'));
     }
 

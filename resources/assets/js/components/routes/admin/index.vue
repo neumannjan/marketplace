@@ -15,6 +15,7 @@
     })
     export default class AdminRoute extends mixins(route, routeGuard('admin', () => store.state.is_admin)) {
         readonly isTopLevelRoute: boolean = true;
+
         get title(): string {
             return this.$store.getters.trans('interface.page.admin');
         }

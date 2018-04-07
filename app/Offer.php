@@ -38,28 +38,31 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
 
     const MAX_BUMP_TIMES = 2;
 
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'listed_at'
-    ];
+    protected $dates
+        = [
+            'created_at',
+            'updated_at',
+            'listed_at',
+        ];
 
-    protected $with = [
-        'images',
-        'author'
-    ];
+    protected $with
+        = [
+            'images',
+            'author',
+        ];
 
-    protected $fillable = [
-        'name',
-        'description',
-        'price',
-        'price_value',
-        'currency',
-        'currency_code',
-        'status',
-        'author_user_id',
-        'sold_to_user_id',
-    ];
+    protected $fillable
+        = [
+            'name',
+            'description',
+            'price',
+            'price_value',
+            'currency',
+            'currency_code',
+            'status',
+            'author_user_id',
+            'sold_to_user_id',
+        ];
 
     public function images()
     {
@@ -78,7 +81,8 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
 
     public function reportedBy()
     {
-        return $this->belongsToMany(User::class, 'user_offer_reports', 'offer_id', 'user_id', 'id', 'id');
+        return $this->belongsToMany(User::class, 'user_offer_reports',
+            'offer_id', 'user_id', 'id', 'id');
     }
 
     /**
@@ -109,11 +113,14 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
      */
     public function getMoneyAttribute()
     {
-        if (!$this->price_value || $this->price_value <= 0 || !is_string($this->currency_code)) {
+        if ( ! $this->price_value || $this->price_value <= 0
+            || ! is_string($this->currency_code)
+        ) {
             return null;
         }
 
-        return \Money::getDecimalParser()->parse((string)$this->price_value, new Currency($this->currency_code));
+        return \Money::getDecimalParser()->parse((string)$this->price_value,
+            new Currency($this->currency_code));
     }
 
     /**
@@ -121,7 +128,7 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
      */
     public function getPriceAttribute()
     {
-        if (!$this->money) {
+        if ( ! $this->money) {
             return null;
         }
 
@@ -140,6 +147,7 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
 
     /**
      * Returns the date that offers have to be newer than to not be considered expired
+     *
      * @return Carbon
      */
     protected function expiredFromTimestamp()
@@ -150,6 +158,7 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
 
     /**
      * Returns the date that offers have to be newer than to not be removed
+     *
      * @return Carbon
      */
     public function removedFromTimestamp()
@@ -159,26 +168,30 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
 
     /**
      * Whether this offer is expired
+     *
      * @return bool
      */
     public function getExpiredAttribute()
     {
-        return $this->status === self::STATUS_AVAILABLE && $this->listed_at->lessThan($this->expiredFromTimestamp());
+        return $this->status === self::STATUS_AVAILABLE
+            && $this->listed_at->lessThan($this->expiredFromTimestamp());
     }
 
     /**
      * Whether this offer can be displayed
+     *
      * @return bool
      */
     public function getDisplayableAttribute()
     {
-        return !$this->expired
+        return ! $this->expired
             && $this->status === self::STATUS_AVAILABLE
             && $this->author->status === User::STATUS_ACTIVE;
     }
 
     /**
      * The amount of times this offer can be bumped
+     *
      * @return int
      */
     public function getBumpsLeftAttribute()
@@ -188,6 +201,7 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
 
     /**
      * Whether this offer has just been created / bumped
+     *
      * @return bool
      */
     public function getJustBumpedAttribute()
@@ -197,17 +211,22 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
 
     /**
      * Limits the query to only return items that should be removed
+     *
      * @param Builder $query
+     *
      * @return Builder
      */
     public function scopeToBeRemoved(Builder $query)
     {
-        return $query->whereDate('listed_at', '<', $this->removedFromTimestamp());
+        return $query->whereDate('listed_at', '<',
+            $this->removedFromTimestamp());
     }
 
     /**
      * Limits the query to only return items that are accessible publicly
+     *
      * @param Builder $query
+     *
      * @return Builder
      */
     public function scopePublic(Builder $query)
@@ -228,7 +247,9 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
 
     /**
      * Does not limit the query
+     *
      * @param Builder $query
+     *
      * @return Builder
      */
     public function scopeUnlimited(Builder $query)
@@ -238,19 +259,24 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
 
     /**
      * Limits the query to only return items that are accessible publicly and that the current user owns.
+     *
      * @param Builder $query
+     *
      * @return Builder
      */
     public function scopeAuth(Builder $query)
     {
         return $query
-            ->addNestedWhereQuery($this->scopePublic($this->newQuery())->getQuery())
+            ->addNestedWhereQuery($this->scopePublic($this->newQuery())
+                ->getQuery())
             ->orWhere(['author_user_id' => \Auth::user()->id]);
     }
 
     /**
      * Limits the query to only return items that have been reported to administrators.
+     *
      * @param Builder $query
+     *
      * @return Builder
      */
     public function scopeReported(Builder $query)
@@ -265,7 +291,12 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
      */
     public function getPublicScopes()
     {
-        return [self::SCOPE_PUBLIC, self::SCOPE_AUTH, self::SCOPE_UNLIMITED, self::SCOPE_REPORTED];
+        return [
+            self::SCOPE_PUBLIC,
+            self::SCOPE_AUTH,
+            self::SCOPE_UNLIMITED,
+            self::SCOPE_REPORTED,
+        ];
     }
 
     /**
@@ -303,7 +334,7 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
                         'author/id',
                         'author/email',
                         'price_value',
-                        'currency_code'
+                        'currency_code',
                     ]))
                     ->isEmpty();
             case self::SCOPE_AUTH:
@@ -318,7 +349,7 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
                         'author/email',
                         'price_value',
                         'currency_code',
-                        'status'
+                        'status',
                     ]))
                     ->isEmpty();
             case self::SCOPE_UNLIMITED:
@@ -339,34 +370,45 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
 
     /**
      * Get validation rules for a creation request.
+     *
      * @param Validator $validator
+     *
      * @return array
      */
-    public static function getValidationRules(Validator $validator = null, $requireImages = true)
-    {
+    public static function getValidationRules(
+        Validator $validator = null,
+        $requireImages = true
+    ) {
         if ($validator) {
-            $validator->sometimes('currency', resolve(CurrencyRule::class), function ($input) {
-                return $input->price && $input->price > 0;
-            });
+            $validator->sometimes('currency', resolve(CurrencyRule::class),
+                function ($input) {
+                    return $input->price && $input->price > 0;
+                });
 
-            $validator->sometimes('price', ['required', new MoneyRule()], function ($input) {
-                return intval($input->status) === Offer::STATUS_AVAILABLE;
-            });
+            $validator->sometimes('price', ['required', new MoneyRule()],
+                function ($input) {
+                    return intval($input->status) === Offer::STATUS_AVAILABLE;
+                });
 
             if ($requireImages) {
                 $validator->sometimes('images', 'required', function ($input) {
                     $val = intval($input->status) === Offer::STATUS_AVAILABLE;
+
                     return $val;
                 });
             }
 
             $validator->sometimes('images', 'file|image', function ($input) {
-                $val = intval($input->status) === Offer::STATUS_AVAILABLE && !is_array($input->images);
+                $val = intval($input->status) === Offer::STATUS_AVAILABLE
+                    && ! is_array($input->images);
+
                 return $val;
             });
 
             $validator->sometimes('images.*', 'file|image', function ($input) {
-                $val = intval($input->status) === Offer::STATUS_AVAILABLE && is_array($input->images);
+                $val = intval($input->status) === Offer::STATUS_AVAILABLE
+                    && is_array($input->images);
+
                 return $val;
             });
         }
@@ -377,17 +419,21 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
             'currency' => '',
             'price' => '',
             'images' => '',
-            'status' => Rule::in([Offer::STATUS_DRAFT, Offer::STATUS_AVAILABLE]),
+            'status' => Rule::in([
+                Offer::STATUS_DRAFT,
+                Offer::STATUS_AVAILABLE,
+            ]),
         ];
     }
 
     /**
      * 'Bump' the offer - make it appear as new. Returns the success.
+     *
      * @return boolean
      */
     public function bump()
     {
-        if($this->bumped_times < self::MAX_BUMP_TIMES) {
+        if ($this->bumped_times < self::MAX_BUMP_TIMES) {
             ++$this->bumped_times;
             $this->listed_at = Carbon::now();
 
@@ -399,7 +445,9 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
 
     /**
      * Report the offer to administrators
+     *
      * @param integer $userId
+     *
      * @return boolean
      */
     public function report($userId)
@@ -407,9 +455,10 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
         /** @var User|null $user */
         $user = $this->reportedBy()->where(['user_id' => $userId])->first();
 
-        if(!$user) {
+        if ( ! $user) {
             ++$this->reported_times;
             $this->reportedBy()->attach($userId);
+
             return true;
         } else {
             return false;
@@ -418,16 +467,19 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
 
     /**
      * Mark the reported offer as appropriate
+     *
      * @return boolean
      */
     public function markAppropriate()
     {
         $this->reported_times = 0;
+
         return true;
     }
 
     /**
      * Clear the list of users that have reported this offer
+     *
      * @return boolean
      */
     public function resetAppropriateness()

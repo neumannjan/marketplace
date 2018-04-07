@@ -1,5 +1,6 @@
-import { EventFormatter } from './../util';
-import { Channel } from './channel';
+import {EventFormatter} from './../util';
+import {Channel} from './channel';
+
 /**
  * This class represents a Pusher channel.
  */
@@ -34,6 +35,7 @@ export declare class PusherChannel extends Channel {
      * @type {any}
      */
     subscription: any;
+
     /**
      * Create a new class instance.
      *
@@ -42,6 +44,7 @@ export declare class PusherChannel extends Channel {
      * @param  {any}  options
      */
     constructor(pusher: any, name: any, options: any);
+
     /**
      * Subscribe to a Pusher channel.
      *
@@ -49,12 +52,14 @@ export declare class PusherChannel extends Channel {
      * @return {object}
      */
     subscribe(): any;
+
     /**
      * Unsubscribe from a Pusher channel.
      *
      * @return {void}
      */
     unsubscribe(): void;
+
     /**
      * Listen for an event on the channel instance.
      *
@@ -63,6 +68,7 @@ export declare class PusherChannel extends Channel {
      * @return {PusherChannel}
      */
     listen(event: string, callback: Function): PusherChannel;
+
     /**
      * Stop listening for an event on the channel instance.
      *
@@ -70,6 +76,7 @@ export declare class PusherChannel extends Channel {
      * @return {PusherChannel}
      */
     stopListening(event: string): PusherChannel;
+
     /**
      * Bind a channel to an event.
      *

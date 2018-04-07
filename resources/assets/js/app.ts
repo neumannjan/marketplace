@@ -26,8 +26,12 @@ declare global {
 
     // JSX
     namespace JSX {
-        interface Element extends VNode {}
-        interface ElementClass extends Vue {}
+        interface Element extends VNode {
+        }
+
+        interface ElementClass extends Vue {
+        }
+
         interface IntrinsicElements {
             [elem: string]: any;
         }
@@ -49,7 +53,8 @@ Vue.component('lazy-img', LazyImgComponent);
 Vue.mixin(EventsMixin);
 
 declare module "vue/types/vue" {
-    interface Vue extends EventsMixinInterface {}
+    interface Vue extends EventsMixinInterface {
+    }
 }
 
 Vue.directive('focus', {

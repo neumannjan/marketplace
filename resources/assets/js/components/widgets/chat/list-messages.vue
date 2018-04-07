@@ -1,16 +1,17 @@
 <template>
     <div>
-        <infinite-scroll top :busy="busy" @request="request" @bottom="onBottom" v-model="scroll" class="flex-grow d-flex flex-column overflow-scroll-y p-2">
+        <infinite-scroll top :busy="busy" @request="request" @bottom="onBottom" v-model="scroll"
+                         class="flex-grow d-flex flex-column overflow-scroll-y p-2">
             <div v-if="busy" class="text-center">
                 <icon name="spinner" :label="translations.loading" pulse/>
             </div>
             <div v-for="message in allMessages"
-                :key="message.identifier ? message.identifier : message.id" class="mb-2">
+                 :key="message.identifier ? message.identifier : message.id" class="mb-2">
                 <div v-if="message.mine" class="chat-item-right d-flex flex-column align-items-end">
                     <div class="d-flex flex-row align-items-end">
                         <div class="d-flex flex-row-reverse align-items-end ml-auto">
                             <div :class="['card text-white', message.error ? 'bg-danger' : 'bg-primary']"
-                                :style="{borderRadius: `${imgSize/2}px`}">
+                                 :style="{borderRadius: `${imgSize/2}px`}">
                                 <chat-message-content class="m-0" :message="message" :white="true" :img-size="imgSize"/>
                             </div>
                             <ul v-if="message.error" class="list-unstyled mb-0 mr-1 line-height-1">
@@ -63,7 +64,7 @@
                     </div>
                     <div v-if="lastReadMessageID === message.id" class="chat-item-indicator ml-auto">
                         <profile-img :img="profileImage ? profileImage : {}"
-                                    :img-size="indicatorSize"/>
+                                     :img-size="indicatorSize"/>
                     </div>
                 </div>
             </div>
@@ -154,14 +155,14 @@
 
         @Prop({type: Number, default: 14})
         indicatorSize: number = 14;
-     
+
         cm: ConversationMediator | null = null;
 
         nextFetch: (() => Promise<ContinuousResponse<NormalizedMessage[]>>) | null = null;
 
         message: string = '';
 
-        addedMessages: {[index: string]: LocalMessage} = {};
+        addedMessages: { [index: string]: LocalMessage } = {};
 
         notifyTyping: (() => void) | null = null;
 
@@ -204,7 +205,7 @@
                     .map(([identifier, message]) => message)
             ];
         }
-        
+
         get profileImage(): Image | null {
             return this.user.profile_image ? this.user.profile_image : null;
         }
@@ -249,7 +250,7 @@
             this.cm.on(ConversationEvents.Message, (message) => {
                 this.addMessages(message);
 
-                if(!message.mine) {
+                if (!message.mine) {
                     this.typing = false;
                 }
             });
@@ -265,7 +266,7 @@
 
             //
             const notifyTypingTrue = debounce(() => {
-                if(this.cm) {
+                if (this.cm) {
                     this.cm.sendTyping(this.message !== '');
                 }
             }, 200, {
@@ -274,7 +275,7 @@
             });
 
             const notifyTypingFalse = debounce(() => {
-                if(this.cm) {
+                if (this.cm) {
                     this.cm.sendTyping(false);
                 }
             }, 10000);
@@ -310,7 +311,7 @@
         }
 
         destroyed() {
-            if(this.cm) {
+            if (this.cm) {
                 this.cm.dispose();
             }
         }
@@ -321,9 +322,9 @@
                 this.message = '';
             }
         }
-        
+
         sendMessage(content: string, additional: MessageAdditional = {}, additionalPrivate: MessageAdditional = {}) {
-            if(this.cm) {
+            if (this.cm) {
                 const intermediate = this.cm.sendMessage(content, additional);
 
                 const message: LocalMessage = {
@@ -346,16 +347,16 @@
                 });
 
                 intermediate.promise
-                .then(message => {
-                    Vue.delete(this.addedMessages, intermediate.identifier);
-                    this.$nextTick(() => this.addMessages(message));
-                })
-                .catch(reason => {
-                    message.awaiting = false;
-                    message.error = true;
-                    Vue.set(this.addedMessages, intermediate.identifier, message);
-                    this.scrollDown(true);
-                });
+                    .then(message => {
+                        Vue.delete(this.addedMessages, intermediate.identifier);
+                        this.$nextTick(() => this.addMessages(message));
+                    })
+                    .catch(reason => {
+                        message.awaiting = false;
+                        message.error = true;
+                        Vue.set(this.addedMessages, intermediate.identifier, message);
+                        this.scrollDown(true);
+                    });
             }
         }
 
@@ -372,7 +373,7 @@
         }
 
         addMessages(messages: NormalizedMessage[] | NormalizedMessage, toTop = false) {
-            if(!Array.isArray(messages))
+            if (!Array.isArray(messages))
                 messages = [messages];
 
             // filter out existing messages

@@ -28,8 +28,8 @@
     const canvasPool = new CanvasPool(5);
 
     /**
-    * @param {HTMLImageElement} img
-    */
+     * @param {HTMLImageElement} img
+     */
     const loadImagePromise = (img) => {
         if (img.complete || img.naturalWidth > 0)
             return Promise.resolve(img);
@@ -113,7 +113,7 @@
         methods: {
             inViewportCheck() {
                 /** @type {HTMLElement} */
-                //@ts-ignore
+                    //@ts-ignore
                 const el = this.$refs.wrapper;
 
                 if (!el || !this.inDOM) {
@@ -201,7 +201,7 @@
                 /**
                  * @type {HTMLImageElement}
                  */
-                //@ts-ignore
+                    //@ts-ignore
                 const fullImage = this.$refs.img;
 
                 if (this.error)
@@ -231,7 +231,7 @@
                 /**
                  * @type {HTMLCanvasElement}
                  */
-                //@ts-ignore
+                    //@ts-ignore
                 let canvas = this.$refs.canvas;
                 /**
                  * @type {CanvasRenderingContext2D | null}
@@ -296,7 +296,7 @@
                             catch (e) {
                             }
                         }
-                    } else if(cctx) {
+                    } else if (cctx) {
                         cctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, width, height);
                     }
                 }

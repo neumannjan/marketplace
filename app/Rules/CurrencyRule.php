@@ -32,7 +32,8 @@ class CurrencyRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        return $this->moneyHelper->getCurrencies()->contains(new Currency($value));
+        return $this->moneyHelper->getCurrencies()
+            ->contains(new Currency($value));
     }
 
     /**

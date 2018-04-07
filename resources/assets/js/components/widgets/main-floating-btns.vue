@@ -106,17 +106,17 @@
 
                 this.$nextTick(() => {
                     this.backShown = (() => {
-                        if(this.$store.state.reRoutedTimes <= 0)
+                        if (this.$store.state.reRoutedTimes <= 0)
                             return false;
 
                         const matched = this.$route.matched;
 
-                        if(matched.length === 0)
+                        if (matched.length === 0)
                             return true;
 
                         const instance = matched[matched.length - 1].instances.default;
-                        
-                        if(!instance)
+
+                        if (!instance)
                             return true;
 
                         return !(<any>instance).isTopLevelRoute;

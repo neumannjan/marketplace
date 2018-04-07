@@ -1,4 +1,5 @@
-import { SocketIoChannel } from './';
+import {SocketIoChannel} from './';
+
 /**
  * This class represents a Socket.io presence channel.
  */

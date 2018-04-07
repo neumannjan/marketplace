@@ -14,7 +14,8 @@ use Illuminate\Support\Str;
 /**
  * {@see Paginator} based on order.
  */
-class AfterPaginator implements Paginator, Arrayable, Jsonable, \JsonSerializable
+class AfterPaginator
+    implements Paginator, Arrayable, Jsonable, \JsonSerializable
 {
     /**
      * All of the items being paginated.
@@ -67,22 +68,25 @@ class AfterPaginator implements Paginator, Arrayable, Jsonable, \JsonSerializabl
 
     /**
      * AfterPaginator constructor.
+     *
      * @param Collection $items
-     * @param int $perPage
+     * @param int        $perPage
      * @param mixed|null $after
      */
     public function __construct(Collection $items, $perPage, $after = null)
     {
-        $this->items = $items;
-        $this->perPage = $perPage;
+        $this->items        = $items;
+        $this->perPage      = $perPage;
         $this->currentAfter = $after;
     }
 
     /**
      * Paginate a database query
-     * @param Builder $query
-     * @param int $perPage
+     *
+     * @param Builder    $query
+     * @param int        $perPage
      * @param mixed|null $after
+     *
      * @return AfterPaginator
      */
     public static function fromQuery(Builder $query, $perPage, $after = null)
@@ -93,6 +97,7 @@ class AfterPaginator implements Paginator, Arrayable, Jsonable, \JsonSerializabl
 
         $query->limit($perPage);
         $result = $query->get();
+
         return new AfterPaginator($result, $perPage, $after);
     }
 
@@ -120,6 +125,7 @@ class AfterPaginator implements Paginator, Arrayable, Jsonable, \JsonSerializabl
      * Get the URL for a given timestamp.
      *
      * @param mixed|null $after
+     *
      * @return string
      */
     public function url($after = null)
@@ -134,15 +140,16 @@ class AfterPaginator implements Paginator, Arrayable, Jsonable, \JsonSerializabl
         }
 
         return $this->path
-            . (Str::contains($this->path, '?') ? '&' : '?')
-            . http_build_query($parameters, '', '&')
-            . $this->buildFragment();
+            .(Str::contains($this->path, '?') ? '&' : '?')
+            .http_build_query($parameters, '', '&')
+            .$this->buildFragment();
     }
 
     /**
      * Get / set the URL fragment to be appended to URLs.
      *
      * @param  string|null $fragment
+     *
      * @return $this|string|null
      */
     public function fragment($fragment = null)
@@ -160,7 +167,8 @@ class AfterPaginator implements Paginator, Arrayable, Jsonable, \JsonSerializabl
      * Add a set of query string values to the paginator.
      *
      * @param  array|string $key
-     * @param  string|null $value
+     * @param  string|null  $value
+     *
      * @return $this
      */
     public function appends($key, $value = null)
@@ -176,6 +184,7 @@ class AfterPaginator implements Paginator, Arrayable, Jsonable, \JsonSerializabl
      * Add an array of query string values.
      *
      * @param  array $keys
+     *
      * @return $this
      */
     protected function appendArray(array $keys)
@@ -192,6 +201,7 @@ class AfterPaginator implements Paginator, Arrayable, Jsonable, \JsonSerializabl
      *
      * @param  string $key
      * @param  string $value
+     *
      * @return $this
      */
     protected function addQuery($key, $value)
@@ -210,7 +220,7 @@ class AfterPaginator implements Paginator, Arrayable, Jsonable, \JsonSerializabl
      */
     protected function buildFragment()
     {
-        return $this->fragment ? '#' . $this->fragment : '';
+        return $this->fragment ? '#'.$this->fragment : '';
     }
 
     /**
@@ -227,6 +237,7 @@ class AfterPaginator implements Paginator, Arrayable, Jsonable, \JsonSerializabl
      * Set the base path to assign to all URLs.
      *
      * @param  string $path
+     *
      * @return $this
      */
     public function setPath($path)
@@ -322,7 +333,8 @@ class AfterPaginator implements Paginator, Arrayable, Jsonable, \JsonSerializabl
      * Render the paginator using a given view.
      *
      * @param  string|null $view
-     * @param  array $data
+     * @param  array       $data
+     *
      * @return string
      */
     public function render($view = null, $data = [])
@@ -344,7 +356,8 @@ class AfterPaginator implements Paginator, Arrayable, Jsonable, \JsonSerializabl
      * Make dynamic calls into the collection.
      *
      * @param  string $method
-     * @param  array $parameters
+     * @param  array  $parameters
+     *
      * @return mixed
      */
     public function __call($method, $parameters)
@@ -365,7 +378,7 @@ class AfterPaginator implements Paginator, Arrayable, Jsonable, \JsonSerializabl
             'next_page_url' => $this->nextPageUrl(),
             'path' => $this->path,
             'per_page' => $this->perPage(),
-            'count' => $this->items->count()
+            'count' => $this->items->count(),
         ];
     }
 
@@ -383,6 +396,7 @@ class AfterPaginator implements Paginator, Arrayable, Jsonable, \JsonSerializabl
      * Convert the object to its JSON representation.
      *
      * @param  int $options
+     *
      * @return string
      */
     public function toJson($options = 0)

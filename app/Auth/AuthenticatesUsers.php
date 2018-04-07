@@ -35,15 +35,21 @@ trait AuthenticatesUsers
 
     /**
      * Try to log in and return an appropriate response
-     * @param string $login Username or email
-     * @param string $password
-     * @param boolean $remember
+     *
+     * @param string       $login Username or email
+     * @param string       $password
+     * @param boolean      $remember
      * @param Request|null $request
+     *
      * @throws ValidationException
      * @return mixed
      */
-    protected function login($login, $password, $remember, Request $request = null)
-    {
+    protected function login(
+        $login,
+        $password,
+        $remember,
+        Request $request = null
+    ) {
         if ($request == null) {
             $request = \App::get('request');
         }
@@ -60,6 +66,7 @@ trait AuthenticatesUsers
             event(new Lockout($request));
 
             $seconds = $limiter->availableIn($throttleKey);
+
             return $this->sendLockoutResponse($seconds);
         }
 
@@ -88,12 +95,15 @@ trait AuthenticatesUsers
 
         /** @var User $user */
         $user = $this->provider()->retrieveByCredentials($credentials);
+
         return $this->sendFailedLoginResponse($this->createFailedLoginMessage($user));
     }
 
     /**
      * Return an error message about why the login failed.
+     *
      * @param User|null $user
+     *
      * @return string
      */
     protected function createFailedLoginMessage($user)
@@ -116,6 +126,7 @@ trait AuthenticatesUsers
 
     /**
      * Get the rate limiter instance
+     *
      * @return RateLimiter
      */
     protected function limiter()
@@ -125,6 +136,7 @@ trait AuthenticatesUsers
 
     /**
      * Get the user provider instance
+     *
      * @return \Illuminate\Contracts\Auth\UserProvider
      */
     protected function provider()
@@ -134,6 +146,7 @@ trait AuthenticatesUsers
 
     /**
      * Get the guard to be used during authentication.
+     *
      * @return StatefulGuard
      */
     protected function guard()
@@ -143,28 +156,37 @@ trait AuthenticatesUsers
 
     /**
      * The return value of {@see login()} for when the user has been forbidden from attempting to log in.
+     *
      * @throws ValidationException
+     *
      * @param int $seconds Time in seconds for how long the user has to wait before they can log in again.
+     *
      * @return mixed
      */
     protected function sendLockoutResponse($seconds)
     {
 
         throw ValidationException::withMessages([
-            UserProvider::LOGIN_KEY => [trans('auth.throttle', ['seconds' => $seconds])],
+            UserProvider::LOGIN_KEY => [
+                trans('auth.throttle', ['seconds' => $seconds]),
+            ],
         ])->status(423);
     }
 
     /**
      * The return value of {@see login()} for when the login was successful.
+     *
      * @return mixed
      */
     protected abstract function sendLoginResponse();
 
     /**
      * The return value of {@see login()} for when the login was unsuccessful.
+     *
      * @throws ValidationException
+     *
      * @param string $failureMessage Message provided by {@see createFailedLoginMessage() }
+     *
      * @return mixed
      */
     protected function sendFailedLoginResponse($failureMessage)

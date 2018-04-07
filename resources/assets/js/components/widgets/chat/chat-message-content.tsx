@@ -43,17 +43,17 @@ export default Vue.extend({
             else
                 user = this.message.from;
 
-            if(this.type === MessageType.Regular) {
-                if(this.inline && user)
+            if (this.type === MessageType.Regular) {
+                if (this.inline && user)
                     return <span>{user.display_name}: {this.message.content}</span>;
                 else
                     return <span class={this.inline ? undefined : "chat-message-content"}>{this.message.content}</span>;
-            } else if(this.type === MessageType.Offer) {
+            } else if (this.type === MessageType.Offer) {
                 const OfferMsg = <i>{this.$store.getters.trans('interface.notice.user-buy', {
                     user: this.user.display_name
                 })}</i>
 
-                if(!this.inline && this.offer)
+                if (!this.inline && this.offer)
                     return <span class="chat-message-content"><h2 class="h5">{(this.offer as Offer).name}</h2>{OfferMsg}</span>
                 else
                     return OfferMsg;
@@ -63,13 +63,16 @@ export default Vue.extend({
         }
 
         const image = () => {
-            if(this.imgSrc) {
+            if (this.imgSrc) {
                 return (
                     <placeholder-img img-style="width: 100%"
                                      placeholder-style="height: 80px"
                                      placeholder-class="w-100"
                                      class="chat-message-image"
-                                     style={{borderTopLeftRadius: `${this.imgSize/2}px`, borderTopRightRadius: `${this.imgSize/2}px`}}
+                                     style={{
+                                         borderTopLeftRadius: `${this.imgSize / 2}px`,
+                                         borderTopRightRadius: `${this.imgSize / 2}px`
+                                     }}
                                      src={this.imgSrc}/>
                 );
             } else {
@@ -78,7 +81,7 @@ export default Vue.extend({
         };
 
         const link = (content: any) => {
-            if(this.route) {
+            if (this.route) {
                 return (
                     <router-link to={this.route}
                                  class={[this.white ? 'text-white' : 'text-dark']}>

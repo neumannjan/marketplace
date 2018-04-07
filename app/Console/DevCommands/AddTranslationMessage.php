@@ -30,14 +30,16 @@ class AddTranslationMessage extends Command
      *
      * @var string
      */
-    protected $description = 'Quickly add/modify a translation message.'
-    . ' Should only be used in development as this command modifies existing .php files.';
+    protected $description
+        = 'Quickly add/modify a translation message.'
+        .' Should only be used in development as this command modifies existing .php files.';
 
     /** @var Application */
     protected $application;
 
     /**
      * Console command constructor.
+     *
      * @param Application $application
      */
     public function __construct(Application $application)
@@ -62,32 +64,35 @@ class AddTranslationMessage extends Command
      */
     public function handle()
     {
-        $keys = explode('.', $this->argument('key'));
+        $keys     = explode('.', $this->argument('key'));
         $firstKey = array_shift($keys);
 
         if (count($keys) === 0) {
             throw new \InvalidArgumentException("Key has to be composed of multiple keys separated with dots.");
         }
 
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $parser        = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
         $prettyPrinter = new Standard([
-            'shortArraySyntax' => true
+            'shortArraySyntax' => true,
         ]);
 
         foreach (config('app.available_locales') as $locale) {
             $message = $this->argument($locale);
 
-            $fileName = $this->application->resourcePath("lang/$locale/$firstKey.php");
+            $fileName
+                = $this->application->resourcePath("lang/$locale/$firstKey.php");
 
             $traverser = new NodeTraverser();
-            $traverser->addVisitor(new TranslationFileNodeVisitor($keys, $message));
+            $traverser->addVisitor(new TranslationFileNodeVisitor($keys,
+                $message));
 
             if (file_exists($fileName)) {
                 $data = file_get_contents($fileName);
             } elseif ($this->option('force')) {
-                $name = str_replace(['-', '_'], ' ', $firstKey);
+                $name  = str_replace(['-', '_'], ' ', $firstKey);
                 $cName = ucwords($name);
-                $data = <<<PHP
+                $data
+                       = <<<PHP
 <?php
 
 return [
@@ -113,11 +118,14 @@ PHP;
 
             } catch (Error $error) {
                 echo "Parse error: {$error->getMessage()}\n";
+
                 return;
             }
 
             $ast = $traverser->traverse($ast);
-            if (file_put_contents($fileName, $prettyPrinter->prettyPrintFile($ast)) !== false) {
+            if (file_put_contents($fileName,
+                    $prettyPrinter->prettyPrintFile($ast)) !== false
+            ) {
                 $this->info("$locale: \"$message\"");
             } else {
                 $this->error("$locale: FAILURE");

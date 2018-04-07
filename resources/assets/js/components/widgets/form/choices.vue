@@ -17,7 +17,7 @@
         items!: any[];
 
         @Prop({type: Object, default: () => ({})})
-        options!: {[index: string]: any};
+        options!: { [index: string]: any };
 
         @Prop({})
         value: any;
@@ -88,7 +88,7 @@
             });
 
             this.el = wrapper.children[0];
-            if(wrapper.parentNode) {
+            if (wrapper.parentNode) {
                 wrapper.parentNode.insertBefore(this.el, wrapper.nextSibling);
             }
             wrapper.style.display = 'none';

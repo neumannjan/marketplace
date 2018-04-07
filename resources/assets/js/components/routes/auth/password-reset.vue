@@ -103,7 +103,7 @@
                         return value.match(/[^0-9]/) !== null;
                     },
 
-                    /** 
+                    /**
                      * @param {string} value
                      */
                     containsNumeric(value) {

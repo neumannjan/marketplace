@@ -6,7 +6,6 @@ namespace App\Api\Request\DB\Offer;
 use App\Api\Request\Request;
 use App\Api\Response\Response;
 use App\Offer;
-use App\User;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Validator;
@@ -39,7 +38,7 @@ class OfferReportRequest extends Request
     protected function rules(Validator $validator = null)
     {
         return [
-            'id' => 'required|integer'
+            'id' => 'required|integer',
         ];
     }
 
@@ -52,10 +51,10 @@ class OfferReportRequest extends Request
         /** @var Offer $offer */
         $offer = Offer::query()->where([
             'id' => $parameters['id'],
-            'status' => Offer::STATUS_AVAILABLE
+            'status' => Offer::STATUS_AVAILABLE,
         ])->first();
 
-        if($offer && $offer->report($this->guard->id()) && $offer->save()) {
+        if ($offer && $offer->report($this->guard->id()) && $offer->save()) {
             return new Response(true, []);
         } else {
             return new Response(false, []);

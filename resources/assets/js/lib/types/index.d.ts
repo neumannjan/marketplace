@@ -59,6 +59,7 @@ declare module "css-element-queries/src/ElementQueries" {
 declare module "css-element-queries/src/ResizeSensor" {
     class ResizeSensor {
         constructor(element: Element | Element[], callback: Function);
+
         static detach(element: Element | Element[], callback: Function): void;
     }
 

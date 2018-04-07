@@ -25,28 +25,30 @@ class Money
 
     /**
      * Money constructor.
+     *
      * @param string $locale
      */
     public function __construct($locale)
     {
         $bitcoinCurrencies = new BitcoinCurrencies();
-        $isoCurrencies = new ISOCurrencies();
-        $this->currencies = $allCurrencies = new AggregateCurrencies([
+        $isoCurrencies     = new ISOCurrencies();
+        $this->currencies  = $allCurrencies = new AggregateCurrencies([
             $bitcoinCurrencies,
-            $isoCurrencies
+            $isoCurrencies,
         ]);
 
-        $numberFormatter = new \NumberFormatter($locale, \NumberFormatter::CURRENCY);
+        $numberFormatter = new \NumberFormatter($locale,
+            \NumberFormatter::CURRENCY);
 
         $moneyFormatter = new AggregateMoneyFormatter([
             'XBT' => new BitcoinMoneyFormatter(4, $bitcoinCurrencies),
-            '*' => new IntlMoneyFormatter($numberFormatter, $isoCurrencies)
+            '*' => new IntlMoneyFormatter($numberFormatter, $isoCurrencies),
         ]);
 
         $moneyParser = new DecimalMoneyParser($allCurrencies);
 
         $this->decimalParser = $moneyParser;
-        $this->formatter = $moneyFormatter;
+        $this->formatter     = $moneyFormatter;
     }
 
     /**

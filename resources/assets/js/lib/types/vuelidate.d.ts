@@ -11,7 +11,7 @@ declare module "vuelidate" {
         }
     }
 
-    export type Vuelidate = IValidator & {[index: string]: any};
+    export type Vuelidate = IValidator & { [index: string]: any };
 
     module "vue/types/vue" {
         interface Vue {
@@ -183,5 +183,5 @@ declare module "vuelidate/lib/validators" {
 }
 
 declare module "vuelidate/lib/withParams" {
-    export default function withParams(params: {[index: string]: any}, validator: (...params: any[]) => boolean): any
+    export default function withParams(params: { [index: string]: any }, validator: (...params: any[]) => boolean): any
 }

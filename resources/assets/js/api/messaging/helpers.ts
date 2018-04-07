@@ -1,6 +1,6 @@
-import { Message } from "JS/api/types";
+import {Message} from "JS/api/types";
 import store from "JS/store";
-import { NormalizedMessage } from "JS/api/messaging/typings";
+import {NormalizedMessage} from "JS/api/messaging/typings";
 
 export function normalizeMessage(message: Message): NormalizedMessage {
     message.mine = isMine(message);
@@ -12,6 +12,7 @@ export function isMine(message: Message): boolean {
 }
 
 const CONVERSATION_CHANNEL_PREFIX = 'conversation';
+
 export function getConversationChannelName(username1: string, username2: string): string {
     if (username1 <= username2)
         return `${CONVERSATION_CHANNEL_PREFIX}.${username1}.${username2}`;

@@ -1,4 +1,5 @@
-import { Channel, PresenceChannel } from './../channel';
+import {Channel, PresenceChannel} from './../channel';
+
 export declare abstract class Connector {
     /**
      * Default connector options.
@@ -12,12 +13,14 @@ export declare abstract class Connector {
      * @type {object}
      */
     options: any;
+
     /**
      * Create a new class instance.
      *
      * @params  {any} options
      */
     constructor(options: any);
+
     /**
      * Merge the custom options with the defaults.
      *
@@ -25,18 +28,21 @@ export declare abstract class Connector {
      * @return {any}
      */
     protected setOptions(options: any): any;
+
     /**
      * Extract the CSRF token from the page.
      *
      * @return {string}
      */
     protected csrfToken(): string;
+
     /**
      * Create a fresh connection.
      *
      * @retrn void
      */
     abstract connect(): void;
+
     /**
      * Get a channel instance by name.
      *
@@ -44,6 +50,7 @@ export declare abstract class Connector {
      * @return {PusherChannel}
      */
     abstract channel(channel: string): Channel;
+
     /**
      * Get a private channel instance by name.
      *
@@ -51,6 +58,7 @@ export declare abstract class Connector {
      * @return {Channel}
      */
     abstract privateChannel(channel: string): Channel;
+
     /**
      * Get a presence channel instance by name.
      *
@@ -58,6 +66,7 @@ export declare abstract class Connector {
      * @return {PresenceChannel}
      */
     abstract presenceChannel(channel: string): PresenceChannel;
+
     /**
      * Leave the given channel.
      *
@@ -65,12 +74,14 @@ export declare abstract class Connector {
      * @return {void}
      */
     abstract leave(channel: string): void;
+
     /**
      * Get the socket_id of the connection.
      *
      * @return {string}
      */
     abstract socketId(): string;
+
     /**
      * Disconnect from the Echo server.
      *

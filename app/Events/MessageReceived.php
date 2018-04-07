@@ -16,8 +16,9 @@ class MessageReceived implements ShouldBroadcast
     /** @var Message */
     protected $message;
 
-    /** 
+    /**
      * User that received the message
+     *
      * @var User
      */
     protected $user;
@@ -26,12 +27,12 @@ class MessageReceived implements ShouldBroadcast
      * Create a new event instance.
      *
      * @param Message $message
-     * @param User $user User that received the message
+     * @param User    $user User that received the message
      */
     public function __construct(Message $message, User $user)
     {
         $this->message = $message;
-        $this->user = $user;
+        $this->user    = $user;
     }
 
     /**
@@ -41,7 +42,8 @@ class MessageReceived implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return $this->getConversationChannel($this->message->from_username, $this->message->to_username);
+        return $this->getConversationChannel($this->message->from_username,
+            $this->message->to_username);
     }
 
     /**
@@ -54,7 +56,7 @@ class MessageReceived implements ShouldBroadcast
         return [
             'id' => $this->message->id,
             'read' => $this->message->read,
-            'username' => $this->user->username
+            'username' => $this->user->username,
         ];
     }
 }

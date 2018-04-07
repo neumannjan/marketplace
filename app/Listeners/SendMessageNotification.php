@@ -21,6 +21,7 @@ class SendMessageNotification
      * Handle the event.
      *
      * @param  MessageSent $event
+     *
      * @return void
      */
     public function handle(MessageSent $event)

@@ -20,11 +20,13 @@ class InitialDataRequest extends GlobalDataRequest
 
         $localeInfo = include app()->path('locales.php');
 
-        $array['messages'] = [];
+        $array['messages']     = [];
         $array['locale_names'] = [];
         foreach (config('app.available_locales') as $lang) {
-            $validationMessages = include app()->resourcePath("lang/$lang/validation.php");
-            $interfaceMessages = include app()->resourcePath("lang/$lang/interface.php");
+            $validationMessages
+                = include app()->resourcePath("lang/$lang/validation.php");
+            $interfaceMessages
+                = include app()->resourcePath("lang/$lang/interface.php");
 
             $array['messages']["$lang.validation"] = [
                 'min' => $validationMessages['min']['string'],
@@ -53,18 +55,19 @@ class InitialDataRequest extends GlobalDataRequest
         // unread conversations
         if ($user) {
             /** @var Builder $query */
-            $query = Message::conversationsWith($user->username)
+            $query         = Message::conversationsWith($user->username)
                 ->scopes(['personal']);
             $conversations = $query
                 ->where(['to_username' => $user->username])
                 ->where(['read' => false])
                 ->get();
 
-            $array['unread_conversations'] = Conversation::collection($conversations);
+            $array['unread_conversations']
+                = Conversation::collection($conversations);
         }
 
         // upload limits
-        $array['max_file_uploads'] = (int) ini_get('max_file_uploads');
+        $array['max_file_uploads'] = (int)ini_get('max_file_uploads');
 
         return $array;
     }

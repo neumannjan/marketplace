@@ -18,12 +18,14 @@ abstract class PaginatedRequest extends Request
 {
     /**
      * Default value for `per_page` parameter. If `null`, the `per_page` parameter is always required.
+     *
      * @var int|null
      */
     protected $perPageDefault = 10;
 
     /**
      * Whether a page based or an order based Paginator will be used.
+     *
      * @var bool
      */
     protected $orderBased = false;
@@ -34,8 +36,9 @@ abstract class PaginatedRequest extends Request
     protected function _rules(Validator $validator = null)
     {
         $rules = [
-            'per_page' => ($this->perPageDefault === null ? 'required|' : '') . 'integer',
-            'page' => 'integer',
+                'per_page' => ($this->perPageDefault === null ? 'required|'
+                        : '').'integer',
+                'page' => 'integer',
             ] + parent::_rules($validator);
 
         if ($this->orderBased) {
@@ -53,17 +56,18 @@ abstract class PaginatedRequest extends Request
     protected function doResolve($name, Collection $parameters)
     {
         $perPage = $parameters->get('per_page', $this->perPageDefault);
-        if ($this->orderBased)
+        if ($this->orderBased) {
             $page = $parameters->get('after', null);
-        else
+        } else {
             $page = $parameters->get('page', 1);
+        }
 
         $urlParameters = $this->_urlParameters($parameters);
-        $query = [
-            'per_page' => $perPage
+        $query         = [
+            'per_page' => $perPage,
         ];
 
-        foreach($urlParameters as $parameter) {
+        foreach ($urlParameters as $parameter) {
             if ($parameters->has($parameter)) {
                 $query[$parameter] = $parameters[$parameter];
             }
@@ -76,19 +80,20 @@ abstract class PaginatedRequest extends Request
         $paginator->setPath(route('api.single', ['name' => $name], false));
 
         $resource = $this->resourceClass($parameters);
-        $result = null;
+        $result   = null;
 
         if ($resource) {
             if (is_subclass_of($resource, ResourceCollection::class)) {
                 $resource = new $resource($paginator);
             } else {
-                $resource = new AnonymousResourceCollection($paginator, $resource);
+                $resource = new AnonymousResourceCollection($paginator,
+                    $resource);
             }
 
             /** @var ResourceCollection $resource */
-            $array = $paginator->toArray();
+            $array         = $paginator->toArray();
             $array['data'] = $resource->resolve();
-            $result = $array;
+            $result        = $array;
         } else {
             $result = $paginator->toArray();
         }
@@ -101,7 +106,9 @@ abstract class PaginatedRequest extends Request
 
     /**
      * Returns an array of parameters that should be present in the URL get query in next/previous URLs
+     *
      * @param Collection $parameters
+     *
      * @return string[]
      */
     protected abstract function urlParameters(Collection $parameters);
@@ -109,7 +116,9 @@ abstract class PaginatedRequest extends Request
     /**
      * Returns an array of parameters that should be present in the URL get query in next/previous URLs.
      * Should be used by abstract classes and should always concatenate result with parent implementation.
+     *
      * @param Collection $parameters
+     *
      * @return string[]
      */
     protected function _urlParameters(Collection $parameters)
@@ -119,15 +128,22 @@ abstract class PaginatedRequest extends Request
 
     /**
      * Returns a Paginator instance to be used
-     * @param Collection $parameters
-     * @param integer $perPage
+     *
+     * @param Collection          $parameters
+     * @param integer             $perPage
      * @param integer|string|null $pageOrAfter
+     *
      * @return Paginator
      */
-    protected abstract function paginator(Collection $parameters, $perPage, $pageOrAfter);
+    protected abstract function paginator(
+        Collection $parameters,
+        $perPage,
+        $pageOrAfter
+    );
 
     /**
      * Called after the query is requested.
+     *
      * @param Model[]|Model $results
      */
     protected function onResults($results)
@@ -136,7 +152,9 @@ abstract class PaginatedRequest extends Request
 
     /**
      * Returns name of a Resource class to be used. If false, no Resource class used
+     *
      * @param Collection $parameters
+     *
      * @return string|false
      */
     protected function resourceClass(Collection $parameters)

@@ -30,7 +30,7 @@ class PasswordEmailRequest extends Request
     protected function rules(Validator $validator = null)
     {
         return [
-            'email' => 'required|email'
+            'email' => 'required|email',
         ];
     }
 
@@ -40,16 +40,18 @@ class PasswordEmailRequest extends Request
     protected function doResolve($name, Collection $parameters)
     {
         $response = \Password::broker()->sendResetLink([
-            'email' => $parameters['email']
+            'email' => $parameters['email'],
         ]);
 
         switch ($response) {
             case PasswordBroker::RESET_LINK_SENT:
-                \Session::flash("success.password-reset-link-sent", trans($response));
+                \Session::flash("success.password-reset-link-sent",
+                    trans($response));
+
                 return new Response(true, []);
             default:
                 throw ValidationException::withMessages([
-                    'email' => [trans($response)]
+                    'email' => [trans($response)],
                 ]);
         }
     }

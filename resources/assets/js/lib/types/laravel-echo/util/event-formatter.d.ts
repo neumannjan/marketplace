@@ -8,12 +8,14 @@ export declare class EventFormatter {
      * @type {string}
      */
     namespace: string | boolean;
+
     /**
      * Create a new class instance.
      *
      * @params  {string | boolean} namespace
      */
     constructor(namespace: string | boolean);
+
     /**
      * Format the given event name.
      *
@@ -21,6 +23,7 @@ export declare class EventFormatter {
      * @return {string}
      */
     format(event: string): string;
+
     /**
      * Set the event namespace.
      *

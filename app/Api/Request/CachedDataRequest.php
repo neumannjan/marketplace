@@ -37,13 +37,14 @@ class CachedDataRequest extends Request
             // Currencies
 
             $currencyContainer = Money::getCurrencies();
-            $iterator = $currencyContainer->getIterator();
+            $iterator          = $currencyContainer->getIterator();
 
             $currencies = [];
 
             /** @var Currency $currency */
             foreach ($iterator as $currency) {
-                $currencies[$currency->getCode()] = $currencyContainer->subunitFor($currency);
+                $currencies[$currency->getCode()]
+                    = $currencyContainer->subunitFor($currency);
             }
 
             uksort($currencies, 'strnatcmp');

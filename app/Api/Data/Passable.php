@@ -10,6 +10,7 @@ interface Passable
     /**
      * Returns a serializable representation of the object.
      * (see the return types of this function)
+     *
      * @return array|\stdClass|\JsonSerializable
      */
     function toPassable();

@@ -26,12 +26,12 @@ class UserAuthenticationEmailTest extends \Codeception\Test\Unit
 
     protected function _registerUser($status = \App\User::STATUS_ACTIVE)
     {
-        $user = new \App\User();
-        $user->username = self::USERNAME;
+        $user               = new \App\User();
+        $user->username     = self::USERNAME;
         $user->display_name = self::DISPLAY_NAME;
-        $user->email = self::EMAIL;
-        $user->password = Hash::make(self::PASSWORD);
-        $user->status = $status;
+        $user->email        = self::EMAIL;
+        $user->password     = Hash::make(self::PASSWORD);
+        $user->status       = $status;
         $user->save();
 
         return $user;
@@ -49,7 +49,7 @@ class UserAuthenticationEmailTest extends \Codeception\Test\Unit
                 'password' => self::PASSWORD,
                 'password_confirmation' => self::PASSWORD,
                 'display_name' => self::DISPLAY_NAME,
-            ]
+            ],
         ]);
 
         $user = \App\User::first();
@@ -58,10 +58,11 @@ class UserAuthenticationEmailTest extends \Codeception\Test\Unit
 
         $i->seeEmailWasSent();
         $i->seeEmailWasSentTo(self::EMAIL);
-        $i->seeEmailContains(preg_quote(__('email.register-activate.action'), '/'));
+        $i->seeEmailContains(preg_quote(__('email.register-activate.action'),
+            '/'));
         $i->seeEmailContains(preg_quote(route('user.activate', [
             'token' => $user->activation_token,
-            'username' => self::USERNAME
+            'username' => self::USERNAME,
         ]), '/'));
 
         // there used to be a bug that displayed HTML as text; hence this check
@@ -75,13 +76,14 @@ class UserAuthenticationEmailTest extends \Codeception\Test\Unit
 
         $i->sendPrivateApiRequest([
             'password-email' => [
-                'email' => self::EMAIL
-            ]
+                'email' => self::EMAIL,
+            ],
         ]);
 
         $i->seeEmailWasSent();
         $i->seeEmailWasSentTo(self::EMAIL);
-        $i->seeEmailContains(preg_quote(__('email.password-reset.action'), '/'));
+        $i->seeEmailContains(preg_quote(__('email.password-reset.action'),
+            '/'));
 
         // there used to be a bug that displayed HTML as text; hence this check
         $i->seeEmailContainsNot('<pre');
@@ -89,12 +91,12 @@ class UserAuthenticationEmailTest extends \Codeception\Test\Unit
 
     public function testPasswordResetEmailContents()
     {
-        $i = $this->tester;
+        $i    = $this->tester;
         $user = $this->_registerUser();
 
         $repo = app(\Illuminate\Auth\Passwords\DatabaseTokenRepository::class, [
             'table' => 'password_resets',
-            'hashKey' => 'hashkey'
+            'hashKey' => 'hashkey',
         ]);
 
         $token = $repo->create($user);
@@ -102,8 +104,10 @@ class UserAuthenticationEmailTest extends \Codeception\Test\Unit
 
         $i->seeEmailWasSent();
         $i->seeEmailWasSentTo(self::EMAIL);
-        $i->seeEmailContains(preg_quote(__('email.password-reset.action'), '/'));
-        $i->seeEmailContains(preg_quote(\App\Http\AppRoutes::passwordReset($token), '/'));
+        $i->seeEmailContains(preg_quote(__('email.password-reset.action'),
+            '/'));
+        $i->seeEmailContains(preg_quote(\App\Http\AppRoutes::passwordReset($token),
+            '/'));
 
         // there used to be a bug that displayed HTML as text; hence this check
         $i->seeEmailContainsNot('<pre');

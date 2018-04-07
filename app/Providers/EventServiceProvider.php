@@ -11,11 +11,12 @@ class EventServiceProvider extends ServiceProvider
      *
      * @var array
      */
-    protected $listen = [
-        'App\Events\MessageSent' => [
-            'App\Listeners\SendMessageNotification',
-        ],
-    ];
+    protected $listen
+        = [
+            'App\Events\MessageSent' => [
+                'App\Listeners\SendMessageNotification',
+            ],
+        ];
 
     /**
      * Register any events for your application.

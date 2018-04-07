@@ -25,7 +25,7 @@ Vue.use(Vuex);
  * @param {boolean} createNew
  * @return {T}
  */
-function updateObject<T extends {[key: string]: any} = {[key: string]: any}>
+function updateObject<T extends { [key: string]: any } = { [key: string]: any }>
 (obj: T, newObj: T, createNew: boolean = false): T {
     let to = createNew ? <T>{} : obj;
     for (let [key, value] of Object.entries(newObj)) {
@@ -68,7 +68,7 @@ export interface AppropriateScopes {
 export interface State extends InitialResponse {
     connection_http: null | boolean,
     connection_websocket: null | boolean,
-    notifications: {[key: string]: Notification},
+    notifications: { [key: string]: Notification },
     reRoutedTimes: number,
     cached: CachedResponse,
     _cached_loaded: boolean,

@@ -27,6 +27,7 @@ class LoginRequest extends ApiRequest
 
     /**
      * LoginRequest constructor.
+     *
      * @param Guard $guard
      */
     public function __construct(Guard $guard)
@@ -52,7 +53,7 @@ class LoginRequest extends ApiRequest
 
         $response = $this->login($login, $password, $remember);
 
-        if (!$response instanceof ApiResponse) {
+        if ( ! $response instanceof ApiResponse) {
             return new ApiResponse(true, $response);
         }
 
@@ -89,7 +90,7 @@ class LoginRequest extends ApiRequest
             ->get();
 
         return [
-            'unread_conversations' => Conversation::collection($conversations)
+            'unread_conversations' => Conversation::collection($conversations),
         ];
     }
 

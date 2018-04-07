@@ -24,8 +24,9 @@ class ExceptionSerializer implements \JsonSerializable, Arrayable, Jsonable
 
     /**
      * ExceptionSerializer constructor.
+     *
      * @param \Exception $exception
-     * @param bool|null $verbose Whether to display exception details. Determined by environment if not specified.
+     * @param bool|null  $verbose Whether to display exception details. Determined by environment if not specified.
      */
     public function __construct(\Exception $exception, $verbose = null)
     {

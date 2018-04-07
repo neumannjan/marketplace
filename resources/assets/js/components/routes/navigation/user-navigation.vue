@@ -30,7 +30,7 @@
     import BlurredImg from 'JS/components/widgets/image/blurred-img.vue';
     import ProfileImg from "JS/components/widgets/image/profile-img.vue";
     import UserMenu from "./user-menu.vue";
-    import NavigationMenuVertical, { VerticalButton } from './navigation-menu-vertical';
+    import NavigationMenuVertical, {VerticalButton} from './navigation-menu-vertical';
 
     import {Image, User, UserStatus} from 'JS/api/types';
     import {routeEvents, RouteEvents} from 'JS/router';
@@ -63,14 +63,14 @@
         },
         watch: {
             thisUser(user: User | null) {
-                if(this.thisUser) {
+                if (this.thisUser) {
                     this.user = this.thisUser;
                 }
             }
         },
         computed: {
             img(): Image | null {
-                if(this.user && this.user.profile_image) {
+                if (this.user && this.user.profile_image) {
                     return this.user.profile_image;
                 } else {
                     return null;
@@ -87,7 +87,7 @@
                 return this.isThisUser || (this.user && thisUser && this.user.username == thisUser.username) ? thisUser : null;
             },
             verticalButtons(): VerticalButton[] {
-                if(!this.user || !this.$store.state.user || this.user.username !== this.$store.state.user.username)
+                if (!this.user || !this.$store.state.user || this.user.username !== this.$store.state.user.username)
                     return [];
 
                 return [
@@ -140,7 +140,7 @@
             }
         },
         created() {
-            if(this.thisUser)
+            if (this.thisUser)
                 this.user = this.thisUser;
 
             this.$onEventListener(routeEvents, RouteEvents.UserNavigation, async user => {

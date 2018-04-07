@@ -38,32 +38,36 @@ class User extends Authenticatable implements AuthorizationAwareModel
      *
      * @var array
      */
-    protected $fillable = [
-        'username',
-        'email',
-        'password',
-        'activation_token',
-        'display_name',
-        'status'
-    ];
+    protected $fillable
+        = [
+            'username',
+            'email',
+            'password',
+            'activation_token',
+            'display_name',
+            'status',
+        ];
 
     /**
      * The attributes that should be hidden for arrays.
      *
      * @var array
      */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected $hidden
+        = [
+            'password',
+            'remember_token',
+        ];
 
-    protected $with = [
-        'profile_image'
-    ];
+    protected $with
+        = [
+            'profile_image',
+        ];
 
-    protected $casts = [
-        'options' => 'array'
-    ];
+    protected $casts
+        = [
+            'options' => 'array',
+        ];
 
     /**
      * @inheritDoc
@@ -86,7 +90,8 @@ class User extends Authenticatable implements AuthorizationAwareModel
 
     public function getLocaleAttribute()
     {
-        return isset($this->options['locale']) ? $this->options['locale'] : config('app.fallback_locale');
+        return isset($this->options['locale']) ? $this->options['locale']
+            : config('app.fallback_locale');
     }
 
     /**
@@ -99,12 +104,14 @@ class User extends Authenticatable implements AuthorizationAwareModel
 
     public function sendRegistrationActivateNotification()
     {
-        $this->notify(new ActivateRegistration($this->activation_token, $this->username, $this->email));
+        $this->notify(new ActivateRegistration($this->activation_token,
+            $this->username, $this->email));
     }
 
     /**
      * Sets the user's status to active.
      * Returns false if the user is banned, already active, or if `$token` does not match the user's `activation_token`.
+     *
      * @var string|null $token If
      * @return bool
      */
@@ -117,6 +124,7 @@ class User extends Authenticatable implements AuthorizationAwareModel
         if ($this->status == self::STATUS_INACTIVE) {
             $this->status = self::STATUS_ACTIVE;
             $this->save();
+
             return true;
         }
 
@@ -125,7 +133,9 @@ class User extends Authenticatable implements AuthorizationAwareModel
 
     /**
      * Get validation rules for a creation request.
+     *
      * @param bool $updating
+     *
      * @return array
      */
     public static function getValidationRules($updating = false)
@@ -136,14 +146,27 @@ class User extends Authenticatable implements AuthorizationAwareModel
                 'string',
                 'min:8',
                 new ContainsNumericRule(),
-                new ContainsNonNumericRule()
+                new ContainsNonNumericRule(),
             ],
             'display_name' => ['nullable', 'string', 'max:50'],
         ];
 
-        if (!$updating) {
-            $rules['username'] = ['required', 'string', 'min:5', 'max:255', 'unique:users', new SlugRule()];
-            $rules['email'] = ['required', 'string', 'email', 'max:255', 'unique:users'];
+        if ( ! $updating) {
+            $rules['username'] = [
+                'required',
+                'string',
+                'min:5',
+                'max:255',
+                'unique:users',
+                new SlugRule(),
+            ];
+            $rules['email']    = [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                'unique:users',
+            ];
         } else {
             $rules['email'] = ['required', 'string', 'email', 'max:255'];
         }
@@ -168,7 +191,9 @@ class User extends Authenticatable implements AuthorizationAwareModel
 
     /**
      * Limits the query to only return users that are active
+     *
      * @param Builder $query
+     *
      * @return Builder
      */
     public function scopePublic(Builder $query)
@@ -179,7 +204,9 @@ class User extends Authenticatable implements AuthorizationAwareModel
 
     /**
      * Does not limit the query
+     *
      * @param Builder $query
+     *
      * @return Builder
      */
     public function scopeUnlimited(Builder $query)
@@ -189,7 +216,9 @@ class User extends Authenticatable implements AuthorizationAwareModel
 
     /**
      * Limits the query to only return users that are banned
+     *
      * @param Builder $query
+     *
      * @return Builder
      */
     public function scopeBanned(Builder $query)
@@ -245,7 +274,8 @@ class User extends Authenticatable implements AuthorizationAwareModel
      */
     public function toSearchableArray()
     {
-        return Arr::only($this->toArray(), ['id', 'username', 'email', 'description', 'display_name']);
+        return Arr::only($this->toArray(),
+            ['id', 'username', 'email', 'description', 'display_name']);
     }
 
 }

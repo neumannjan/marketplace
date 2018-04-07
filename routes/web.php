@@ -19,7 +19,8 @@ Route::get('api', 'PrivateApiController@index')->middleware('dev');
 Route::get('api/{name}', 'PrivateApiController@single')->middleware('dev');
 
 // User Activation Route
-Route::get('user/activate/{username}/{token}', 'Auth\ActivateController@activate')->name('user.activate');
+Route::get('user/activate/{username}/{token}',
+    'Auth\ActivateController@activate')->name('user.activate');
 
 // MUST STAY LAST
 Route::get('/{route?}', 'AppController@app')

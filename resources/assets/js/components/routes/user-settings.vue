@@ -41,7 +41,8 @@
                         <icon name="times"/>
                     </button>
                 </file-select>
-                <form-select :disabled="form.images && form.images.length > 0" name="remove_image" v-model="form.remove_image">
+                <form-select :disabled="form.images && form.images.length > 0" name="remove_image"
+                             v-model="form.remove_image">
                     {{ translations.button.removeimage }}
                 </form-select>
             </div>
@@ -81,13 +82,13 @@
 </template>
 
 <script lang="ts">
-    import { Vue, Component, mixins } from "JS/components/class-component";
+    import {Component, mixins} from "JS/components/class-component";
     import route from "JS/components/mixins/route";
     import routeGuard from "JS/components/mixins/route-guard";
     import form from 'JS/components/mixins/form';
     import store from "JS/store";
-    import { User } from "JS/api/types";
-    import { TranslationMessages } from "lang.js";
+    import {User} from "JS/api/types";
+    import {TranslationMessages} from "lang.js";
     import notifications from "JS/notifications";
 
     import {email, maxLength, minLength, required, sameAs} from 'vuelidate/lib/validators';
@@ -134,7 +135,7 @@
                     min: minLength(5),
 
                     slug(value: string) {
-                        if(value === '') return true;
+                        if (value === '') return true;
 
                         return (value.match(/^[a-zA-Z0-9-_]+$/) !== null);
                     }
@@ -148,7 +149,7 @@
                 },
                 images: {
                     image(images: FileList | undefined) {
-                        if(images === undefined) {
+                        if (images === undefined) {
                             return true;
                         }
 
@@ -207,7 +208,7 @@
             images: undefined,
             remove_image: false
         };
-        
+
         get title() {
             return this.$store.getters.trans('interface.page.user-settings');
         }
@@ -245,13 +246,13 @@
             const formData = new FormData(this.$refs.form as HTMLFormElement);
             formData.delete('username');
 
-            if(this.form.images && this.form.images.length > 0)
+            if (this.form.images && this.form.images.length > 0)
                 formData.delete('remove_image');
 
-            if(this.form.password === '')
+            if (this.form.password === '')
                 formData.delete('password');
 
-            if(formData.has('remove_image'))
+            if (formData.has('remove_image'))
                 formData.set('remove_image', formData.get('remove_image') === 'true' ? '1' : '0');
 
             this.$submitForm('user-settings', 'form', (response: Response) => {
@@ -260,14 +261,14 @@
                     message: this.$store.getters.trans('interface.notification.user-settings.success'),
                 });
 
-                if(response.password !== undefined) {
+                if (response.password !== undefined) {
                     notifications.showNotification({
                         type: response.password ? 'success' : 'danger',
                         message: this.$store.getters.trans(`interface.notification.user-settings.password.${response.password ? 'success' : 'failure'}`),
                     })
                 }
 
-                if(response.image !== undefined) {
+                if (response.image !== undefined) {
                     notifications.showNotification({
                         type: response.image ? 'success' : 'danger',
                         message: this.$store.getters.trans(`interface.notification.user-settings.image.${response.image ? 'success' : 'failure'}`),
@@ -289,7 +290,7 @@
 
         created() {
             const user: User | null = this.$store.state.user;
-            if(user) {
+            if (user) {
                 this.form.username = user.username;
                 this.form.email = user.email;
                 this.form.display_name = user.display_name;

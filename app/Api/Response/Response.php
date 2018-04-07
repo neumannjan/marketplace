@@ -8,6 +8,7 @@ use Illuminate\Contracts\Support\Jsonable;
 
 /**
  * API Response class.
+ *
  * @see \App\Api\Response\ResponseInterface
  */
 class Response implements ResponseInterface
@@ -22,8 +23,9 @@ class Response implements ResponseInterface
     protected $content;
 
     /**
-     * @param bool $success
+     * @param bool  $success
      * @param mixed $content
+     *
      * @internal param string $name
      */
     public function __construct($success, $content)
@@ -53,14 +55,14 @@ class Response implements ResponseInterface
      */
     private function assertHasName()
     {
-        if($this->name == null || !is_string($this->name))
-        {
+        if ($this->name == null || ! is_string($this->name)) {
             throw new \RuntimeException("Response does not have a name");
         }
     }
 
     /**
      * Get response content
+     *
      * @return mixed
      */
     protected function getContent()
@@ -86,8 +88,8 @@ class Response implements ResponseInterface
         return [
             $this->name => [
                 "success" => (bool)$this->success,
-                "result" => $result
-            ]
+                "result" => $result,
+            ],
         ];
     }
 
@@ -107,7 +109,8 @@ class Response implements ResponseInterface
         }
 
         $success = $this->success ? "true" : "false";
-        $result = "{\"success\":$success,\"result\":$result}";
+        $result  = "{\"success\":$success,\"result\":$result}";
+
         return "{\"$this->name\":$result}";
     }
 }

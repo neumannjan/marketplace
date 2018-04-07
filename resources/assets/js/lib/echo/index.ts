@@ -46,8 +46,8 @@ export default class ConnectionManager extends EventListener<Payloads, Connectio
     };
 
     public* [Symbol.iterator](): Iterator<Channel> {
-        for(let channels of Object.values(this.channels)) {
-            for(let channel of Object.values(channels)) {
+        for (let channels of Object.values(this.channels)) {
+            for (let channel of Object.values(channels)) {
                 yield channel;
             }
         }
@@ -64,7 +64,7 @@ export default class ConnectionManager extends EventListener<Payloads, Connectio
      * @param {string | null} csrfToken
      */
     private replaceEcho(echo: Echo | null, host: string | null, csrfToken: string | null) {
-        if(this.echo) {
+        if (this.echo) {
             this.echo.disconnect();
         }
 
@@ -72,8 +72,8 @@ export default class ConnectionManager extends EventListener<Payloads, Connectio
         this.host = host;
         this.csrfToken = csrfToken;
 
-        for(let channel of this) {
-            if(this.rejoinOnReconnect[channel.type][channel.name] !== false)
+        for (let channel of this) {
+            if (this.rejoinOnReconnect[channel.type][channel.name] !== false)
                 channel.echo = echo;
             else
                 delete this.channels[channel.type][channel.name];
@@ -95,9 +95,9 @@ export default class ConnectionManager extends EventListener<Payloads, Connectio
                     csrfToken: csrfToken,
                     client: io
                 });
-        
+
                 this.replaceEcho(echo, host, csrfToken);
-        
+
                 if (echo.connector.socket) {
                     const socket: EventTarget = echo.connector.socket;
                     socket.addEventListener('connect', () => this.dispatch(ConnectionManagerEvents.Connect, undefined));
@@ -136,10 +136,10 @@ export default class ConnectionManager extends EventListener<Payloads, Connectio
      * @returns {Channel}
      */
     channel(type: ChannelType, name: string, rejoinOnReconnect?: boolean) {
-        if(rejoinOnReconnect !== undefined)
+        if (rejoinOnReconnect !== undefined)
             this.rejoinOnReconnect[type][name] = rejoinOnReconnect;
 
-        if(!this.channels[type][name]) {
+        if (!this.channels[type][name]) {
             return this.channels[type][name] = new Channel(type, name, this.echo, () => this.leave(name));
         } else {
             return this.channels[type][name];
@@ -151,13 +151,13 @@ export default class ConnectionManager extends EventListener<Payloads, Connectio
      * @param {string} name
      */
     leave(name: string) {
-        for(let type of [ChannelType.Private, ChannelType.Presence, ChannelType.Public]) {
-            if(this.channels[type][name]) {
+        for (let type of [ChannelType.Private, ChannelType.Presence, ChannelType.Public]) {
+            if (this.channels[type][name]) {
                 delete this.channels[type][name];
             }
         }
 
-        if(this.echo) {
+        if (this.echo) {
             this.echo.leave(name);
         }
     }

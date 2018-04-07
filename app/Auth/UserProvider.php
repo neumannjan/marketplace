@@ -40,7 +40,7 @@ class UserProvider extends EloquentUserProvider
 
         if (isset($credentials[self::LOGIN_KEY])) {
             $value = $credentials[self::LOGIN_KEY];
-            $key = $this->guessLoginKey($value);
+            $key   = $this->guessLoginKey($value);
 
             $credentials[$key] = $value;
             unset($credentials[self::LOGIN_KEY]);
@@ -51,7 +51,8 @@ class UserProvider extends EloquentUserProvider
 
     protected function guessLoginKey($value)
     {
-        return (filter_var($value, FILTER_VALIDATE_EMAIL) !== false ? self::EMAIL_KEY : self::USERNAME_KEY);
+        return (filter_var($value, FILTER_VALIDATE_EMAIL) !== false
+            ? self::EMAIL_KEY : self::USERNAME_KEY);
     }
 
 }

@@ -21,30 +21,34 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
     const SCOPE_PERSONAL = 'personal';
     const SCOPE_ANY = 'any';
 
-    protected $fillable = [
-        'from',
-        'to',
-        'from_username',
-        'to_username',
-        'content',
-        'additional',
-        'read',
-        'identifier'
-    ];
+    protected $fillable
+        = [
+            'from',
+            'to',
+            'from_username',
+            'to_username',
+            'content',
+            'additional',
+            'read',
+            'identifier',
+        ];
 
-    protected $casts = [
-        'additional' => 'array'
-    ];
+    protected $casts
+        = [
+            'additional' => 'array',
+        ];
 
-    protected $with = [
-        'from',
-        'to'
-    ];
+    protected $with
+        = [
+            'from',
+            'to',
+        ];
 
     protected $appends = ['identifier'];
 
     /**
      * Message identifier. Provided by the client. Not saved to the database.
+     *
      * @var string
      */
     protected $identifier;
@@ -99,7 +103,8 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
      */
     public function getOfferIdAttribute()
     {
-        return isset($this->additional['offer']) ? $this->additional['offer'] : null;
+        return isset($this->additional['offer']) ? $this->additional['offer']
+            : null;
     }
 
     public function scopeConversationsWith(Builder $query, $user_username)
@@ -123,7 +128,7 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
             ->withoutGlobalScope('order')
             ->select([
                 DB::raw("IF(to_username = ?, from_username, to_username) AS user_username"),
-                DB::raw('MAX(id) AS max_id')
+                DB::raw('MAX(id) AS max_id'),
             ])
             ->addBinding($user_username, 'select')
             ->where(['to_username' => $user_username])
@@ -132,7 +137,8 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
 
         return $query
             ->select(['messages.*', 'm.user_username'])
-            ->join(DB::raw("({$inner->toSql()}) m"), 'messages.id', '=', 'm.max_id')
+            ->join(DB::raw("({$inner->toSql()}) m"), 'messages.id', '=',
+                'm.max_id')
             ->addBinding($inner->getBindings(), 'join');
     }
 

@@ -52,7 +52,7 @@
             requestSearch() {
                 let params: Dictionary<string>;
 
-                if(this.input)
+                if (this.input)
                     params = {query: this.input};
                 else
                     params = {};

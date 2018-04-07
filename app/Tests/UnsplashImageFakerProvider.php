@@ -17,19 +17,23 @@ class UnsplashImageFakerProvider extends FakerProviderBase
 
     /**
      * Returns a random Unsplash image id
+     *
      * @return int
      */
     public function unsplashId()
     {
         $ids = $this->fetchIds();
+
         return (int)$ids[array_rand($ids)]['id'];
     }
 
     /**
      * Creates an Unsplash image URL
-     * @param int $width
-     * @param int $height
+     *
+     * @param int      $width
+     * @param int      $height
      * @param int|null $id Random if null
+     *
      * @return string
      */
     public function unsplashUrl($width, $height, $id = null)
@@ -43,10 +47,12 @@ class UnsplashImageFakerProvider extends FakerProviderBase
 
     /**
      * Downloads an Unsplash image. Returns the path to file.
-     * @param int $width
-     * @param int $height
+     *
+     * @param int      $width
+     * @param int      $height
      * @param int|null $id Random if null
-     * @param string $dir
+     * @param string   $dir
+     *
      * @return string
      */
     public function unsplashImage($width, $height, $id = null, $dir = null)
@@ -60,15 +66,15 @@ class UnsplashImageFakerProvider extends FakerProviderBase
         }
 
         $client = $this->getHttpClient();
-        $name = "faker_{$id}_{$width}_{$height}.jpg";
-        $path = join(DIRECTORY_SEPARATOR, [$dir, $name]);
+        $name   = "faker_{$id}_{$width}_{$height}.jpg";
+        $path   = join(DIRECTORY_SEPARATOR, [$dir, $name]);
 
         if (file_exists($path)) {
             return $path;
         }
 
         $client->get($this->unsplashUrl($width, $height, $id), [
-            'sink' => $path
+            'sink' => $path,
         ]);
 
         return $path;
@@ -76,13 +82,14 @@ class UnsplashImageFakerProvider extends FakerProviderBase
 
     /**
      * Downloads an array of possible image IDs
+     *
      * @return array
      */
     protected function fetchIds()
     {
-        if (!$this->ids) {
-            $client = $this->getHttpClient();
-            $response = $client->get('https://picsum.photos/list');
+        if ( ! $this->ids) {
+            $client    = $this->getHttpClient();
+            $response  = $client->get('https://picsum.photos/list');
             $this->ids = json_decode($response->getBody(), true);
         }
 
@@ -94,7 +101,7 @@ class UnsplashImageFakerProvider extends FakerProviderBase
      */
     protected function getHttpClient()
     {
-        if (!$this->httpClient) {
+        if ( ! $this->httpClient) {
             $this->httpClient = new Client();
         }
 

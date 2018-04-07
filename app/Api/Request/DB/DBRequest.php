@@ -19,6 +19,7 @@ trait DBRequest
 
     /**
      * Public scope to be used by default. Null if the scope parameter is required.
+     *
      * @var string|null
      */
     protected $defaultScope = null;
@@ -34,42 +35,59 @@ trait DBRequest
         $model = new $modelClass;
 
         return [
-                'scope' => $this->defaultScope ?
-                    ['sometimes', Rule::in($model->getPublicScopes())] :
-                    ['required', Rule::in($model->getPublicScopes())]
+                'scope' => $this->defaultScope
+                    ?
+                    ['sometimes', Rule::in($model->getPublicScopes())]
+                    :
+                    ['required', Rule::in($model->getPublicScopes())],
             ] + parent::_rules($validator);
     }
 
     /**
      * Converts API request parameter to its query counterpart. Supports relations using forward slash notation.
+     *
      * @param Builder $query
-     * @param string $param The parameter. Forward slash notation defines relations.
-     * @param string $operator See {@see Builder::where}
-     * @param mixed $value See {@see Builder::where}
-     * @param string $boolean See {@see Builder::where}
+     * @param string  $param The parameter. Forward slash notation defines relations.
+     * @param string  $operator See {@see Builder::where}
+     * @param mixed   $value See {@see Builder::where}
+     * @param string  $boolean See {@see Builder::where}
      */
-    protected function addWhere(Builder $query, $param, $operator = null, $value = null, $boolean = 'and')
-    {
+    protected function addWhere(
+        Builder $query,
+        $param,
+        $operator = null,
+        $value = null,
+        $boolean = 'and'
+    ) {
         if ($value === null) {
             return;
         }
 
         $parts = explode('/', $param, 2);
 
-        if (!isset($parts[1])) {
+        if ( ! isset($parts[1])) {
             $query->where($parts[0], $operator, $value, $boolean);
+
             return;
         }
 
-        $query->whereHas($parts[0], function (Builder $query) use ($parts, $param, $operator, $value, $boolean) {
+        $query->whereHas($parts[0], function (Builder $query) use (
+            $parts,
+            $param,
+            $operator,
+            $value,
+            $boolean
+        ) {
             $query->where($parts[1], $operator, $value, $boolean);
         });
     }
 
     /**
      * Used to add additional parameters to the query
+     *
      * @param Builder|\Laravel\Scout\Builder $query
-     * @param Collection $parameters
+     * @param Collection                     $parameters
+     *
      * @return Builder|\Laravel\Scout\Builder
      */
     protected function additionalQuery($query, Collection $parameters)
@@ -83,7 +101,9 @@ trait DBRequest
 
     /**
      * Builds the query from parameters
+     *
      * @param Collection $parameters
+     *
      * @return Builder
      * @throws AuthorizationException
      */
@@ -96,11 +116,13 @@ trait DBRequest
         /** @var AuthorizationAwareModel|Model $model */
         $model = new $modelClass;
 
-        if (!$model->canUsePublicScope($scope, \Auth::user())) {
+        if ( ! $model->canUsePublicScope($scope, \Auth::user())) {
             $this->authorizationError();
         }
 
-        if (!$model->validatePublicScopeParams($scope, $this->getDBParameters($parameters)->keys())) {
+        if ( ! $model->validatePublicScopeParams($scope,
+            $this->getDBParameters($parameters)->keys())
+        ) {
             $this->authorizationError();
         }
 
@@ -118,6 +140,7 @@ trait DBRequest
 
     /**
      * Called after the query is requested.
+     *
      * @param Model[]|Model $results
      */
     protected function onResults($results)

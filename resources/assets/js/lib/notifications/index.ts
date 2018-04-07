@@ -17,21 +17,22 @@ function isIdentifierNotification<Identifier extends string>(notification: Anony
 }
 
 export default abstract class NotificationManager<Identifier extends string = string> extends EventListener<Payloads<Identifier>, NotificationEvents> implements NotificationManagerInterface<Identifier> {
-    protected hidden: {[index: string]: boolean} = {};
+    protected hidden: { [index: string]: boolean } = {};
 
     protected abstract doShowNotification(notification: Notification<Identifier | string>): void;
+
     protected abstract doHideNotification(identifier: Identifier | string): void;
 
     showNotification(notification: AnonymousNotification | Notification<Identifier>): string {
         let identifier: string;
 
-        if(!isIdentifierNotification(notification)) {
+        if (!isIdentifierNotification(notification)) {
             identifier = 'T' + random.int32().toString();
             (notification as Notification).id = identifier;
         } else {
             identifier = notification.id;
 
-            if(this.hidden[identifier] === true) {
+            if (this.hidden[identifier] === true) {
                 return identifier;
             }
         }
@@ -50,7 +51,7 @@ export default abstract class NotificationManager<Identifier extends string = st
     forceHidden(identifier: string | Identifier, hidden: boolean = false): void {
         this.hidden[identifier] = hidden;
 
-        if(hidden) {
+        if (hidden) {
             this.hideNotification(identifier);
         }
     }
