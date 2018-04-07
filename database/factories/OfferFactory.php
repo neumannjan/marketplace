@@ -11,9 +11,10 @@ $factory->define(\App\Offer::class, function (Faker $faker) {
         'listed_at' => $faker->dateTimeBetween('-3 months'),
         'price' => $faker->randomFloat(3, 0, 1000),
         'currency_code' => $faker->currencyCode,
-        'status' => $faker->biasedNumberBetween(0, 2, function ($i) {
+        /*'status' => $faker->biasedNumberBetween(0, 2, function ($i) { //TODO add status: sold and status: draft
             return sin($i * M_PI);
-        }),
+        }),*/
+        'status' => \App\Offer::STATUS_AVAILABLE,
         'bumped_times' => $faker->biasedNumberBetween(0, \App\Offer::MAX_BUMP_TIMES, function($i) {
             return 1 - sqrt($i);
         }),
