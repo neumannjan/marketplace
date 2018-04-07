@@ -83,6 +83,8 @@ const state: State = {
     locale: 'en',
     fallback_locale: 'en',
     available_locales: ['en'],
+    currency_default: 0,
+    locale_names: {},
     user: null,
     is_admin: false,
     connection_http: null,
@@ -200,6 +202,11 @@ const getters = {
     transChoice(state: State) {
         return (key: string, number: number, replacements?: TranslationReplacements): string => {
             return lang.choice(key, number, replacements, state.locale);
+        }
+    },
+    localeName(state: State) {
+        return (locale: string) => {
+            return state.locale_names[locale] ? state.locale_names[locale] : locale;
         }
     }
 };

@@ -166,7 +166,9 @@ export interface GlobalResponse {
 export interface InitialResponse extends GlobalResponse {
     messages: TranslationMessages,
     unread_conversations?: Conversation[],
-    max_file_uploads: number
+    max_file_uploads: number,
+    locale_names: {[locale: string]: string},
+    currency_default: string | 0
 }
 
 /**

@@ -84,6 +84,11 @@ class User extends Authenticatable implements AuthorizationAwareModel
         return $this->attributes['display_name'];
     }
 
+    public function getLocaleAttribute()
+    {
+        return isset($this->options['locale']) ? $this->options['locale'] : config('app.fallback_locale');
+    }
+
     /**
      * @inheritDoc
      */

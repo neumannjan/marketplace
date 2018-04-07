@@ -47,6 +47,14 @@
             </div>
 
             <div class="mb-5">
+                <h2 class="h3 mb-2">{{ translations.form.additional }}</h2>
+                <label for="select-locale">{{ translations.form.locale }}</label>
+                <select class="custom-select" v-model="form.locale" id="select-locale" name="locale">
+                    <option v-for="(name, locale) of locales" :key="locale" :value="locale">{{ name }}</option>
+                </select>
+            </div>
+
+            <div class="mb-5">
                 <h2 class="h3 mb-2">{{ translations.form.password_change }}</h2>
                 <form-input class="form-group"
                             :label="translations.form.password"
@@ -97,6 +105,7 @@
         display_name: string,
         password: string,
         password_confirmation: string,
+        locale: string,
         images: FileList | undefined,
         remove_image: boolean
     }
@@ -194,6 +203,7 @@
             display_name: "",
             password: "",
             password_confirmation: "",
+            locale: store.state.locale,
             images: undefined,
             remove_image: false
         };
@@ -202,15 +212,21 @@
             return this.$store.getters.trans('interface.page.user-settings');
         }
 
+        get locales() {
+            return (this.$store as typeof store).state.locale_names;
+        }
+
         get translations(): TranslationMessages {
             return {
                 form: {
                     basic: this.$store.getters.trans('interface.form.user-information'),
+                    additional: this.$store.getters.trans('interface.form.additional-user-settings'),
                     username: this.$store.getters.trans('interface.form.username'),
                     email: this.$store.getters.trans('interface.form.email'),
                     display_name: this.$store.getters.trans('interface.form.display_name'),
                     password_change: this.$store.getters.trans('interface.form.password_change'),
                     password: this.$store.getters.trans('interface.form.password'),
+                    locale: this.$store.getters.trans('interface.form.locale'),
                     confirm: this.$store.getters.trans('interface.form.password_confirmation'),
                     image: this.$store.getters.trans('interface.form.profile-image'),
                 },

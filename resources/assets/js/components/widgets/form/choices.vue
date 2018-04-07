@@ -50,6 +50,10 @@
         @Watch('items')
         onItemsChanged(val: any[]) {
             this.choices.setChoices(val, 'value', 'label', true);
+
+            if (this.value !== this.choices.getValue(true)) {
+                this.choices.setValueByChoice(this.value);
+            }
         }
 
         @Watch('value')

@@ -170,12 +170,12 @@
         valids: { [index: string]: boolean };
     }
 
-    const emptyOfferForm: OfferFormRouteInterface = {
+    const emptyOfferForm = (): OfferFormRouteInterface => ({
         form: {
             name: "",
             description: "",
             price: "",
-            currency: 0,
+            currency: store.state.currency_default,
             images: []
         },
         offer: null,
@@ -183,11 +183,11 @@
         imageOrder: [],
         errors: {},
         valids: {},
-    };
+    });
 
     function fetchOffer(params: { id?: number }): Promise<OfferFormRouteInterface> {
         if(params.id === undefined) {
-            return Promise.resolve(emptyOfferForm);
+            return Promise.resolve(emptyOfferForm());
         } else {
             return api.requestSingle<Offer>('offer', {
                     scope: store.getters.scope.offer,
@@ -281,7 +281,7 @@
 
         offer: Offer | null = null;
         form: FormData = {
-            currency: 0
+            currency: store.state.currency_default
         };
         formModified: boolean = false;
         imageOrder: ImageOrderInstance[] = [];

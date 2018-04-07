@@ -8,7 +8,7 @@ use Closure;
 /**
  * Middleware that logs out users that are inactive or banned.
  */
-class LogoutUserIfNotActive
+class LogoutInactiveUser
 {
     /**
      * Handle an incoming request.

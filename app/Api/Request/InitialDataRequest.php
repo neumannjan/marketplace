@@ -18,7 +18,10 @@ class InitialDataRequest extends GlobalDataRequest
     {
         $array = parent::get($request);
 
+        $localeInfo = include app()->path('locales.php');
+
         $array['messages'] = [];
+        $array['locale_names'] = [];
         foreach (config('app.available_locales') as $lang) {
             $validationMessages = include app()->resourcePath("lang/$lang/validation.php");
             $interfaceMessages = include app()->resourcePath("lang/$lang/interface.php");
@@ -38,7 +41,11 @@ class InitialDataRequest extends GlobalDataRequest
             ];
 
             $array['messages']["$lang.interface"] = $interfaceMessages;
+
+            $array['locale_names'][$lang] = $localeInfo[$lang]['native'];
         }
+
+        $array['currency_default'] = config('app.currency');
 
         /** @var User $user */
         $user = \Auth::user();

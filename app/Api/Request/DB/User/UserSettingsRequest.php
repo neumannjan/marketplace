@@ -11,6 +11,7 @@ use App\User;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
 class UserSettingsRequest extends Request
@@ -45,6 +46,7 @@ class UserSettingsRequest extends Request
         $rules['password'][] = 'confirmed';
         $rules['image'] = ['sometimes', 'file', 'image'];
         $rules['remove_image'] = ['sometimes', 'boolean'];
+        $rules['locale'] = ['required', 'string', Rule::in(config('app.available_locales'))];
 
         return $rules;
     }
@@ -65,6 +67,10 @@ class UserSettingsRequest extends Request
             $user->password = \Hash::make($parameters['password']);
             $passwordChanged = true;
         }
+
+        $options = $user->options;
+        $options['locale'] = $parameters['locale'];
+        $user->options = $options;
 
         $imageChanged = null;
         if ($parameters->has('image') || $parameters->get('remove_image')) {

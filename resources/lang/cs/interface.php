@@ -13,11 +13,17 @@ return [
     'connection' => [
         'http' => [
             'lost' => 'Připojení k internetu bylo ztraceno.',
-            'gained' => 'Připojení k internetu bylo obnoveno.'
+            'gained' => 'Připojení k internetu bylo obnoveno.',
         ],
-        'websocket' => ['lost' => 'Připojení k chatu bylo ztraceno.', 'gained' => 'Připojení k chatu bylo obnoveno.']
+        'websocket' => [
+            'lost' => 'Připojení k chatu bylo ztraceno.',
+            'gained' => 'Připojení k chatu bylo obnoveno.',
+        ],
     ],
-    'error' => ['unknown' => 'Neznámá chyba.', 'image' => 'Chyba stažení obrázku.'],
+    'error' => [
+        'unknown' => 'Neznámá chyba.',
+        'image' => 'Chyba stažení obrázku.',
+    ],
     'form' => [
         'username' => 'Uživatelské jméno',
         'display_name' => 'Zobrazené jméno',
@@ -32,7 +38,7 @@ return [
         'extended' => [
             'offer-name' => 'Co prodáváte?',
             'offer-description' => 'Popište svoji nabídku trochu více',
-            'offer-images' => 'Přidejte nějaké fotografie'
+            'offer-images' => 'Přidejte nějaké fotografie',
         ],
         'offer-name' => 'Název nabídky',
         'offer-description' => 'Popis nabídky',
@@ -41,7 +47,9 @@ return [
         'reorder-images' => 'Přeskupte fotografie (přetáhnutím)',
         'password_change' => 'Nové heslo',
         'user-information' => 'Základní informace',
-        'profile-image' => 'Profilový obrázek'
+        'profile-image' => 'Profilový obrázek',
+        'additional-user-settings' => 'Další nastavení',
+        'locale' => 'Jazyk',
     ],
     'button' => [
         'profile' => 'Zobrazit profil',
@@ -79,12 +87,12 @@ return [
         'search' => 'Hledat',
         'update-profile' => 'Aktualizovat profil',
         'clear-image' => 'Nenahrát žádnou fotku',
-        'remove-profile-image' => 'Odstranit můj profilový obrázek úplně.'
+        'remove-profile-image' => 'Odstranit můj profilový obrázek úplně.',
     ],
     'hint' => [
         'login' => 'Přihlašovací jméno nebo e-mail',
         'type-message' => 'Napište zprávu',
-        'empty_change' => 'Nechte prázdné, pokud nechcete měnit'
+        'empty_change' => 'Nechte prázdné, pokud nechcete měnit',
     ],
     'page' => [
         'login' => 'Přihlásit se',
@@ -102,7 +110,7 @@ return [
         'dashboard' => 'Nástěnka',
         'me' => 'Můj profil',
         'logout' => 'Odhlásit se',
-        'user-settings' => 'Moje nastavení'
+        'user-settings' => 'Moje nastavení',
     ],
     'confirm' => [
         'ban' => 'Jste si jist/a, že chcete dát ban uživateli :user?',
@@ -113,7 +121,7 @@ return [
         'offer-report' => 'Jste si jist/a, že chcete nabídku ":offer" nahlásit jako nevhodnou?',
         'offer-mark-appropriate' => 'Jste si jist/a, že chcete nabídku ":offer" označit za vhodnou?',
         'form-leave' => 'Jste si jist/a, že chcete odejít? Máte neuložené změny!',
-        'message' => 'Jste si jist/a, že chcete odeslat uživateli :user zprávu?'
+        'message' => 'Jste si jist/a, že chcete odeslat uživateli :user zprávu?',
     ],
     'notification' => [
         'before' => [
@@ -122,28 +130,28 @@ return [
             'offer-remove' => 'Nabídka ":offer" je právě mazána.',
             'offer-bump' => 'Popostrkuji nabídku ":offer" nahoru.',
             'offer-report' => 'Nahlašování nabídky ":offer".',
-            'offer-mark-appropriate' => 'Označování nabídky ":offer" za vhodnou.'
+            'offer-mark-appropriate' => 'Označování nabídky ":offer" za vhodnou.',
         ],
         'after' => [
             'ban' => 'Uživatel :user byl úspěšně zabanován.',
             'unban' => 'Uživatel :user byl úspěšně očištěn od banu.',
             'offer-remove' => 'Nabídka ":offer" byla úspěšně smazána.',
             'offer-bump' => 'Nabídka ":offer" byla úspěšně popostrčena.',
-            'offer-report' => 'Nabídka ":offer" byla úspěšně nahlášena.'
+            'offer-report' => 'Nabídka ":offer" byla úspěšně nahlášena.',
         ],
         'messages' => 'Máte jednu novou zprávu.|Máte :amount nové zprávy.|Máte :amount nových zpráv.',
         'user-settings' => [
             'password' => [
                 'success' => 'Heslo bylo úspěšně aktualizováno.',
-                'failure' => 'Heslo se nepodařilo aktualizovat.'
+                'failure' => 'Heslo se nepodařilo aktualizovat.',
             ],
             'image' => [
                 'success' => 'Profilový obrázek byl úspěšně aktualizován. Změna se nemusí projevit ihned.',
-                'failure' => 'Profilový obrázek se nepodařilo aktualizovat.'
+                'failure' => 'Profilový obrázek se nepodařilo aktualizovat.',
             ],
             'success' => 'Profil byl úspěšně aktualizován.',
-            'failure' => 'Profil se nepodařilo aktualizovat.'
-        ]
+            'failure' => 'Profil se nepodařilo aktualizovat.',
+        ],
     ],
     'notice' => [
         'bumps-none' => 'Již nelze popostrčit!',
@@ -153,22 +161,22 @@ return [
         'offer-reported' => 'Nahlášeno :timesx',
         'images-loading' => 'Ne všechny obrázky jsou ještě připraveny.',
         'list-end' => 'Dosáhl/a jste na konec.',
-        'user-buy' => 'Uživatel :user chce něco koupit!'
+        'user-buy' => 'Uživatel :user chce něco koupit!',
     ],
     'label' => [
         'options' => [
             'additional' => 'Další možnosti',
             'owned' => 'Možnosti vlastníka',
-            'admin' => 'Možnosti administrátora'
+            'admin' => 'Možnosti administrátora',
         ],
-        'page-current' => '(zde se nacházíte)'
+        'page-current' => '(zde se nacházíte)',
     ],
     'choices' => [
         'no-results' => 'Nic nenalezeno',
         'no-choices' => 'Žádné možnosti výběru',
         'select' => 'Stisknout pro výběr',
         'add' => 'Stiskněte Enter pro přidání ":value"',
-        'max' => 'Lze přidat jen :max hodnot.'
+        'max' => 'Lze přidat jen :max hodnot.',
     ],
     'message' => [
         'error' => 'Chyba',
@@ -176,8 +184,15 @@ return [
         'awaiting' => 'Čeká na odeslání',
         'read' => 'Přečteno',
         'sent' => 'Odesláno',
-        'typing' => 'Píše...'
+        'typing' => 'Píše...',
     ],
-    'accessibility' => ['profile-img' => 'Profilový obrázek', 'offer-image' => 'Fotografie nabídky'],
-    'offer' => ['draft' => 'Koncept', 'sold' => 'Prodáno', 'expired' => 'Vypršelo'],
+    'accessibility' => [
+        'profile-img' => 'Profilový obrázek',
+        'offer-image' => 'Fotografie nabídky',
+    ],
+    'offer' => [
+        'draft' => 'Koncept',
+        'sold' => 'Prodáno',
+        'expired' => 'Vypršelo',
+    ],
 ];

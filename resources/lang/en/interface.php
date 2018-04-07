@@ -13,9 +13,12 @@ return [
     'connection' => [
         'http' => [
             'lost' => 'Internet connection was lost.',
-            'gained' => 'Internet connection was reestablished.'
+            'gained' => 'Internet connection was reestablished.',
         ],
-        'websocket' => ['lost' => 'Chat connection was lost.', 'gained' => 'Chat connection was reestablished.']
+        'websocket' => [
+            'lost' => 'Chat connection was lost.',
+            'gained' => 'Chat connection was reestablished.',
+        ],
     ],
     'error' => ['unknown' => 'Unknown error.', 'image' => 'Image fetch error.'],
     'form' => [
@@ -32,7 +35,7 @@ return [
         'extended' => [
             'offer-name' => 'What are you selling?',
             'offer-description' => 'Describe the offer a little more',
-            'offer-images' => 'Add some photos'
+            'offer-images' => 'Add some photos',
         ],
         'offer-name' => 'Offer name',
         'offer-description' => 'Offer description',
@@ -41,7 +44,9 @@ return [
         'reorder-images' => 'Reorder the photos (use drag & drop)',
         'password_change' => 'New password',
         'user-information' => 'Basic information',
-        'profile-image' => 'Profile image'
+        'profile-image' => 'Profile image',
+        'additional-user-settings' => 'Additional settings',
+        'locale' => 'Locale',
     ],
     'button' => [
         'profile' => 'Show Profile',
@@ -79,12 +84,12 @@ return [
         'search' => 'Search',
         'update-profile' => 'Update Profile',
         'clear-image' => 'Do not upload an image',
-        'remove-profile-image' => 'Remove my profile image altogether.'
+        'remove-profile-image' => 'Remove my profile image altogether.',
     ],
     'hint' => [
         'login' => 'Username or e-mail',
         'type-message' => 'Type a message',
-        'empty_change' => 'Keep empty if you do not want to change'
+        'empty_change' => 'Keep empty if you do not want to change',
     ],
     'page' => [
         'login' => 'Sign In',
@@ -102,7 +107,7 @@ return [
         'dashboard' => 'Dashboard',
         'me' => 'My Profile',
         'logout' => 'Sign Out',
-        'user-settings' => 'My Settings'
+        'user-settings' => 'My Settings',
     ],
     'confirm' => [
         'ban' => 'Are you sure you want to ban user :user?',
@@ -113,7 +118,7 @@ return [
         'offer-report' => 'Are you sure you want to report the offer ":offer" as inappropriate?',
         'offer-mark-appropriate' => 'Are you sure you want to mark the offer ":offer" as appropriate?',
         'form-leave' => 'Are you sure you want to leave? You have unsaved changes!',
-        'message' => 'Are you sure you want to send user :user a message?'
+        'message' => 'Are you sure you want to send user :user a message?',
     ],
     'notification' => [
         'before' => [
@@ -122,28 +127,28 @@ return [
             'offer-remove' => 'Offer ":offer" is being removed.',
             'offer-bump' => 'Bumping offer ":offer".',
             'offer-report' => 'Reporting offer ":offer".',
-            'offer-mark-appropriate' => 'Marking offer ":offer" as appropriate.'
+            'offer-mark-appropriate' => 'Marking offer ":offer" as appropriate.',
         ],
         'after' => [
             'ban' => 'User :user was successfully banned.',
             'unban' => 'User :user was successfully unbanned.',
             'offer-remove' => 'Offer ":offer" was successfully removed.',
             'offer-bump' => 'Offer ":offer" was successfully bumped.',
-            'offer-report' => 'Offer ":offer" has been successfully reported.'
+            'offer-report' => 'Offer ":offer" has been successfully reported.',
         ],
         'messages' => 'You have a new message.|You have :amount new messages.',
         'user-settings' => [
             'password' => [
                 'success' => 'Password was successfully updated.',
-                'failure' => 'Password failed to update.'
+                'failure' => 'Password failed to update.',
             ],
             'image' => [
                 'success' => 'Profile image was successfully updated. The change may not appear immediately.',
-                'failure' => 'Profile image failed to update.'
+                'failure' => 'Profile image failed to update.',
             ],
             'success' => 'Profile was successfully updated.',
-            'failure' => 'Profile failed to update.'
-        ]
+            'failure' => 'Profile failed to update.',
+        ],
     ],
     'notice' => [
         'bumps-none' => 'No bumps left!',
@@ -153,22 +158,22 @@ return [
         'offer-reported' => '{1} Reported once|{2} Reported twice|[3,*] Reported :times times',
         'images-loading' => 'Not all images are ready yet.',
         'list-end' => 'You reached the end.',
-        'user-buy' => 'User :user wants to buy something!'
+        'user-buy' => 'User :user wants to buy something!',
     ],
     'label' => [
         'options' => [
             'additional' => 'Additional options',
             'owned' => 'Owner options',
-            'admin' => 'Administrator options'
+            'admin' => 'Administrator options',
         ],
-        'page-current' => '(current)'
+        'page-current' => '(current)',
     ],
     'choices' => [
         'no-results' => 'No results found',
         'no-choices' => 'No choices to choose from',
         'select' => 'Press to select',
         'add' => 'Press Enter to add ":value"',
-        'max' => 'Only :max values can be added.'
+        'max' => 'Only :max values can be added.',
     ],
     'message' => [
         'error' => 'Error',
@@ -176,8 +181,11 @@ return [
         'awaiting' => 'Awaiting send',
         'read' => 'Read',
         'sent' => 'Sent',
-        'typing' => 'Typing...'
+        'typing' => 'Typing...',
     ],
-    'accessibility' => ['profile-img' => 'Profile Image', 'offer-image' => 'Offer Photo'],
+    'accessibility' => [
+        'profile-img' => 'Profile Image',
+        'offer-image' => 'Offer Photo',
+    ],
     'offer' => ['draft' => 'Draft', 'sold' => 'Sold', 'expired' => 'Expired'],
 ];

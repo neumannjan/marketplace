@@ -24,9 +24,9 @@
 
     import 'vue-awesome/icons/plus';
     import 'vue-awesome/icons/comment';
-    import 'vue-awesome/icons/language';
     import 'vue-awesome/icons/angle-left';
     import 'vue-awesome/icons/angle-up';
+
     import notifications, {NotificationTypes} from 'JS/notifications';
     import {NotificationEvents} from 'JS/lib/notifications';
     import {Route} from 'vue-router';
@@ -45,14 +45,6 @@
         [index: string]: boolean
     }
 
-    const alwaysButtons: Button[] = [
-        {
-            id: FloatingButtonTypes.Language,
-            icon: 'language',
-            label: () => store.getters.trans('interface.button.language-toggle')
-        },
-    ];
-
     const mainButtons: Button[] = [
         {
             id: FloatingButtonTypes.Add,
@@ -66,7 +58,6 @@
             icon: 'comment',
             label: () => store.getters.trans('interface.button.chat')
         },
-        ...alwaysButtons,
     ];
 
     const backButton: Button = {
@@ -147,7 +138,7 @@
                     if (this.isAuthenticated) {
                         return this.backShown ? [...mainButtons, backButton] : mainButtons;
                     } else {
-                        return this.backShown ? [...alwaysButtons, backButton] : alwaysButtons;
+                        return this.backShown ? [backButton] : [];
                     }
                 } else {
                     return [upButton];

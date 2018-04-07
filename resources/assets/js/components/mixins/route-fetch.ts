@@ -12,8 +12,17 @@ export interface RouteFetchMixinInterface {
     doFetch(): void;
 }
 
+function get<R>(from: R | (() => R)) {
+    if(typeof from === 'function')
+        return from();
+    else
+        return from;
+}
+
 export default function <R extends Result, P extends object>
-(fetchAsyncFunction: (params: P) => Promise<R | null>, nullObj: R, before: boolean = true, after?: (vm: Vue) => void) {
+(fetchAsyncFunction: (params: P) => Promise<R | null>, nullObj: R | (() => R), before: boolean = true, after?: (vm: Vue) => void) {
+
+    const _nullObj = get(nullObj);
 
     async function handleResult(vm: Vue, result: R) {
         function setValues(from: R) {
@@ -21,7 +30,7 @@ export default function <R extends Result, P extends object>
                 vm.$data[key] = value;
         }
 
-        setValues(nullObj);
+        setValues(_nullObj);
         await vm.$nextTick();
 
         setValues(result);
@@ -47,7 +56,7 @@ export default function <R extends Result, P extends object>
                 notifyLoading();
                 fetchAsyncFunction(<any>to.params).then(result => {
                     next((vm: RouteFetchMixin & Vue) => {
-                        handleResult(vm, result ? result : nullObj);
+                        handleResult(vm, result ? result : _nullObj);
                     });
                 });
             } else {
@@ -66,7 +75,7 @@ export default function <R extends Result, P extends object>
             notifyLoading();
             fetchAsyncFunction(<any>to.params).then(result => {
                 if (!before) next();
-                handleResult(this, result ? result : nullObj);
+                handleResult(this, result ? result : _nullObj);
                 if (before) next();
             });
         }
@@ -98,7 +107,7 @@ export default function <R extends Result, P extends object>
             if (!this.$lastRouteFetch || !routesMatch(this.$lastRouteFetch, this.$route)) {
                 this.$lastRouteFetch = this.$route;
                 notifyLoading();
-                fetchAsyncFunction(<any>this).then(result => handleResult(this, result ? result : nullObj));
+                fetchAsyncFunction(<any>this).then(result => handleResult(this, result ? result : _nullObj));
             }
         }
     }
