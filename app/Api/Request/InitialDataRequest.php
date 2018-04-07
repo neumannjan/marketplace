@@ -18,21 +18,27 @@ class InitialDataRequest extends GlobalDataRequest
     {
         $array = parent::get($request);
 
-        $array['messages'] = [
-            'validation' => [
-                'min' => trans('validation.min.string'),
-                'max' => trans('validation.max.string'),
-                'maxArray' => trans('validation.max.array'),
-                'required' => trans('validation.required'),
-                'slug' => trans('validation.slug'),
-                'numeric' => trans('validation.numeric'),
-                'containsNumeric' => trans('validation.contains.numeric'),
-                'containsNonNumeric' => trans('validation.contains.non_numeric'),
-                'confirmed' => trans('validation.confirmed'),
-                'email' => trans('validation.email'),
-                'image' => trans('validation.image'),
-            ]
-        ];
+        $array['messages'] = [];
+        foreach (config('app.available_locales') as $lang) {
+            $validationMessages = include app()->resourcePath("lang/$lang/validation.php");
+            $interfaceMessages = include app()->resourcePath("lang/$lang/interface.php");
+
+            $array['messages']["$lang.validation"] = [
+                'min' => $validationMessages['min']['string'],
+                'max' => $validationMessages['max']['string'],
+                'maxArray' => $validationMessages['max']['array'],
+                'required' => $validationMessages['required'],
+                'slug' => $validationMessages['slug'],
+                'numeric' => $validationMessages['numeric'],
+                'containsNumeric' => $validationMessages['contains']['numeric'],
+                'containsNonNumeric' => $validationMessages['contains']['non_numeric'],
+                'confirmed' => $validationMessages['confirmed'],
+                'email' => $validationMessages['email'],
+                'image' => $validationMessages['image'],
+            ];
+
+            $array['messages']["$lang.interface"] = $interfaceMessages;
+        }
 
         /** @var User $user */
         $user = \Auth::user();

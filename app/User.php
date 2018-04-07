@@ -120,16 +120,30 @@ class User extends Authenticatable implements AuthorizationAwareModel
 
     /**
      * Get validation rules for a creation request.
+     * @param bool $updating
      * @return array
      */
-    public static function getValidationRules()
+    public static function getValidationRules($updating = false)
     {
-        return [
-            'username' => ['required', 'string', 'min:5', 'max:255', 'unique:users', new SlugRule()],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', new ContainsNumericRule(), new ContainsNonNumericRule()],
+        $rules = [
+            'password' => [
+                $updating ? 'sometimes' : 'required',
+                'string',
+                'min:8',
+                new ContainsNumericRule(),
+                new ContainsNonNumericRule()
+            ],
             'display_name' => ['nullable', 'string', 'max:50'],
         ];
+
+        if (!$updating) {
+            $rules['username'] = ['required', 'string', 'min:5', 'max:255', 'unique:users', new SlugRule()];
+            $rules['email'] = ['required', 'string', 'email', 'max:255', 'unique:users'];
+        } else {
+            $rules['email'] = ['required', 'string', 'email', 'max:255'];
+        }
+
+        return $rules;
     }
 
     public function offers()

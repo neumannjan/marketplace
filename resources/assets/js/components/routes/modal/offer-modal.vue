@@ -1,14 +1,14 @@
 <template>
     <offer-route :id="parseInt(offer)">
         <template slot="header-end">
-            <!-- TODO translate -->
             <div class="btn-wrapper ml-auto">
-                <button type="button" aria-label="Expand" class="btn btn-link text-muted py-0"
-                    @click="goToFull">
-                    <icon name="expand" label="Expand" :style="{verticalAlign: 'middle'}"/>
+                <button type="button" :title="translations.expand" class="btn btn-link text-muted py-0"
+                        @click="goToFull">
+                    <icon name="expand" :style="{verticalAlign: 'middle'}"/>
                 </button>
-                <button type="button" class="btn btn-link text-muted py-0" aria-label="Close" @click="$emit('close')">
-                    <icon name="times" label="Close" :style="{verticalAlign: 'middle'}"/>
+                <button type="button" class="btn btn-link text-muted py-0" :title="translations.close"
+                        @click="$emit('close')">
+                    <icon name="times" :style="{verticalAlign: 'middle'}"/>
                 </button>
             </div>
         </template>
@@ -28,6 +28,14 @@
         name: "offer-modal",
         props: {
             offer: {}
+        },
+        computed: {
+            translations() {
+                return {
+                    expand: this.$store.getters.trans('interface.button.expand'),
+                    close: this.$store.getters.trans('interface.button.close'),
+                }
+            }
         },
         methods: {
             goToFull() {

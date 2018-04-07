@@ -14,7 +14,7 @@
                     </router-link>
                 </template>
                 <template v-else>
-                    <h1 class="h6 m-0">Chat</h1>
+                    <h1 class="h6 m-0">{{ translations.chat }}</h1>
                 </template>
                 <button class="btn btn-link btn-link-gray btn-icon btn-wrapper ml-auto" @click="onClose">
                     <icon name="close" label="close"/>
@@ -44,6 +44,7 @@
 
     import "vue-awesome/icons/arrow-left";
     import "vue-awesome/icons/close";
+    import {TranslationMessages} from 'lang.js';
 
     export default Vue.extend({
         name: 'chat-card',
@@ -60,6 +61,13 @@
             indicatorSize: {
                 type: Number,
                 default: 14
+            }
+        },
+        computed: {
+            translations(): TranslationMessages {
+                return {
+                    chat: this.$store.getters.trans('interface.page.chat'),
+                }
             }
         },
         data: (): {

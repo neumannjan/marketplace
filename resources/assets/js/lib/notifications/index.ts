@@ -1,5 +1,6 @@
-import { NotificationManagerInterface, Notification, NotificationType, AnonymousNotification } from "./typings";
+import {AnonymousNotification, Notification, NotificationManagerInterface} from "./typings";
 import EventListener from "JS/lib/event-listener";
+import {random} from "JS/app";
 
 export enum NotificationEvents {
     Shown = 'Shown',
@@ -25,7 +26,7 @@ export default abstract class NotificationManager<Identifier extends string = st
         let identifier: string;
 
         if(!isIdentifierNotification(notification)) {
-            identifier = 'T' + Date.now().toString();
+            identifier = 'T' + random.int32().toString();
             (notification as Notification).id = identifier;
         } else {
             identifier = notification.id;

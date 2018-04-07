@@ -28,7 +28,7 @@
 
             <footer class="footer">
                 <div class="footer-inner">
-                    <span class="ml-auto">&copy; Company 2018</span> <!--TODO replace-->
+                    <span class="ml-auto">&copy; {{copyright}}</span>
                 </div>
             </footer>
         </div>
@@ -40,14 +40,12 @@
 </template>
 
 <script lang="ts">
-    import {cached, CachedRouteComponents, routeEvents, queryModalRouter, RouteEvents, QueryModalRouter} from 'JS/router';
-    import { Conversation, Message } from 'JS/api/types';
+    import {cached, queryModalRouter, QueryModalRouter, RouteEvents, routeEvents} from 'JS/router';
     import {mapState} from 'vuex';
-    import appEvents,{ Events } from "JS/events";
+    import appEvents, {Events} from "JS/events";
     import store, {State} from 'JS/store';
     import Vue from 'vue';
-    import notifications,{ NotificationTypes } from 'JS/notifications';
-    import { Route } from 'vue-router/types/router';
+    import notifications, {NotificationTypes} from 'JS/notifications';
     import initial from 'JS/store/initial';
 
     import TopNav from './widgets/nav/vertical/top-nav.vue';
@@ -115,6 +113,9 @@
                 } as Has;
 
                 return has;
+            },
+            copyright(): string {
+                return `${this.$store.state.name} ${(new Date()).getFullYear()}`;
             }
         },
         methods: {
@@ -130,7 +131,7 @@
                 notifications.showNotification({
                     id: getID(isHttp, value),
                     persistent: !value,
-                    message: `TODO message: ${isHttp ? 'http' : 'websocket'} connection ${value ? 'regained' : 'lost'}.`,
+                    message: store.getters.trans(`interface.connection.${isHttp ? 'http' : 'websocket'}.${value ? 'gained' : 'lost'}`),
                     type: value ? 'success' : 'danger'
                 });
 
@@ -167,10 +168,11 @@
         },
         created() {
             const addNotification = (amount: number) => {
-                //TODO translate
                 notifications.showNotification({
                     id: NotificationTypes.NewMessages,
-                    message: amount > 1 ? 'You have new messages.' : 'You have a new message.',
+                    message: store.getters.transChoice('interface.notification.messages', amount, {
+                        amount: amount.toString()
+                    }),
                     type: 'primary'
                 });
             };

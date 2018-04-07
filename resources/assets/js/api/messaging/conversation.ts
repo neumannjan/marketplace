@@ -1,13 +1,13 @@
-import { ConversationMediatorInterface, IntermediateMessage, NormalizedMessage } from "JS/api/messaging/typings";
-import { Message, PaginatedResponse, ContinuousResponse, User, MessageReceivedNotifyRequest, MessageAdditional } from "JS/api/types";
-import EventListener from "JS/lib/event-listener";
+import {ConversationMediatorInterface, IntermediateMessage, NormalizedMessage} from "JS/api/messaging/typings";
+import {ContinuousResponse, Message, MessageAdditional, User} from "JS/api/types";
 import api from "JS/api";
-import EventPropagator, { EventPropagatorAttachFunction } from "JS/lib/event-propagator";
-import { isMine, getConversationChannelName, normalizeMessage } from "JS/api/messaging/helpers";
-import { Channel, ChannelType } from "JS/lib/echo/channel";
+import EventPropagator, {EventPropagatorAttachFunction} from "JS/lib/event-propagator";
+import {getConversationChannelName, isMine, normalizeMessage} from "JS/api/messaging/helpers";
+import {Channel, ChannelType} from "JS/lib/echo/channel";
 import echo from "JS/echo";
 import store from "JS/store";
-import { ConnectionManagerEvents } from "JS/lib/echo";
+import {ConnectionManagerEvents} from "JS/lib/echo";
+import {random} from "JS/app";
 
 export enum ConversationEvents {
     Received = 'Received',
@@ -107,7 +107,7 @@ export class ConversationMediator extends EventPropagator<Payloads, Conversation
      * @param additional {MessageAdditional}
      */
     sendMessage(content: string, additional: MessageAdditional): IntermediateMessage {
-        const identifier = 'T' + Date.now().toString();
+        const identifier = 'T' + random.int32().toString();
 
         const promise = api.requestSingle<Message>('message-send', {
             to: this.them.username,

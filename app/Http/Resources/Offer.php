@@ -22,7 +22,7 @@ class Offer extends Resource
             'name' => $this->name,
             'author' => User::make($this->author),
             'listed_at' => $this->listed_at->toIso8601String(),
-            'price' => $this->price,
+            'price' => $this->when($this->price, $this->price),
             'price_value' => $this->price_value,
             'currency' => $this->currency_code,
             'description' => $this->description,

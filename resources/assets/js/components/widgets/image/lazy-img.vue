@@ -5,7 +5,7 @@
         <img v-if="wasInViewport && !error" v-show="shown" :src="src" :class="imgClass" :alt="alt" ref="img"
              :crossorigin="crossOrigin">
         <div class="error" v-if="error">
-            <icon name="chain-broken" label="Error" :scale="3"/> <!-- TODO translate label -->
+            <icon name="chain-broken" :label="translations.error" :scale="3"/>
         </div>
     </div>
 </template>
@@ -15,8 +15,8 @@
     import Blur from 'stackblur-canvas';
     import Velocity from 'velocity-animate';
     import throttle from 'lodash/throttle';
-    import { awaitEvent } from 'JS/lib/helpers';
-    import appEvents,{ Events } from 'JS/events';
+    import {awaitEvent} from 'JS/lib/helpers';
+    import appEvents, {Events} from 'JS/events';
     import CanvasPool from 'JS/components/widgets/image/canvas-pool';
     import Vue from 'vue';
 
@@ -103,6 +103,11 @@
             },
             crossOrigin() {
                 return process.env.NODE_ENV === 'development' ? 'anonymous' : undefined;
+            },
+            translations() {
+                return {
+                    error: this.$store.getters.trans('interface.error.image'),
+                }
             }
         },
         methods: {

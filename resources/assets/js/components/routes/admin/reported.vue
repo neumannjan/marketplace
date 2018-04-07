@@ -5,13 +5,13 @@
 </template>
 
 <script lang="ts">
-    import { Vue, Component, mixins } from "JS/components/class-component";
+    import {Component, mixins} from "JS/components/class-component";
     import route from "JS/components/mixins/route";
     import routeGuard from "JS/components/mixins/route-guard";
     import store from "JS/store";
 
     import OfferMasonry from "JS/components/widgets/masonry/data-aware/offer/offer-masonry.vue";
-    import { Offer, isAdminOffer } from "JS/api/types";
+    import {isAdminOffer, Offer} from "JS/api/types";
 
     @Component({
         name: 'admin-reported-route',
@@ -22,7 +22,7 @@
     export default class AdminRoute extends mixins(route, routeGuard('admin', () => store.state.is_admin)) {
         readonly isTopLevelRoute: boolean = true;
         get title(): string {
-            return "Reported offers";
+            return this.$store.getters.trans('interface.page.reported');
         }
 
         shouldShow = (offer: Offer) => {

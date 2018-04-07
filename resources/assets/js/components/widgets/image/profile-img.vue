@@ -3,12 +3,12 @@
                      @img="onImg"
                      :width="imgSize"
                      :height="imgSize"
+                     :alt="alt"
                      :src="img && img.urls ? img.urls.icon : ''"
                      :srcset="img && img.urls ? `${img.urls.icon}, ${img.urls.icon_2x} 2x` : ''">
-        <!-- TODO img alt --><!-- TODO translate label -->
         <icon class="profile-img-placeholder"
               name="user-circle"
-              label="user"
+              :label="alt"
               :scale="imgSize/16"/>
     </placeholder-img>
 </template>
@@ -16,8 +16,10 @@
 <script>
     import PlaceholderImg from "JS/components/widgets/image/placeholder-img.vue";
     import 'vue-awesome/icons/user-circle';
+    import Vue from "vue";
+    import store from "JS/store";
 
-    export default {
+    export default Vue.extend({
         components: {PlaceholderImg},
         name: "profile-img",
         props: {
@@ -29,6 +31,10 @@
                 type: Object,
                 required: true
             },
+            alt: {
+                type: String,
+                default: () => store.getters.trans('interface.accessibility.profile-img'),
+            }
         },
         methods: {
             /**
@@ -38,7 +44,7 @@
                 this.$emit('img', el);
             }
         }
-    }
+    });
 </script>
 
 <style scoped lang="scss" type="text/scss">

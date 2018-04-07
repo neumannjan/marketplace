@@ -24,19 +24,19 @@
 
     import 'vue-awesome/icons/plus';
     import 'vue-awesome/icons/comment';
-    import 'vue-awesome/icons/bell';
+    import 'vue-awesome/icons/language';
     import 'vue-awesome/icons/angle-left';
     import 'vue-awesome/icons/angle-up';
     import notifications, {NotificationTypes} from 'JS/notifications';
     import {NotificationEvents} from 'JS/lib/notifications';
     import {Route} from 'vue-router';
-import { FloatingButtonTypes } from 'JS/components/types';
+    import {FloatingButtonTypes} from 'JS/components/types';
 
     interface Button {
         id: FloatingButtonTypes,
         icon: string,
         class?: string,
-        label?: string, //TODO make required
+        label: () => string,
         badgeType?: string,
         show?: (route: Route) => boolean
     }
@@ -45,15 +45,42 @@ import { FloatingButtonTypes } from 'JS/components/types';
         [index: string]: boolean
     }
 
-    //TODO labels
-    const mainButtons: Button[] = [
-        {id: FloatingButtonTypes.Add, icon: 'plus', class: 'btn-primary', show: (route: Route) => route.name !== 'offer-create'},
-        {id: FloatingButtonTypes.Chat, icon: 'comment'},
-        {id: FloatingButtonTypes.Notifications, icon: 'bell'},
+    const alwaysButtons: Button[] = [
+        {
+            id: FloatingButtonTypes.Language,
+            icon: 'language',
+            label: () => store.getters.trans('interface.button.language-toggle')
+        },
     ];
 
-    const backButton = {id: FloatingButtonTypes.Back, icon: 'angle-left'};
-    const upButton = {id: FloatingButtonTypes.Up, icon: 'angle-up', class: 'btn-danger'};
+    const mainButtons: Button[] = [
+        {
+            id: FloatingButtonTypes.Add,
+            icon: 'plus',
+            class: 'btn-primary',
+            show: (route: Route) => route.name !== 'offer-create',
+            label: () => store.getters.trans('interface.button.offer-create')
+        },
+        {
+            id: FloatingButtonTypes.Chat,
+            icon: 'comment',
+            label: () => store.getters.trans('interface.button.chat')
+        },
+        ...alwaysButtons,
+    ];
+
+    const backButton: Button = {
+        id: FloatingButtonTypes.Back,
+        icon: 'angle-left',
+        label: () => store.getters.trans('interface.button.go-back')
+    };
+
+    const upButton: Button = {
+        id: FloatingButtonTypes.Up,
+        icon: 'angle-up',
+        class: 'btn-danger',
+        label: () => store.getters.trans('interface.button.top')
+    };
 
     export default Vue.extend({
         name: 'main-floating-btns',
@@ -120,7 +147,7 @@ import { FloatingButtonTypes } from 'JS/components/types';
                     if (this.isAuthenticated) {
                         return this.backShown ? [...mainButtons, backButton] : mainButtons;
                     } else {
-                        return this.backShown ? [backButton] : [];
+                        return this.backShown ? [...alwaysButtons, backButton] : alwaysButtons;
                     }
                 } else {
                     return [upButton];
@@ -152,8 +179,7 @@ import { FloatingButtonTypes } from 'JS/components/types';
                         case FloatingButtonTypes.Add:
                             router.push({name: 'offer-create'});
                             return true;
-                        case FloatingButtonTypes.Chat:
-                        case FloatingButtonTypes.Notifications:
+                        case FloatingButtonTypes.Chat: //ADD ALL THAT HAVE A POPUP HERE
                             if (element) {
                                 if (toggle && lastPopperEl === element)
                                     this.popperEl = null;
@@ -172,6 +198,9 @@ import { FloatingButtonTypes } from 'JS/components/types';
                             return true;
                         case FloatingButtonTypes.Up:
                             window.scrollTo(window.scrollX, 0);
+                            return true;
+                        case FloatingButtonTypes.Language:
+                            store.commit('toggleLocale');
                             return true;
                     }
 

@@ -5,10 +5,10 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Username</th> <!-- TODO translate -->
-                        <th>Display name</th>
-                        <th>E-mail</th>
-                        <th>Profile</th>
+                        <th>{{ translations.username }}</th>
+                        <th>{{ translations.display_name }}</th>
+                        <th>{{ translations.email }}</th>
+                        <th>{{ translations.profile }}</th>
                     </tr>
                 </thead>
                 <infinite-scroll as="tbody" :busy="busy" @request="request">
@@ -17,8 +17,9 @@
                         <th>{{ user.display_name }}</th>
                         <td>{{ user.email }}</td>
                         <td>
-                            <router-link :to="{name: 'user', params: {username: user.username}}">
-                                <icon name="link" label="Profile"/> <!-- TODO translate -->
+                            <router-link :title="translations.profile"
+                                         :to="{name: 'user', params: {username: user.username}}">
+                                <icon name="link"/>
                             </router-link>
                         </td>
                     </tr>
@@ -32,15 +33,15 @@
 </template>
 
 <script lang="ts">
-    import { Vue, Component, mixins, Prop, Watch } from "JS/components/class-component";
+    import {Component, mixins, Prop, Watch} from "JS/components/class-component";
     import route from "JS/components/mixins/route";
     import routeGuard from "JS/components/mixins/route-guard";
     import store from "JS/store";
     import api from "JS/api";
-    import { User, PaginatedResponse, UserStatus } from "JS/api/types";
-    import { Dictionary } from "vue-router/types/router";
+    import {PaginatedResponse, User, UserStatus} from "JS/api/types";
+    import {Dictionary} from "vue-router/types/router";
 
-    import InfiniteScroll from 'JS/components/widgets/infinite-scroll.vue';    
+    import InfiniteScroll from 'JS/components/widgets/infinite-scroll.vue';
     import Search from 'JS/components/widgets/search.vue';
 
     import "vue-awesome/icons/spinner";
@@ -55,8 +56,9 @@
     })
     export default class AdminRoute extends mixins(route, routeGuard('admin', () => store.state.is_admin)) {
         readonly isTopLevelRoute: boolean = true;
+
         get title(): string {
-            return "Banned users";
+            return this.$store.getters.trans('interface.page.banned');
         }
 
         @Prop({type: String})
@@ -82,6 +84,15 @@
                 name: 'admin-banned',
                 params: params
             });
+        }
+
+        get translations() {
+            return {
+                username: this.$store.getters.trans('interface.form.username'),
+                display_name: this.$store.getters.trans('interface.form.display_name'),
+                email: this.$store.getters.trans('interface.form.email'),
+                profile: this.$store.getters.trans('interface.button.profile'),
+            }
         }
 
         get busy() {

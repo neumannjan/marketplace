@@ -1,5 +1,5 @@
 import Api from 'JS/api';
-import { safeGet } from 'JS/lib/helpers';
+import {safeGet} from 'JS/lib/helpers';
 import debounce from 'lodash/debounce';
 import Vue from "vue";
 import Component from 'JS/components/class-component';
@@ -27,15 +27,15 @@ class FormMixin extends Vue implements FormMixinData {
     }
 
     $submitForm(requestName: string, selectorKey: string, onSuccess: Function, data: FormData | false = false,
-                bypassValidation: boolean = false) {
-        doSubmitForm(this, requestName, selectorKey, onSuccess, data, bypassValidation);
+                bypassValidation: boolean = false, onFailure?: () => void) {
+        doSubmitForm(this, requestName, selectorKey, onSuccess, data, bypassValidation, onFailure);
     }
 }
 
 type VM = { [index: string]: any } & Vue & FormMixinData;
 
 const doSubmitForm = debounce((vm: VM, requestName: string, selectorKey: string, onSuccess: Function,
-                             formData: FormData | false, bypassValidation: boolean) => {
+                               formData: FormData | false, bypassValidation: boolean, onFailure?: () => void) => {
     vm.$v.$reset();
     if (bypassValidation || !vm.$v.$invalid) {
         vm.$set(vm.validation, selectorKey, {});
@@ -56,6 +56,8 @@ const doSubmitForm = debounce((vm: VM, requestName: string, selectorKey: string,
             .catch((result) => {
                 if (result.api && result.api.validation) {
                     vm.$set(vm.validation, selectorKey, result.api.validation);
+                } else if (onFailure) {
+                    onFailure();
                 }
             })
             .then(() => vm.$v.$touch());

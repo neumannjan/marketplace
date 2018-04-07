@@ -3,10 +3,11 @@
         <button v-for="button in props.buttons"
                 :key="button.icon"
                 type="button"
+                :title="button.label"
                 @click="button.callback && !button.disabled ? button.callback() : null"
                 :disabled="button.disabled ? 'true' : undefined"
                 :class="['btn btn-link', props.buttonClass, {'btn-link-gray': props.gray}]">
-            <icon :name="button.icon" :label="button.label"/>
+            <icon :name="button.icon"/>
         </button>
     </div>
 </template>

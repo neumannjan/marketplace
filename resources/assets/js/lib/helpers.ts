@@ -1,5 +1,6 @@
 import notifications, {NotificationTypes} from "JS/notifications";
-import { NotificationType } from "JS/lib/notifications/typings";
+import {NotificationType} from "JS/lib/notifications/typings";
+import store from "JS/store";
 
 /**
  * Safely retrieves a value from a nested object. Returns defaultValue if the key is not present in the object.
@@ -163,7 +164,7 @@ export function doAction(config: ActionConfiguration, func: () => Promise<any>) 
 
             notifications.showNotification({
                 type: notificationType(config.errorNotification, 'danger'),
-                message: notificationMessage(config.errorNotification, 'ERROR'), //TODO translate
+                message: notificationMessage(config.errorNotification, store.getters.trans('interface.error.unknown')),
                 persistent: false
             });
         });

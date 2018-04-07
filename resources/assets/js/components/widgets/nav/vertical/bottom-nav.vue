@@ -4,34 +4,12 @@
 
 <script>
     import NavComponent from '../nav.vue';
-    import {mapState} from 'vuex';
     import store from 'JS/store';
 
     import 'vue-awesome/icons/sign-in';
     import 'vue-awesome/icons/user-plus';
     import 'vue-awesome/icons/sign-out';
-
-    const guestItems = [
-        {
-            label: 'Log in',
-            icon: 'sign-in',
-            route: 'login'
-        },
-        {
-            label: 'Register',
-            icon: 'user-plus',
-            route: 'register'
-        },
-    ];
-
-    const authItems = [
-        {
-            label: 'Log out',
-            icon: 'sign-out',
-            id: 'logout',
-            callback: () => store.dispatch('logout')
-        },
-    ];
+    import 'vue-awesome/icons/cog';
 
     export default {
         name: 'bottom-nav',
@@ -39,9 +17,36 @@
             'base-nav': NavComponent
         },
         computed: {
-            ...mapState({
-                items: state => !!state.user ? authItems : guestItems
-            })
+            items() {
+                const guestItems = [
+                    {
+                        label: this.$store.getters.trans('interface.page.login'),
+                        icon: 'sign-in',
+                        route: 'login'
+                    },
+                    {
+                        label: this.$store.getters.trans('interface.page.register'),
+                        icon: 'user-plus',
+                        route: 'register'
+                    },
+                ];
+
+                const authItems = [
+                    {
+                        label: this.$store.getters.trans('interface.page.user-settings'),
+                        icon: 'cog',
+                        route: 'user-settings'
+                    },
+                    {
+                        label: this.$store.getters.trans('interface.page.logout'),
+                        icon: 'sign-out',
+                        id: 'logout',
+                        callback: () => store.dispatch('logout')
+                    },
+                ];
+
+                return this.$store.state.user ? authItems : guestItems;
+            }
         }
     };
 </script>

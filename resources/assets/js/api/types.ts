@@ -30,7 +30,7 @@ export interface User {
     display_name: string,
     status: UserStatus,
     description: string,
-    profile_image: Image
+    profile_image: Image | null
 }
 
 export enum OfferStatus {
@@ -47,7 +47,7 @@ export interface Offer {
     name: string,
     author: User,
     listed_at: string,
-    price: string,
+    price?: string,
     price_value: number,
     currency: string,
     description: string,
@@ -128,18 +128,7 @@ export interface FlashMessageWithKey extends FlashMessage {
 }
 
 export interface TranslationMessages {
-    validation?: {
-        min?: string,
-        max?: string,
-        required?: string,
-        slug?: string,
-        numeric?: string,
-        containsNumeric?: string,
-        containsNonNumeric?: string,
-        confirmed?: string,
-        email?: string,
-        image?: string,
-    }
+    [key: string]: string | TranslationMessages
 }
 
 export interface Currencies {
@@ -160,8 +149,11 @@ export type OfferRequestScope = RequestScope | 'auth';
  * Global request response
  */
 export interface GlobalResponse {
+    name: string,
     token: null | string,
     locale: string,
+    fallback_locale: string,
+    available_locales: string[],
     user: null | User,
     is_admin: boolean,
     flash: {[key: string]: FlashMessage},

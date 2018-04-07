@@ -3,9 +3,9 @@
 </template>
 
 <script lang="ts">
-    import {helpers as storeHelpers} from 'JS/store';
-    import { Vue, Component, Prop, Watch } from 'JS/components/class-component';
-    import { Vuelidate } from 'vuelidate';
+    import store from 'JS/store';
+    import {Component, Prop, Vue, Watch} from 'JS/components/class-component';
+    import {Vuelidate} from 'vuelidate';
 
     @Component({
         name: 'validation-message'
@@ -73,7 +73,7 @@
                     if (singleParams)
                         delete singleParams.message;
 
-                    return storeHelpers.trans('validation.' + message, {
+                    return store.getters.trans('validation.' + message, {
                         attribute: this.label,
                         ...singleParams
                     });

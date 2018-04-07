@@ -4,21 +4,21 @@
 
         <form id="form-register">
             <form-input class="form-group"
-                        label="E-mail"
+                        :label="translations.form.email"
                         name="email"
                         :serverValidation="$serverValidationOn('form.email')"
                         :validation="$v.form.email"
                         v-model="form.email"
                         type="email" autofocus=""/>
             <form-input class="form-group"
-                        label="Password"
+                        :label="translations.form.password"
                         name="password"
                         :serverValidation="$serverValidationOn('form.password')"
                         :validation="$v.form.password"
                         v-model="form.password"
                         type="password"/>
             <form-input class="form-group"
-                        label="Confirm Password"
+                        :label="translations.form.confirm"
                         name="password_confirmation"
                         :serverValidation="$serverValidationOn('form.password_confirmation')"
                         :validation="$v.form.password_confirmation"
@@ -28,7 +28,6 @@
             <div class="form-group">
                 <button type="submit" id="submit" class="btn btn-primary" @click.prevent="submit">Reset Password
                 </button>
-                <!-- TODO translate -->
             </div>
         </form>
     </div>
@@ -63,6 +62,7 @@
         }),
         methods: {
             submit() {
+                //@ts-ignore
                 this.$submitForm('password-reset', 'form', () => this.$router.push({name: 'index'}));
             },
         },
@@ -71,7 +71,17 @@
         },
         computed: {
             title() {
-                return 'Reset Password';
+                return this.$store.getters.trans('interface.page.password-reset');
+            },
+            translations() {
+                return {
+                    form: {
+                        email: this.$store.getters.trans('interface.form.email'),
+                        password: this.$store.getters.trans('interface.form.password'),
+                        confirm: this.$store.getters.trans('interface.form.password_confirmation'),
+                    },
+                    button: this.$store.getters.trans('interface.button.password-reset'),
+                }
             }
         },
         validations: {

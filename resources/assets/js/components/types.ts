@@ -1,7 +1,7 @@
 export enum FloatingButtonTypes {
     Add = 'add',
     Chat = 'chat',
-    Notifications = 'notifications',
+    Language = 'language',
     Back = 'back',
     Up = 'up',
 }

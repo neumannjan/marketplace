@@ -6,9 +6,10 @@
         <button v-for="(button, index) in filteredButtons"
                 ref="buttons"
                 :key="button.id ? button.id : button.icon"
+                :title="button.label()"
                 @click="onClick(button, index)"
                 :class="['btn btn-floating', `btn-floating-${index}`, button.class ? button.class : 'btn-dark']">
-            <icon :name="button.icon" :label="button.label"/>
+            <icon :name="button.icon"/>
             <transition name="badge">
                 <span v-if="badges[button.id]"
                       :class="`badge badge-${button.badgeType ? button.badgeType : 'danger'}`">

@@ -10,26 +10,27 @@
         <template v-if="items.length > 1">
             <button class="btn btn-link carousel-control-prev" @click="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span> <!-- TODO translate -->
+                <span class="sr-only">{{ translations.previous }}</span>
             </button>
             <button class="btn btn-link carousel-control-next" @click="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only">Next</span> <!-- TODO translate -->
+                <span class="sr-only">{{ translations.next }}</span>
             </button>
-            <ol class="carousel-indicators">
+            <ol class="carousel-indicators" aria-hidden="true">
                 <li v-for="(item, index) in items"
                     :key="item.id ? item.id : `fallback-${index}`"
+                    aria-hidden="true"
                     @click="activeIndex = index"
-                    :class="['m-1', {'active': activeIndex === index}]"></li>
+                    :class="['m-1', {'active': activeIndex === index}]">
+                </li>
             </ol>
         </template>
     </div>
 </template>
 
 <script lang="ts">
-    import { Vue, Component, Prop } from "JS/components/class-component";
-
-    //TODO transition
+    import {Component, Prop, Vue} from "JS/components/class-component";
+    import {TranslationMessages} from "lang.js";
 
     @Component({
         name: "carousel"
@@ -43,6 +44,13 @@
 
         activeIndex: number = 0;
         timerRunning: boolean = true;
+
+        get translations(): TranslationMessages {
+            return {
+                previous: this.$store.getters.trans('interface.button.previous'),
+                next: this.$store.getters.trans('interface.button.next'),
+            }
+        }
 
         next(runByUser = true) {
             if (runByUser)

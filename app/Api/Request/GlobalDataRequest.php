@@ -32,8 +32,13 @@ class GlobalDataRequest extends Request
             $token = csrf_token();
         }
 
+        // application name
+        $name = config('app.name');
+
         // locale
-        $locale = \App::getLocale();
+        $locale = config('app.locale');
+        $fallback_locale = config('app.fallback_locale');
+        $available_locales = config('app.available_locales');
 
         // authentication
 
@@ -58,8 +63,11 @@ class GlobalDataRequest extends Request
             env('WEBSOCKET_PORT', 6001);
 
         return compact(
+            'name',
             'token',
             'locale',
+            'fallback_locale',
+            'available_locales',
             'user',
             'is_admin',
             'flash',

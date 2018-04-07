@@ -4,9 +4,9 @@
             <router-link :to="toAuthor" class="offer-card-header text-dark">
                 <profile-img :img="profileImage ? profileImage : {}" :img-size="32"/>
                 <span class="ml-2 author-info">
-                        {{ value.author.display_name }} <small
+                    {{ value.author.display_name }} <small
                         class="text-muted">{{ `@${value.author.username}` }}</small>
-                    </span>
+                </span>
             </router-link>
             <slot name="header-end"/>
         </div>
@@ -14,35 +14,39 @@
         <template v-if="!large">
 
             <router-link v-if="imgData" :to="toOffer" slot="post-header">
-                <lazy-img img-class="card-img-top" v-bind="imgData"/>
+                <lazy-img img-class="card-img-top" v-bind="imgData" :alt="translations.image"/>
             </router-link>
 
             <h4 class="card-title d-flex align-items-baseline">
                 <router-link :to="toOffer" :class="[color('text-', 'dark')]" style="flex-grow: 1">
                     <span>{{ value.name }} </span>
                     <badge class="ml-1 badge" v-for="(badge, index) in badges" :key="index" v-bind="badge"/>
-                    <badge class="ml-1 badge" v-if="reportedTimes > 0" type="danger">
-                        <icon class="mr-1" name="flag" :scale="0.8" :label="`Reported ${reportedTimes} times`"/>
+                    <badge class="ml-1 badge"
+                           v-if="reportedTimes > 0"
+                           type="danger"
+                           aria-hidden="true"
+                           :aria-label="translations.reported">
+                        <icon class="mr-1" name="flag" :scale="0.8"/>
                         {{ reportedTimes }}
                     </badge>
                 </router-link>
-                <b-dropdown v-if="loggedIn" class="ml-3" toggle-class="btn-link-gray" right variant="link" no-caret boundary="window">
+                <b-dropdown v-if="loggedIn" :title="translations.dropdown" class="ml-3" toggle-class="btn-link-gray"
+                            right variant="link" no-caret boundary="window">
                     <offer-dropdown-contents :offer="value" />
-
-                    <icon slot="button-content" name="ellipsis-v" label="" /> <!-- TODO label -->
+                    <icon slot="button-content" name="ellipsis-v"/>
                 </b-dropdown>
             </h4>
 
             <p class="card-text">{{ shortDesc }}</p>
-            <p class="h5 card-text">{{ value.price }}</p>
+            <p class="h5 card-text">{{ price }}</p>
 
         </template>
         <div v-else class="row">
 
             <div class="col-md-5 mb-3">
                 <alert v-if="isAwaitingImages" type="warning">
-                    Not all images have appeared yet.
-                    <a href="#" @click.prevent="refreshImages" class="alert-link">Check again if they are ready?</a>
+                    {{ translations.loading.notice }}
+                    <a href="#" @click.prevent="refreshImages" class="alert-link">{{ translations.loading.button }}</a>
                 </alert>
                 <carousel v-if="this.value.images" :items="this.value.images">
                     <template slot-scope="props">
@@ -50,7 +54,7 @@
                                   v-if="props.item.ready"
                                   :src="props.item.urls.original"
                                   :thumb="props.item.urls.tiny"
-                                  alt="Image"/> <!-- TODO alt -->
+                                  :alt="translations.image"/>
                     </template>
                 </carousel>
             </div>
@@ -59,27 +63,33 @@
                 <h1 :class="['card-title heading-resp', color('text-', 'dark')]">
                     <span>{{ value.name }} </span>
                     <badge class="ml-1 badge" v-for="(badge, index) in badges" :key="index" v-bind="badge"/>
-                    <badge class="ml-1 badge" v-if="reportedTimes > 0" type="danger">
-                        <icon class="mr-1" name="flag" :scale="1.2" :label="`Reported ${reportedTimes} times`"/>
+                    <badge class="ml-1 badge"
+                           v-if="reportedTimes > 0"
+                           type="danger"
+                           aria-hidden="true"
+                           :aria-label="translations.reported">
+                        <icon class="mr-1" name="flag" :scale="1.2"/>
                         {{ reportedTimes }}
                     </badge>
                 </h1>
 
                 <div class="card-text">
                     <p v-if="value.description">{{ value.description }}</p>
-                    <p class="price-resp card-text mt-auto">{{ value.price }}</p>
+                    <p class="price-resp card-text mt-auto">{{ price }}</p>
                 </div>
 
                 <div class="btn-group btn-group-lg mt-1" role="group" aria-label="Basic example">
                     <button type="button"
                             v-for="button in buttons"
+                            :title="button.label"
                             :key="button.icon"
                             @click="button.callback ? button.callback() : null"
                             :disabled="button.disabled"
                             :class="['btn', color('btn-', 'primary', true)]">
-                        <icon :name="button.icon" :label="button.label"/>
+                        <icon :name="button.icon"/>
                     </button>
-                    <b-dropdown v-if="loggedIn" boundary="window" :variant="color('', 'primary', true)">
+                    <b-dropdown v-if="loggedIn" boundary="window" :variant="color('', 'primary', true)"
+                                :title="translations.dropdown">
                         <offer-dropdown-contents :offer="value" />
                     </b-dropdown>
                 </div>
@@ -94,40 +104,43 @@
 <script lang="ts">
     import Card from "../../card.vue";
     import CardIconFooter from "../../card-icon-footer.vue";
-    import Badge from 'JS/components/widgets/badge.vue';
+    import BadgeComponent from 'JS/components/widgets/badge.vue';
     import Carousel from 'JS/components/widgets/carousel.vue';
     import Alert from "JS/components/widgets/alert.vue";
     import ProfileImg from "JS/components/widgets/image/profile-img.vue";
     import Popper from "JS/components/widgets/popper.vue";
     import BDropdown from "bootstrap-vue/src/components/dropdown/dropdown";
-    import BDropdownItem from "bootstrap-vue/src/components/dropdown/dropdown-item";
-    import BDropdownItemButton from "bootstrap-vue/src/components/dropdown/dropdown-item-button";
-    import BDropdownHeader from "bootstrap-vue/src/components/dropdown/dropdown-header";
     import OfferDropdownContents from 'JS/components/widgets/masonry/data-aware/offer/offer-dropdown-contents.vue';
 
-    import appEvents,{ Events, events } from 'JS/events';
+    import appEvents, {Events, events} from 'JS/events';
     import router from 'JS/router';
     import api from 'JS/api';
     import store from "JS/store";
     import Vue from 'vue';
-    import { Image, Offer, isAdminOffer } from "JS/api/types";
-    import { Location } from "vue-router";
+    import {Image, isAdminOffer, Offer} from "JS/api/types";
+    import {Location} from "vue-router";
 
     import 'vue-awesome/icons/shopping-cart';
     import 'vue-awesome/icons/expand';
     import 'vue-awesome/icons/user-circle';
     import 'vue-awesome/icons/ellipsis-v';
     import 'vue-awesome/icons/flag';
-import { FloatingButtonTypes } from "JS/components/types";
+    import {FloatingButtonTypes} from "JS/components/types";
+    import {TranslationMessages} from "lang.js";
+
+    interface Badge {
+        message: string,
+        type: string
+    }
 
     export default Vue.extend({
         name: "offer-card",
         components: {
+            'badge': BadgeComponent,
             ProfileImg,
             Alert,
             Card,
             CardIconFooter,
-            Badge,
             Carousel,
             Popper,
             BDropdown,
@@ -188,6 +201,19 @@ import { FloatingButtonTypes } from "JS/components/types";
             }
         },
         computed: {
+            translations(): TranslationMessages {
+                return {
+                    reported: this.$store.getters.trans('interface.notice.offer-reported', this.reportedTimes, {
+                        times: this.reportedTimes
+                    }),
+                    loading: {
+                        notice: this.$store.getters.trans('interface.notice.images-loading'),
+                        button: this.$store.getters.trans('interface.button.images-loading'),
+                    },
+                    dropdown: this.$store.getters.trans('interface.label.options.additional'),
+                    image: this.$store.getters.trans('interface.accessibility.offer-image'),
+                }
+            },
             isThisUser(): boolean {
                 const user = (<typeof store>this.$store).state.user;
                 return !!user && user.username === this.value.author.username;
@@ -202,11 +228,12 @@ import { FloatingButtonTypes } from "JS/components/types";
                 const ubiquitous = [
                     {
                         icon: 'shopping-cart',
-                        label: 'Buy',
+                        label: this.$store.getters.trans('interface.button.buy'),
                         disabled: this.isThisUser || !(<typeof store>this.$store).state.user,
                         callback: () => {
-                            //TODO translate
-                            if (!confirm(`Are you sure you want to send user ${this.value.author.display_name} a message?`)) {
+                            if (!confirm(this.$store.getters.trans('interface.confirm.message', {
+                                user: this.value.author.display_name
+                            }))) {
                                 return;
                             }
 
@@ -223,7 +250,7 @@ import { FloatingButtonTypes } from "JS/components/types";
                 const nonLarge = [
                     {
                         icon: 'expand',
-                        label: 'Expand',
+                        label: this.$store.getters.trans('interface.button.expand'),
                         callback: () => router.push(this.toOffer)
                     },
                 ];
@@ -296,9 +323,7 @@ import { FloatingButtonTypes } from "JS/components/types";
                     }
                 }
             },
-            badges() {
-                // TODO translate
-
+            badges(): Badge[] | null {
                 if (!this.value)
                     return null;
 
@@ -306,17 +331,21 @@ import { FloatingButtonTypes } from "JS/components/types";
 
                 switch (this.value.status) {
                     case 0:
-                        badges.push({message: 'Draft', type: 'warning'});
+                        badges.push({message: this.$store.getters.trans('interface.offer.draft'), type: 'warning'});
                         break;
                     case 2:
-                        badges.push({message: 'Sold', type: 'info'});
+                        badges.push({message: this.$store.getters.trans('interface.offer.sold'), type: 'info'});
                         break;
                 }
 
                 if (this.value.expired)
-                    badges.push({message: 'Expired', type: 'danger'});
+                    badges.push({message: this.$store.getters.trans('interface.offer.expired'), type: 'danger'});
 
                 return badges;
+            },
+            price(): string {
+                return this.value.price ? this.value.price
+                    : this.$store.getters.trans('interface.money.free');
             }
         },
         created() {

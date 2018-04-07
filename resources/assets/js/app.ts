@@ -5,10 +5,11 @@ import "../css/app.scss";
 import './lib/polyfill';
 import 'babel-polyfill';
 
-import Vue, {VNodeDirective, VNode} from 'vue';
+import Vue, {VNode, VNodeDirective} from 'vue';
 import Vuelidate from 'vuelidate';
 import IconComponent from 'vue-awesome/components/Icon.vue';
 import * as ElementQueries from 'css-element-queries/src/ElementQueries';
+import seedrandom from 'seedrandom';
 
 import store from 'JS/store';
 import router from 'JS/router';
@@ -32,6 +33,8 @@ declare global {
         }
     }
 }
+
+export const random = seedrandom(undefined, {entropy: true});
 
 // setup
 

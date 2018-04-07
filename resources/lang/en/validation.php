@@ -32,7 +32,7 @@ return [
         'array' => ':attribute must have between :min and :max items.',
     ],
     'boolean' => ':attribute field must be true or false.',
-    'confirmed' => ':attribute confirmation does not match.',
+    'confirmed' => ':attribute does not match.',
     'contains' => [
         'numeric' => ':attribute must contain at least one number.',
         'non_numeric' => ':attribute must contain at least one character that is not a number.',

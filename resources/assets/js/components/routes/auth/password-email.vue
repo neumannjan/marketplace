@@ -4,7 +4,7 @@
 
         <form id="form-register">
             <form-input class="form-group"
-                        label="E-mail"
+                        :label="translations.form.email"
                         name="email"
                         :serverValidation="$serverValidationOn('form.email')"
                         :validation="$v.form.email"
@@ -12,10 +12,9 @@
                         type="email" autofocus/>
 
             <div class="form-group">
-                <button type="submit" id="submit" class="btn btn-primary" @click.prevent="submit">Send Password Reset
-                    Link
+                <button type="submit" id="submit" class="btn btn-primary" @click.prevent="submit">{{ translations.button
+                    }}
                 </button>
-                <!-- TODO translate -->
             </div>
         </form>
     </div>
@@ -45,13 +44,22 @@
         }),
         methods: {
             submit() {
+                //@ts-ignore
                 this.$submitForm('password-email', 'form', () => this.$router.push({name: 'index'}));
             },
         },
         computed: {
             title() {
-                return 'Reset Password';
+                return this.$store.getters.trans('interface.page.password-email');
             },
+            translations() {
+                return {
+                    form: {
+                        email: this.$store.getters.trans('interface.form.email'),
+                    },
+                    button: this.$store.getters.trans('interface.button.password-email'),
+                }
+            }
         },
         validations: {
             form: {

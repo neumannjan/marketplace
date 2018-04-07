@@ -58,6 +58,7 @@ class OfferEditRequest extends Request
 
     /**
      * @inheritDoc
+     * @throws \Exception
      */
     protected function doResolve($name, Collection $parameters)
     {

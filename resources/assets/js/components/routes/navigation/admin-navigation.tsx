@@ -1,31 +1,27 @@
 import Vue from "vue";
-import { Location } from "vue-router";
 
 import 'vue-awesome/icons/flag';
 import 'vue-awesome/icons/ban';
-import router, { routesMatch } from "JS/router";
-
-interface Button {
-    icon: string,
-    label: string,
-    location: Location
-}
+import store from "JS/store";
+import NavigationMenuVertical, {VerticalButton} from './navigation-menu-vertical';
 
 export default Vue.extend({
     name: "admin-navigation",
-    functional: true,
+    components: {
+        NavigationMenuVertical
+    },
     render(h) {
-        const buttons: Button[] = [
+        const buttons: VerticalButton[] = [
             {
                 icon: 'flag',
-                label: 'Reported offers',
+                label: store.getters.trans('interface.page.reported'),
                 location: {
                     name: 'admin-reported'
                 }
             },
             {
                 icon: 'ban',
-                label: 'Banned users',
+                label: store.getters.trans('interface.page.banned'),
                 location: {
                     name: 'admin-banned'
                 }
@@ -34,20 +30,8 @@ export default Vue.extend({
 
         return (
             <div class="p-4">
-                <h1 class="h2 text-center">Administration</h1>
-                <ul class="nav flex-column">
-                    {buttons.map(b => (
-                        <li class="nav-item">
-                            <router-link to={b.location} class={[
-                                'nav-link btn-link-gray',
-                                {'active': routesMatch(b.location, router.currentRoute)}
-                            ]}>
-                                <icon name={b.icon} class="mr-3" />
-                                <span>{b.label}</span>
-                            </router-link>
-                        </li>
-                    ))}
-                </ul>
+                <h1 class="h2 text-center">{store.getters.trans('interface.page.admin')}</h1>
+                <navigation-menu-vertical buttons={buttons}/>
             </div>
         );
     }

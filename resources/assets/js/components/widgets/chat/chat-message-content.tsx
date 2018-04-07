@@ -1,9 +1,8 @@
 import api from 'JS/api';
 import PlaceholderImg from "JS/components/widgets/image/placeholder-img.vue";
-import { Location } from 'vue-router/types/router';
-import Vue, { VNode } from 'vue';
-import { User, Message, Offer } from 'JS/api/types';
-import { PropsDefinition } from 'vue/types/options';
+import {Location} from 'vue-router/types/router';
+import Vue, {VNode} from 'vue';
+import {Offer, User} from 'JS/api/types';
 
 enum MessageType {
     Regular = 'regular',
@@ -50,7 +49,9 @@ export default Vue.extend({
                 else
                     return <span class={this.inline ? undefined : "chat-message-content"}>{this.message.content}</span>;
             } else if(this.type === MessageType.Offer) {
-                const OfferMsg = <i>User {user ? user.display_name : "???"} wants to buy something!</i>
+                const OfferMsg = <i>{this.$store.getters.trans('interface.notice.user-buy', {
+                    user: this.user.display_name
+                })}</i>
 
                 if(!this.inline && this.offer)
                     return <span class="chat-message-content"><h2 class="h5">{(this.offer as Offer).name}</h2>{OfferMsg}</span>

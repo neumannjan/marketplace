@@ -5,7 +5,7 @@
             <loading-offer-card/>
         </div>
         <div slot="loaded" class="h1 text-muted text-center m-5">
-            You reached the end. <!-- TODO translate -->
+            {{ translations.end }}
         </div>
     </infinite-scroll-masonry>
 </template>
@@ -14,9 +14,10 @@
     import InfiniteScrollMasonry from '../../infinite-scroll-masonry.vue';
     import OfferCard from './offer-card.vue';
     import LoadingOfferCard from './loading-offer-card.vue';
-    import {Vue, Component, Prop} from 'JS/components/class-component';
-    import { events, Events } from 'JS/events';
-    import { Offer } from 'JS/api/types';
+    import {Component, Prop, Vue} from 'JS/components/class-component';
+    import {events, Events} from 'JS/events';
+    import {Offer} from 'JS/api/types';
+    import {TranslationMessages} from 'lang.js';
 
     @Component({
         name: 'offer-masonry',
@@ -40,6 +41,12 @@
         shouldShow: ((offer: Offer) => boolean) | undefined;
 
         cards: Offer[] = [];
+
+        get translations(): TranslationMessages {
+            return {
+                end: this.$store.getters.trans('interface.notice.list-end'),
+            }
+        }
 
         created() {
             if (this.startCards) {

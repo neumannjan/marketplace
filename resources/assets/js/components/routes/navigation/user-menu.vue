@@ -15,15 +15,13 @@
     import {User, UserStatus} from 'JS/api/types';
     import {Location} from 'vue-router';
     import {events, Events} from 'JS/events';
-    import store from 'JS/store';
     import api from 'JS/api';
 
     import 'vue-awesome/icons/comment';
     import 'vue-awesome/icons/ban';
     import {doAction} from 'JS/lib/helpers';
-    import { FloatingButtonTypes } from 'JS/components/types';
+    import {FloatingButtonTypes} from 'JS/components/types';
 
-    //TODO translate labels
     interface Button {
         label: string,
         icon: string,
@@ -64,17 +62,13 @@
         }
 
         get buttons(): Button[] {
-            if(this.isMe) {
-                return [];
-            }
-
             let loggedButtons: Button[] = [];
             let adminButtons: Button[] = [];
 
-            if (!!this.loggedUser && !this.isBanned) {
+            if (!!this.loggedUser && !this.isBanned && !this.isMe) {
                 loggedButtons = [
                     {
-                        label: 'Contact',
+                        label: this.$store.getters.trans('interface.button.message'),
                         icon: 'comment',
                         type: 'muted',
                         action: () => {
@@ -89,17 +83,18 @@
                 ]
             }
 
-            if(this.isAdmin) {
+            if (this.isAdmin && !this.isMe) {
+                const replacements = {user: this.value.display_name};
                 adminButtons = [
                     {
-                        label: this.isBanned ? 'Unban' : 'Ban',
+                        label: this.$store.getters.trans(`interface.button.${this.isBanned ? 'unban' : 'ban'}`),
                         icon: 'ban',
                         type: this.isBanned ? 'success' : 'danger',
                         action: () => {
                             doAction({
-                                confirm: `Are you sure you want to ${this.isBanned ? 'unban' : 'ban'} user ${this.value.username}?`,
-                                beforeNotification: `${this.isBanned ? 'Unbanning' : 'Banning'} user ${this.value.username}`,
-                                afterNotification: `${this.isBanned ? 'Unbanned' : 'Banned'} user ${this.value.username}`,
+                                confirm: this.$store.getters.trans(`interface.confirm.${this.isBanned ? 'unban' : 'ban'}`, replacements),
+                                beforeNotification: this.$store.getters.trans(`interface.notification.before.${this.isBanned ? 'unban' : 'ban'}`, replacements),
+                                afterNotification: this.$store.getters.trans(`interface.notification.after.${this.isBanned ? 'unban' : 'ban'}`, replacements),
                             }, () => api.requestSingle<User>('user-admin', {
                                 username: this.value.username,
                                 status: this.isBanned ? UserStatus.Active : UserStatus.Banned

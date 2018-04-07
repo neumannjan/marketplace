@@ -1,14 +1,14 @@
 import Vue, {VueConstructor} from 'vue';
-import VueRouter, { Route, Location } from 'vue-router';
+import VueRouter, {Location, Route} from 'vue-router';
 
 import IndexRoute from './components/routes/index.vue';
-import TestRoute from './components/routes/test.vue';
 import ErrorRoute from './components/routes/404.vue';
 import UserRoute from './components/routes/user.vue';
 import OfferRoute from './components/routes/offer.vue';
 import SearchRoute from './components/routes/search.vue';
 
 import OfferFormRoute from './components/routes/offer-form.vue';
+import UserSettingsRoute from './components/routes/user-settings.vue';
 
 import LoginRoute from './components/routes/auth/login.vue';
 import RegisterRoute from './components/routes/auth/register.vue';
@@ -26,8 +26,7 @@ import OfferModal from './components/routes/modal/offer-modal.vue';
 
 import store from 'JS/store';
 import EventListener from "JS/lib/event-listener";
-import { User } from 'JS/api/types';
-import events from 'JS/events';
+import {User} from 'JS/api/types';
 
 Vue.use(VueRouter);
 
@@ -178,14 +177,6 @@ const router: VueRouter = new VueRouter({
             }
         },
 
-        // Test page TODO remove
-        {
-            path: '/test',
-            name: 'test',
-            component: TestRoute,
-            props: true
-        },
-
         // Auth pages
         {
             path: '/login',
@@ -265,6 +256,19 @@ const router: VueRouter = new VueRouter({
             name: 'offer-edit',
             component: OfferFormRoute,
             props: route => ({id: parseInt(route.params.id)}),
+        },
+        {
+            path: '/me/settings',
+            name: 'user-settings',
+            components: {
+                default: UserSettingsRoute,
+                navigation: UserNavigation
+            },
+            props: {
+                navigation: {
+                    isThisUser: true
+                }
+            }
         },
 
         //administration

@@ -1,27 +1,27 @@
 <template>
     <li :class="['nav-item', {active: this.active}]">
-        <router-link v-if="isToRoute" class="nav-link" :to="routeDefinition" :aria-label="labelFull" :title="label">
+        <router-link v-if="isToRoute" class="nav-link" :to="routeDefinition" :title="labelFull">
             <icon v-if="icon" :name="icon" :label="label" :scale="1.125"/>
             <template v-else>
                 {{ label }}
-                <span class="sr-only">&nbsp;(current)</span> <!-- TODO translate the "current" word -->
+                <span class="sr-only">&nbsp;{{ translations.current }}</span>
             </template>
         </router-link>
         <a v-else href="#" class="nav-link" @click.prevent="callback" :title="label">
             <icon v-if="icon" :name="icon" :label="label" :scale="1.125"/>
             <template v-else>
                 {{ label }}
-                <span class="sr-only">&nbsp;(current)</span> <!-- TODO translate the "current" word -->
+                <span class="sr-only">&nbsp;{{ translations.current }}</span>
             </template>
         </a>
     </li>
 </template>
 
 <script lang="ts">
-    import { Prop, Vue } from "JS/components/class-component";
-    import Component from 'JS/components/class-component';
-    import router,{ routesMatch } from 'JS/router';
-    import { Location } from 'vue-router/types/router';
+    import Component, {Prop, Vue} from "JS/components/class-component";
+    import {routesMatch} from 'JS/router';
+    import {Location} from 'vue-router/types/router';
+    import {TranslationMessages} from "lang.js";
 
     @Component({
         name: 'nav-item'
@@ -48,12 +48,18 @@
         @Prop({})
         callback: ((e: MouseEvent) => void) | undefined;
 
+        get translations(): TranslationMessages {
+            return {
+                current: this.$store.getters.trans('interface.label.page-current'),
+            }
+        }
+
         get active(): boolean {
             return routesMatch(this.routeDefinition, this.$route, this.activeAnyParams, true);
         }
 
         get labelFull(): string {
-            return this.label + (this.active ? ' (current)' : ''); // TODO translate the "current" word
+            return this.label + (this.active ? ` ${this.translations.current}` : '');
         }
 
         get routeDefinition(): Location {

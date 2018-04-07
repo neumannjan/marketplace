@@ -41,7 +41,7 @@
         }),
         computed: {
             title(): string {
-                return this.offer ? this.offer.name : 'Offer'
+                return this.offer ? this.offer.name : this.$store.getters.trans('interface.page.offer');
             }
         },
         methods: {

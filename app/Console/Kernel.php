@@ -37,6 +37,10 @@ class Kernel extends ConsoleKernel
     {
         $this->load(__DIR__ . '/Commands');
 
+        if (\DevPackages::available()) {
+            $this->load(__DIR__ . '/DevCommands');
+        }
+
         require base_path('routes/console.php');
     }
 }

@@ -2,12 +2,11 @@
     <div>
         <infinite-scroll top :busy="busy" @request="request" @bottom="onBottom" v-model="scroll" class="flex-grow d-flex flex-column overflow-scroll-y p-2">
             <div v-if="busy" class="text-center">
-                <icon name="spinner" label="Loading" pulse/>
+                <icon name="spinner" :label="translations.loading" pulse/>
             </div>
             <div v-for="message in allMessages"
                 :key="message.identifier ? message.identifier : message.id" class="mb-2">
                 <div v-if="message.mine" class="chat-item-right d-flex flex-column align-items-end">
-                    <!-- TODO label -->
                     <div class="d-flex flex-row align-items-end">
                         <div class="d-flex flex-row-reverse align-items-end ml-auto">
                             <div :class="['card text-white', message.error ? 'bg-danger' : 'bg-primary']"
@@ -16,33 +15,42 @@
                             </div>
                             <ul v-if="message.error" class="list-unstyled mb-0 mr-1 line-height-1">
                                 <li>
-                                    <small><i><a href="#" @click.prevent="resendFailed(message.identifier)">Resend</a></i>
+                                    <small>
+                                        <i><a href="#" @click.prevent="resendFailed(message.identifier)">{{
+                                            translations.resend }}</a></i>
                                     </small>
                                 </li>
                                 <li>
-                                    <small><i><a href="#" @click.prevent="removeFailed(message.identifier)">Remove</a></i>
+                                    <small>
+                                        <i><a href="#" @click.prevent="removeFailed(message.identifier)">{{
+                                            translations.remove }}</a></i>
                                     </small>
                                 </li>
                             </ul>
                         </div>
                         <div class="chat-item-indicator mx-2">
                             <profile-img v-if="lastReadMessageID === message.id"
-                                        :img="profileImage ? profileImage : {}"
-                                        :img-size="indicatorSize"/>
+                                         :img="profileImage ? profileImage : {}"
+                                         :alt="translations.status.read"
+                                         :img-size="indicatorSize"/>
                             <icon v-else-if="message.error" name="times-circle" :scale="indicatorSize/16"
-                                class="text-danger"/>
+                                  :label="translations.status.error"
+                                  class="text-danger"/>
                             <icon v-else-if="!message.read && message.received" name="check-circle"
-                                :scale="indicatorSize/16"
-                                class="text-primary"/>
+                                  :label="translations.status.received"
+                                  :scale="indicatorSize/16"
+                                  class="text-primary"/>
                             <icon v-else-if="message.awaiting" name="circle-o" :scale="indicatorSize/16"
-                                class="text-primary"/>
+                                  :label="translations.status.awaiting"
+                                  class="text-primary"/>
                             <icon v-else-if="!message.read && !message.received" name="check-circle-o"
-                                :scale="indicatorSize/16"
-                                class="text-primary"/>
+                                  :label="translations.status.sent"
+                                  :scale="indicatorSize/16"
+                                  class="text-primary"/>
                             <div v-else :style="{width: `${indicatorSize}px`, height: '1px'}"></div>
                         </div>
                     </div>
-                    <small v-if="message.error" class="text-danger"><i>Message send failed.</i></small>
+                    <small v-if="message.error" class="text-danger"><i>{{ translations.failed }}</i></small>
                 </div>
                 <div v-else class="d-flex flex-row align-items-end">
                     <div class="chat-item-left d-flex flex-row">
@@ -60,7 +68,8 @@
                 </div>
             </div>
             <!-- Typing indicator -->
-            <div v-if="typing" class="chat-item-left mb-2 d-flex mr-auto flex-row-reverse align-items-end">
+            <div v-if="typing" class="chat-item-left mb-2 d-flex mr-auto flex-row-reverse align-items-end"
+                 :aria-label="translations.status.typing">
                 <div class="card bg-light" :style="{borderRadius: `${imgSize/2}px`}">
                     <div class="chat-item-typing">
                         <div></div>
@@ -73,9 +82,9 @@
         </infinite-scroll>
         <div class="p-1">
             <form @submit.prevent="sendInputMessage" class="input-group input-group-sm">
-                <input type="text" class="form-control" placeholder="Type a message" v-model="message" v-focus>
+                <input type="text" class="form-control" :placeholder="translations.typemsg" v-model="message" v-focus>
                 <div class="input-group-append">
-                    <button class="btn btn-outline-primary" type="submit">Send</button>
+                    <button class="btn btn-outline-primary" type="submit">{{ translations.send }}</button>
                 </div>
             </form>
         </div>
@@ -92,22 +101,25 @@
     import "vue-awesome/icons/check-circle";
     import "vue-awesome/icons/circle-o";
     import "vue-awesome/icons/times-circle";
-
-    import api from 'JS/api';
-    import echo from 'JS/echo';
     import messaging from 'JS/api/messaging';
     import debounce from 'lodash/debounce';
-    import { Image, MessageReceivedNotifyRequest, PaginatedResponse, User, MessageAdditional, ContinuousResponse } from 'JS/api/types';
-    import { ChannelType } from 'JS/lib/echo/channel';
-    import { ConnectionManagerEvents } from 'JS/lib/echo';
-    import { TypingEvent } from 'JS/echo/types';
-    import appEvents,{ Events } from 'JS/events';
-    import { Vue, Component, Prop, Watch } from 'JS/components/class-component';
-    import { NormalizedMessage } from 'JS/api/messaging/typings';
-    import { MessageSender } from 'JS/components/widgets/chat/types';
-    import { ConversationMediator, ConversationEvents } from 'JS/api/messaging/conversation';
-
-    // TODO: User chat notification and 'received' without 'read' on notification.
+    import {
+        ContinuousResponse,
+        Image,
+        MessageAdditional,
+        MessageReceivedNotifyRequest,
+        PaginatedResponse,
+        User
+    } from 'JS/api/types';
+    import {ChannelType} from 'JS/lib/echo/channel';
+    import {ConnectionManagerEvents} from 'JS/lib/echo';
+    import {TypingEvent} from 'JS/echo/types';
+    import {Events} from 'JS/events';
+    import {Component, Prop, Vue, Watch} from 'JS/components/class-component';
+    import {NormalizedMessage} from 'JS/api/messaging/typings';
+    import {MessageSender} from 'JS/components/widgets/chat/types';
+    import {ConversationEvents, ConversationMediator} from 'JS/api/messaging/conversation';
+    import {TranslationMessages} from 'lang.js';
 
     interface LocalMessage {
         identifier: string,
@@ -164,6 +176,25 @@
         scroll: number = 0;
 
         typing: boolean = false;
+
+        get translations(): TranslationMessages {
+            return {
+                typemsg: this.$store.getters.trans('interface.hint.type-message'),
+                loading: this.$store.getters.trans('interface.notice.loading'),
+                resend: this.$store.getters.trans('interface.button.resend'),
+                send: this.$store.getters.trans('interface.button.send'),
+                remove: this.$store.getters.trans('interface.button.remove'),
+                failed: this.$store.getters.trans('interface.notice.message-failed'),
+                status: {
+                    error: this.$store.getters.trans('interface.message.error'),
+                    read: this.$store.getters.trans('interface.message.read'),
+                    awaiting: this.$store.getters.trans('interface.message.awaiting'),
+                    received: this.$store.getters.trans('interface.message.received'),
+                    sent: this.$store.getters.trans('interface.message.sent'),
+                    typing: this.$store.getters.trans('interface.message.typing'),
+                }
+            }
+        }
 
         get allMessages(): Message[] {
             return [

@@ -1,17 +1,16 @@
 <template>
     <form @submit.prevent="submit">
-        <!-- TODO translate -->
         <div class="input-group input-group-lg">
             <div class="input-group-prepend">
                 <label for="search" class="search-icon input-group-text">
-                    <icon name="search" label="Search"/>
+                    <icon name="search"/>
                 </label>
             </div>
             <input name="search"
                    id="search"
                    class="search-form form-control"
                    type="text"
-                   placeholder="Search"
+                   :placeholder="translations.search"
                    ref="input"
                    :value="value"
                    @input="e => input(e.target.value)">
@@ -37,6 +36,13 @@
             submit() {
                 //@ts-ignore
                 this.$emit('submit', this.$refs.input.value);
+            }
+        },
+        computed: {
+            translations() {
+                return {
+                    search: this.$store.getters.trans('interface.button.search'),
+                }
             }
         }
     }

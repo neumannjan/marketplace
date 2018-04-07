@@ -1,6 +1,7 @@
-import router, {getRouteMainComponent} from 'JS/router';
-import {Route, RawLocation, RouteRecord} from "vue-router";
-import { Vue, Component, Watch } from "JS/components/class-component";
+import {getRouteMainComponent} from 'JS/router';
+import {RawLocation, Route} from "vue-router";
+import {Component, Vue, Watch} from "JS/components/class-component";
+import store from 'JS/store';
 
 function determineActive(instance: Vue) {
     return instance === getRouteMainComponent();
@@ -22,7 +23,7 @@ function changeTitle(instance: Vue & {title?: string}) {
     if(!instance.$data._isMainRoute)
         return;
 
-    let title = 'Marketplace'; //TODO default title
+    let title = store.state.name;
 
     for(let i = matched.length - 1; i >= 0; --i) {
         const inst = matched[i].instances.default;

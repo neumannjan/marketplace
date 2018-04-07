@@ -10,6 +10,7 @@
                   :title="label"
                   @input="onInput" @blur="touch()" v-focus="autofocus"
                   :value="value"
+                  :disabled="disabled"
                   :maxlength="maxlength"
                   :aria-describedby="hint ? hintId : false"></textarea>
         <input v-else
@@ -18,6 +19,7 @@
                :placeholder="placeholder"
                :maxlength="maxlength"
                :title="label"
+               :disabled="disabled"
                @input="onInput" @blur="touch()" v-focus="autofocus"
                :aria-describedby="hint ? hintId : false">
         <validation-message :validation="validation" :server-validation="serverValidation"
@@ -70,7 +72,8 @@
             errorLabel: String,
             value: String,
             autofocus: Boolean,
-            maxlength: Number
+            disabled: Boolean,
+            maxlength: Number,
         },
         methods: {
             touch() {

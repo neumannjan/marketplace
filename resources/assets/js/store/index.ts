@@ -1,4 +1,4 @@
-import Vuex, {ActionContext, ActionTree, GetterTree, MutationTree, Store} from "vuex";
+import Vuex, {ActionContext} from "vuex";
 import api from "JS/api";
 import Vue from "vue";
 import persistedState from 'vuex-persistedstate';
@@ -11,8 +11,9 @@ import {
     RequestScope
 } from "JS/api/types";
 import {StrictStore} from "JS/lib/strict-store";
-import { Notification } from "JS/lib/notifications/typings";
+import {Notification} from "JS/lib/notifications/typings";
 import initial from './initial';
+import Lang, {TranslationReplacements} from 'lang.js';
 
 Vue.use(Vuex);
 
@@ -30,7 +31,12 @@ function updateObject<T extends {[key: string]: any} = {[key: string]: any}>
     for (let [key, value] of Object.entries(newObj)) {
         if (obj[key] !== undefined) {
             if (obj[key] instanceof Array && value instanceof Array) {
-                to[key] = [...obj[key], ...value];
+                const newArray = (obj[key] as Array<any>).filter((val: any) => {
+                    return (value as Array<any>).indexOf(val) === -1;
+                });
+
+                newArray.push(...value);
+                to[key] = newArray;
             } else if (obj[key] instanceof Object && value instanceof Object) {
                 to[key] = {...obj[key], ...value};
             } else {
@@ -41,6 +47,11 @@ function updateObject<T extends {[key: string]: any} = {[key: string]: any}>
 
     return to;
 }
+
+/**
+ * Message translation tool
+ */
+let lang = new Lang();
 
 /**
  * A map of appropriate API scopes per request type
@@ -67,8 +78,11 @@ export interface State extends InitialResponse {
  * Initial store state
  */
 const state: State = {
+    name: 'Marketplace',
     token: null,
     locale: 'en',
+    fallback_locale: 'en',
+    available_locales: ['en'],
     user: null,
     is_admin: false,
     connection_http: null,
@@ -91,6 +105,21 @@ const state: State = {
 const mutations = {
     global(state: State, data: GlobalResponse | InitialResponse) {
         updateObject<GlobalResponse | InitialResponse>(state, data);
+
+        lang.setLocale(state.locale);
+
+        if ((<InitialResponse>data).messages)
+            lang.setMessages(state.messages);
+    },
+    toggleLocale(state: State) {
+        let index = state.available_locales.indexOf(state.locale) + 1;
+
+        if (index >= state.available_locales.length) {
+            index = 0;
+        }
+
+        state.locale = state.available_locales[index];
+        lang.setLocale(state.locale);
     },
     logout(state: State) {
         state.user = null;
@@ -162,6 +191,16 @@ const getters = {
             publicOffer: considerAdmin<RequestScope>('public'),
             offer: considerAdmin<OfferRequestScope>(!!state.user ? 'auth' : 'public'),
         };
+    },
+    trans(state: State) {
+        return (key: string, replacements?: TranslationReplacements): string => {
+            return lang.get(key, replacements, state.locale);
+        }
+    },
+    transChoice(state: State) {
+        return (key: string, number: number, replacements?: TranslationReplacements): string => {
+            return lang.choice(key, number, replacements, state.locale);
+        }
     }
 };
 
@@ -175,40 +214,6 @@ const store: StrictStore<State, typeof mutations, typeof actions, typeof getters
 });
 
 store.commit('global', initial.state);
-
-export const helpers = {
-    /**
-     * Get translation for key
-     * @param {string} key
-     * @param {string[]} parameters
-     * @return {string}
-     */
-    trans(key: string, parameters?: string[]) {
-        if (!store.state.messages)
-            return key;
-
-        //retrieve the value based on dot notation of key
-        let value: undefined | string | object = key.split('.').reduce(function (a: any, b: string) {
-            if (a && (typeof a === 'object') && a[b])
-                return a[b];
-            else
-                return null;
-        }, store.state.messages);
-
-        if (!value || typeof value === "object")
-            return key;
-
-        if (!parameters || parameters.length === 0)
-            return value;
-
-        //replace parameters with values
-        for (let [param, replacement] of Object.entries(parameters)) {
-            value = value.replace(':' + param, replacement);
-        }
-
-        return value;
-    }
-};
 
 export async function cached() {
     await store.dispatch('requestCached');

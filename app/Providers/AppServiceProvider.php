@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Helpers\DevPackages;
 use App\Helpers\Money;
 use Illuminate\Support\ServiceProvider;
 
@@ -33,5 +34,11 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->alias('money', Money::class);
+
+        // dev composer packages helper
+        $this->app->singleton('dev-packages', function () {
+            return new DevPackages();
+        });
+        $this->app->alias('dev-packages', DevPackages::class);
     }
 }

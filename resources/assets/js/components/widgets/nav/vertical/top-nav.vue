@@ -21,12 +21,12 @@
             items(): any[] {
                 const items = [
                     {
-                        label: 'Dashboard',
+                        label: this.$store.getters.trans('interface.page.dashboard'),
                         icon: 'home',
                         route: 'index'
                     },
                     {
-                        label: 'Search',
+                        label: this.$store.getters.trans('interface.page.search'),
                         icon: 'search',
                         route: 'search',
                         activeAnyParams: true,
@@ -37,7 +37,7 @@
 
                 const authItems = !!user ? [
                     {
-                        label: 'Profile',
+                        label: this.$store.getters.trans('interface.page.me'),
                         icon: 'user',
                         route: 'user',
                         params: {
@@ -48,7 +48,7 @@
 
                 const adminItems = (<typeof store>this.$store).state.is_admin ? [
                     {
-                        label: 'Administration',
+                        label: this.$store.getters.trans('interface.page.admin'),
                         icon: 'flag',
                         route: 'admin',
                         activeAnyParams: true,

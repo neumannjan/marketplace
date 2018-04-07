@@ -132,7 +132,7 @@
         }
     }
 
-    .notification-disappearing:not(.tr-enter):not(.tr-enter-active) {
+    .notification-disappearing:not(.tr-enter):not(.tr-enter-active):not(.tr-leave):not(.tr-leave-active) {
         animation: disappear 15000ms normal forwards ease-in;
     }
 

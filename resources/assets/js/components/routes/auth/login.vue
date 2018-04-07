@@ -4,27 +4,30 @@
 
         <form id="form-login">
             <form-input class="form-group"
-                        label="Login"
+                        :label="translations.form.login"
                         name="login"
                         :serverValidation="$serverValidationOn('form.login')"
                         :validation="$v.form.login"
                         v-model="form.login"
-                        hint="Username or email"
+                        :hint="translations.hint.login"
                         autofocus/>
             <form-input class="form-group"
-                        label="Password"
+                        :label="translations.form.password"
                         name="password"
                         :serverValidation="$serverValidationOn('form.password')"
                         :validation="$v.form.password"
                         v-model="form.password"
                         type="password"/>
 
-            <form-select class="form-group" v-model="form.remember">Remember Me</form-select>
+            <form-select class="form-group" v-model="form.remember" name="remember">{{ translations.button.remember }}
+            </form-select>
 
             <div class="form-group">
-                <button id="submit" type="submit" class="btn btn-primary" @click.prevent="submit">Login</button>
-                <!-- TODO translate -->
-                <router-link class="btn btn-link" :to="{ name: 'password-email' }">Forgot Your Password?</router-link>
+                <button id="submit" type="submit" class="btn btn-primary" @click.prevent="submit">{{
+                    translations.button.login }}
+                </button>
+                <router-link class="btn btn-link" :to="{ name: 'password-email' }">{{ translations.button.forgot }}
+                </router-link>
             </div>
         </form>
     </div>
@@ -34,16 +37,17 @@
     import FormInput from 'JS/components/widgets/form/input.vue';
     import FormSelect from 'JS/components/widgets/form/select.vue';
 
-    import appEvents,{ Events } from "JS/events";
+    import appEvents, {Events} from "JS/events";
 
     import {minLength, required} from 'vuelidate/lib/validators';
 
     import route from 'JS/components/mixins/route';
     import FormMixin from 'JS/components/mixins/form';
-    import { LoginResponse } from 'JS/api/types';
+    import {LoginResponse} from 'JS/api/types';
     import Vue from 'vue';
     import store from 'JS/store';
     import routeGuard from 'JS/components/mixins/route-guard';
+    import {TranslationMessages} from 'lang.js';
 
     export default Vue.extend({
         mixins: [route, FormMixin, routeGuard('guest', () => !store.state.user)],
@@ -73,7 +77,23 @@
         },
         computed: {
             title(): string {
-                return 'Login';
+                return this.$store.getters.trans('interface.page.login');
+            },
+            translations(): TranslationMessages {
+                return {
+                    form: {
+                        login: this.$store.getters.trans('interface.form.login'),
+                        password: this.$store.getters.trans('interface.form.password'),
+                    },
+                    hint: {
+                        login: this.$store.getters.trans('interface.hint.login')
+                    },
+                    button: {
+                        login: this.$store.getters.trans('interface.button.login'),
+                        remember: this.$store.getters.trans('interface.button.remember-me'),
+                        forgot: this.$store.getters.trans('interface.button.forgot-password'),
+                    }
+                }
             }
         },
         validations: {

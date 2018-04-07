@@ -6,11 +6,12 @@
         <div class="input-group">
             <div :class="['custom-file', $slots.append ? 'custom-file-append' : '']">
                 <input type="file" :name="name" :multiple="multiple" @change="onFileChange"
+                       v-if="!reseting"
                        :accept="accept"
                        :class="['custom-file-input', {'is-invalid': error, 'is-valid': valid}]"
                        :id="id" ref="file">
-                <!-- TODO -->
-                <label class="custom-file-label" :data-button="'Browse'" :for="id"><span>{{ fileInfo }}</span></label>
+                <label class="custom-file-label" :data-button="translations.browse"
+                       :for="id"><span>{{ fileInfo }}</span></label>
             </div>
             <div v-if="$slots.append" class="input-group-append">
                 <slot name="append"/>
@@ -20,13 +21,15 @@
                             :label="errorLabel ? errorLabel : label" :input="files"
                             @valid="v => valid = v"
                             @error="e => error = e"/>
+        <small v-if="!!hint" :id="hintId" class="form-text text-muted">{{ hint }}</small>
     </div>
 </template>
 
 <script lang="ts">
     import ValidationMessage from "JS/components/widgets/form/validation-message.vue";
-    import {Component, Prop, Vue} from "JS/components/class-component";
+    import {Component, Prop, Vue, Watch} from "JS/components/class-component";
     import {Vuelidate} from "vuelidate";
+    import {TranslationMessages} from "lang.js";
 
     let nextID = 0;
 
@@ -41,12 +44,16 @@
         files: FileList | null = null;
         valid: boolean = false;
         error: null | boolean = null;
+        reseting: boolean = false;
 
         @Prop({type: String})
         name: string | undefined;
 
         @Prop({type: String, default: null})
         label!: string | null;
+
+        @Prop({type: String})
+        hint: string | undefined;
 
         @Prop({type: Boolean})
         multiple: boolean | undefined;
@@ -58,33 +65,42 @@
         serverValidation: Array<string> | undefined;
 
         @Prop({type: String})
-        errorLabel: string | undefined
+        errorLabel: string | undefined;
 
         @Prop({type: String})
-        accept: string | undefined
+        accept: string | undefined;
+
+        @Prop({})
+        value: FileList | undefined;
 
         get fileInfo() {
-            //TODO
+            let amountStr = '';
 
             const amount = this.files ? this.files.length : 0;
-
-            let amountStr;
 
             switch (amount) {
                 case 0:
                     if (this.multiple)
-                        return "Choose files";
+                        return this.$store.getters.trans('interface.form.file-select-multiple');
                     else
-                        return "Choose file";
-                case 1:
-                    amountStr = '1 file';
-                    break;
+                        return this.$store.getters.trans('interface.form.file-select');
                 default:
-                    amountStr = `${amount} files`;
                     break;
             }
 
-            return `${amountStr}: ${Array.from(this.files!).map(file => file.name).join(' | ')}`;
+            if (this.multiple) {
+                amountStr = this.$store.getters.transChoice('interface.form.file-select-listed', amount, {
+                    amount: amount
+                }) + ": ";
+            }
+
+            return amountStr + Array.from(this.files!).map(file => file.name).join(' | ');
+        }
+
+        get translations(): TranslationMessages {
+            return {
+                browse: this.$store.getters.trans('interface.button.browse'),
+            }
         }
 
         async onFileChange(e: Event) {
@@ -92,6 +108,20 @@
             await this.$nextTick();
             this.files = (e.target as HTMLInputElement).files || (e as DragEvent).dataTransfer.files;
             this.$emit('input', this.files);
+        }
+
+        get hintId() {
+            return this.id + '-hint';
+        }
+
+        @Watch('value')
+        async onValueChanged(value: FileList | undefined) {
+            if (value === undefined) {
+                this.files = null;
+                this.reseting = true;
+                await this.$nextTick();
+                this.reseting = false;
+            }
         }
 
         mounted() {

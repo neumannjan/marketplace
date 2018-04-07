@@ -24,6 +24,7 @@ use App\Api\Request\DB\Offer\OfferSearchRequest;
 use App\Api\Request\DB\SingleRequest;
 use App\Api\Request\DB\User\UserAdminRequest;
 use App\Api\Request\DB\User\UserSearchRequest;
+use App\Api\Request\DB\User\UserSettingsRequest;
 use App\Api\Request\DummyRequest;
 use App\Api\Request\GlobalDataRequest;
 use App\Api\Request\Request as ApiRequest;
@@ -100,6 +101,7 @@ class PrivateApiController extends Controller
             'offer-bump' => OfferBumpRequest::class,
             'offer-report' => OfferReportRequest::class,
             'offer-mark-appropriate' => OfferMarkAppropriateRequest::class,
+            'user-settings' => UserSettingsRequest::class,
 
             // Admin
             'user-admin' => UserAdminRequest::class,

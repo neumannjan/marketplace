@@ -117,13 +117,13 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPriceAttribute()
     {
         if (!$this->money) {
-            return 'FREE';
-        } //TODO
+            return null;
+        }
 
         return \Money::getFormatter()->format($this->money);
     }

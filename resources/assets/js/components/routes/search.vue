@@ -14,8 +14,8 @@
     import api from 'JS/api';
     import OfferMasonry from "JS/components/widgets/masonry/data-aware/offer/offer-masonry.vue";
     import Vue from "vue";
-    import { PaginatedResponse, Offer } from "JS/api/types";
-    import { Dictionary } from "vue-router/types/router";
+    import {Offer, PaginatedResponse} from "JS/api/types";
+    import {Dictionary} from "vue-router/types/router";
 
     export default Vue.extend({
         name: "search-route",
@@ -40,7 +40,7 @@
         }),
         computed: {
             title(): string {
-                return (this.query ? `${this.query} | ` : '') + 'Search';
+                return (this.query ? `${this.query} | ` : '') + this.$store.getters.trans('interface.page.search');
             }
         },
         watch: {

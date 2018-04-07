@@ -1,34 +1,35 @@
 <template>
     <div>
-        <!-- TODO translate -->
         <template v-if="!owned && !admin">
-            <b-dropdown-header>Additional options</b-dropdown-header>
+            <b-dropdown-header>{{ translations.options.additional }}</b-dropdown-header>
             <b-dropdown-item-button @click="reportOffer()">
                 <icon name="flag-o" class="mr-2" />
-                Report
+                {{ translations.button.report }}
             </b-dropdown-item-button>
         </template>
         <template v-else>
-            <b-dropdown-header>{{ owned ? 'Owner options' : 'Administrator options' }}</b-dropdown-header>
+            <b-dropdown-header>{{ owned ? translations.options.owned : translations.options.admin }}</b-dropdown-header>
             <template v-if="!sold">
                 <b-dropdown-item-button @click="editOffer()">
                     <icon name="pencil" class="mr-2" />
-                    Edit
+                    {{ translations.button.edit }}
                 </b-dropdown-item-button>
                 <b-dropdown-item-button v-if="!draft && owned" :disabled="!bumpable" @click="bumpOffer()">
                     <icon name="clock-o" class="mr-2" />
-                    <template v-if="offer.bumps_left === 0">No bumps left!</template>
-                    <template v-else-if="offer.just_bumped">Bumped recently</template>
-                    <template v-else>Bump up as new&#160;<small>(left: {{ offer.bumps_left }})</small></template>
+                    <template v-if="offer.bumps_left === 0">{{ translations.notice.bumpsnone }}</template>
+                    <template v-else-if="offer.just_bumped">{{ translations.notice.bumpedrecently }}</template>
+                    <template v-else>{{ translations.button.bump }}&#160;<small>{{ translations.button.bumptimes }}
+                    </small>
+                    </template>
                 </b-dropdown-item-button>
             </template>
             <b-dropdown-item-button @click="removeOffer()">
                 <icon name="trash-o" class="mr-2" />
-                Remove
+                {{ translations.button.remove }}
             </b-dropdown-item-button>
             <b-dropdown-item-button v-if="admin && reported" @click="markOfferAppropriate()">
                 <icon name="check" class="mr-2" />
-                Mark as appropriate
+                {{ translations.button.appropriate }}
             </b-dropdown-item-button>
         </template>
     </div>
@@ -45,14 +46,14 @@
     import 'vue-awesome/icons/trash-o';
     import 'vue-awesome/icons/check';
 
-    import {ExtendedOffer, isExtendedOffer, Offer, OfferStatus, isAdminOffer} from 'JS/api/types';
-    import store from 'JS/store';
+    import {ExtendedOffer, isAdminOffer, isExtendedOffer, Offer, OfferStatus} from 'JS/api/types';
     import router from 'JS/router';
     import api from 'JS/api';
     import events, {Events} from 'JS/events';
     import {Location} from 'vue-router';
     import {NotificationTypes} from 'JS/notifications';
     import {doAction} from 'JS/lib/helpers';
+    import {TranslationMessages} from 'lang.js';
 
     @Component({
         name: "offer-dropdown-contents",
@@ -89,12 +90,36 @@
             return isExtendedOffer(this.offer) && this.offer.bumps_left > 0 && !this.offer.just_bumped;
         }
 
+        get translations(): TranslationMessages {
+            return {
+                button: {
+                    report: this.$store.getters.trans('interface.button.report'),
+                    edit: this.$store.getters.trans('interface.button.edit'),
+                    remove: this.$store.getters.trans('interface.button.remove'),
+                    appropriate: this.$store.getters.trans('interface.button.mark-appropriate'),
+                    bump: this.$store.getters.trans('interface.button.bump'),
+                    bumptimes: this.$store.getters.trans('interface.button.bump-times', {
+                        times: isExtendedOffer(this.offer) ? this.offer.bumps_left : '?'
+                    }),
+                },
+                notice: {
+                    bumpsnone: this.$store.getters.trans('interface.notice.bumps-none'),
+                    bumpedrecently: this.$store.getters.trans('interface.notice.bumped-recently'),
+                },
+                options: {
+                    additional: this.$store.getters.trans('interface.label.options.additional'),
+                    owned: this.$store.getters.trans('interface.label.options.owned'),
+                    admin: this.$store.getters.trans('interface.label.options.admin'),
+                }
+            }
+        }
+
         removeOffer() {
-            // TODO translate
+            const replacements = {offer: this.offer.name};
             doAction({
-                confirm: `You are trying to remove "${this.offer.name}". Are you sure you want to continue?`,
-                beforeNotification: `"${this.offer.name}" is being removed.`,
-                afterNotification: `"${this.offer.name}" was successfully removed.`
+                confirm: this.$store.getters.trans('interface.confirm.offer-remove', replacements),
+                beforeNotification: this.$store.getters.trans('interface.notification.before.offer-remove', replacements),
+                afterNotification: this.$store.getters.trans('interface.notification.after.offer-remove', replacements),
             }, () => api.requestSingle('offer-remove', {id: this.offer.id}).then(() => {
                 let newRoute: Location = {};
 
@@ -121,15 +146,18 @@
             if (!isExtendedOffer(this.offer))
                 return;
 
-            //TODO translate
+            const replacements = {offer: this.offer.name};
+
             doAction({
-                confirm: `Are you sure you want to make "${this.offer.name}" reappear on top as a new offer? `
-                    + `You can do this only ${this.offer.bumps_left} times!`,
+                confirm: this.$store.getters.trans('interface.confirm.offer-bump', replacements) + ' '
+                + this.$store.getters.transChoice('interface.confirm.offer-bump-times', this.offer.bumps_left, {
+                    times: this.offer.bumps_left,
+                }),
                 beforeNotification: {
-                    message: `Bumping "${this.offer.name}".`
+                    message: this.$store.getters.trans('interface.notification.before.offer-bump', replacements),
                 },
                 afterNotification: {
-                    message: `"${this.offer.name}" has been bumped.`
+                    message: this.$store.getters.trans('interface.notification.after.offer-bump', replacements),
                 }
             }, () => api.requestSingle<Offer>('offer-bump', {id: this.offer.id}).then((offer) => {
                 events.dispatch(Events.OfferModified, offer);
@@ -146,14 +174,15 @@
         }
 
         reportOffer() {
-            //TODO translate            
+            const replacements = {offer: this.offer.name};
+
             doAction({
-                confirm: `Are you sure you want to report "${this.offer.name}" as inappropriate?`,
+                confirm: this.$store.getters.trans('interface.confirm.offer-report', replacements),
                 beforeNotification: {
-                    message: `Reporting "${this.offer.name}".`
+                    message: this.$store.getters.trans('interface.notification.before.offer-report', replacements),
                 },
                 afterNotification: {
-                    message: `"${this.offer.name}" has been reported.`
+                    message: this.$store.getters.trans('interface.notification.after.offer-report', replacements),
                 },
                 errorNotification: {
                     type: 'warning',
@@ -163,14 +192,15 @@
         }
 
         markOfferAppropriate() {
-            //TODO translate            
+            const replacements = {offer: this.offer.name};
+
             doAction({
-                confirm: `Are you sure you want to mark "${this.offer.name}" as appropriate?`,
+                confirm: this.$store.getters.trans('interface.confirm.offer-mark-appropriate', replacements),
                 beforeNotification: {
-                    message: `Marking "${this.offer.name}" as appropriate.`
+                    message: this.$store.getters.trans('interface.notification.before.offer-mark-appropriate', replacements),
                 },
                 afterNotification: {
-                    message: `"${this.offer.name}" has been marked as appropriate.`
+                    message: this.$store.getters.trans('interface.notification.after.offer-mark-appropriate', replacements),
                 }
             }, () => api.requestSingle<Offer>('offer-mark-appropriate', {id: this.offer.id}).then((offer) => {
                 events.dispatch(Events.OfferModified, offer);

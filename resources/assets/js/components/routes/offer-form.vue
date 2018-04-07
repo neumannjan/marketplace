@@ -4,8 +4,8 @@
 
         <form id="form-offer" ref="form">
             <form-input class="form-group"
-                        label="What are you selling?"
-                        error-label="Offer name"
+                        :label="translations.form.extended.name"
+                        :error-label="translations.form.name"
                         name="name"
                         v-focus
                         :server-validation="$serverValidationOn('form.name')"
@@ -13,8 +13,8 @@
                         v-model="form.name"
                         autofocus/>
             <form-input class="form-group"
-                        label="Describe the offer a little more"
-                        error-label="Description"
+                        :label="translations.form.extended.description"
+                        :error-label="translations.form.description"
                         name="description"
                         :textarea="5"
                         :server-validation="$serverValidationOn('form.description')"
@@ -23,7 +23,7 @@
 
             <div class="form-group">
                 <label for="price">
-                    <slot>Price</slot>
+                    {{ translations.form.price }}
                 </label>
                 <div class="input-group">
                     <input id="price"
@@ -45,13 +45,13 @@
                              v-model="form.currency">
                     </choices>
                 </div>
-                <validation-message label="Price"
+                <validation-message :label="translations.form.price"
                                     :input="form.price"
                                     @error="e => setObjArg('errors', 'price', e)"
                                     @valid="v => setObjArg('valids', 'price', v)"
                                     :server-validation="$serverValidationOn('form.price')"
                                     :validation="$v.form.price"/>
-                <validation-message label="Currency"
+                <validation-message :label="translations.form.currency"
                                     :input="form.currency"
                                     @error="e => setObjArg('errors', 'currency', e)"
                                     @valid="v => setObjArg('valids', 'currency', v)"
@@ -64,19 +64,19 @@
                          v-if="!resettingFileInput"
                          accept="image/*"
                          multiple
-                         label="Add some images"
-                         error-label="File"
+                         :label="translations.form.extended.images"
+                         :error-label="translations.form.images"
                          :server-validation="$serverValidationOn('form.images')"
                          :validation="$v.form.images"
                          @input="onFileInput">
                 <button slot="append" v-if="offer" class="btn btn-danger" @click.prevent="resetImageOrder()"
-                        title="Revert original images">
+                        :title="translations.button.revert">
                     <icon name="refresh"/>
                 </button>
             </file-select>
 
             <div v-if="imageOrder && imageOrder.length > 0" class="form-group">
-                <div class="mb-2">Reorder the images (use drag & drop)</div>
+                <div class="mb-2">{{ translations.form.reorder }}</div>
                 <draggable class="d-flex flex-wrap thumbnail-container" v-model="imageOrder">
                     <div v-for="(image) of imageOrder"
                          :key="image.key"
@@ -89,15 +89,16 @@
                                 @click="removeExistingMessage(image.id)"
                                 type="button"
                                 class="btn badge badge-float badge-danger"
-                                aria-label="Close">
-                            <icon name="times" label="Close"/>
+                                :aria-label="translations.button.close">
+                            <icon name="times" :label="translations.button.close"/>
                         </button>
                     </div>
                 </draggable>
             </div>
 
             <div class="form-group">
-                <button id="submit" type="submit" class="btn btn-primary" @click.prevent="submit(false)">Publish
+                <button id="submit" type="submit" class="btn btn-primary" @click.prevent="submit(false)">
+                    {{ translations.button.publish }}
                 </button>
                 <!--TODO draft editing, existing image editing (drag / drop existing and new)
                 <button id="submit-draft" type="submit" class="btn btn-warning" @click.prevent="submit(true)">Save as draft</button>-->
@@ -132,6 +133,7 @@
     import {RawLocation, Route} from 'vue-router';
     import routeFetch from 'JS/components/mixins/route-fetch';
     import {getImageFileThumbnailDataURL} from 'JS/lib/helpers';
+    import {TranslationMessages} from 'lang.js';
 
     import 'vue-awesome/icons/times';
     import 'vue-awesome/icons/refresh';
@@ -422,8 +424,7 @@
         }
         
         get title() {
-            //TODO
-            return this.id ? `Edit offer` : 'Create offer';
+            return this.$store.getters.trans(`interface.page.offer-${this.id ? 'edit' : 'create'}`);
         }
 
         get price() {
@@ -451,12 +452,35 @@
 
             currencies.push({
                 value: 0,
-                label: 'Currency', //TODO translate
+                label: this.$store.getters.trans('interface.form.currency'),
                 selected: true,
                 placeholder: true,
             });
 
             return currencies;
+        }
+
+        get translations(): TranslationMessages {
+            return {
+                button: {
+                    publish: this.$store.getters.trans('interface.button.publish'),
+                    close: this.$store.getters.trans('interface.button.close'),
+                    revert: this.$store.getters.trans('interface.button.revert-images'),
+                },
+                form: {
+                    extended: {
+                        name: this.$store.getters.trans('interface.form.extended.offer-name'),
+                        description: this.$store.getters.trans('interface.form.extended.offer-description'),
+                        images: this.$store.getters.trans('interface.form.extended.offer-images'),
+                    },
+                    name: this.$store.getters.trans('interface.form.offer-name'),
+                    description: this.$store.getters.trans('interface.form.offer-description'),
+                    images: this.$store.getters.trans('interface.form.offer-images'),
+                    reorder: this.$store.getters.trans('interface.form.reorder-images'),
+                    currency: this.$store.getters.trans('interface.form.currency'),
+                    price: this.$store.getters.trans('interface.form.price'),
+                }
+            }
         }
 
         get priceValid() {
@@ -483,7 +507,7 @@
         }
 
         beforeRouteLeave(to: Route, from: Route, next: (to?: RawLocation | false | ((vm: any) => any) | void) => void) {
-            if (!this.formModified || window.confirm('Are you sure you want to leave? You have unsaved changes!')) {
+            if (!this.formModified || window.confirm(this.$store.getters.trans('interface.confirm.form-leave'))) {
                 next()
             } else {
                 next(false)

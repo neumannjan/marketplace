@@ -1,8 +1,8 @@
 <template>
     <div>
         <div :class="['custom-control custom-checkbox', {disabled: disabled}]">
-            <input class="custom-control-input" :type="type" :value="value" :id="id"
-                       @change="$emit('input', $event.target.checked)" :disabled="disabled">
+            <input class="custom-control-input" :type="type" :value="value" :id="id" :name="name"
+                   @change="$emit('input', $event.target.checked)" :disabled="disabled">
             <label class="custom-control-label" :for="id"><slot/></label>
         </div>
     </div>
@@ -18,6 +18,7 @@
         props: {
             disabled: Boolean,
             value: Boolean,
+            name: String,
             type: {
                 type: String,
                 default: 'checkbox'

@@ -7,7 +7,7 @@
 <script lang="ts">
     //@ts-ignore
     import Choices from 'choices.js';
-    import { Vue, Component, Prop, Watch } from 'JS/components/class-component';
+    import {Component, Prop, Vue, Watch} from 'JS/components/class-component';
 
     @Component({
         name: "choices",
@@ -64,12 +64,12 @@
             const options = this.options;
             const clss = wrapper.className;
             const choices = this.choices = new Choices(this.$refs.select, {
-                loadingText: 'Loading...',
-                noResultsText: 'No results found',
-                noChoicesText: 'No choices to choose from',
-                itemSelectText: 'Press to select',
-                addItemText: (value: string) => `Press Enter to add <b>"${value}"</b>`,
-                maxItemText: (maxItemCount: number) => `Only ${maxItemCount} values can be added.`, //TODO translate
+                loadingText: this.$store.getters.trans('interface.notice.loading'),
+                noResultsText: this.$store.getters.trans('interface.choices.no-results'),
+                noChoicesText: this.$store.getters.trans('interface.choices.no-choices'),
+                itemSelectText: this.$store.getters.trans('interface.choices.select'),
+                addItemText: (value: string) => this.$store.getters.trans('interface.choices.add', {value: value}),
+                maxItemText: (maxItemCount: number) => this.$store.getters.trans('interface.choices.max', {max: maxItemCount}),
                 callbackOnCreateTemplates(template: any) {
                     const classNames = this.config.classNames;
                     return {
