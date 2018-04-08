@@ -27,8 +27,7 @@ export default Vue.extend({
                     <li class="nav-item">
                         <router-link to={b.location} class={[
                             'nav-link btn-link-gray',
-                            {'active': routesMatch(b.location, router.currentRoute)}
-                        ]}>
+                        ]} active-class="active">
                             <icon name={b.icon} class="mr-3"/>
                             <span>{b.label}</span>
                         </router-link>
