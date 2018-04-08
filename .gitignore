@@ -18,5 +18,4 @@ public/js/
 .phpstorm.meta.php
 _ide_helper.php
 _ide_helper_models.php
-composer.lock
 .phpcd
