@@ -3,6 +3,8 @@ services:
   web:
     build: ./docker/marketplace-php-apache
     image: marketplace-php-apache
+    user: application
+    restart: always
     depends_on:
       - db
       - redis
@@ -33,17 +35,22 @@ services:
       - databasevol:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: marketplace
+      MYSQL_PASSWORD: marketplace
+      MYSQL_DATABASE: marketplace
   redis:
     image: bitnami/redis:4.0
+    restart: always
     ports:
       - "6378:6379"
     volumes:
       - cachevol:/bitnami
     environment:
-      REDIS_PASSWORD: root
+      REDIS_PASSWORD: marketplace
   nodejs:
     build: ./docker/marketplace-nodejs
     image: marketplace-nodejs
+    restart: always
     depends_on:
       - redis
       - web
