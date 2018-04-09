@@ -56,14 +56,14 @@ $ docker-compose down
 ### Database access caveat
 All `php artisan` commands that access the database have to be run from the `web` Docker container! Such commands have to be executed like below:
 
-```
+```sh
  $ docker exec -it marketplace_web_1 php app/artisan <rest of the command>
 ```
 
 > `marketplace_web_1` may be different depending on the name of the Docker container that had been created by docker-compose.
 
 Alternatively, you may do the following:
-```
+```sh
 $ docker exec -it marketplace_web_1 bash
 
 $ cd app
@@ -71,7 +71,7 @@ $ cd app
 Now you are in the docker `web` container and can run all `php artisan` commands regularly.
 
 You may then leave the container:
-```
+```sh
 $ exit
 ```
 
@@ -88,14 +88,14 @@ See [Laravel's documentation](https://laravel.com/docs/5.6/installation#configur
 Your web server's document / web root should be the `public` directory. 
 
 ### Install Composer production dependencies
-```
+```sh
 $ composer install --no-dev
 ```
 
 
 ### Prepare the `.env` file
 Rename `.env.example` to `.env`.
-```
+```sh
 $ cp .env.example .env
 ```
 
@@ -134,19 +134,19 @@ This is not preconfigured by `docker-compose.yml`! No e-mails are sent by defaul
 See [Laravel's documentation](https://laravel.com/docs/5.6/mail#introduction).
 
 ### Generate a unique app key
-```
+```sh
 $ php artisan key:generate
 ```
 
 ### Run database migrations
-```
+```sh
 $ php artisan migrate
 ```
 
 > **Warning:** If you are using provided `docker-compose.yml`, the [database access caveat](#database-access-caveat) applies here!
 
 ### Create an admin user
-```
+```sh
 $ php artisan user:create <username> <email> <password> -a
 ```
 The `-a` option gives the user admin privileges.
@@ -168,7 +168,7 @@ First, configure the `WEBSOCKET_PORT` variable. It determines which port the web
 After that, make sure that the `WEBSOCKET_APP_ENDPOINT` variable matches the `APP_ENV` variable. You may also remove this variable entirely.
 
 Then, run the service:
-```
+```sh
 $ node websocket
 ```
 
@@ -179,13 +179,13 @@ We are using [laravel-echo-server](https://github.com/tlaverdure/laravel-echo-se
 We use [Codeception](https://codeception.com/). However, the vast majority of the application is uncovered by tests due to time pressure.
 
 All tests are meant to be run with our Docker configuration. The application should, however, be launched differently:
-```
+```sh
 $ docker-compose -f docker-compose.yml -f docker-compose.testing.yml up
 ```
 
 This launches a Selenium driver alongside the application.
 
 To shut everything down, execute the following:
-```
+```sh
 $ docker-compose -f docker-compose.yml -f docker-compose.testing.yml down
 ```
