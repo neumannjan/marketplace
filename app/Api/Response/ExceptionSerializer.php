@@ -33,7 +33,7 @@ class ExceptionSerializer implements \JsonSerializable, Arrayable, Jsonable
         $this->exception = $exception;
 
         if ($verbose === null) {
-            $verbose = (config('app.env') === 'local');
+            $verbose = \App::environment('development');
         }
 
         $this->verbose = $verbose;

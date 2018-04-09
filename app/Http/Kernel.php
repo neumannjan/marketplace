@@ -88,8 +88,5 @@ class Kernel extends HttpKernel
             'guest' => RedirectIfAuthenticated::class,
             'signed' => ValidateSignature::class,
             'throttle' => ThrottleRequests::class,
-
-            // custom
-            'dev' => DevOnly::class,
         ];
 }
