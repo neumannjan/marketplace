@@ -1,4 +1,4 @@
-# 02\_customization
+# Customization
 
 All application customization-related configuration can be found in `config/app.php`.
 
