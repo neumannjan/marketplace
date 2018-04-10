@@ -2,6 +2,6 @@
 
 * [Marketplace](README.md)
 * English
-  * [Customization](en/02_customization.md)
-  * [Installation](en/01_installation.md)
+  * [Customization](docs/en/customization.md)
+  * [Installation](docs/en/installation.md)
 
