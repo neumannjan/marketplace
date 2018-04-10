@@ -30,4 +30,4 @@ This functionality may only be used twice per offer at most.
 
 ## Documentation
 
-Available [here](https://kogli.github.io/marketplace).
+Available [here](https://neumann.gitbook.io/marketplace).

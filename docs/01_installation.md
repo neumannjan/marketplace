@@ -1,9 +1,3 @@
----
-layout: page
-title: Installation
-navigation: 2
----
-
 # Installation
 
 ## Requirements

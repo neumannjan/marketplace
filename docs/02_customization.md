@@ -1,9 +1,3 @@
----
-layout: page
-title: Customization
-navigation: 3
----
-
 # Customization
 
 All application customization-related configuration can be found in `config/app.php`.

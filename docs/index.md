@@ -1,9 +1,3 @@
----
-layout: page
-title: Introduction
-navigation: 1
----
-
 # Marketplace
 
 A marketplace web application developed in PHP and TypeScript (Laravel, Vue.js), similar in functionality to Letgo or Facebook's marketplace.
