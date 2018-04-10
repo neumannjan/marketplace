@@ -22,6 +22,7 @@
 
 ### WebSocket server requirements
 * *Node.js* (preferably at least current LTS)
+    * *npm*
 * *Redis 3+*
 
 ## Docker
@@ -86,6 +87,12 @@ Your web server's document / web root should be the `public` directory.
 $ composer install --no-dev
 ```
 
+### Install npm dependencies
+```sh
+$ npm install --production
+```
+
+Skip the `--production` flag if you intend to [build assets](#building-assets).
 
 ### Prepare the `.env` file
 Rename `.env.example` to `.env`.
@@ -166,11 +173,26 @@ Then, run the service:
 $ node websocket
 ```
 
-We are using [laravel-echo-server](https://github.com/tlaverdure/laravel-echo-server). See the bottom of the `websocket` file (in root project directory) to see how it is configured (it pulls information from the `.env` file automatically on its launch).
+[laravel-echo-server](https://github.com/tlaverdure/laravel-echo-server) is used for this. See the bottom of the `websocket` file (in root project directory) to see how it is configured (it pulls information from the `.env` file automatically on its launch).
+
+## Building assets
+
+[Webpack 4](https://webpack.js.org/) is used here. These are the provided commands:
+
+```sh
+# Building for development:
+$ npm run dev
+
+# Building for development and watching for file changes:
+$ npm run watch
+
+# Building for production:
+$ npm run prod
+```
 
 ## Running tests
 
-We use [Codeception](https://codeception.com/). However, the vast majority of the application is uncovered by tests due to time pressure.
+[Codeception](https://codeception.com/) is used here. However, the vast majority of the application is uncovered by tests due to time pressure.
 
 All tests are meant to be run with our Docker configuration. The application should, however, be launched differently:
 ```sh
