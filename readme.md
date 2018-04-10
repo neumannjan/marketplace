@@ -2,7 +2,7 @@
 
 A marketplace web application developed in PHP and TypeScript (Laravel, Vue.js), similar in functionality to Letgo or Facebook's marketplace.
 
-![A Representative Screenshot](hhttps://github.com/kogli/marketplace/raw/master/screenshot.png "A Representative Screenshot")
+![A Representative Screenshot](https://github.com/kogli/marketplace/raw/master/screenshot.png "A Representative Screenshot")
 
 ## Main libraries/frameworks used
 
