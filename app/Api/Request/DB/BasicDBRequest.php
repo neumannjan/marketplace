@@ -5,6 +5,11 @@ namespace App\Api\Request\DB;
 
 use Illuminate\Support\Collection;
 
+/**
+ * A basic database API request with configurable model and resource classes.
+ *
+ * @package App\Api\Request\DB
+ */
 trait BasicDBRequest
 {
     /**

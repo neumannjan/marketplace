@@ -13,6 +13,11 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Validator;
 
+/**
+ * API request to send a message.
+ *
+ * @package App\Api\Request\DB\Chat
+ */
 class MessageSendRequest extends Request
 {
     /** @var Guard */
@@ -37,7 +42,11 @@ class MessageSendRequest extends Request
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
+     *
+     * @param Validator|null $validator
+     *
+     * @return array
      */
     protected function rules(Validator $validator = null)
     {
@@ -51,6 +60,11 @@ class MessageSendRequest extends Request
 
     /**
      * @inheritDoc
+     *
+     * @param string     $name
+     * @param Collection $parameters
+     *
+     * @return Response
      */
     protected function doResolve($name, Collection $parameters)
     {

@@ -1,6 +1,9 @@
 <?php
 
 
+/**
+ * CEST for user registration, sign in, activation, password reset, etc.
+ */
 class AuthenticationCest
 {
     const USERNAME = 'testuser';
@@ -17,6 +20,13 @@ class AuthenticationCest
     {
     }
 
+    /**
+     * Quickly register a user.
+     *
+     * @param int $status
+     *
+     * @return \App\User
+     */
     protected function _register($status = \App\User::STATUS_ACTIVE)
     {
         $user = new \App\User([

@@ -33,6 +33,7 @@ class CachedResponse extends Response
     /**
      * @inheritDoc
      *
+     * @param string                                     $success
      * @param string                                     $cacheKey
      * @param \Closure                                   $buildCallback
      * @param Repository                                 $cache
@@ -62,6 +63,7 @@ class CachedResponse extends Response
      * @param string|null   $as
      *
      * @return mixed
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     protected function remember($callback = null, $as = null)
     {

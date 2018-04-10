@@ -4,6 +4,11 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
+/**
+ * Serrvice provider for development tools.
+ *
+ * @package App\Providers
+ */
 class DevServiceProvider extends ServiceProvider
 {
     /**

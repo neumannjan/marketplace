@@ -10,6 +10,11 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Validator;
 
+/**
+ * API request to report an offer
+ *
+ * @package App\Api\Request\DB\Offer
+ */
 class OfferReportRequest extends Request
 {
 
@@ -34,6 +39,10 @@ class OfferReportRequest extends Request
 
     /**
      * @inheritDoc
+     *
+     * @param Validator|null $validator
+     *
+     * @return array
      */
     protected function rules(Validator $validator = null)
     {
@@ -44,7 +53,11 @@ class OfferReportRequest extends Request
 
     /**
      * @inheritDoc
-     * @throws \Exception
+     *
+     * @param            $name
+     * @param Collection $parameters
+     *
+     * @return Response
      */
     protected function doResolve($name, Collection $parameters)
     {

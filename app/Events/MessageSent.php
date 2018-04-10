@@ -9,6 +9,11 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * MessageSent event that can be broadcast to the frontend
+ *
+ * @package App\Events
+ */
 class MessageSent implements ShouldBroadcastNow
 {
     use ConversationEvent, Dispatchable, InteractsWithSockets, SerializesModels;

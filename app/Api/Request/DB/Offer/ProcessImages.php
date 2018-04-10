@@ -9,9 +9,17 @@ use App\Offer;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 
+/**
+ * Classes can make use of this trait to be able to process images based on
+ * their requested order.
+ *
+ * @package App\Api\Request\DB\Offer
+ */
 trait ProcessImages
 {
     /**
+     * Remove old images, save new and reorder them.
+     *
      * @param Offer $offer
      * @param array $imageOrder
      * @param UploadedFile|UploadedFile[] $newImages

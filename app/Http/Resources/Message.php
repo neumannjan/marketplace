@@ -4,6 +4,11 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
 
+/**
+ * Message JSON resource
+ *
+ * @package App\Http\Resources
+ */
 class Message extends Resource
 {
     /**

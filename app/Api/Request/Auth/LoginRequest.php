@@ -45,6 +45,12 @@ class LoginRequest extends ApiRequest
 
     /**
      * @inheritDoc
+     *
+     * @param            $name
+     * @param Collection $parameters
+     *
+     * @return ApiResponse|mixed
+     * @throws \Illuminate\Validation\ValidationException
      */
     protected function doResolve($name, Collection $parameters)
     {
@@ -60,6 +66,12 @@ class LoginRequest extends ApiRequest
         return $response;
     }
 
+    /**
+     * @inheritdoc
+     * @param Validator|null $validator
+     *
+     * @return array
+     */
     protected function rules(Validator $validator = null)
     {
         return [

@@ -4,9 +4,18 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * Migration for 'users' table creation
+ */
 class CreateUsersTable extends Migration
 {
+    /**
+     * Table name
+     */
     const TABLE = 'users';
+    /**
+     * Search index name
+     */
     const SEARCH_INDEX = 'i_users_search';
 
     /**

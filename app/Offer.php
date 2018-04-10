@@ -21,7 +21,7 @@ use Money\Currency;
 use Money\Money;
 
 /**
- * App\Offer
+ * Offer model
  */
 class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
 {
@@ -64,21 +64,38 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
             'sold_to_user_id',
         ];
 
+    /**
+     * Images relation
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function images()
     {
         return $this->hasMany(Image::class, 'offer_id');
     }
 
+    /**
+     * Author user relation
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function author()
     {
         return $this->belongsTo(User::class, 'author_user_id');
     }
 
+    /**
+     * Relation to the user that the offer has been sold to
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function soldTo()
     {
         return $this->belongsTo(User::class, 'sold_to_user_id');
     }
 
+    /**
+     * Relation to users that have reported this offer
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function reportedBy()
     {
         return $this->belongsToMany(User::class, 'user_offer_reports',
@@ -135,11 +152,17 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
         return \Money::getFormatter()->format($this->money);
     }
 
+    /**
+     * @param integer $price price value
+     */
     public function setPriceAttribute($price)
     {
         $this->price_value = $price;
     }
 
+    /**
+     * @param string $currency currency code
+     */
     public function setCurrencyAttribute($currency)
     {
         $this->currency_code = $currency;
@@ -301,6 +324,11 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
 
     /**
      * @inheritDoc
+     *
+     * @param string    $scopeName
+     * @param User|null $user
+     *
+     * @return bool
      */
     public function canUsePublicScope($scopeName, User $user = null)
     {
@@ -319,6 +347,11 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
 
     /**
      * @inheritDoc
+     *
+     * @param string   $scopeName
+     * @param string[] $columnNames
+     *
+     * @return bool
      */
     public function validatePublicScopeParams($scopeName, $columnNames)
     {
@@ -372,6 +405,8 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
      * Get validation rules for a creation request.
      *
      * @param Validator $validator
+     *
+     * @param bool      $requireImages
      *
      * @return array
      */

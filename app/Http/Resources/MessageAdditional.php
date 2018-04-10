@@ -4,6 +4,11 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
 
+/**
+ * JSON resource for additional message data
+ *
+ * @package App\Http\Resources
+ */
 class MessageAdditional extends Resource
 {
     /**

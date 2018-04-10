@@ -16,6 +16,8 @@ class ApplyUserOptions
 
     /**
      * ApplyUserOptions constructor.
+     *
+     * @param Application $application
      */
     public function __construct(Application $application)
     {

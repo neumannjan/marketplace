@@ -11,6 +11,11 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Validator;
 
+/**
+ * API request to bump an offer
+ *
+ * @package App\Api\Request\DB\Offer
+ */
 class OfferBumpRequest extends Request
 {
 
@@ -35,6 +40,10 @@ class OfferBumpRequest extends Request
 
     /**
      * @inheritDoc
+     *
+     * @param Validator|null $validator
+     *
+     * @return array
      */
     protected function rules(Validator $validator = null)
     {
@@ -45,7 +54,11 @@ class OfferBumpRequest extends Request
 
     /**
      * @inheritDoc
-     * @throws \Exception
+     *
+     * @param            $name
+     * @param Collection $parameters
+     *
+     * @return Response
      */
     protected function doResolve($name, Collection $parameters)
     {

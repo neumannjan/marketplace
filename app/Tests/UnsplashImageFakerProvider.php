@@ -12,7 +12,16 @@ use GuzzleHttp\Client;
 class UnsplashImageFakerProvider extends FakerProviderBase
 {
 
+    /**
+     * Array of possible image IDs
+     *
+     * @var array|null
+     */
     protected $ids;
+
+    /**
+     * @var Client
+     */
     protected $httpClient;
 
     /**

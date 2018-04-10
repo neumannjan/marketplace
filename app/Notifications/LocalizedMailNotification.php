@@ -7,7 +7,8 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 /**
- * Mail {@see Notification notification} class that simplifies internationalization of the contents.
+ * Mail {@see Notification notification} class that simplifies
+ * internationalization of content.
  */
 abstract class LocalizedMailNotification extends Notification
 {
@@ -18,21 +19,30 @@ abstract class LocalizedMailNotification extends Notification
     }
 
     /**
-     * @var mixed $notifiable
+     * @param mixed $notifiable
+     *
      * @return MailMessage
      */
     public abstract function toMail($notifiable);
 
     /**
+     * Localization parameters
      * @return array
      */
     protected abstract function getLocalizationParameters();
 
     /**
+     * Localization key base
      * @return string
      */
     protected abstract function getKeyBase();
 
+    /**
+     * Translate a message
+     * @param $key
+     *
+     * @return array|null|string
+     */
     protected function __($key)
     {
         return __($this->getKeyBase().'.'.$key,

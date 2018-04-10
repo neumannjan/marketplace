@@ -7,6 +7,9 @@
  * @author   Taylor Otwell <taylor@laravel.com>
  */
 
+/**
+ * Laravel start time
+ */
 define('LARAVEL_START', microtime(true));
 
 /*

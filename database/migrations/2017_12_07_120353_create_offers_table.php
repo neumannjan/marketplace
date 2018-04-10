@@ -4,8 +4,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * Migration for 'offers' table creation
+ */
 class CreateOffersTable extends Migration
 {
+    /**
+     * Table name
+     */
     const TABLE = "offers";
 
     /**

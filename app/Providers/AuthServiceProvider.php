@@ -6,6 +6,12 @@ use App\Auth\UserProvider;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
+/**
+ * Service provider for registering custom authentication / authorization
+ * classes
+ *
+ * @package App\Providers
+ */
 class AuthServiceProvider extends ServiceProvider
 {
     /**

@@ -14,6 +14,13 @@ use Illuminate\Http\Request as HttpRequest;
  */
 class InitialDataRequest extends GlobalDataRequest
 {
+    /**
+     * Get the data.
+     *
+     * @param HttpRequest $request
+     *
+     * @return array
+     */
     public static function get(HttpRequest $request)
     {
         $array = parent::get($request);

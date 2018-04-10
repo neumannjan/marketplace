@@ -14,6 +14,11 @@ use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
+/**
+ * API request for modifying user settings.
+ *
+ * @package App\Api\Request\DB\User
+ */
 class UserSettingsRequest extends Request
 {
     /** @var Guard */
@@ -39,6 +44,10 @@ class UserSettingsRequest extends Request
 
     /**
      * @inheritDoc
+     *
+     * @param Validator|null $validator
+     *
+     * @return array
      */
     protected function rules(Validator $validator = null)
     {
@@ -58,6 +67,11 @@ class UserSettingsRequest extends Request
 
     /**
      * @inheritDoc
+     *
+     * @param            $name
+     * @param Collection $parameters
+     *
+     * @return Response
      * @throws \Exception
      */
     protected function doResolve($name, Collection $parameters)

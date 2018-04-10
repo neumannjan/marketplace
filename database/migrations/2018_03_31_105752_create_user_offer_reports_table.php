@@ -1,9 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
+/**
+ * Migration for the creation of a table handling the many-to-many relation
+ * of users and offers that they reported.
+ */
 class CreateUserOfferReportsTable extends Migration
 {
     /**

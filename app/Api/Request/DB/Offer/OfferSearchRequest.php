@@ -7,6 +7,11 @@ use App\Api\Request\DB\SearchRequest;
 use App\Offer;
 use Illuminate\Support\Collection;
 
+/**
+ * API request to search for offers
+ *
+ * @package App\Api\Request\DB\Offer
+ */
 class OfferSearchRequest extends SearchRequest
 {
     protected $modelClass = Offer::class;
@@ -15,7 +20,10 @@ class OfferSearchRequest extends SearchRequest
     /**
      * @inheritDoc
      *
-     * @param Offer $model
+     * @param            $model
+     * @param Collection $parameters
+     *
+     * @return mixed
      */
     protected function filterResult($model, Collection $parameters)
     {

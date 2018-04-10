@@ -6,6 +6,12 @@ namespace App\Eloquent;
 use App\User;
 use Illuminate\Support\Collection;
 
+/**
+ * An interface for models to give them the ability to scope database queries
+ * based on current user authentication.
+ *
+ * @package App\Eloquent
+ */
 interface AuthorizationAwareModel
 {
     /**

@@ -8,6 +8,9 @@ namespace App\Helpers;
  */
 class DevPackages
 {
+    /**
+     * Cache file name
+     */
     const FILENAME = 'dev-packages.php';
 
     /** @var null|bool */

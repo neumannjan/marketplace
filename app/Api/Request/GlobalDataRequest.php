@@ -10,18 +10,30 @@ use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Collection;
 
 /**
- * Request that contains global variables that the frontend might request repeatedly.
+ * Request that contains global variables that the frontend might request
+ * repeatedly.
  */
 class GlobalDataRequest extends Request
 {
     /**
-     * @inheritDoc
+     * @inheritdoc
+     *
+     * @param string     $name
+     * @param Collection $parameters
+     *
+     * @return Response
      */
     protected function doResolve($name, Collection $parameters)
     {
         return new Response(true, static::get($this->httpRequest));
     }
 
+    /**
+     * Get the data.
+     * @param HttpRequest $request
+     *
+     * @return array
+     */
     public static function get(HttpRequest $request)
     {
         // CSRF token

@@ -5,6 +5,11 @@ namespace App\Http\Resources;
 use App\Message;
 use Illuminate\Http\Resources\Json\Resource;
 
+/**
+ * Conversation JSON resource
+ *
+ * @package App\Http\Resources
+ */
 class Conversation extends Resource
 {
     /**

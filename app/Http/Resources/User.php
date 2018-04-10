@@ -5,6 +5,11 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
 
+/**
+ * User JSON resource
+ *
+ * @package App\Http\Resources
+ */
 class User extends Resource
 {
 

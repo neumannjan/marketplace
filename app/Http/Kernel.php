@@ -27,6 +27,11 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
+/**
+ * Laravel's HTTP Kernel
+ *
+ * @package App\Http
+ */
 class Kernel extends HttpKernel
 {
     /**

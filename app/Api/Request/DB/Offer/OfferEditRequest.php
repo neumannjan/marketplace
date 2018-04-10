@@ -11,6 +11,11 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Validator;
 
+/**
+ * API request to edit an offer
+ *
+ * @package App\Api\Request\DB\Offer
+ */
 class OfferEditRequest extends Request
 {
     use ProcessImages;
@@ -38,6 +43,10 @@ class OfferEditRequest extends Request
 
     /**
      * @inheritDoc
+     *
+     * @param Validator|null $validator
+     *
+     * @return array
      */
     protected function rules(Validator $validator = null)
     {
@@ -59,6 +68,11 @@ class OfferEditRequest extends Request
 
     /**
      * @inheritDoc
+     *
+     * @param            $name
+     * @param Collection $parameters
+     *
+     * @return Response
      * @throws \Exception
      */
     protected function doResolve($name, Collection $parameters)

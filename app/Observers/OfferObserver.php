@@ -5,6 +5,11 @@ namespace App\Observers;
 
 use App\Offer;
 
+/**
+ * Event observer for the {@see \App\Offer Offer} model
+ *
+ * @package App\Observers
+ */
 class OfferObserver
 {
     /**
@@ -23,6 +28,9 @@ class OfferObserver
         return true;
     }
 
+    /**
+     * @param Offer $offer
+     */
     function updating(Offer $offer)
     {
         if ($offer->isDirty(['name', 'description'])) {

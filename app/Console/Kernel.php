@@ -5,6 +5,11 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
+/**
+ * Laravel's console Kernel
+ *
+ * @package App\Console
+ */
 class Kernel extends ConsoleKernel
 {
     /**

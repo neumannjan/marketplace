@@ -79,6 +79,11 @@ class User extends Authenticatable implements AuthorizationAwareModel
         self::observe(UserObserver::class);
     }
 
+    /**
+     * Get a display name or fallback to the username if not provided.
+     *
+     * @return string
+     */
     public function getDisplayNameAttribute()
     {
         if ($this->attributes['display_name'] == null) {
@@ -88,6 +93,10 @@ class User extends Authenticatable implements AuthorizationAwareModel
         return $this->attributes['display_name'];
     }
 
+    /**
+     * Get the user's preferred locale
+     * @return string
+     */
     public function getLocaleAttribute()
     {
         return isset($this->options['locale']) ? $this->options['locale']
@@ -102,6 +111,9 @@ class User extends Authenticatable implements AuthorizationAwareModel
         $this->notify(new ResetPassword($token));
     }
 
+    /**
+     * Send the registration activation e-mail notification.
+     */
     public function sendRegistrationActivateNotification()
     {
         $this->notify(new ActivateRegistration($this->activation_token,
@@ -174,16 +186,28 @@ class User extends Authenticatable implements AuthorizationAwareModel
         return $rules;
     }
 
+    /**
+     * Relation to the offers owned by the user.
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function offers()
     {
         return $this->hasMany(Offer::class, 'author_user_id');
     }
 
+    /**
+     * Relation to the offers bought by the user.
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function bought()
     {
         return $this->hasMany(Offer::class, 'sold_to_user_id');
     }
 
+    /**
+     * Relation to the profile image
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function profile_image()
     {
         return $this->belongsTo(Image::class, 'profile_image_id');
@@ -237,6 +261,11 @@ class User extends Authenticatable implements AuthorizationAwareModel
 
     /**
      * @inheritDoc
+     *
+     * @param string    $scopeName
+     * @param User|null $user
+     *
+     * @return bool
      */
     public function canUsePublicScope($scopeName, User $user = null)
     {
@@ -253,6 +282,11 @@ class User extends Authenticatable implements AuthorizationAwareModel
 
     /**
      * @inheritDoc
+     *
+     * @param string   $scopeName
+     * @param string[] $columnNames
+     *
+     * @return bool
      */
     public function validatePublicScopeParams($scopeName, $columnNames)
     {

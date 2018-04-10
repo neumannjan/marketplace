@@ -4,6 +4,11 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
 
+/**
+ * Offer JSON resource
+ *
+ * @package App\Http\Resources
+ */
 class Offer extends Resource
 {
     use LoadsAttributesByAuthorization;

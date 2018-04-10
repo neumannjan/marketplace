@@ -5,6 +5,12 @@ namespace App\Http\Resources;
 use Illuminate\Http\Resources\ConditionallyLoadsAttributes;
 use Illuminate\Http\Resources\MissingValue;
 
+/**
+ * LoadsAttributesByAuthorization - JSON resource helper trait with helper
+ * functions.
+ *
+ * @package App\Http\Resources
+ */
 trait LoadsAttributesByAuthorization
 {
     use ConditionallyLoadsAttributes;

@@ -11,6 +11,11 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Validator;
 
+/**
+ * API Request for a list of conversations
+ *
+ * @package App\Api\Request\DB\Chat
+ */
 class ConversationsRequest extends MultiRequest
 {
     protected $modelClass = Message::class;
@@ -36,6 +41,10 @@ class ConversationsRequest extends MultiRequest
 
     /**
      * @inheritDoc
+     *
+     * @param Validator|null $validator
+     *
+     * @return array
      */
     protected function rules(Validator $validator = null)
     {
@@ -46,6 +55,10 @@ class ConversationsRequest extends MultiRequest
 
     /**
      * @inheritDoc
+     *
+     * @param Collection $parameters
+     *
+     * @return array
      */
     protected function urlParameters(Collection $parameters)
     {
@@ -61,7 +74,11 @@ class ConversationsRequest extends MultiRequest
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     * @param            $query
+     * @param Collection $parameters
+     *
+     * @return \Illuminate\Database\Eloquent\Builder|\Laravel\Scout\Builder
      */
     protected function additionalQuery($query, Collection $parameters)
     {

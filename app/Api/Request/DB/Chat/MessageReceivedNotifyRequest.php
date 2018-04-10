@@ -13,6 +13,11 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Validator;
 
+/**
+ * API Request to notify that a chat message has been received.
+ *
+ * @package App\Api\Request\DB\Chat
+ */
 class MessageReceivedNotifyRequest extends Request
 {
     /** @var Guard */
@@ -38,6 +43,10 @@ class MessageReceivedNotifyRequest extends Request
 
     /**
      * @inheritDoc
+     *
+     * @param Validator|null $validator
+     *
+     * @return array
      */
     protected function rules(Validator $validator = null)
     {
@@ -50,6 +59,11 @@ class MessageReceivedNotifyRequest extends Request
 
     /**
      * @inheritDoc
+     *
+     * @param            $name
+     * @param Collection $parameters
+     *
+     * @return Response
      */
     protected function doResolve($name, Collection $parameters)
     {

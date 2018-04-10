@@ -7,7 +7,7 @@ use App\Jobs\DeleteImage;
 
 
 /**
- * Events for the {@see \App\Image Image} model
+ * Event observer for the {@see \App\Image Image} model
  */
 class ImageObserver
 {
@@ -24,6 +24,9 @@ class ImageObserver
         }
     }
 
+    /**
+     * @param Image $image
+     */
     function updating(Image $image)
     {
         if ($image->isDirty(['offer_id']) && $image->offer) {
@@ -32,6 +35,11 @@ class ImageObserver
         }
     }
 
+    /**
+     * @param Image $image
+     *
+     * @return bool
+     */
     function deleting(Image $image)
     {
         // delete image files
@@ -40,6 +48,9 @@ class ImageObserver
         return true;
     }
 
+    /**
+     * @param Image $image
+     */
     function created(Image $image)
     {
         if ($image->offer) {

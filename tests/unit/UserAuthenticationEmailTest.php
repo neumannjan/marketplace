@@ -1,6 +1,9 @@
 <?php
 
 
+/**
+ * Test authentication email sending
+ */
 class UserAuthenticationEmailTest extends \Codeception\Test\Unit
 {
     const USERNAME = 'testuser';
@@ -24,6 +27,13 @@ class UserAuthenticationEmailTest extends \Codeception\Test\Unit
     {
     }
 
+    /**
+     * Quickly register a user.
+     *
+     * @param int $status
+     *
+     * @return \App\User
+     */
     protected function _registerUser($status = \App\User::STATUS_ACTIVE)
     {
         $user               = new \App\User();

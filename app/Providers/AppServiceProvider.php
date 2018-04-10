@@ -6,6 +6,11 @@ use App\Helpers\DevPackages;
 use App\Helpers\Money;
 use Illuminate\Support\ServiceProvider;
 
+/**
+ * Laravel's main service provider
+ *
+ * @package App\Providers
+ */
 class AppServiceProvider extends ServiceProvider
 {
 

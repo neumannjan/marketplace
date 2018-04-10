@@ -11,6 +11,11 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Validator;
 
+/**
+ * API request to mark an offer as appropriate. Available to admins only.
+ *
+ * @package App\Api\Request\DB\Offer
+ */
 class OfferMarkAppropriateRequest extends Request
 {
 
@@ -38,6 +43,10 @@ class OfferMarkAppropriateRequest extends Request
 
     /**
      * @inheritDoc
+     *
+     * @param Validator|null $validator
+     *
+     * @return array
      */
     protected function rules(Validator $validator = null)
     {
@@ -48,7 +57,11 @@ class OfferMarkAppropriateRequest extends Request
 
     /**
      * @inheritDoc
-     * @throws \Exception
+     *
+     * @param            $name
+     * @param Collection $parameters
+     *
+     * @return Response
      */
     protected function doResolve($name, Collection $parameters)
     {

@@ -2,6 +2,9 @@
 
 use Illuminate\Database\Seeder;
 
+/**
+ * Database seeder to provide dummy content.
+ */
 class DatabaseSeeder extends Seeder
 {
     /**

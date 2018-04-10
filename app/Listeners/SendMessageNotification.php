@@ -5,6 +5,11 @@ namespace App\Listeners;
 use App\Events\MessageSent;
 use App\Notifications\MessageNotification;
 
+/**
+ * MessageSent event listener that sends a notification to the message recipient.
+ *
+ * @package App\Listeners
+ */
 class SendMessageNotification
 {
     /**

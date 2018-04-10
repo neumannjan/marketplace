@@ -11,6 +11,12 @@ use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
+/**
+ * API request for user configuration. Available to administrators only.
+ * Allows banning and unbanning of users.
+ *
+ * @package App\Api\Request\DB\User
+ */
 class UserAdminRequest extends Request
 {
 
@@ -38,6 +44,10 @@ class UserAdminRequest extends Request
 
     /**
      * @inheritDoc
+     *
+     * @param Validator|null $validator
+     *
+     * @return array
      */
     protected function rules(Validator $validator = null)
     {
@@ -53,6 +63,11 @@ class UserAdminRequest extends Request
 
     /**
      * @inheritDoc
+     *
+     * @param            $name
+     * @param Collection $parameters
+     *
+     * @return Response
      */
     protected function doResolve($name, Collection $parameters)
     {

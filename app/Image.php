@@ -9,12 +9,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
- * App\Image
+ * Image model
  */
 class Image extends Model
 {
+    /**
+     * Image storage location
+     */
     const STORAGE_DIR = 'public'.DIRECTORY_SEPARATOR.'images';
 
+    /**
+     * Size definitions
+     */
     const SIZES
         = [
             'tiny' => 24,
@@ -22,7 +28,15 @@ class Image extends Model
             'icon_2x' => [80, 80],
             'thumbnail' => [400, 400],
         ];
+
+    /**
+     * Original size key name
+     */
     const ORIGINAL_SIZE = 'original';
+
+    /**
+     * Max width/height in px
+     */
     const ORIGINAL_SIZE_LIMIT = 1024;
 
     protected $casts
@@ -59,11 +73,21 @@ class Image extends Model
         });
     }
 
+    /**
+     * Offer relation
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function offer()
     {
         return $this->belongsTo(Offer::class, 'offer_id');
     }
 
+
+    /**
+     * Profile image owner relation
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function user()
     {
         return $this->hasOne(User::class, 'profile_image_id');

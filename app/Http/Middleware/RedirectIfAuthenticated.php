@@ -5,6 +5,11 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Middleware for redirecting authenticated users
+ *
+ * @package App\Http\Middleware
+ */
 class RedirectIfAuthenticated
 {
     /**

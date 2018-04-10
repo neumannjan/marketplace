@@ -12,6 +12,11 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Validator;
 
+/**
+ * API request to fetch chat messages between the current user and another user
+ *
+ * @package App\Api\Request\DB\Chat
+ */
 class MessagesRequest extends MultiRequest
 {
     protected $modelClass = Message::class;
@@ -49,6 +54,10 @@ class MessagesRequest extends MultiRequest
 
     /**
      * @inheritDoc
+     *
+     * @param Validator|null $validator
+     *
+     * @return array
      */
     protected function rules(Validator $validator = null)
     {
@@ -59,6 +68,10 @@ class MessagesRequest extends MultiRequest
 
     /**
      * @inheritDoc
+     *
+     * @param Collection $parameters
+     *
+     * @return array
      */
     protected function urlParameters(Collection $parameters)
     {
@@ -67,6 +80,11 @@ class MessagesRequest extends MultiRequest
 
     /**
      * @inheritDoc
+     *
+     * @param            $query
+     * @param Collection $parameters
+     *
+     * @return \Illuminate\Database\Eloquent\Builder|Builder|\Laravel\Scout\Builder
      */
     protected function additionalQuery($query, Collection $parameters)
     {
@@ -84,6 +102,8 @@ class MessagesRequest extends MultiRequest
 
     /**
      * @inheritDoc
+     *
+     * @param $results
      */
     protected function onResults($results)
     {
@@ -105,6 +125,9 @@ class MessagesRequest extends MultiRequest
 
     /**
      * @inheritDoc
+     * @param Collection $parameters
+     *
+     * @return string
      */
     protected function resourceClass(Collection $parameters)
     {

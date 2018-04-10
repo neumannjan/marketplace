@@ -1,6 +1,9 @@
 <?php
 
 
+/**
+ * Image handling CEST
+ */
 class ImageCest
 {
     const JPG_IMG = 'img.jpg';

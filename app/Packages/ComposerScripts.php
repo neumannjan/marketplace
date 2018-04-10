@@ -6,8 +6,16 @@ use App\Helpers\DevPackages;
 use Composer\Script\Event;
 use Illuminate\Foundation\Application;
 
+/**
+ * Class for Composer events
+ *
+ * @package App\Packages
+ */
 class ComposerScripts
 {
+    /**
+     * @param Event $event
+     */
     public static function postAutoloadDump(Event $event)
     {
         $dev = $event->isDevMode() ? 'true' : 'false';

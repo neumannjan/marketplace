@@ -138,6 +138,14 @@ class ProcessImage implements ShouldQueue
         $this->image->save();
     }
 
+    /**
+     * Get the relative image path
+     *
+     * @param $path
+     * @param $base
+     *
+     * @return string
+     */
     protected function getRelativePath($path, $base)
     {
         $base = Str::finish($base, DIRECTORY_SEPARATOR);

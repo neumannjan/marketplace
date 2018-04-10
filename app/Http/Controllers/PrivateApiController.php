@@ -41,6 +41,11 @@ use Illuminate\Http\Request;
  */
 class PrivateApiController extends Controller
 {
+    /**
+     * Associative array of request classes and their endpoint names
+     *
+     * @var array
+     */
     private $requests;
 
     /**
@@ -52,7 +57,6 @@ class PrivateApiController extends Controller
             // Global
             'global' => GlobalDataRequest::class,
             'cached' => CachedDataRequest::class,
-            'dummy' => DummyRequest::class,
 
             // Auth
             'login' => LoginRequest::class,
@@ -159,12 +163,27 @@ class PrivateApiController extends Controller
         return new JsonResponse($compositeResponse);
     }
 
+    /**
+     * Controller method for the index route
+     * @param Request     $request
+     * @param Application $app
+     *
+     * @return JsonResponse
+     */
     public function index(Request $request, Application $app)
     {
         return $this->resolve(json_decode($request->input("api"), true),
             $request, $app);
     }
 
+    /**
+     * Controller method for a single request route
+     * @param             $name
+     * @param Request     $request
+     * @param Application $app
+     *
+     * @return JsonResponse
+     */
     public function single($name, Request $request, Application $app)
     {
         return $this->resolve([

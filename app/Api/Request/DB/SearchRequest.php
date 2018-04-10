@@ -17,6 +17,9 @@ abstract class SearchRequest extends PaginatedRequest
 {
     use BasicDBRequest;
 
+    /**
+     * SearchRequest constructor.
+     */
     public function __construct()
     {
         // empty constructor. Should not have the `modelClass` and `resourceClass` parameters.
@@ -24,6 +27,10 @@ abstract class SearchRequest extends PaginatedRequest
 
     /**
      * @inheritDoc
+     *
+     * @param Collection $parameters
+     *
+     * @return array
      */
     protected function urlParameters(Collection $parameters)
     {
@@ -32,6 +39,10 @@ abstract class SearchRequest extends PaginatedRequest
 
     /**
      * @inheritDoc
+     *
+     * @param Validator|null $validator
+     *
+     * @return array
      */
     protected function _rules(Validator $validator = null)
     {
@@ -42,6 +53,10 @@ abstract class SearchRequest extends PaginatedRequest
 
     /**
      * @inheritDoc
+     *
+     * @param Collection $parameters
+     *
+     * @return array
      */
     protected function _urlParameters(Collection $parameters)
     {
@@ -65,6 +80,12 @@ abstract class SearchRequest extends PaginatedRequest
 
     /**
      * @inheritDoc
+     *
+     * @param Collection $parameters
+     * @param            $perPage
+     * @param            $pageOrAfter
+     *
+     * @return LengthAwarePaginator
      */
     protected function paginator(Collection $parameters, $perPage, $pageOrAfter)
     {

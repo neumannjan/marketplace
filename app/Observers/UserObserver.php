@@ -6,15 +6,21 @@ namespace App\Observers;
 use App\User;
 
 /**
- * Events for the {@see \App\User User} model
+ * Event observer for the {@see \App\User User} model
  */
 class UserObserver
 {
+    /**
+     * @param User $user
+     */
     public function creating(User $user)
     {
         $user->activation_token = str_random(User::ACTIVATION_TOKEN_LENGTH);
     }
 
+    /**
+     * @param User $user
+     */
     public function saving(User $user)
     {
         if ($user->display_name == $user->username) {

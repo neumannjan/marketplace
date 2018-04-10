@@ -27,6 +27,13 @@ class ActivateRegistration extends LocalizedMailNotification
         $this->email    = $email;
     }
 
+    /**
+     * @inheritdoc
+     *
+     * @param mixed $notifiable
+     *
+     * @return $this|MailMessage
+     */
     public function toMail($notifiable)
     {
         return (new MailMessage())

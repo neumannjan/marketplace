@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 /**
- * App\Message
+ * Chat message model
  */
 class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
 {
@@ -68,31 +68,54 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
         });
     }
 
+    /**
+     * @return string
+     */
     public function getIdentifierAttribute()
     {
         return $this->identifier;
     }
 
+    /**
+     * @param $identifier
+     */
     public function setIdentifierAttribute($identifier)
     {
         $this->identifier = $identifier;
     }
 
+    /**
+     * 'from' user relation
+     *
+     * @return $this|\Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function from()
     {
         return $this->belongsTo(User::class, 'from_username', 'username');
     }
 
+    /**
+     * 'to' user relation
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function to()
     {
         return $this->belongsTo(User::class, 'to_username', 'username');
     }
 
+    /**
+     * Relation for the user that is not the current user
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function user()
     {
         return $this->belongsTo(User::class, 'user_username', 'username');
     }
 
+    /**
+     * Offer relation for messages that are linked to an offer
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function offer()
     {
         return $this->belongsTo(Offer::class, 'offer_id', 'id');
@@ -107,6 +130,15 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
             : null;
     }
 
+    /**
+     * Modifies the query to return a list of conversations between the current
+     * user and another user.
+     *
+     * @param Builder $query
+     * @param         $user_username
+     *
+     * @return $this
+     */
     public function scopeConversationsWith(Builder $query, $user_username)
     {
         /*
@@ -150,11 +182,21 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
         return [self::SCOPE_PERSONAL, self::SCOPE_ANY];
     }
 
+    /**
+     * @param Builder $query
+     *
+     * @return Builder
+     */
     public function scopeAny(Builder $query)
     {
         return $query;
     }
 
+    /**
+     * @param Builder $query
+     *
+     * @return Builder|static
+     */
     public function scopePersonal(Builder $query)
     {
         $user = Auth::user();
@@ -183,6 +225,11 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
 
     /**
      * @inheritDoc
+     *
+     * @param           $scopeName
+     * @param User|null $user
+     *
+     * @return bool|int|mixed
      */
     public function canUsePublicScope($scopeName, User $user = null)
     {
@@ -198,6 +245,11 @@ class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
 
     /**
      * @inheritDoc
+     *
+     * @param $scopeName
+     * @param $columnNames
+     *
+     * @return bool
      */
     public function validatePublicScopeParams($scopeName, $columnNames)
     {

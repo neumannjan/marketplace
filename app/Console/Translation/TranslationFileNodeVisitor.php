@@ -87,12 +87,22 @@ class TranslationFileNodeVisitor implements NodeVisitor
         return $this->keysPosition >= count($this->keys) - 1;
     }
 
+    /**
+     * @param array $nodes
+     *
+     * @return null|Node[]|void
+     */
     public function beforeTraverse(array $nodes)
     {
         $this->found        = false;
         $this->keysPosition = null;
     }
 
+    /**
+     * @param Node $node
+     *
+     * @return int|null|Node
+     */
     public function enterNode(Node $node)
     {
         if ($node instanceof Node\Expr\ArrayItem) {
@@ -119,11 +129,21 @@ class TranslationFileNodeVisitor implements NodeVisitor
         return $node;
     }
 
+    /**
+     * @param Node $node
+     *
+     * @return false|int|null|Node|Node[]|void
+     */
     public function leaveNode(Node $node)
     {
         $this->previousKey();
     }
 
+    /**
+     * @param array $nodes
+     *
+     * @return null|Node[]|void
+     */
     public function afterTraverse(array $nodes)
     {
         if ( ! $this->found && $this->newValue !== null) {

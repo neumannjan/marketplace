@@ -8,6 +8,11 @@ use App\User;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Collection;
 
+/**
+ * API request for user search
+ *
+ * @package App\Api\Request\DB\User
+ */
 class UserSearchRequest extends SearchRequest
 {
     protected $modelClass = User::class;
@@ -37,6 +42,10 @@ class UserSearchRequest extends SearchRequest
 
     /**
      * @inheritDoc
+     *
+     * @param Collection $parameters
+     *
+     * @return array
      */
     protected function urlParameters(Collection $parameters)
     {
@@ -46,9 +55,12 @@ class UserSearchRequest extends SearchRequest
     }
 
     /**
-     * @param User $model
-     *
      * @inheritDoc
+     *
+     * @param            $model
+     * @param Collection $parameters
+     *
+     * @return bool
      */
     protected function filterResult($model, Collection $parameters)
     {

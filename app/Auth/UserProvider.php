@@ -7,7 +7,8 @@ use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Auth\Authenticatable as UserContract;
 
 /**
- * {@see EloquentUserProvider} that asserts that the user's status is active.
+ * {@see EloquentUserProvider} that asserts that the user's status is active
+ * before allowing actions such as login.
  */
 class UserProvider extends EloquentUserProvider
 {
@@ -17,6 +18,11 @@ class UserProvider extends EloquentUserProvider
 
     /**
      * @inheritDoc
+     *
+     * @param UserContract $user
+     * @param array        $credentials
+     *
+     * @return bool
      */
     public function validateCredentials(UserContract $user, array $credentials)
     {
@@ -31,6 +37,10 @@ class UserProvider extends EloquentUserProvider
 
     /**
      * @inheritDoc
+     *
+     * @param array $credentials
+     *
+     * @return UserContract|null
      */
     public function retrieveByCredentials(array $credentials)
     {
@@ -49,6 +59,12 @@ class UserProvider extends EloquentUserProvider
         return parent::retrieveByCredentials($credentials);
     }
 
+    /**
+     * Guess whether the provided login is an e-mail or a username.
+     * @param $value
+     *
+     * @return string
+     */
     protected function guessLoginKey($value)
     {
         return (filter_var($value, FILTER_VALIDATE_EMAIL) !== false

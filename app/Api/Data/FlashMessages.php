@@ -7,12 +7,15 @@ use Illuminate\Session\Store;
 
 /**
  * Class containing flash messages from the session.
- * It can be converted to an array passable to
+ * It can be converted to an array passable to frontend.
  */
 class FlashMessages implements Passable
 {
     public $messages;
 
+    /**
+     * Frontend message type list
+     */
     const TYPES
         = [
             'success',

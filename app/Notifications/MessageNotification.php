@@ -6,6 +6,11 @@ use App\Message;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 
+/**
+ * Notification for a message that has been sent
+ *
+ * @package App\Notifications
+ */
 class MessageNotification extends LocalizedMailNotification
 {
     use Queueable;
