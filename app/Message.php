@@ -13,6 +13,36 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Chat message model
+ *
+ * @property int $id
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property string $content
+ * @property array $additional
+ * @property int $received
+ * @property int $read
+ * @property string $from_username
+ * @property string $to_username
+ * @property-read \App\User $from
+ * @property string $identifier
+ * @property-read null|int $offer_id
+ * @property-read \App\Offer $offer
+ * @property-read \App\User $to
+ * @property-read \App\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message after($model)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message any()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message conversationsWith($user_username)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message personal()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereAdditional($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereFromUsername($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereRead($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereReceived($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereToUsername($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
 {

@@ -10,6 +10,36 @@ use Illuminate\Support\Str;
 
 /**
  * Image model
+ *
+ * @property int $id
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property string|null $original
+ * @property array $sizes
+ * @property array $available_sizes If null, all sizes will be created
+ * @property bool $ready
+ * @property int $width
+ * @property int $height
+ * @property int $order
+ * @property int|null $offer_id
+ * @property-read string[] $absolute_paths
+ * @property-read string[] $all_sizes
+ * @property-read string[] $urls
+ * @property-read \App\Offer|null $offer
+ * @property-read \App\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Image displayable()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Image whereAvailableSizes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Image whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Image whereHeight($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Image whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Image whereOfferId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Image whereOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Image whereOriginal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Image whereReady($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Image whereSizes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Image whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Image whereWidth($value)
+ * @mixin \Eloquent
  */
 class Image extends Model
 {

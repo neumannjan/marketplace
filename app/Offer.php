@@ -22,6 +22,51 @@ use Money\Money;
 
 /**
  * Offer model
+ *
+ * @property int $id
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property \Carbon\Carbon $listed_at
+ * @property string $name
+ * @property string|null $description
+ * @property int $author_user_id
+ * @property int $status 0 == inactive, 1 == available, 2 == sold
+ * @property int|null $sold_to_user_id
+ * @property int|null $price_value
+ * @property int $bumped_times 2 max
+ * @property string|null $currency_code
+ * @property int $reported_times
+ * @property-read \App\User $author
+ * @property-read int $bumps_left
+ * @property-read bool $displayable
+ * @property-read bool $expired
+ * @property-read bool $just_bumped
+ * @property-read \Money|null $money
+ * @property string|null $price
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Image[] $images
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $reportedBy
+ * @property-write mixed $currency
+ * @property-read \App\User|null $soldTo
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer after($model)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer auth()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer public()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer reported()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer toBeRemoved()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer unlimited()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer whereAuthorUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer whereBumpedTimes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer whereCurrencyCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer whereListedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer wherePriceValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer whereReportedTimes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer whereSoldToUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Offer whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
 {

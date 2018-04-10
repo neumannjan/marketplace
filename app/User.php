@@ -18,6 +18,44 @@ use Laravel\Scout\Searchable;
 
 /**
  * User model. Manages users in the database.
+ *
+ * @property int $id
+ * @property string $username
+ * @property string $email
+ * @property string $password
+ * @property string $activation_token
+ * @property string $display_name
+ * @property int $is_admin
+ * @property array $options
+ * @property int $status 0 == inactive, 1 == active, 2 == banned
+ * @property string|null $description
+ * @property string|null $remember_token
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property int|null $profile_image_id
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Offer[] $bought
+ * @property-read string $locale
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Offer[] $offers
+ * @property-read \App\Image|null $profile_image
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User banned()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User public()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User unlimited()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereActivationToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereDisplayName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereIsAdmin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereOptions($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereProfileImageId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUsername($value)
+ * @mixin \Eloquent
  */
 class User extends Authenticatable implements AuthorizationAwareModel
 {
