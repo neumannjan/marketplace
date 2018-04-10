@@ -1,4 +1,4 @@
-# Customization
+# 02\_customization
 
 All application customization-related configuration can be found in `config/app.php`.
 
@@ -17,3 +17,4 @@ All translation files are available in `resources/lang`, just the way it is comm
 ## Currencies
 
 You are able to configure which currency will be selected by default in the offer creation form. See the `currency` variable in `config/app.php`.
+
