@@ -3,6 +3,6 @@
 * [Marketplace](README.md)
 * English
   * [About](docs/en/about.md)
-  * [Customization](docs/en/customization.md)
   * [Installation](docs/en/installation.md)
+  * [Customization](docs/en/customization.md)
 
