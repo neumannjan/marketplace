@@ -27,6 +27,9 @@ If you are using provided `docker-compose.yml`, the [database access caveat](ins
 $ php artisan db:seed
 ```
 
+By doing this, `storage/search/users.index` and `storage/search/offers.index` files may have been created.
+In that case please ensure that they are both readable and writable by the web server. (This is ensured automatically if you are using provided `docker-compose.yml`.)
+
 ## Running tests
 
 [Codeception](https://codeception.com/) is used here. However, the vast majority of the application is uncovered by tests due to time pressure.

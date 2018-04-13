@@ -7,7 +7,7 @@
     "prod": "npm run production",
     "production": "npx webpack --mode production -p --progress",
     "websocket": "node websocket.js --env",
-    "documentation": "npx typedoc --out reference_docs/js --name Marketplace --mode modules --excludeExternals resources/assets/js",
+    "documentation": "npx typedoc --out reference_docs/ts --name Marketplace --mode modules --excludeExternals resources/assets/js",
     "docs": "npm run documentation"
   },
   "devDependencies": {
