@@ -6,7 +6,7 @@ namespace App\Observers;
 use App\Offer;
 
 /**
- * Event observer for the {@see \App\Offer Offer} model
+ * Event observer for the Offer model
  *
  * @package App\Observers
  */

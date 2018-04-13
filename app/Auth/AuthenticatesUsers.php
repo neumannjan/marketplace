@@ -13,7 +13,7 @@ use Illuminate\Validation\ValidationException;
 
 /**
  * Trait for user authentication. Inspired by the original
- * {@see \Illuminate\Foundation\Auth\AuthenticatesUsers AuthenticatesUsers} trait.
+ * AuthenticatesUsers trait.
  */
 trait AuthenticatesUsers
 {
@@ -155,7 +155,7 @@ trait AuthenticatesUsers
     }
 
     /**
-     * The return value of {@see login()} for when the user has been forbidden from attempting to log in.
+     * The return value of login() for when the user has been forbidden from attempting to log in.
      *
      * @throws ValidationException
      *
@@ -174,18 +174,18 @@ trait AuthenticatesUsers
     }
 
     /**
-     * The return value of {@see login()} for when the login was successful.
+     * The return value of login() for when the login was successful.
      *
      * @return mixed
      */
     protected abstract function sendLoginResponse();
 
     /**
-     * The return value of {@see login()} for when the login was unsuccessful.
+     * The return value of login() for when the login was unsuccessful.
      *
      * @throws ValidationException
      *
-     * @param string $failureMessage Message provided by {@see createFailedLoginMessage() }
+     * @param string $failureMessage Message provided by createFailedLoginMessage()
      *
      * @return mixed
      */

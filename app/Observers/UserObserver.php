@@ -6,7 +6,7 @@ namespace App\Observers;
 use App\User;
 
 /**
- * Event observer for the {@see \App\User User} model
+ * Event observer for the User model
  */
 class UserObserver
 {

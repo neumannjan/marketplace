@@ -6,7 +6,7 @@ use App\Http\AppRoutes;
 use Illuminate\Notifications\Messages\MailMessage;
 
 /**
- * Mail {@see Notification notification} that allows users to reset their password.
+ * Mail Notification that allows users to reset their password.
  */
 class ResetPassword extends LocalizedMailNotification
 {

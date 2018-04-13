@@ -54,9 +54,9 @@ class CachedResponse extends Response
     }
 
     /**
-     * See {@see Repository::remember}.
+     * See Repository::remember.
      *
-     * If `$callback` and `$as` are null, uses the {@see CachedResponse::$buildCallback} and saves/retrieves as
+     * If `$callback` and `$as` are null, uses the CachedResponse::$buildCallback and saves/retrieves as
      * the main response content. Otherwise, saves as an entry that is derived from the main response content.
      *
      * @param \Closure|null $callback

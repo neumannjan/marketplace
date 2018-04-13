@@ -7,7 +7,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 /**
- * Mail {@see Notification notification} class that simplifies
+ * Mail Notification class that simplifies
  * internationalization of content.
  */
 abstract class LocalizedMailNotification extends Notification

@@ -12,7 +12,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 /**
- * {@see Paginator} based on order.
+ * Paginator based on order.
  */
 class AfterPaginator
     implements Paginator, Arrayable, Jsonable, \JsonSerializable

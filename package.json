@@ -6,7 +6,9 @@
     "watch": "npx webpack --mode development -d --watch --progress",
     "prod": "npm run production",
     "production": "npx webpack --mode production -p --progress",
-    "websocket": "node websocket.js --env"
+    "websocket": "node websocket.js --env",
+    "documentation": "npx typedoc --out reference_docs/js --name Marketplace --mode modules --excludeExternals resources/assets/js",
+    "docs": "npm run documentation"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.104",
@@ -48,6 +50,7 @@
     "stackblur-canvas": "^1.4.0",
     "svg-sprite-loader": "^3.7.3",
     "ts-loader": "^4.1.0",
+    "typedoc": "^0.11.1",
     "typescript": "^2.8.1",
     "uglifyjs-webpack-plugin": "^1.2.4",
     "velocity-animate": "^1.5.0",

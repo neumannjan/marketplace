@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 const EchoServer = require('laravel-echo-server');
 
 /**
- * Script that runs
+ * Script that launches the websocket server
  */
 
 /**

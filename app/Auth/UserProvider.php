@@ -7,7 +7,7 @@ use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Auth\Authenticatable as UserContract;
 
 /**
- * {@see EloquentUserProvider} that asserts that the user's status is active
+ * EloquentUserProvider that asserts that the user's status is active
  * before allowing actions such as login.
  */
 class UserProvider extends EloquentUserProvider

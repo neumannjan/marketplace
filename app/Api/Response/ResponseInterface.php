@@ -28,7 +28,7 @@ interface ResponseInterface extends Jsonable, Arrayable
     /**
      * Return the data as a JSON string
      *
-     * @param int $options {@see json_encode} options
+     * @param int $options json_encode options
      *
      * @return string
      */

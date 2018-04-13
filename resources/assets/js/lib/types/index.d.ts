@@ -1,11 +1,3 @@
-// Node.js
-declare let process: {
-    env: {
-        NODE_ENV: 'production' | 'development'
-        [key: string]: string | undefined
-    }
-};
-
 // Vue
 declare module "*.vue" {
     import Vue from 'vue';

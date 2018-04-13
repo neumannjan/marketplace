@@ -80,7 +80,7 @@ class TestHelper
     }
 
     /**
-     * Creates a temporary file that enables {@see isSeleniumRequest} to return true.
+     * Creates a temporary file that enables isSeleniumRequest to return true.
      */
     public function enableSeleniumRequests()
     {
@@ -94,7 +94,7 @@ class TestHelper
     }
 
     /**
-     * Deletes the temporary file that enables {@see isSeleniumRequest} to return true.
+     * Deletes the temporary file that enables isSeleniumRequest to return true.
      */
     public function disableSeleniumRequests()
     {

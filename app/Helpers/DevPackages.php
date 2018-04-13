@@ -19,7 +19,7 @@ class DevPackages
     /**
      * Get whether composer dev packages are available.
      * Allows us to use dev packages safely without having to call functions such as `class_exists`.
-     * See the source code of {@see \App\Console\Kernel::commands} to see how it is used.
+     * See the source code of Kernel::commands to see how it is used.
      *
      * @return boolean
      */

@@ -3,7 +3,7 @@
 namespace App\Api\Response;
 
 /**
- * API Response that is able to combine multiple {@see \App\Api\Response\Response Responses} into one.
+ * API Response that is able to combine multiple Responses into one.
  *
  * @see \App\Api\Response\ResponseInterface
  */

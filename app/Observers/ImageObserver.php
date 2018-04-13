@@ -7,7 +7,7 @@ use App\Jobs\DeleteImage;
 
 
 /**
- * Event observer for the {@see \App\Image Image} model
+ * Event observer for the Image model
  */
 class ImageObserver
 {

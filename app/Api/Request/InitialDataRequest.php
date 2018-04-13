@@ -10,7 +10,7 @@ use Illuminate\Http\Request as HttpRequest;
 
 /**
  * Request that contains variables that the frontend might require at the beginning of its existence.
- * Extends {@see GlobalRequest}.
+ * Extends GlobalRequest.
  */
 class InitialDataRequest extends GlobalDataRequest
 {
