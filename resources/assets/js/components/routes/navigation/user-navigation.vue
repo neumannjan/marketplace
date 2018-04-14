@@ -14,11 +14,12 @@
                         width: `${imgSize}px`,
                         height: `${imgSize}px`}"/>
                 </div>
-                <h1 :class="['h2 text-center', {'text-danger': isBanned}]">
+                <h1 :class="['h2 text-center ellipsis', {'text-danger': isBanned}]">
                     {{ user.display_name }}
                     <span v-if="isBanned" class="badge badge-danger">Banned</span>
                 </h1>
-                <p :class="['text-center', isBanned ? 'text-danger' : 'text-muted']"><i>@{{ user.username }}</i></p>
+                <p :class="['text-center ellipsis', isBanned ? 'text-danger' : 'text-muted']"><i>@{{ user.username
+                    }}</i></p>
                 <user-menu class="mx-auto" v-model="user"/>
             </div>
             <navigation-menu-vertical class="px-4 pb-4" :buttons="verticalButtons"/>
@@ -182,6 +183,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        min-width: 0;
     }
 
     .img-border {
@@ -195,5 +197,9 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
+    }
+
+    .ellipsis {
+        width: 100%;
     }
 </style>

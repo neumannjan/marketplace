@@ -404,12 +404,6 @@
         }
     }
 
-    .ellipsis {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        word-wrap: normal;
-    }
-
     .offer-text-content {
         font-family: inherit;
         font-size: inherit;

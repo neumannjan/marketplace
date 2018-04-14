@@ -65,3 +65,9 @@ body {
 .line-height-1 {
   line-height: 1;
 }
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: normal;
+}
