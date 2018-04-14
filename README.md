@@ -2,9 +2,12 @@
 
 A marketplace web application developed in PHP and TypeScript \(Laravel, Vue.js\), similar in functionality to Letgo or Facebook's marketplace.
 
-* Documentation
+Webová prodejní burza napsaná v PHP a TypeScriptu \(Laravel, Vue.js\), odpovídající funkčností aplikacím typu Letgo nebo Facebook Marketplace.
+
+* Documentation/Dokumentace
     * [English](https://neumann.gitbook.io/marketplace/english/about)
+    * [Čeština](https://neumann.gitbook.io/marketplace/cestina/o-aplikaci)
 * [PHP Reference](https://kogli.github.io/marketplace/reference_docs/php/)
 * [TypeScript Reference](https://kogli.github.io/marketplace/reference_docs/ts/)
 
-![A Representative Screenshot](https://github.com/kogli/marketplace/raw/master/screenshot.png)
+![A Representative Screenshot / Reprezentativní snímek obrazovky](https://github.com/kogli/marketplace/raw/master/screenshot.png)

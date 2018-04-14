@@ -2,31 +2,29 @@
 
 ## Functionality
 
-* A user may create offers which are then shown to other users in a feed-like view.
+* Users upload offers which are then shown to other users in a **feed-like view of the newest offers**.
 
-  Existing offers can be edited or removed.
+  Existing offers can be edited or removed by their owners.
 
-* An offer disappears \(expires\) after two months since it is published.
+  * An offer disappears \(expires\) after two months since its publication.
 
-  The owner of the offer is, however, able to 'bump' the offer to make it reappear on top as new at any time.
+    The owner of the offer is able to 'bump' the offer to make it reappear on top as new at any time, even after it had expired. This functionality may, however, only be used twice per offer at most.
 
-  This functionality may only be used twice per offer at most.
+  * An offer is removed entirely after a year since it is published or bumped.
 
-* An offer is removed entirely after a year since it is published or bumped.
+  * **Fulltext search** is available for published offers.
 
-* **Fulltext search** is available for users to search for other users' offers.
+* Whenever a user wants to buy a product, he/she is automatically redirected to a **chat** with the author of the offer.
 
-* Whenever a user wants to buy an item, he/she is redirected to a **realtime chat** with the owner of the offer.
-
-* Users are notified about their chat messages over e-mail. \(Only once per day per conversation!\)
+  * Users are notified about received chat messages directly in the application and over e-mail. \(E-mails are sent only once per day per conversation.\)
 
 * Users can **report inappropriate offers to administrators**.
 
-* Administrators may edit and remove all offers. They may also ban users, who are then unable to reuse their e-mail addresses.
+  * Administrators may edit and remove all offers. They may also ban any user. Banned users are unable to reuse their e-mail addresses in new registrations.
 
 ![A Representative Screenshot](https://github.com/kogli/marketplace/raw/master/screenshot.png)
 
-## Main libraries/frameworks used
+## Main Libraries/Frameworks Used
 
 * Backend
   * [_Laravel 5.6_](https://laravel.com)
@@ -37,4 +35,4 @@
   * [_Vue.js_](https://vuejs.org/)
   * [_Bootstrap 4_](https://getbootstrap.com/)
 
-Other used external tools and dependencies are specified in `composer.json` and `package.json`.
+Other third-party dependencies are specified in [installation instructions](installation.md), `composer.json` and `package.json`.

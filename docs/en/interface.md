@@ -17,7 +17,7 @@
 * No. 8 - Main content, e. g., list of offers
 * No. 9 - Action/Popup buttons
     * *Create a New Offer* (link to form)
-    * *Chat* - open chat popup
+    * *Chat* - opens chat popup
     * *Go Back*
     * *Go to Top*
 
@@ -55,23 +55,21 @@
 * No. 1 - *Author profile* - display name, username, link to profile
 * No. 2 - *Main offer image* (compact version) / *Carousel of all images* (expanded version)
 * No. 3 - *Offer name*
-* No. 4 - *Inappropriate reports counter* (visible for administrators only)
+* No. 4 - *Inappropriate reports counter* (visible to administrators only)
     * Counter of how many times the offer has been reported as inappropriate
 * No. 5 - *Offer description*
 * No. 6 - *Price*
     * Has just an informative purpose. Purchase conditions are a matter of discussion between the two parties involved. The application's chat service is expected to be used for this.
 * No. 7 - *Request a purchase button*
-    * Sends a chat message to the author of the offer and opens the chat window.
+    * Sends a chat message to the author of the offer and opens the corresponding chat window.
 * No. 8 - *Additional offer settings dropdown*
-    * *Edit / delete offer* (owners or administrators)
-    * *Bump offer* (owners)
+    * *Edit / delete offer* (owner or administrators)
+    * *Bump offer* (owner)
     * *Report offer* (logged in users)
     * *Mark reported offer as appropriate* (administrators)
 * No. 9 - *Expand* - open offer in a popup or in a separate route
 
 ## User Profile Navigation
-
-Visible on a user profile route.
 
 ![User Profile Navigation](https://github.com/kogli/marketplace/raw/gh-pages/screenshots/user_navigation.png)
 ![User Profile Navigation (of the logged-in user)](https://github.com/kogli/marketplace/raw/gh-pages/screenshots/user_navigation_this.png)
@@ -79,12 +77,12 @@ Visible on a user profile route.
 * No. 1 - *Profile image*
 * No. 2 - *User display name*
 * No. 3 - *Username*
-* No. 4 - *Chat button* (visible for logged in users only)
+* No. 4 - *Chat button* (visible to logged in users only)
     * opens a chat window with the user
-* No. 5 - *Ban / unban button* (visible for administrators only)
-* No. 6 - *My Profile tab* (visible for profile owners only)
-    * Displays the user's offers
-* No. 7 - *My Settings tab* (visible for profile owners only)
+* No. 5 - *Ban / unban button* (visible to administrators only)
+* No. 6 - *My Profile tab* (visible to profile owner only)
+    * Displays the user's offers (displayed by default to other users)
+* No. 7 - *My Settings tab* (visible to profile owner only)
     * Displays the user's profile settings
 
 ## Offer Create / Offer Edit Form
@@ -125,7 +123,7 @@ Sorted by newest.
     * Profile picture, user display name, link to profile
 * No. 3 - *Conversation messages* 
 * No. 4 - *Message status indicator* 
-    * *Read* (profile picture)
+    * *Read* (profile picture is shown)
     * *Received*
     * *Sent*
     * *Sending*
