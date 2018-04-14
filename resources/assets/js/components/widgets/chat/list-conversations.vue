@@ -18,6 +18,9 @@
         <li v-if="busy" class="list-group-item px-2 text-center">
             <icon name="spinner" label="Loading" pulse/>
         </li>
+        <li v-else-if="empty" class="list-group-item text-center h5 text-muted">
+            {{ translations.empty }}
+        </li>
     </infinite-scroll>
 </template>
 
@@ -31,6 +34,7 @@
     import "vue-awesome/icons/spinner";
     import InfiniteScroll from "JS/components/widgets/infinite-scroll.vue";
     import ChatMessageContent from "JS/components/widgets/chat/chat-message-content";
+    import { TranslationMessages } from "lang.js";
 
     type Conversations = {
         [index: string]: Conversation
@@ -58,6 +62,21 @@
             busy: false,
             nextUrl: '/api/conversations'
         }),
+        computed: {
+            empty(): boolean {
+                console.log(this.conversations);
+                for(const c of Object.values(this.conversations)) {
+                    return false;
+                }
+
+                return true;
+            },
+            translations(): TranslationMessages {
+                return {
+                    empty: this.$store.getters.trans('interface.notice.conversations-none'),
+                }
+            }
+        },
         methods: {
             onSelect(conversation: Conversation) {
                 this.$emit('select', conversation.user);

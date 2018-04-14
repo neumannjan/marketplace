@@ -164,6 +164,7 @@ return [
         'user-buy' => 'Uživatel :user chce něco koupit!',
         'login-required' => 'Pro tuto akci je vyžadováno přihlášení.',
         'search-enter' => 'Zadejte text k hledání',
+        'conversations-none' => 'Žádné konverzace.',
     ],
     'label' => [
         'options' => [

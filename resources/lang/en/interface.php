@@ -161,6 +161,7 @@ return [
         'user-buy' => 'User :user wants to buy something!',
         'login-required' => 'You need to be signed in to perform this action.',
         'search-enter' => 'Enter to search',
+        'conversations-none' => 'No conversations.',
     ],
     'label' => [
         'options' => [
