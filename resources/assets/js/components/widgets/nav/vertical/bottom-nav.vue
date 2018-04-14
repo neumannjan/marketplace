@@ -20,14 +20,14 @@
             items() {
                 const guestItems = [
                     {
-                        label: this.$store.getters.trans('interface.page.login'),
-                        icon: 'sign-in',
-                        route: 'login'
-                    },
-                    {
                         label: this.$store.getters.trans('interface.page.register'),
                         icon: 'user-plus',
                         route: 'register'
+                    },
+                    {
+                        label: this.$store.getters.trans('interface.page.login'),
+                        icon: 'sign-in',
+                        route: 'login'
                     },
                 ];
 

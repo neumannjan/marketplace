@@ -10,9 +10,9 @@
     * č. 3 - *Můj profil* - profil přihlášeného uživatele (pouze přihlášení uživatelé)
     * č. 4 - *Administrace* (pouze administrátoři)
     * č. 5 - *Mé nastavení* - current user's profile settings  (pouze přihlášení uživatelé)
-        * Alternativně: *Přihlásit se* (pouze anonymní uživatelé)
-    * č. 6 - *Odhlásit se*  (pouze přihlášení uživatelé)
         * Alternativně: *Registrovat se* (pouze anonymní uživatelé)
+    * č. 6 - *Odhlásit se*  (pouze přihlášení uživatelé)
+        * Alternativně: *Přihlásit se* (pouze anonymní uživatelé)
 * č. 7 - Pole pro vyhledávání nabídek
 * č. 8 - Hlavní obsah, například přehled nabídek
 * č. 9 - Tlačítka akce / vyskakovacích oken

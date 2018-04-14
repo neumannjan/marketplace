@@ -10,9 +10,9 @@
     * No. 3 - *My Profile* - current user's profile (signed in users)
     * No. 4 - *Administration* (administrators)
     * No. 5 - *My Settings* - current user's profile settings  (signed in users)
-        * Alternative: *Sign In* (anonymous users)
-    * No. 6 - *Sign Out*  (signed in users)
         * Alternative: *Register* (anonymous users)
+    * No. 6 - *Sign Out*  (signed in users)
+        * Alternative: *Sign In* (anonymous users)
 * No. 7 - Offer search bar
 * No. 8 - Main content, e. g., list of offers
 * No. 9 - Action/Popup buttons
