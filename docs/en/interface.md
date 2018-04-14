@@ -5,21 +5,21 @@
 ![Main Interface Showcase](https://github.com/kogli/marketplace/raw/gh-pages/screenshots/main.png)
 
 * Main menu
-    * No. 1 - <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/home.png" /> *Main dashboard - overview of newest offers* 
-    * No. 2 - <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/search.png" /> *Search* 
-    * No. 3 - <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/user.png" /> *Current user's profile*  (signed in users)
-    * No. 4 - <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/flag.png" /> *Administrator tools*  (administrators)
-    * No. 5 - <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/cog.png" /> *Current user profile settings*  (signed in users)
-        * Alternative: <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/sign-in.png" /> *Sign in* (anonymous users)
-    * No. 6 - <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/sign-out.png" /> *Log out*  (signed in users)
-        * Alternative: <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/user-plus.png" /> *Register* (anonymous users)
+    * No. 1 - <span style="width: 24px; height: 24px; display: inline-block; background: url(https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/home.png)"></span> *Main dashboard - overview of newest offers* 
+    * No. 2 - <span style="width: 24px; height: 24px; display: inline-block; background: url(https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/search.png"></span> *Search* 
+    * No. 3 - <span style="width: 24px; height: 24px; display: inline-block; background: url(https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/user.png"></span> *Current user's profile*  (signed in users)
+    * No. 4 - <span style="width: 24px; height: 24px; display: inline-block; background: url(https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/flag.png"></span> *Administrator tools*  (administrators)
+    * No. 5 - <span style="width: 24px; height: 24px; display: inline-block; background: url(https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/cog.png"></span> *Current user profile settings*  (signed in users)
+        * Alternative: <span style="width: 24px; height: 24px; display: inline-block; background: url(https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/sign-in.png"></span> *Sign in* (anonymous users)
+    * No. 6 - <span style="width: 24px; height: 24px; display: inline-block; background: url(https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/sign-out.png"></span> *Log out*  (signed in users)
+        * Alternative: <span style="width: 24px; height: 24px; display: inline-block; background: url(https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/user-plus.png"></span> *Register* (anonymous users)
 * No. 7 - *Offer search bar*
 * No. 8 - *Main content*, e. g., list of offers
 * No. 9 - *Additional buttons*
-    * <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/plus.png" /> *Add a new offer* (link to form)
-    * <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/comment.png" /> *Display chat popup*
-    * <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/chevron-left.png" /> *Go back*
-    * <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/chevron-up.png" /> *Go to top*
+    * <span style="width: 24px; height: 24px; display: inline-block; background: url(https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/plus.png"></span> *Add a new offer* (link to form)
+    * <span style="width: 24px; height: 24px; display: inline-block; background: url(https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/comment.png"></span> *Display chat popup*
+    * <span style="width: 24px; height: 24px; display: inline-block; background: url(https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/chevron-left.png"></span> *Go back*
+    * <span style="width: 24px; height: 24px; display: inline-block; background: url(https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/chevron-up.png"></span> *Go to top*
 
 ## Offer Card
 
@@ -100,9 +100,9 @@ Sorted by newest.
 * No. 3 - *Conversation messages* 
 * No. 4 - *Message status indicator* 
     * Profile picture = Read
-* <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/check-circle.png" /> = Received
-* <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/check-circle-o.png" /> = Sent
-* <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/circle-o.png" /> = Sending
+    * <span style="width: 24px; height: 24px; display: inline-block; background: url(https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/check-circle.png"></span> = Received
+    * <span style="width: 24px; height: 24px; display: inline-block; background: url(https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/check-circle-o.png"></span> = Sent
+    * <span style="width: 24px; height: 24px; display: inline-block; background: url(https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/circle-o.png"></span> = Sending
 * No. 5 - *Typing indicator* 
 * No. 6 - *Message input* 
 * No. 6 - *Message send button* 
