@@ -5,30 +5,47 @@
 ![Main Interface Showcase](https://github.com/kogli/marketplace/raw/gh-pages/screenshots/main.png)
 
 * Main menu
-    * No. 1 - *Main dashboard - overview of newest offers* 
+    * No. 1 - *Dashboard* - overview of newest offers
     * No. 2 - *Search* 
-    * No. 3 - *Current user's profile*  (signed in users)
-    * No. 4 - *Administrator tools*  (administrators)
-    * No. 5 - *Current user profile settings*  (signed in users)
-        * Alternative: *Sign in* (anonymous users)
-    * No. 6 - *Sign out*  (signed in users)
+    * No. 3 - *My Profile* - current user's profile (signed in users)
+    * No. 4 - *Administration* (administrators)
+    * No. 5 - *My Settings* - current user's profile settings  (signed in users)
+        * Alternative: *Sign In* (anonymous users)
+    * No. 6 - *Sign Out*  (signed in users)
         * Alternative: *Register* (anonymous users)
-* No. 7 - *Offer search bar*
-* No. 8 - *Main content*, e. g., list of offers
-* No. 9 - *Action/Popup buttons*
-    * *Add a new offer* (link to form)
-    * *Display chat popup*
-    * *Go back*
-    * *Go to top*
+* No. 7 - Offer search bar
+* No. 8 - Main content, e. g., list of offers
+* No. 9 - Action/Popup buttons
+    * *Create a New Offer* (link to form)
+    * *Chat* - open chat popup
+    * *Go Back*
+    * *Go to Top*
+
+### Main Menu Buttons
+![Dashboard](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/home.png)
+
+![Search](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/search.png)
+
+![My Profile](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/user.png)
+
+![Administration](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/flag.png)
+
+![My Settings](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/cog.png)
+
+![Sign In](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/sign-in.png)
+
+![Sign Out](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/sign-out.png)
+
+![Register](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/user-plus.png)
 
 ### Action/Popup Buttons
-![Add a new offer](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/plus.png)
+![Create a New Offer](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/plus.png)
 
-![Display chat popup](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/comment.png)
+![Chat](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/comment.png)
 
-![Go back](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/chevron-left.png)
+![Go Back](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/chevron-left.png)
 
-![Go to top](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/chevron-up.png)
+![Go to Top](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/chevron-up.png)
 
 ## Offer Card
 
