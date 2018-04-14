@@ -11,7 +11,7 @@
     * No. 4 - *Administrator tools*  (administrators)
     * No. 5 - *Current user profile settings*  (signed in users)
         * Alternative: *Sign in* (anonymous users)
-    * No. 6 - *Log out*  (signed in users)
+    * No. 6 - *Sign out*  (signed in users)
         * Alternative: *Register* (anonymous users)
 * No. 7 - *Offer search bar*
 * No. 8 - *Main content*, e. g., list of offers
