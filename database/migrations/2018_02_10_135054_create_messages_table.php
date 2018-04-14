@@ -26,8 +26,10 @@ class CreateMessagesTable extends Migration
 
             $table->string('from_username');
             $table->string('to_username');
-            $table->foreign('from_username')->references('username')->on('users')->onDelete('cascade');
-            $table->foreign('to_username')->references('username')->on('users')->onDelete('cascade');
+            $table->foreign('from_username')->references('username')
+                ->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('to_username')->references('username')->on('users')
+                ->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

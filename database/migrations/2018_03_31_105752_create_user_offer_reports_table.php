@@ -23,7 +23,8 @@ class CreateUserOfferReportsTable extends Migration
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('offer_id');
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')
+                ->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('offer_id')->references('id')->on('offers')->onDelete('cascade');
             $table->unique(['user_id', 'offer_id']);
         });
