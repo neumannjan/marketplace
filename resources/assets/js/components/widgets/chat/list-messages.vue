@@ -83,7 +83,7 @@
         </infinite-scroll>
         <div class="p-1">
             <form @submit.prevent="sendInputMessage" class="input-group input-group-sm">
-                <input type="text" class="form-control" :placeholder="translations.typemsg" v-model="message" v-focus>
+                <input type="text" class="form-control" :placeholder="translations.typemsg" v-model="message" v-focus ref="input">
                 <div class="input-group-append">
                     <button class="btn btn-outline-primary" type="submit">{{ translations.send }}</button>
                 </div>
@@ -317,6 +317,7 @@
         }
 
         sendInputMessage() {
+            (<HTMLInputElement>this.$refs.input).focus();
             if (this.message) {
                 this.sendMessage(this.message);
                 this.message = '';
