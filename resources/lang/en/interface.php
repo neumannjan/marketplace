@@ -56,7 +56,7 @@ return [
         'register' => 'Register',
         'password-email' => 'Send Password Reset Link',
         'password-reset' => 'Reset Password',
-        'expand' => 'Expand',
+        'expand' => 'Show More',
         'close' => 'Close',
         'message' => 'Message',
         'ban' => 'Ban',
@@ -159,6 +159,7 @@ return [
         'images-loading' => 'Not all images are ready yet.',
         'list-end' => 'You reached the end.',
         'user-buy' => 'User :user wants to buy something!',
+        'login-required' => 'You need to be signed in to perform this action.',
     ],
     'label' => [
         'options' => [

@@ -67,7 +67,7 @@
     * *Bump offer* (owner)
     * *Report offer* (logged in users)
     * *Mark reported offer as appropriate* (administrators)
-* No. 9 - *Expand* - open offer in a popup or in a separate route
+* No. 9 - *Show More* - open offer in a popup or in a separate route
 
 ## User Profile Navigation
 

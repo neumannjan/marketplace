@@ -42,7 +42,6 @@
 
         </template>
         <div v-else class="row">
-
             <div class="col-md-5 mb-3">
                 <alert v-if="isAwaitingImages" type="warning">
                     {{ translations.loading.notice }}
@@ -229,8 +228,12 @@
                     {
                         icon: 'shopping-cart',
                         label: this.$store.getters.trans('interface.button.buy'),
-                        disabled: this.isThisUser || !(<typeof store>this.$store).state.user,
                         callback: () => {
+                            if(this.isThisUser || !(<typeof store>this.$store).state.user) {
+                                alert(this.$store.getters.trans('interface.notice.login-required'));
+                                return;
+                            }
+
                             if (!confirm(this.$store.getters.trans('interface.confirm.message', {
                                 user: this.value.author.display_name
                             }))) {

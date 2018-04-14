@@ -82,7 +82,7 @@
 * č. 5 - *Udělit ban / očistit od banu* (viditelné pouze administrátorům)
 * č. 6 - *Záložka Můj profil* (viditelné pouze vlastníkovi profilu)
     * Zobrazí uživatelovy nejnovější nabídky (ostatním uživatelům zobrazeno automaticky)
-* č. 7 - *My Settings tab* (viditelné pouze vlastníkovi profilu)
+* č. 7 - *Záložka Mé nastavení* (viditelné pouze vlastníkovi profilu)
     * Zobrazí uživatelské nastavení
 
 ## Formulář pro tvorbu/úpravu nabídky

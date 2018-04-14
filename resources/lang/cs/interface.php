@@ -59,7 +59,7 @@ return [
         'register' => 'Registrovat se',
         'password-email' => 'Odeslat odkaz pro obnovení',
         'password-reset' => 'Obnovit heslo',
-        'expand' => 'Zvětšit',
+        'expand' => 'Zobrazit více',
         'close' => 'Zavřít',
         'message' => 'Napsat zprávu',
         'ban' => 'Dát ban',
@@ -73,7 +73,7 @@ return [
         'previous' => 'Předchozí',
         'next' => 'Další',
         'browse' => 'Procházet',
-        'publish' => 'Publikovat',
+        'publish' => 'Zveřejnit',
         'revert-images' => 'Obnovit původní fotografie',
         'resend' => 'Znovu',
         'send' => 'Odeslat',
@@ -110,7 +110,7 @@ return [
         'dashboard' => 'Nástěnka',
         'me' => 'Můj profil',
         'logout' => 'Odhlásit se',
-        'user-settings' => 'Moje nastavení',
+        'user-settings' => 'Mé nastavení',
     ],
     'confirm' => [
         'ban' => 'Jste si jist/a, že chcete dát ban uživateli :user?',
@@ -162,6 +162,7 @@ return [
         'images-loading' => 'Ne všechny obrázky jsou ještě připraveny.',
         'list-end' => 'Dosáhl/a jste na konec.',
         'user-buy' => 'Uživatel :user chce něco koupit!',
+        'login-required' => 'Pro tuto akci je vyžadováno přihlášení.',
     ],
     'label' => [
         'options' => [
