@@ -39,11 +39,7 @@
         @Prop({type: Array, required: true})
         items!: any[]
 
-        @Prop({type: Number, default: 5000})
-        timer!: number
-
         activeIndex: number = 0;
-        timerRunning: boolean = true;
 
         get translations(): TranslationMessages {
             return {
@@ -53,9 +49,6 @@
         }
 
         next(runByUser = true) {
-            if (runByUser)
-                this.timerRunning = false;
-
             if (this.activeIndex < this.items.length - 1)
                 ++this.activeIndex;
             else
@@ -63,27 +56,10 @@
         }
 
         prev(runByUser = true) {
-            if (runByUser)
-                this.timerRunning = false;
-
             if (this.activeIndex > 0)
                 --this.activeIndex;
             else
                 this.activeIndex = this.items.length - 1;
-        }
-
-        handleTimer() {
-            setTimeout(() => {
-                if (!this.timerRunning || this.timer <= 0)
-                    return;
-
-                this.next(false);
-                this.handleTimer();
-            }, this.timer);
-        }
-
-        mounted() {
-            this.handleTimer();
         }
     }
 </script>
