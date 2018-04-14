@@ -2,7 +2,7 @@
 
 Všechna konfigurace spjatá s přizpůsobováním aplikace je k dispozici v souboru `config/app.php`.
 
-## Jméno aplikace
+## Název aplikace
 
 Nastavte klíč `name` v souboru `config/app.php` a proměnnou `APP_NAME` v souboru `.env`.
 
