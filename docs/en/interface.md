@@ -5,21 +5,21 @@
 ![Main Interface Showcase](https://github.com/kogli/marketplace/raw/gh-pages/screenshots/main.png)
 
 * Main menu
-    * No. 1 - ![](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/home.png) *Main dashboard - overview of newest offers* 
-    * No. 2 - ![](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/search.png) *Search* 
-    * No. 3 - ![](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/user.png) *Current user's profile*  (signed in users)
-    * No. 4 - ![](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/flag.png) *Administrator tools*  (administrators)
-    * No. 5 - ![](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/cog.png) *Current user profile settings*  (signed in users)
-        * Alternative: ![](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/sign-in.png) *Sign in* (anonymous users)
-    * No. 6 - ![](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/sign-out.png) *Log out*  (signed in users)
-        * Alternative: ![](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/user-plus.png) *Register* (anonymous users)
+    * No. 1 - <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/home.png" /> *Main dashboard - overview of newest offers* 
+    * No. 2 - <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/search.png" /> *Search* 
+    * No. 3 - <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/user.png" /> *Current user's profile*  (signed in users)
+    * No. 4 - <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/flag.png" /> *Administrator tools*  (administrators)
+    * No. 5 - <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/cog.png" /> *Current user profile settings*  (signed in users)
+        * Alternative: <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/sign-in.png" /> *Sign in* (anonymous users)
+    * No. 6 - <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/sign-out.png" /> *Log out*  (signed in users)
+        * Alternative: <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/user-plus.png" /> *Register* (anonymous users)
 * No. 7 - *Offer search bar*
 * No. 8 - *Main content*, e. g., list of offers
 * No. 9 - *Additional buttons*
-    * ![](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/plus.png) *Add a new offer* (link to form)
-    * ![](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/comment.png) *Display chat popup*
-    * ![](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/chevron-left.png) *Go back*
-    * ![](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/chevron-up.png) *Go to top*
+    * <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/plus.png" /> *Add a new offer* (link to form)
+    * <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/comment.png" /> *Display chat popup*
+    * <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/chevron-left.png" /> *Go back*
+    * <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/chevron-up.png" /> *Go to top*
 
 ## Offer Card
 
@@ -100,9 +100,9 @@ Sorted by newest.
 * No. 3 - *Conversation messages* 
 * No. 4 - *Message status indicator* 
     * Profile picture = Read
-    * ![](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/check-circle.png) = Received
-    * ![](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/check-circle-o.png) = Sent
-    * ![](https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/circle-o.png) = Sending
+* <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/check-circle.png" /> = Received
+* <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/check-circle-o.png" /> = Sent
+* <img src="https://github.com/encharm/Font-Awesome-SVG-PNG/raw/master/black/png/24/circle-o.png" /> = Sending
 * No. 5 - *Typing indicator* 
 * No. 6 - *Message input* 
 * No. 6 - *Message send button* 
