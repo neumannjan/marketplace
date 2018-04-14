@@ -18,7 +18,7 @@
             </router-link>
 
             <h4 class="card-title d-flex align-items-baseline">
-                <router-link :to="toOffer" :class="[color('text-', 'dark')]" style="flex-grow: 1">
+                <router-link :to="toOffer" :class="[color('text-', 'dark'), 'ellipsis']" style="flex-grow: 1">
                     <span>{{ value.name }} </span>
                     <badge class="ml-1 badge" v-for="(badge, index) in badges" :key="index" v-bind="badge"/>
                     <badge class="ml-1 badge"
@@ -37,7 +37,7 @@
                 </b-dropdown>
             </h4>
 
-            <p class="card-text">{{ shortDesc }}</p>
+            <pre class="card-text offer-text-content">{{ shortDesc }}</pre>
             <p class="h5 card-text">{{ price }}</p>
 
         </template>
@@ -73,7 +73,7 @@
                 </h1>
 
                 <div class="card-text">
-                    <p v-if="value.description">{{ value.description }}</p>
+                    <pre v-if="value.description" class="offer-text-content">{{ value.description }}</pre>
                     <p class="price-resp card-text mt-auto">{{ price }}</p>
                 </div>
 
@@ -374,6 +374,7 @@
         line-height: 1em;
         display: flex;
         align-items: center;
+        min-width: 0;
     }
 
     .profile-img {
@@ -401,5 +402,19 @@
         @include media-breakpoint-up('sm') {
             font-size: $h2-font-size;
         }
+    }
+
+    .ellipsis {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-wrap: normal;
+    }
+
+    .offer-text-content {
+        font-family: inherit;
+        font-size: inherit;
+        overflow: unset;
+        min-width: 0;
+        white-space: pre-line;
     }
 </style>
