@@ -3,7 +3,7 @@
         <search class="mb-4" v-model="input" @submit="requestSearch"/>
         <template v-if="!loading">
             <offer-masonry v-if="results" :start-cards="results.data" :url="results.next_page_url"/>
-            <div v-else class="h1 text-muted text-center">Enter to search</div>
+            <div v-else class="h1 text-muted text-center">{{ translations.notice }}</div>
         </template>
     </div>
 </template>
@@ -16,6 +16,7 @@
     import Vue from "vue";
     import {Offer, PaginatedResponse} from "JS/api/types";
     import {Dictionary} from "vue-router/types/router";
+    import {TranslationMessages} from "lang.js";
 
     export default Vue.extend({
         name: "search-route",
@@ -41,6 +42,11 @@
         computed: {
             title(): string {
                 return (this.query ? `${this.query} | ` : '') + this.$store.getters.trans('interface.page.search');
+            },
+            translations(): TranslationMessages {
+                return {
+                    notice: this.$store.getters.trans('interface.notice.search-enter'),
+                }
             }
         },
         watch: {

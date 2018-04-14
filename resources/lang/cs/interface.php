@@ -163,6 +163,7 @@ return [
         'list-end' => 'Dosáhl/a jste na konec.',
         'user-buy' => 'Uživatel :user chce něco koupit!',
         'login-required' => 'Pro tuto akci je vyžadováno přihlášení.',
+        'search-enter' => 'Zadejte text k hledání',
     ],
     'label' => [
         'options' => [
