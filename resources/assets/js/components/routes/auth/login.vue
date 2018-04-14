@@ -19,7 +19,8 @@
                         v-model="form.password"
                         type="password"/>
 
-            <form-select class="form-group" v-model="form.remember" name="remember">{{ translations.button.remember }}
+            <form-select class="form-group" v-model="form.remember" name="remember">
+                {{ translations.button.remember }}
             </form-select>
 
             <div class="form-group">
@@ -39,7 +40,7 @@
 
     import appEvents, {Events} from "JS/events";
 
-    import {minLength, required} from 'vuelidate/lib/validators';
+    import {maxLength, minLength, required} from 'vuelidate/lib/validators';
 
     import route from 'JS/components/mixins/route';
     import FormMixin from 'JS/components/mixins/form';
@@ -100,7 +101,8 @@
             form: {
                 login: {
                     required,
-                    min: minLength(5),
+                    min: minLength(4),
+                    max: maxLength(20),
                 },
                 password: {
                     required,

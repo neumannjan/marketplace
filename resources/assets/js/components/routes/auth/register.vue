@@ -70,7 +70,8 @@
             form: {
                 username: {
                     required,
-                    min: minLength(5),
+                    min: minLength(4),
+                    max: minLength(20),
 
                     slug(value: string) {
                         if (value === '') return true;
@@ -81,9 +82,10 @@
                 email: {
                     required,
                     email,
+                    max: maxLength(255),                    
                 },
                 display_name: {
-                    max: maxLength(50),
+                    max: maxLength(20),
                 },
                 password: {
                     required,

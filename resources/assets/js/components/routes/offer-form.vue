@@ -234,9 +234,11 @@
                 name: {
                     required,
                     min: minLength(3),
+                    max: maxLength(50),
                 },
                 description: {
                     min: minLength(5),
+                    max: maxLength(2000),
                 },
                 price: {
                     required(val: number) {

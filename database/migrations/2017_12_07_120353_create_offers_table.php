@@ -31,7 +31,7 @@ class CreateOffersTable extends Migration
             $table->unsignedInteger('author_user_id');
             $table->unsignedTinyInteger('status')->comment('0 == inactive, 1 == available, 2 == sold');
             $table->unsignedInteger('sold_to_user_id')->nullable();
-            $table->unsignedInteger('price_value')->nullable();
+            $table->unsignedBigInteger('price_value')->nullable();
             $table->unsignedInteger('bumped_times')->comment('2 max')->default(0);
             $table->string('currency_code', 3)->nullable();
             $table->unsignedInteger('reported_times')->default(0);

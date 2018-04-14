@@ -198,15 +198,15 @@ class User extends Authenticatable implements AuthorizationAwareModel
                 new ContainsNumericRule(),
                 new ContainsNonNumericRule(),
             ],
-            'display_name' => ['nullable', 'string', 'max:50'],
+            'display_name' => ['nullable', 'string', 'max:20'],
         ];
 
         if ( ! $updating) {
             $rules['username'] = [
                 'required',
                 'string',
-                'min:5',
-                'max:255',
+                'min:4',
+                'max:20',
                 'unique:users',
                 new SlugRule(),
             ];
