@@ -168,13 +168,7 @@ export interface InitialResponse extends GlobalResponse {
     unread_conversations?: Conversation[],
     max_file_uploads: number,
     locale_names: { [locale: string]: string },
-    currency_default: string | 0
-}
-
-/**
- * Cached request response
- */
-export interface CachedResponse {
+    currency_default: string | 0,
     currencies: Currencies
 }
 

@@ -1,9 +1,7 @@
 import Vuex, {ActionContext} from "vuex";
 import api from "JS/api";
 import Vue from "vue";
-import persistedState from 'vuex-persistedstate';
 import {
-    CachedResponse,
     FlashMessageWithKey,
     GlobalResponse,
     InitialResponse,
@@ -70,8 +68,6 @@ export interface State extends InitialResponse {
     connection_websocket: null | boolean,
     notifications: { [key: string]: Notification },
     reRoutedTimes: number,
-    cached: CachedResponse,
-    _cached_loaded: boolean,
 }
 
 /**
@@ -94,10 +90,7 @@ const state: State = {
     notifications: {},
     messages: {},
     reRoutedTimes: -1,
-    cached: {
-        currencies: {}
-    },
-    _cached_loaded: false,
+    currencies: {},
     socket_host: null
 };
 
@@ -157,10 +150,6 @@ const mutations = {
     addReRoute(state: State) {
         ++state.reRoutedTimes;
     },
-    cached(state: State, data: CachedResponse) {
-        state._cached_loaded = true;
-        state.cached = updateObject<CachedResponse>(state.cached, data, true);
-    }
 };
 
 /**
@@ -171,12 +160,6 @@ const actions = {
         return api.requestSingle('logout')
             .then(() => store.commit('logout'));
     },
-    requestCached(context: ActionContext<State, State>) {
-        if (context.state._cached_loaded) return;
-
-        return api.requestSingle<CachedResponse>('cached')
-            .then((data: CachedResponse) => store.commit('cached', data));
-    }
 };
 
 /**
@@ -212,7 +195,6 @@ const getters = {
 };
 
 const store: StrictStore<State, typeof mutations, typeof actions, typeof getters> = new Vuex.Store({
-    plugins: [persistedState<State>({paths: ['cached', '_cached_loaded']})],
     strict: true,
     state,
     mutations,
@@ -221,10 +203,5 @@ const store: StrictStore<State, typeof mutations, typeof actions, typeof getters
 });
 
 store.commit('global', initial.state);
-
-export async function cached() {
-    await store.dispatch('requestCached');
-    return store.state.cached;
-}
 
 export default store;

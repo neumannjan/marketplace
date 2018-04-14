@@ -5,6 +5,7 @@ namespace App\Console\DevCommands;
 use App\Console\Translation\TranslationFileNodeVisitor;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Arr;
 use PhpParser\Error;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
@@ -47,7 +48,7 @@ class AddTranslationMessage extends Command
         parent::__construct();
         $this->application = $application;
 
-        $locales = config('app.available_locales');
+        $locales = Arr::wrap(config('app.available_locales'));
 
         $this->addArgument('key', InputArgument::REQUIRED);
 
@@ -76,7 +77,7 @@ class AddTranslationMessage extends Command
             'shortArraySyntax' => true,
         ]);
 
-        foreach (config('app.available_locales') as $locale) {
+        foreach (Arr::wrap(config('app.available_locales')) as $locale) {
             $message = $this->argument($locale);
 
             $fileName

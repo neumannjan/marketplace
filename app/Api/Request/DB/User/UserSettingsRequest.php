@@ -10,6 +10,7 @@ use App\Jobs\ProcessImage;
 use App\User;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
@@ -59,7 +60,7 @@ class UserSettingsRequest extends Request
         $rules['locale']       = [
             'required',
             'string',
-            Rule::in(config('app.available_locales')),
+            Rule::in(Arr::wrap(config('app.available_locales'))),
         ];
 
         return $rules;

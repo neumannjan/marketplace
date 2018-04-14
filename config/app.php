@@ -71,6 +71,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Available Application Locales
+    |--------------------------------------------------------------------------
+    |
+    | The locales that are considered available to use.
+    |
+    */
+
+    'available_locales' => ['en', 'cs'],
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Locale Configuration
     |--------------------------------------------------------------------------
     |
@@ -97,18 +108,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Available Application Locales
+    | Available Currencies
     |--------------------------------------------------------------------------
     |
-    | The locales that are considered available to use.
+    | Currencies to choose from in the offer form.
     |
     */
 
-    'available_locales' => ['en', 'cs'],
+    'available_currencies' => ['USD', 'EUR', 'CZK'],
 
     /*
     |--------------------------------------------------------------------------
-    | Default currency
+    | Default Currency
     |--------------------------------------------------------------------------
     |
     | The currency that will be selected by default.

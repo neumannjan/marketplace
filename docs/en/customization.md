@@ -10,11 +10,10 @@ See the `name` key in `config/app.php` and `APP_NAME` variable in `.env`.
 
 The application is available in English and Czech.
 
-See `locale`, `fallback_locale` and `available_locales` keys in `config/app.php`.
+See `available_locales`, `locale` and `fallback_locale` keys in `config/app.php`.
 
 Translation files are located in `resources/lang`, just the way it is common in any other Laravel application.
 
 ## Currencies
 
-You are able to configure which currency will be selected by default in the offer creation form. See the `currency` key in `config/app.php`.
-
+You are able to configure which currencies are available in the offer creation form and which currency will be selected by default. See `available_currencies` and `currency` keys in `config/app.php`.

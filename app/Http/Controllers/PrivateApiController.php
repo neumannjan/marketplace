@@ -8,7 +8,6 @@ use App\Api\Request\Auth\LogoutRequest;
 use App\Api\Request\Auth\PasswordEmailRequest;
 use App\Api\Request\Auth\PasswordResetRequest;
 use App\Api\Request\Auth\RegisterRequest;
-use App\Api\Request\CachedDataRequest;
 use App\Api\Request\DB\Chat\ConversationsRequest;
 use App\Api\Request\DB\Chat\MessageReceivedNotifyRequest;
 use App\Api\Request\DB\Chat\MessageSendRequest;
@@ -25,7 +24,6 @@ use App\Api\Request\DB\SingleRequest;
 use App\Api\Request\DB\User\UserAdminRequest;
 use App\Api\Request\DB\User\UserSearchRequest;
 use App\Api\Request\DB\User\UserSettingsRequest;
-use App\Api\Request\DummyRequest;
 use App\Api\Request\GlobalDataRequest;
 use App\Api\Request\Request as ApiRequest;
 use App\Api\Response\CompositeResponse as CompositeApiResponse;
@@ -56,7 +54,6 @@ class PrivateApiController extends Controller
         $this->requests = [
             // Global
             'global' => GlobalDataRequest::class,
-            'cached' => CachedDataRequest::class,
 
             // Auth
             'login' => LoginRequest::class,

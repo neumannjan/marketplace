@@ -117,7 +117,7 @@
     import route from 'JS/components/mixins/route';
     import routeGuard from 'JS/components/mixins/route-guard';
     import form from 'JS/components/mixins/form';
-    import store, {cached} from 'JS/store';
+    import store from 'JS/store';
     import {Component, mixins, Prop, Vue, Watch} from 'JS/components/class-component';
     import api from 'JS/api';
 
@@ -499,7 +499,7 @@
                 numeralDecimalScale: 8,
                 numeralPositiveOnly: true,
             });
-            this.currencies = (await cached()).currencies;
+            this.currencies = store.state.currencies;
         }
 
         beforeDestroy() {

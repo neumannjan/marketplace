@@ -7,6 +7,7 @@ use App\Api\Data\FlashMessages;
 use App\Api\Response\Response;
 use App\Http\Resources\User;
 use Illuminate\Http\Request as HttpRequest;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 /**
@@ -50,7 +51,7 @@ class GlobalDataRequest extends Request
         // locale
         $locale            = config('app.locale');
         $fallback_locale   = config('app.fallback_locale');
-        $available_locales = config('app.available_locales');
+        $available_locales = Arr::wrap(config('app.available_locales'));
 
         // authentication
 

@@ -10,11 +10,10 @@ Nastavte klíč `name` v souboru `config/app.php` a proměnnou `APP_NAME` v soub
 
 Aplikace je k dispozici v angličtině a češtině.
 
-Více informací u klíčů `locale`, `fallback_locale` a `available_locales` v souboru `config/app.php`.
+Více informací u klíčů `available_locales`, `locale` a `fallback_locale` v souboru `config/app.php`.
 
 Soubory s překlady se nachází v adresáři `resources/lang`, což odpovídá standardům Laravel.
 
 ## Měny
 
-Lze nakonfigurovat, která měna je ve výchozím stavu vybrána ve formuláři pro tvorbu nových nabídek. Viz klíč `currency` v souboru `config/app.php`.
-
+Lze nakonfigurovat, které měny jsou k výběru ve formuláři pro tvorbu nových nabídek a která měna je vybrána ve výchozím stavu. Viz klíče `available_currencies` a `currency` v souboru `config/app.php`.
