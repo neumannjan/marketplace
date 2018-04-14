@@ -24,7 +24,7 @@
 
 ![Reprezentativní snímek obrazovky](https://github.com/kogli/marketplace/raw/master/screenshot.png)
 
-## Main Libraries/Frameworks Used
+## Použitý software
 
 * Backend
   * [_Laravel 5.6_](https://laravel.com)

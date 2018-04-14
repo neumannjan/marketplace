@@ -1,8 +1,8 @@
 # Marketplace
 
-A marketplace web application developed in PHP and TypeScript \(Laravel, Vue.js\), similar in functionality to Letgo or Facebook's marketplace.
+**English:** A marketplace web application developed in PHP and TypeScript \(Laravel, Vue.js\), similar in functionality to Letgo or Facebook's Marketplace.
 
-Webová prodejní burza napsaná v PHP a TypeScriptu \(Laravel, Vue.js\), odpovídající funkčností aplikacím typu Letgo nebo Facebook Marketplace.
+**Čeština:** Webová prodejní burza napsaná v PHP a TypeScriptu \(Laravel, Vue.js\), odpovídající funkčností aplikacím typu Letgo nebo Facebook Marketplace.
 
 * Documentation/Dokumentace
     * [English](https://neumann.gitbook.io/marketplace/english/about)
