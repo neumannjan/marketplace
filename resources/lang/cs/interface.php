@@ -12,8 +12,8 @@ return [
     'money' => ['free' => 'ZDARMA'],
     'connection' => [
         'http' => [
-            'lost' => 'Připojení k internetu bylo ztraceno.',
-            'gained' => 'Připojení k internetu bylo obnoveno.',
+            'lost' => 'Připojení k serveru bylo ztraceno.',
+            'gained' => 'Připojení k serveru bylo obnoveno.',
         ],
         'websocket' => [
             'lost' => 'Připojení k chatu bylo ztraceno.',

@@ -12,8 +12,8 @@ return [
     'money' => ['free' => 'FREE'],
     'connection' => [
         'http' => [
-            'lost' => 'Internet connection was lost.',
-            'gained' => 'Internet connection was reestablished.',
+            'lost' => 'Connection to server was lost.',
+            'gained' => 'Connection to server was reestablished.',
         ],
         'websocket' => [
             'lost' => 'Chat connection was lost.',
