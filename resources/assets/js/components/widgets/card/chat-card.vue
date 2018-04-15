@@ -7,10 +7,10 @@
                         <icon name="arrow-left" label="back"/>
                     </button>
                     <router-link :to="{name: 'user', params: {username: user.username}}"
-                                 class="d-flex flex-row align-items-center no-decoration">
+                                 class="d-flex flex-row align-items-center no-decoration ellipsis-flex-parent">
                         <profile-img :img="user.profile_image ? user.profile_image : {}" :img-size="imgSize"
                                      class="mr-2" :style="{margin: `-${imgSize/2}px 0`}"/>
-                        <h1 class="h6 m-0 text-dark">{{ user.display_name }}</h1>
+                        <h1 class="h6 m-0 text-dark ellipsis">{{ user.display_name }}</h1>
                     </router-link>
                 </template>
                 <template v-else>
