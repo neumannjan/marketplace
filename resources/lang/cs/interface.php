@@ -165,6 +165,7 @@ return [
         'login-required' => 'Pro tuto akci je vyžadováno přihlášení.',
         'search-enter' => 'Zadejte text k hledání',
         'conversations-none' => 'Žádné konverzace.',
+        'buy-self' => 'Nelze koupit vlastní nabídku.',
     ],
     'label' => [
         'options' => [

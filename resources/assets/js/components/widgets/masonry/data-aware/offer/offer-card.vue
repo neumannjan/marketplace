@@ -229,8 +229,13 @@
                         icon: 'shopping-cart',
                         label: this.$store.getters.trans('interface.button.buy'),
                         callback: () => {
-                            if(this.isThisUser || !(<typeof store>this.$store).state.user) {
+                            if (!(<typeof store>this.$store).state.user) {
                                 alert(this.$store.getters.trans('interface.notice.login-required'));
+                                return;
+                            }
+
+                            if (this.isThisUser) {
+                                alert(this.$store.getters.trans('interface.notice.buy-self'));
                                 return;
                             }
 

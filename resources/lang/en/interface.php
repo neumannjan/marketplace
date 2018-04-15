@@ -162,6 +162,7 @@ return [
         'login-required' => 'You need to be signed in to perform this action.',
         'search-enter' => 'Enter to search',
         'conversations-none' => 'No conversations.',
+        'buy-self' => 'You cannot buy your own offer.',
     ],
     'label' => [
         'options' => [
