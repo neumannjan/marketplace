@@ -9,6 +9,7 @@ use App\Observers\UserObserver;
 use App\Rules\ContainsNonNumericRule;
 use App\Rules\ContainsNumericRule;
 use App\Rules\SlugRule;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -41,6 +42,7 @@ use Laravel\Scout\Searchable;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User banned()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User public()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User unlimited()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User toBeRemoved()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereActivationToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereDescription($value)
@@ -133,6 +135,7 @@ class User extends Authenticatable implements AuthorizationAwareModel
 
     /**
      * Get the user's preferred locale
+     *
      * @return string
      */
     public function getLocaleAttribute()
@@ -226,6 +229,7 @@ class User extends Authenticatable implements AuthorizationAwareModel
 
     /**
      * Relation to the offers owned by the user.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function offers()
@@ -235,6 +239,7 @@ class User extends Authenticatable implements AuthorizationAwareModel
 
     /**
      * Relation to the offers bought by the user.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function bought()
@@ -244,11 +249,60 @@ class User extends Authenticatable implements AuthorizationAwareModel
 
     /**
      * Relation to the profile image
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function profile_image()
     {
         return $this->belongsTo(Image::class, 'profile_image_id');
+    }
+
+    /**
+     * Returns the date that inactive users have to be newer than
+     * to not be removed
+     *
+     * @return Carbon
+     */
+    public function inactiveRemovedFromTimestamp()
+    {
+        return Carbon::now()->subDays(7);
+    }
+
+    /**
+     * Returns the date that banned users have to be newer than
+     * to not be removed
+     *
+     * @return Carbon
+     */
+    public function bannedRemovedFromTimestamp()
+    {
+        return Carbon::now()->subMonths(6);
+    }
+
+    /**
+     * Limits the query to only return items that should be removed
+     *
+     * @param Builder $query
+     *
+     * @return Builder
+     */
+    public function scopeToBeRemoved(Builder $query)
+    {
+        return $query
+            ->whereNested(function ($query) {
+                /** @var \Illuminate\Database\Query\Builder $query */
+                return $query
+                    ->where(['status' => self::STATUS_INACTIVE])
+                    ->whereDate('updated_at', '<',
+                        $this->inactiveRemovedFromTimestamp());
+            })
+            ->whereNested(function ($query) {
+                /** @var \Illuminate\Database\Query\Builder $query */
+                return $query
+                    ->where(['status' => self::STATUS_BANNED])
+                    ->whereDate('updated_at', '<',
+                        $this->bannedRemovedFromTimestamp());
+            }, 'or');
     }
 
     /**

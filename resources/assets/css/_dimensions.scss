@@ -71,3 +71,7 @@ body {
   text-overflow: ellipsis;
   word-wrap: normal;
 }
+
+.ellipsis-flex-parent {
+  min-width: 0;
+}

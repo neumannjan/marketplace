@@ -69,16 +69,18 @@
                 </div>
             </div>
             <!-- Typing indicator -->
-            <div v-if="typing" class="chat-item-left mb-2 d-flex mr-auto flex-row-reverse align-items-end"
-                 :aria-label="translations.status.typing">
-                <div class="card bg-light" :style="{borderRadius: `${imgSize/2}px`}">
-                    <div class="chat-item-typing">
-                        <div></div>
+            <div v-if="typing" class="mb-2 mr-auto">
+                <div class="chat-item-left d-flex flex-row-reverse align-items-end"
+                     :aria-label="translations.status.typing">
+                    <div class="card bg-light" :style="{borderRadius: `${imgSize/2}px`}">
+                        <div class="chat-item-typing">
+                            <div></div>
+                        </div>
                     </div>
+                    <router-link :to="{name: 'user', params: {username: user.username}}" class="mx-2">
+                        <profile-img :img="profileImage ? profileImage : {}" :img-size="imgSize"/>
+                    </router-link>
                 </div>
-                <router-link :to="{name: 'user', params: {username: user.username}}" class="mx-2">
-                    <profile-img :img="profileImage ? profileImage : {}" :img-size="imgSize"/>
-                </router-link>
             </div>
         </infinite-scroll>
         <div class="p-1">

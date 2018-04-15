@@ -17,3 +17,11 @@ Soubory s překlady se nachází v adresáři `resources/lang`, což odpovídá 
 ## Měny
 
 Lze nakonfigurovat, které měny jsou k výběru ve formuláři pro tvorbu nových nabídek a která měna je vybrána ve výchozím stavu. Viz klíče `available_currencies` a `currency` v souboru `config/app.php`.
+
+## Limity nahrávání souborů
+
+Lze omezit celkové množství nahraných souborů za jeden POST požadavek a maximáln
+povolená velikost souboru.
+
+See `max_file_uploads` and `upload_max_filesize` keys in `config/app.php`.
+

@@ -43,6 +43,12 @@ export interface NotificationManagerInterface<Identifier extends string = string
     hideNotification(identifier: string | Identifier): void;
 
     /**
+     * Whether a notification is shown.
+     * @param identifier {string | Identifier}
+     */
+    isShown(identifier: Identifier | string): boolean;
+
+    /**
      * Force a particular notification ID to be hidden
      * @param identifier {string | Identifier}
      * @param hidden {boolean}

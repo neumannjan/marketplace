@@ -9,6 +9,8 @@ export enum NotificationTypes {
     NoHttpConnection = 'NoHttpConnection',
     WebsocketConnection = 'WebsocketConnection',
     NoWebsocketConnection = 'NoWebsocketConnection',
+
+    RequestError = 'RequestError'
 }
 
 export default new class Notifications extends NotificationManager<NotificationTypes> {
@@ -19,5 +21,9 @@ export default new class Notifications extends NotificationManager<NotificationT
 
     protected doHideNotification(identifier: string): void {
         store.commit('removeNotification', identifier);
+    }
+
+    public isShown(identifier: string): boolean {
+        return !!store.state.notifications[identifier];
     }
 }

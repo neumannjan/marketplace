@@ -49,7 +49,10 @@ class UserAdminRequest extends Request
      *
      * @return array
      */
-    protected function rules(Validator $validator = null)
+    protected function rules(
+        Collection $parameters,
+        Validator $validator = null
+    )
     {
         return [
             'username' => 'required|string',

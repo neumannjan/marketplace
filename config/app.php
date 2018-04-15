@@ -130,6 +130,32 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Maximal amount of file uploads per POST request
+    |--------------------------------------------------------------------------
+    |
+    | Keep in mind that this value is limited by max_file_uploads directive
+    | set in php.ini!
+    |
+    */
+
+    'max_file_uploads' => 10,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Maximal uploaded file size
+    |--------------------------------------------------------------------------
+    |
+    | In kilobytes.
+    |
+    | Keep in mind that this value is limited by upload_max_filesize
+    | and post_max_size directives set in php.ini!
+    |
+    */
+
+    'upload_max_filesize' => 3000,
+
+    /*
+    |--------------------------------------------------------------------------
     | Encryption Key
     |--------------------------------------------------------------------------
     |

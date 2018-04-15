@@ -23,6 +23,7 @@ return [
     'error' => [
         'unknown' => 'Neznámá chyba.',
         'image' => 'Chyba stažení obrázku.',
+        'api' => 'Splnit požadavek se nezdařilo.',
     ],
     'form' => [
         'username' => 'Uživatelské jméno',
@@ -165,6 +166,7 @@ return [
         'login-required' => 'Pro tuto akci je vyžadováno přihlášení.',
         'search-enter' => 'Zadejte text k hledání',
         'conversations-none' => 'Žádné konverzace.',
+        'buy-self' => 'Nelze koupit vlastní nabídku.',
     ],
     'label' => [
         'options' => [
@@ -188,6 +190,7 @@ return [
         'read' => 'Přečteno',
         'sent' => 'Odesláno',
         'typing' => 'Píše...',
+        'removed' => 'Tato zpráva byla smazána.',
     ],
     'accessibility' => [
         'profile-img' => 'Profilový obrázek',

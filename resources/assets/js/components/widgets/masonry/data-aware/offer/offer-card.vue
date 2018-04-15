@@ -229,8 +229,13 @@
                         icon: 'shopping-cart',
                         label: this.$store.getters.trans('interface.button.buy'),
                         callback: () => {
-                            if(this.isThisUser || !(<typeof store>this.$store).state.user) {
+                            if (!(<typeof store>this.$store).state.user) {
                                 alert(this.$store.getters.trans('interface.notice.login-required'));
+                                return;
+                            }
+
+                            if (this.isThisUser) {
+                                alert(this.$store.getters.trans('interface.notice.buy-self'));
                                 return;
                             }
 
@@ -292,14 +297,24 @@
                 if (!this.value.description)
                     return '';
 
-                let desc = this.value.description;
+                const MAX_LINES = 8;
+                const MAX_CHARS = 300;
 
-                if (desc.length < 300)
-                    return desc;
+                let desc: string = this.value.description;
+                let shortened = false;
 
-                desc = desc.substr(0, 300).substr(0, Math.min(desc.length, desc.lastIndexOf(" ")));
+                if (desc.length >= MAX_CHARS) {
+                    desc = desc.substr(0, MAX_CHARS).substr(0, Math.min(desc.length, desc.lastIndexOf(" ")));
+                    shortened = true;
+                }
 
-                if (desc)
+                const lines = desc.split(/\r\n|\r|\n/);
+                if (lines.length > MAX_LINES) {
+                    desc = lines.slice(0, MAX_LINES).join('\n');
+                    shortened = true;
+                }
+
+                if (desc && shortened)
                     desc += '...';
                 return desc;
             },

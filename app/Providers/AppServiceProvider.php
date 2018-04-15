@@ -4,6 +4,9 @@ namespace App\Providers;
 
 use App\Helpers\DevPackages;
 use App\Helpers\Money;
+use App\Notifications\LocalizedMailChannel;
+use Illuminate\Foundation\Application;
+use Illuminate\Notifications\Channels\MailChannel;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -33,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // money parser and formatter
         $this->app->singleton('money', function ($app) {
-            /** @var \App $app */
+            /** @var Application $app */
 
             return new Money($app->getLocale());
         });
@@ -45,5 +48,12 @@ class AppServiceProvider extends ServiceProvider
             return new DevPackages();
         });
         $this->app->alias('dev-packages', DevPackages::class);
+
+        // custom mail channel
+        $this->app->bind(MailChannel::class, function ($app) {
+            /** @var Application $app */
+
+            return $app->make(LocalizedMailChannel::class);
+        });
     }
 }
