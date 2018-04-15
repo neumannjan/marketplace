@@ -26,6 +26,8 @@ A marketplace web application developed in PHP and TypeScript \(Laravel, Vue.js\
 
   * Administrators may edit and remove all offers. They may also ban any user. Banned users are unable to reuse their e-mail addresses in new registrations.
 
+* Users that have not activated their accounts or are long banned are automatically removed.
+
 ## Main Libraries/Frameworks Used
 
 * Backend
