@@ -33,15 +33,18 @@ abstract class PaginatedRequest extends Request
     /**
      * @inheritDoc
      */
-    protected function _rules(Validator $validator = null)
+    protected function _rules(
+        Collection $parameters,
+        Validator $validator = null
+    )
     {
         $rules = [
                 'per_page' => ($this->perPageDefault === null ? 'required|'
                         : '').'integer',
                 'page' => 'integer',
-            ] + parent::_rules($validator);
+            ] + parent::_rules($parameters, $validator);
 
-        if ($this->orderBased) {
+        if ($this->isOrderBased($parameters)) {
             $rules['after'] = 'filled';
         } else {
             $rules['page'] = 'integer';
@@ -56,7 +59,7 @@ abstract class PaginatedRequest extends Request
     protected function doResolve($name, Collection $parameters)
     {
         $perPage = $parameters->get('per_page', $this->perPageDefault);
-        if ($this->orderBased) {
+        if ($this->isOrderBased($parameters)) {
             $page = $parameters->get('after', null);
         } else {
             $page = $parameters->get('page', 1);
@@ -102,6 +105,18 @@ abstract class PaginatedRequest extends Request
         $result['data'] = array_values($result['data']);
 
         return new Response(true, $result);
+    }
+
+    /**
+     * Whether AfterPaginator or regular Paginator should be used
+     *
+     * @param Collection $parameters
+     *
+     * @return bool
+     */
+    protected function isOrderBased(Collection $parameters)
+    {
+        return $this->orderBased;
     }
 
     /**

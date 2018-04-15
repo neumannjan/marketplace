@@ -48,7 +48,10 @@ class OfferMarkAppropriateRequest extends Request
      *
      * @return array
      */
-    protected function rules(Validator $validator = null)
+    protected function rules(
+        Collection $parameters,
+        Validator $validator = null
+    )
     {
         return [
             'id' => 'required|integer',

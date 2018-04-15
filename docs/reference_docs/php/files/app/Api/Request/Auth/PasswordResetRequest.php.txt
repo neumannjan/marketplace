@@ -29,7 +29,10 @@ class PasswordResetRequest extends Request
     /**
      * @inheritdoc
      */
-    protected function rules(Validator $validator = null)
+    protected function rules(
+        Collection $parameters,
+        Validator $validator = null
+    )
     {
         $baseRules = User::getValidationRules();
 

@@ -25,9 +25,18 @@ trait DBRequest
     protected $defaultScope = null;
 
     /**
-     * @inheritDoc
+     * Returns validation rules for the request parameters. Should be used by abstract classes and should always
+     * concatenate result with parent implementation
+     *
+     * @param Collection $parameters
+     * @param Validator  $validator
+     *
+     * @return array
      */
-    protected function _rules(Validator $validator = null)
+    protected function _rules(
+        Collection $parameters,
+        Validator $validator = null
+    )
     {
         $modelClass = $this->modelClass();
 
@@ -40,7 +49,7 @@ trait DBRequest
                     ['sometimes', Rule::in($model->getPublicScopes())]
                     :
                     ['required', Rule::in($model->getPublicScopes())],
-            ] + parent::_rules($validator);
+            ] + parent::_rules($parameters, $validator);
     }
 
     /**

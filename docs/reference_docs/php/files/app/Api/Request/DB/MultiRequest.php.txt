@@ -59,7 +59,7 @@ class MultiRequest extends PaginatedRequest
     {
         $query = $this->buildQuery($parameters);
 
-        if ($this->orderBased) {
+        if ($this->isOrderBased($parameters)) {
             return AfterPaginator::fromQuery($query, $perPage, $pageOrAfter);
         } else {
             return $query->paginate($perPage, ['*'], 'page', $pageOrAfter);

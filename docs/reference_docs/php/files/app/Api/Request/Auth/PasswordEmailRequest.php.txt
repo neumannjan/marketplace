@@ -27,7 +27,10 @@ class PasswordEmailRequest extends Request
     /**
      * @inheritDoc
      */
-    protected function rules(Validator $validator = null)
+    protected function rules(
+        Collection $parameters,
+        Validator $validator = null
+    )
     {
         return [
             'email' => 'required|email',

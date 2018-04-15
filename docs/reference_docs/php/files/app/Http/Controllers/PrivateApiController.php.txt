@@ -20,6 +20,7 @@ use App\Api\Request\DB\Offer\OfferMarkAppropriateRequest;
 use App\Api\Request\DB\Offer\OfferRemoveRequest;
 use App\Api\Request\DB\Offer\OfferReportRequest;
 use App\Api\Request\DB\Offer\OfferSearchRequest;
+use App\Api\Request\DB\Offer\OffersRequest;
 use App\Api\Request\DB\SingleRequest;
 use App\Api\Request\DB\User\UserAdminRequest;
 use App\Api\Request\DB\User\UserSearchRequest;
@@ -63,12 +64,7 @@ class PrivateApiController extends Controller
             'password-reset' => PasswordResetRequest::class,
 
             // DB get
-            'offers' => [
-                MultiRequest::class,
-                'modelClass' => Offer::class,
-                'resourceClass' => \App\Http\Resources\Offer::class,
-                'orderBased' => true,
-            ],
+            'offers' => OffersRequest::class,
 
             'offer' => [
                 SingleRequest::class,

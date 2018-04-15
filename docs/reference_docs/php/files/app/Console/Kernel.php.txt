@@ -32,7 +32,10 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('offer:remove-old')
-            ->dailyAt('19:00');
+            ->dailyAt('3:00');
+
+        $schedule->command('user:remove-old')
+            ->dailyAt('4:00');
     }
 
     /**

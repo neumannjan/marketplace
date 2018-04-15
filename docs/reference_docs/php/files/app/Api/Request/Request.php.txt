@@ -38,11 +38,15 @@ abstract class Request
     /**
      * Returns validation rules for the request parameters
      *
-     * @param Validator $validator
+     * @param Collection $parameters
+     * @param Validator  $validator
      *
      * @return array
      */
-    protected function rules(Validator $validator = null)
+    protected function rules(
+        Collection $parameters,
+        Validator $validator = null
+    )
     {
         return [];
     }
@@ -51,13 +55,17 @@ abstract class Request
      * Returns validation rules for the request parameters. Should be used by abstract classes and should always
      * concatenate result with parent implementation
      *
-     * @param Validator $validator
+     * @param Collection $parameters
+     * @param Validator  $validator
      *
      * @return array
      */
-    protected function _rules(Validator $validator = null)
+    protected function _rules(
+        Collection $parameters,
+        Validator $validator = null
+    )
     {
-        return $this->rules($validator);
+        return $this->rules($parameters, $validator);
     }
 
     /**
@@ -119,7 +127,7 @@ abstract class Request
             }
 
             $validator = \Validator::make($parameters->all(), []);
-            $validator->addRules($this->_rules($validator));
+            $validator->addRules($this->_rules($parameters, $validator));
             $validator->validate();
 
             $response = $this->doResolve($name, $parameters);
