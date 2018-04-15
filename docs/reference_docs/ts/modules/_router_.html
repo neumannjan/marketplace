@@ -121,7 +121,7 @@
 					<div class="tsd-signature tsd-kind-icon">Cached<wbr>Route<wbr>Components<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/kogli/marketplace/blob/fb72692/resources/assets/js/router.ts#L33">router.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/kogli/marketplace/blob/a28af92/resources/assets/js/router.ts#L33">router.ts:33</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -134,7 +134,7 @@
 					<div class="tsd-signature tsd-kind-icon">cached<wbr>Route<wbr>Components<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[&#x27;search-route&#x27;] as CachedRouteComponents</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/kogli/marketplace/blob/fb72692/resources/assets/js/router.ts#L38">router.ts:38</a></li>
+							<li>Defined in <a href="https://github.com/kogli/marketplace/blob/a28af92/resources/assets/js/router.ts#L38">router.ts:38</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -144,7 +144,7 @@
 					<div class="tsd-signature tsd-kind-icon">route<wbr>Events<span class="tsd-signature-symbol">:</span> <a href="../classes/_lib_event_listener_.eventlistener.html" class="tsd-signature-type">EventListener</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_router_.payloads.html" class="tsd-signature-type">Payloads</a><span class="tsd-signature-symbol">, </span><a href="../enums/_router_.routeevents.html" class="tsd-signature-type">RouteEvents</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new EventListener&lt;Payloads, RouteEvents&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/kogli/marketplace/blob/fb72692/resources/assets/js/router.ts#L73">router.ts:73</a></li>
+							<li>Defined in <a href="https://github.com/kogli/marketplace/blob/a28af92/resources/assets/js/router.ts#L73">router.ts:73</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -159,7 +159,7 @@
 					<div class="tsd-signature tsd-kind-icon">router<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">VueRouter</span><span class="tsd-signature-symbol"> =&nbsp;new VueRouter({mode: &#x27;history&#x27;,scrollBehavior(to, from, savedPosition) {const promise &#x3D; to.meta.async ?new Promise&lt;void&gt;(resolve &#x3D;&gt; routeEvents.once(RouteEvents.Loaded, resolve)): Promise.resolve();if (savedPosition) {return promise.then(() &#x3D;&gt; savedPosition);}return undefined;},routes: [// Index page{path: &#x27;/&#x27;,name: &#x27;index&#x27;,component: IndexRoute,meta: {refreshOnReconnect: true}},// Auth pages{path: &#x27;/login&#x27;,name: &#x27;login&#x27;,component: LoginRoute,},{path: &#x27;/register&#x27;,name: &#x27;register&#x27;,component: RegisterRoute,},{path: &#x27;/password/reset&#x27;,name: &#x27;password-email&#x27;,component: PasswordEmailRoute,},{path: &#x27;/password/reset/:token&#x27;,name: &#x27;password-reset&#x27;,component: PasswordResetRoute,props: true,},// Display pages{path: &#x27;/user/:username&#x27;,name: &#x27;user&#x27;,components: {default: UserRoute,navigation: UserNavigation,},props: {default: true},meta: {async: true,refreshOnReconnect: true}},{path: &#x27;/me&#x27;,name: &#x27;me&#x27;,redirect: to &#x3D;&gt; {if (!!store.state.user)return {name: &#x27;user&#x27;, params: {username: store.state.user.username}};elsereturn {name: &#x27;login&#x27;}},},{path: &#x27;/offer/:id(\\d+)&#x27;,name: &#x27;offer&#x27;,component: OfferRoute,props: route &#x3D;&gt; ({id: parseInt(route.params.id)}),meta: {refreshOnReconnect: true}},{path: &#x27;/search/:query?&#x27;,name: &#x27;search&#x27;,component: SearchRoute,props: true,meta: {refreshOnReconnect: true}},// Modify pages{path: &#x27;/offer/create&#x27;,name: &#x27;offer-create&#x27;,component: OfferFormRoute,},{path: &#x27;/offer/edit/:id(\\d+)&#x27;,name: &#x27;offer-edit&#x27;,component: OfferFormRoute,props: route &#x3D;&gt; ({id: parseInt(route.params.id)}),},{path: &#x27;/me/settings&#x27;,name: &#x27;user-settings&#x27;,components: {default: UserSettingsRoute,navigation: UserNavigation},props: {navigation: {isThisUser: true}}},//administration{path: &#x27;/admin&#x27;,components: {default: AdminRoute,navigation: AdminNavigation,},children: [{path: &#x27;/&#x27;,name: &#x27;admin&#x27;,redirect: () &#x3D;&gt; ({name: &#x27;admin-reported&#x27;})},{path: &#x27;reported&#x27;,name: &#x27;admin-reported&#x27;,component: AdminReportedRoute,meta: {parent: &#x27;admin&#x27;,refreshOnReconnect: true,}},{path: &#x27;banned/:query?&#x27;,name: &#x27;admin-banned&#x27;,component: AdminBannedRoute,props: true,meta: {parent: &#x27;admin&#x27;,refreshOnReconnect: true,}},]},// error{path: &#x27;/404&#x27;,name: &#x27;error&#x27;,component: ErrorRoute},{path: &#x27;*&#x27;,component: ErrorRoute},]})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/kogli/marketplace/blob/fb72692/resources/assets/js/router.ts#L156">router.ts:156</a></li>
+							<li>Defined in <a href="https://github.com/kogli/marketplace/blob/a28af92/resources/assets/js/router.ts#L156">router.ts:156</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -176,7 +176,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/kogli/marketplace/blob/fb72692/resources/assets/js/router.ts#L47">router.ts:47</a></li>
+									<li>Defined in <a href="https://github.com/kogli/marketplace/blob/a28af92/resources/assets/js/router.ts#L47">router.ts:47</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -207,7 +207,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/kogli/marketplace/blob/fb72692/resources/assets/js/router.ts#L100">router.ts:100</a></li>
+									<li>Defined in <a href="https://github.com/kogli/marketplace/blob/a28af92/resources/assets/js/router.ts#L100">router.ts:100</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -242,7 +242,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/kogli/marketplace/blob/fb72692/resources/assets/js/router.ts#L124">router.ts:124</a></li>
+									<li>Defined in <a href="https://github.com/kogli/marketplace/blob/a28af92/resources/assets/js/router.ts#L124">router.ts:124</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -278,7 +278,7 @@
 					<div class="tsd-signature tsd-kind-icon">query<wbr>Modal<wbr>Router<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/kogli/marketplace/blob/fb72692/resources/assets/js/router.ts#L89">router.ts:89</a></li>
+							<li>Defined in <a href="https://github.com/kogli/marketplace/blob/a28af92/resources/assets/js/router.ts#L89">router.ts:89</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-object-literal">
@@ -287,7 +287,7 @@
 						<div class="tsd-signature tsd-kind-icon">offer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/kogli/marketplace/blob/fb72692/resources/assets/js/router.ts#L90">router.ts:90</a></li>
+								<li>Defined in <a href="https://github.com/kogli/marketplace/blob/a28af92/resources/assets/js/router.ts#L90">router.ts:90</a></li>
 							</ul>
 						</aside>
 						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
@@ -296,7 +296,7 @@
 							<div class="tsd-signature tsd-kind-icon">component<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">VueConstructor</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Vue</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;OfferModal</span></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/kogli/marketplace/blob/fb72692/resources/assets/js/router.ts#L91">router.ts:91</a></li>
+									<li>Defined in <a href="https://github.com/kogli/marketplace/blob/a28af92/resources/assets/js/router.ts#L91">router.ts:91</a></li>
 								</ul>
 							</aside>
 						</section>
@@ -306,7 +306,7 @@
 							<div class="tsd-signature tsd-kind-icon">size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;xl&quot;</span></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/kogli/marketplace/blob/fb72692/resources/assets/js/router.ts#L92">router.ts:92</a></li>
+									<li>Defined in <a href="https://github.com/kogli/marketplace/blob/a28af92/resources/assets/js/router.ts#L92">router.ts:92</a></li>
 								</ul>
 							</aside>
 						</section>
