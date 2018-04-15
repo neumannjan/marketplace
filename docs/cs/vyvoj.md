@@ -19,9 +19,7 @@ $ npm run prod
 
 ## Plnění databáze falešným obsahem
 
-{% hint style="warning" %}
-Při používání poskytované Docker konfigurace je nutné dbát na [komplikace přístupu k databázi](instalace.md#komplikace-pristupu-k-databazi)!
-{% endhint %}
+!> Při používání poskytované Docker konfigurace je nutné dbát na [komplikace přístupu k databázi](cs/instalace.md#komplikace-přístupu-k-databázi)!
 
 ```bash
 $ php artisan db:seed

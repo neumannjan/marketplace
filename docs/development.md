@@ -19,9 +19,7 @@ $ npm run prod
 
 ## Filling the Database With Dummy Content
 
-{% hint style="warning" %}
-If you are using provided `docker-compose.yml`, the [database access caveat](installation.md#database-access-caveat) applies here!
-{% endhint %}
+!> If you are using provided Docker configuration, the [database access caveat](installation.md#database-access-caveat) applies here!
 
 ```bash
 $ php artisan db:seed

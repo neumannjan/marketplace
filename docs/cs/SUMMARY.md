@@ -1,0 +1,5 @@
+* [O aplikaci](cs/README.md)
+* [Uživatelské rozhraní](cs/rozhrani.md)
+* [Instalace](cs/instalace.md)
+* [Přizpůsobení](cs/prizpusobeni.md)
+* [Vývoj](cs/vyvoj.md)

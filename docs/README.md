@@ -1,4 +1,8 @@
-# About
+# Marketplace
+
+A marketplace web application developed in PHP and TypeScript \(Laravel, Vue.js\), similar in functionality to Letgo or Facebook's Marketplace.
+
+![A Representative Screenshot](/images/screenshot.png)
 
 ## Functionality
 
@@ -21,8 +25,6 @@
 * Users can **report inappropriate offers to administrators**.
 
   * Administrators may edit and remove all offers. They may also ban any user. Banned users are unable to reuse their e-mail addresses in new registrations.
-
-![A Representative Screenshot](https://github.com/kogli/marketplace/raw/master/screenshot.png)
 
 ## Main Libraries/Frameworks Used
 

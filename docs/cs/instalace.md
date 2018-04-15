@@ -39,11 +39,9 @@ Obstaráno je vše níže uvedené:
 * Spuštění [queue workeru](https://laravel.com/docs/5.5/queues) Laravel frameworku
 * Pravidelné spouštění příkazu `schedule:run` Laravel frameworku každou minutu pomocí cron.
 
-{% hint style="warning" %}
-**Použitá Docker konfigurace je určena pouze pro lokální používání**. Pro úpravu pro použití v praxi prosím zkontrolujte správné nastavení souboru `docker-compose.yml` a složky `docker`, která obsahuje `Dockerfile` soubory.
-{% endhint %}
+!> **Použitá Docker konfigurace je určena pouze pro lokální používání**. Pro úpravu pro použití v praxi prosím zkontrolujte správné nastavení souboru `docker-compose.yml` a složky `docker`, která obsahuje `Dockerfile` soubory.
 
-### Usage
+### Použití
 
 Nástroje Docker a `docker-compose` jsou vyžadovány. Vše lze poté spustit pomocí jednoho příkazu:
 
@@ -87,10 +85,8 @@ $ exit
 
 ## Návod k instalaci
 
-{% hint style="info" %}
-Dobrá znalost [Laravel](https://laravel.com/docs/5.6) je pro instalaci a správu běžící aplikace výhodou.
-Níže uvedené instrukce ovšem všechny potřebné informace pro instalaci obsahují.
-{% endhint %}
+?> Dobrá znalost [Laravel](https://laravel.com/docs/5.6) je pro instalaci a správu běžící aplikace výhodou.
+  Níže uvedené instrukce ovšem všechny potřebné informace pro instalaci obsahují.
 
 Přejděte do složky projektu pomocí `cd`.
 
@@ -100,9 +96,7 @@ Přečtěte si [dokumentaci Laravel frameworku](https://laravel.com/docs/5.6/ins
 
 ### Nakonfigurujte HTTP server (Apache, Nginx,...)
 
-{% hint style="success" %}
-Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
-{% endhint %}
+?> Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
 
 Kořenový veřejný adresář HTTP serveru by měl být adresář `public`.
 
@@ -118,7 +112,7 @@ $ composer install --no-dev
 $ npm install --production
 ```
 
-Pokud budete upravovat a [kompilovat CSS a JS](vyvoj.md#kompilace-css-a-js), vynechte `--production`.
+Pokud budete upravovat a [kompilovat CSS a JS](cs/vyvoj.md#kompilace-css-a-js), vynechte `--production`.
 
 ### Připravte soubor `.env`
 
@@ -139,17 +133,13 @@ Nastavte `APP_NAME` dle vlastní libosti.
 
 ### Nastavte dodatečné proměnné `.env`
 
-{% hint style="success" %}
-Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
-{% endhint %}
+?> Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
 
 Nastavte proměnnou `APP_URL`.
 
 ### Nakonfigurujte queue worker a plánovač úloh
 
-{% hint style="success" %}
-Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
-{% endhint %}
+?> Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
 
 Přečtěte si [dokumentaci Laravel frameworku](https://laravel.com/docs/5.6/scheduling#introduction) pro více informací o plánování úloh.
 
@@ -159,17 +149,12 @@ Zajistěte spouštění následující služby: (těchto procesů je možné mí
 $ php artisan queue:work --sleep=3 --tries=3
 ```
 
-{% hint style="warning" %}
-Queue worker je potřebný pro indexování dat pro vyhledávač a pro úpravu velikosti nahraných obrázků.
-
-Pokud nechcete používat frontu (_nedoporučujeme_), nastavte v `.env` souboru `SCOUT_QUEUE` proměnnou na `false` a `QUEUE_DRIVER` proměnnou na `sync`.
-{% endhint %}
+!> Queue worker je potřebný pro indexování dat pro vyhledávač a pro úpravu velikosti nahraných obrázků.
+  Pokud nechcete používat frontu (_nedoporučujeme_), nastavte v `.env` souboru `SCOUT_QUEUE` proměnnou na `false` a `QUEUE_DRIVER` proměnnou na `sync`.
 
 ### Nakonfigurujte připojení k MySQL a Redis
 
-{% hint style="success" %}
-Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
-{% endhint %}
+?> Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
 
 Konfiguraci lze provést v souborech `.env` nebo `config/database.php`. Více informací najdete v [dokumentaci Laravel frameworku](https://laravel.com/docs/5.6).
 
@@ -177,9 +162,7 @@ Jiná databázová řešení než MySQL &gt;= 5.7 nejsou podporována. Dotazy sp
 
 ### Nakonfigurujte odesílání e-mailu
 
-{% hint style="warning" %}
-Toto není automaticky konfigurováno pomocí poskytované Docker konfigurace! Ve výchozím nastavení nejsou žádné e-maily odesílány, informace o nich je pouze zaznamenána do souboru `storage/logs/laravel.log`.
-{% endhint %}
+!> Toto není automaticky konfigurováno pomocí poskytované Docker konfigurace! Ve výchozím nastavení nejsou žádné e-maily odesílány, informace o nich je pouze zaznamenána do souboru `storage/logs/laravel.log`.
 
 Přečtěte si [dokumentaci Laravel frameworku](https://laravel.com/docs/5.6/mail#introduction).
 
@@ -191,9 +174,7 @@ $ php artisan key:generate
 
 ### Zavolejte databázové migrations
 
-{% hint style="warning" %}
-Při používání poskytované Docker konfigurace je nutné dbát na [komplikace přístupu k databázi](#komplikace-pristupu-k-databazi)!
-{% endhint %}
+!> Při používání poskytované Docker konfigurace je nutné dbát na [komplikace přístupu k databázi](#komplikace-přístupu-k-databázi)!
 
 ```bash
 $ php artisan migrate
@@ -201,9 +182,7 @@ $ php artisan migrate
 
 ### Vytvořte administrátorský účet
 
-{% hint style="warning" %}
-Při používání poskytované Docker konfigurace je nutné dbát na [komplikace přístupu k databázi](#komplikace-pristupu-k-databazi)!
-{% endhint %}
+!> Při používání poskytované Docker konfigurace je nutné dbát na [komplikace přístupu k databázi](#komplikace-přístupu-k-databázi)!
 
 ```bash
 $ php artisan user:create <jmeno> <email> <heslo> -a
@@ -211,25 +190,18 @@ $ php artisan user:create <jmeno> <email> <heslo> -a
 
 Možnost `-a` udělí vytvářenému uživateli administrátorská oprávnění.
 
-{% hint style="info" %}
-Pokud tento příkaz zavoláte špatně (například s překlepy v e-mailu, hesle nebo uživatelském jméně), je nutné databázi upravit ručně (tabulka `users`).
-
-Alternativně lze smazat veškerá data z databáze pomocí `php artisan migrate:fresh`.
-{% endhint %}
+?> Pokud tento příkaz zavoláte špatně (například s překlepy v e-mailu, hesle nebo uživatelském jméně), je nutné databázi upravit ručně (tabulka `users`).
+  Alternativně lze smazat veškerá data z databáze pomocí `php artisan migrate:fresh`.
 
 ### Nastavte oprávnění nově vytvořených souborů
 
-{% hint style="success" %}
-Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
-{% endhint %}
+?> Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
 
 Vytvořením nového uživatele došlo k vytvoření souboru `storage/search/users.index`. Zajistěte, aby byl soubor čitelný a upravitelný webovým serverem.
 
 ### Nakonfigurujte a spusťte WebSocket server
 
-{% hint style="success" %}
-Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
-{% endhint %}
+?> Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
 
 Nejprve nakonfigurujte proměnnou `WEBSOCKET_PORT`, která určuje, na kterém portu WebSocket server poběží. Soubor `.env` je jediné místo, kde je třeba tuto proměnnou nakonfigurovat (pokud nepoužíváte poskytovanou Docker konfiguraci a `docker-compose.yml`).
 

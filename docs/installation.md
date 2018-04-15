@@ -39,9 +39,7 @@ It handles the following:
 * Launch of Laravel's [queue worker](https://laravel.com/docs/5.5/queues)
 * Scheduling Laravel's `schedule:run` command to run every minute using cron.
 
-{% hint style="warning" %}
-**Provided Docker setup is meant for local use only**. In order to modify it for production, please see `docker-compose.yml` and the `docker` directory, which contains custom Dockerfiles.
-{% endhint %}
+!> **Provided Docker setup is meant for local use only**. In order to modify it for production, please see `docker-compose.yml` and the `docker` directory, which contains custom Dockerfiles.
 
 ### Usage
 
@@ -87,10 +85,8 @@ $ exit
 
 ## Installation Instructions
 
-{% hint style="info" %}
-Good knowledge of [Laravel](https://laravel.com/docs/5.6) is an advantage for those installing and maintaining the application.
-Instructions below contain, however, all necessary installation information.
-{% endhint %}
+?> Good knowledge of [Laravel](https://laravel.com/docs/5.6) is an advantage for those installing and maintaining the application.
+  Instructions below contain, however, all necessary installation information.
 
 `cd` to the project directory.
 
@@ -100,9 +96,7 @@ Read [Laravel's documentation](https://laravel.com/docs/5.6/installation#configu
 
 ### Configure Your HTTP Server (Apache, Nginx,...)
 
-{% hint style="success" %}
-If you are using provided Docker configuration, skip this step.
-{% endhint %}
+?> If you are using provided Docker configuration, skip this step.
 
 Your web server's document / web root should be the `public` directory.
 
@@ -139,17 +133,13 @@ APP_DEBUG=false
 
 ### Set Additional `.env` Variables
 
-{% hint style="success" %}
-If you are using provided Docker configuration, skip this step.
-{% endhint %}
+?> If you are using provided Docker configuration, skip this step.
 
 Set the `APP_URL` variable appropriately.
 
 ### Configure Laravel's Queue Worker and Task Scheduling
 
-{% hint style="success" %}
-If you are using provided Docker configuration, skip this step.
-{% endhint %}
+?> If you are using provided Docker configuration, skip this step.
 
 Read [Laravel's documentation](https://laravel.com/docs/5.6/scheduling#introduction) for more information about task scheduling.
 
@@ -159,17 +149,12 @@ Ensure that the following service is running: (multiple such processes may be ru
 $ php artisan queue:work --sleep=3 --tries=3
 ```
 
-{% hint style="warning" %}
-Queue worker is required for search indexing and image resizing.
-
-If you do not want to use a queue (_not recommended_), change the `SCOUT_QUEUE` environment variable to `false` and the `QUEUE_DRIVER` environment variable to `sync`.
-{% endhint %}
+!> Queue worker is required for search indexing and image resizing. 
+    If you do not want to use a queue (_not recommended_), change the `SCOUT_QUEUE` environment variable to `false` and the `QUEUE_DRIVER` environment variable to `sync`.
 
 ### Configure MySQL and Redis Connections
 
-{% hint style="success" %}
-If you are using provided Docker configuration, skip this step.
-{% endhint %}
+?> If you are using provided Docker configuration, skip this step.
 
 Configuration may be done in `.env` or `config/database.php`. Details are in [Laravel's documentation](https://laravel.com/docs/5.6).
 
@@ -177,9 +162,7 @@ No database solutions other than MySQL &gt;= 5.7 are supported. MySQL-specific d
 
 ### Configure E-Mail Sending
 
-{% hint style="warning" %}
-This is not preconfigured by the provided Docker configuration! No e-mails are sent by default, they are just logged to `storage/logs/laravel.log`.
-{% endhint %}
+!> This is not preconfigured by the provided Docker configuration! No e-mails are sent by default, they are just logged to `storage/logs/laravel.log`.
 
 See [Laravel's documentation](https://laravel.com/docs/5.6/mail#introduction).
 
@@ -191,9 +174,7 @@ $ php artisan key:generate
 
 ### Run Database Migrations
 
-{% hint style="warning" %}
-If you are using provided Docker configuration, the [database access caveat](#database-access-caveat) applies here!
-{% endhint %}
+!> If you are using provided Docker configuration, the [database access caveat](#database-access-caveat) applies here!
 
 ```bash
 $ php artisan migrate
@@ -201,9 +182,7 @@ $ php artisan migrate
 
 ### Create an Admin User
 
-{% hint style="warning" %}
-If you are using provided Docker configuration, the [database access caveat](#database-access-caveat) applies here!
-{% endhint %}
+!> If you are using provided Docker configuration, the [database access caveat](#database-access-caveat) applies here!
 
 ```bash
 $ php artisan user:create <username> <email> <password> -a
@@ -211,25 +190,18 @@ $ php artisan user:create <username> <email> <password> -a
 
 The `-a` option gives the user admin privileges.
 
-{% hint style="info" %}
-If you execute this command incorrectly, e.g., with a typo in e-mail, password or username, you will have to modify the database by hand (`users` table).
-
-Alternatively, you may remove all data from the whole database and re-migrate by executing `php artisan migrate:fresh`.
-{% endhint %}
+?> If you execute this command incorrectly, e.g., with a typo in e-mail, password or username, you will have to modify the database by hand (`users` table).
+  Alternatively, you may remove all data from the whole database and re-migrate by executing `php artisan migrate:fresh`.
 
 ### Fix Newly Created File Permissions
 
-{% hint style="success" %}
-If you are using provided Docker configuration, skip this step.
-{% endhint %}
+?> If you are using provided Docker configuration, skip this step.
 
 By creating a new user, the `storage/search/users.index` file has been created. Ensure that it is readable and writable by the web server.
 
 ### Configure and Launch the WebSocket Server
 
-{% hint style="success" %}
-If you are using provided Docker configuration, skip this step.
-{% endhint %}
+?> If you are using provided Docker configuration, skip this step.
 
 First, configure the `WEBSOCKET_PORT` variable. It determines which port the WebSocket server will run on. `.env` is the only place where this value has to be set (unless you are using provided `docker-compose.yml`).
 

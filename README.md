@@ -10,4 +10,4 @@
 * [PHP Reference](https://kogli.github.io/marketplace/reference_docs/php/)
 * [TypeScript Reference](https://kogli.github.io/marketplace/reference_docs/ts/)
 
-![A Representative Screenshot / Reprezentativní snímek obrazovky](https://github.com/kogli/marketplace/raw/master/screenshot.png)
+![A Representative Screenshot / Reprezentativní snímek obrazovky](docs/images/screenshot.png)

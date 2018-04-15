@@ -1,4 +1,8 @@
-# O aplikaci
+# Marketplace
+
+Webová prodejní burza napsaná v PHP a TypeScriptu \(Laravel, Vue.js\), odpovídající funkčností aplikacím typu Letgo nebo Facebook Marketplace.
+
+![Reprezentativní snímek obrazovky](../images/screenshot.png)
 
 ## Funkce
 
@@ -21,8 +25,6 @@
 * Uživatelé mohou **nahlašovat nevhodné nabídky administrátorům**.
 
   * Administrátoři mohou upravovat i mazat všechny nabídky. Také mohou udělit kterémukoli uživateli ban. Zabanovaní uživatelé nemohou při nové registraci použít svoji původní e-mailovou adresu.
-
-![Reprezentativní snímek obrazovky](https://github.com/kogli/marketplace/raw/master/screenshot.png)
 
 ## Použitý software
 
