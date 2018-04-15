@@ -478,19 +478,45 @@ class Offer extends Model implements AuthorizationAwareModel, OrderAwareModel
                 });
             }
 
-            $validator->sometimes('images', 'file|image', function ($input) {
-                $val = intval($input->status) === Offer::STATUS_AVAILABLE
-                    && ! is_array($input->images);
 
-                return $val;
-            });
+            $validator->sometimes('images',
+                ['file', 'image'],
+                function ($input) {
+                    $val = intval($input->status) === Offer::STATUS_AVAILABLE
+                        && ! is_array($input->images);
 
-            $validator->sometimes('images.*', 'file|image', function ($input) {
-                $val = intval($input->status) === Offer::STATUS_AVAILABLE
-                    && is_array($input->images);
+                    return $val;
+                });
 
-                return $val;
-            });
+            $validator->sometimes('images.*',
+                ['file', 'image'],
+                function ($input) {
+                    $val = intval($input->status) === Offer::STATUS_AVAILABLE
+                        && is_array($input->images);
+
+                    return $val;
+                });
+
+            $maxFileSize   = config('app.upload_max_filesize');
+            $maxFileAmount = config('app.max_file_uploads');
+
+            $validator->sometimes('images',
+                ['max:'.$maxFileSize],
+                function ($input) {
+                    return ! is_array($input->images);
+                });
+
+            $validator->sometimes('images.*',
+                ['max:'.$maxFileSize],
+                function ($input) {
+                    return is_array($input->images);
+                });
+
+            $validator->sometimes('images',
+                ['max:'.$maxFileAmount],
+                function ($input) {
+                    return is_array($input->images);
+                });
         }
 
         return [

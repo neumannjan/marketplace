@@ -1,13 +1,7 @@
 import Vuex, {ActionContext} from "vuex";
 import api from "JS/api";
 import Vue from "vue";
-import {
-    FlashMessageWithKey,
-    GlobalResponse,
-    InitialResponse,
-    OfferRequestScope,
-    RequestScope
-} from "JS/api/types";
+import {FlashMessageWithKey, GlobalResponse, InitialResponse, OfferRequestScope, RequestScope} from "JS/api/types";
 import {StrictStore} from "JS/lib/strict-store";
 import {Notification} from "JS/lib/notifications/typings";
 import initial from './initial';
@@ -86,6 +80,7 @@ const state: State = {
     connection_http: null,
     connection_websocket: null,
     max_file_uploads: 0,
+    max_file_kb: 0,
     flash: {},
     notifications: {},
     messages: {},

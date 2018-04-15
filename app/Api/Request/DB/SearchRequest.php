@@ -44,11 +44,14 @@ abstract class SearchRequest extends PaginatedRequest
      *
      * @return array
      */
-    protected function _rules(Validator $validator = null)
+    protected function _rules(
+        Collection $parameters,
+        Validator $validator = null
+    )
     {
         return [
                 'query' => 'required|string',
-            ] + parent::_rules($validator);
+            ] + parent::_rules($parameters, $validator);
     }
 
     /**

@@ -65,6 +65,6 @@ trait BasicDBRequest
      */
     protected function getDBParameters(Collection $parameters)
     {
-        return $parameters->except(array_keys(static::_rules()));
+        return $parameters->except(array_keys(static::_rules($parameters)));
     }
 }

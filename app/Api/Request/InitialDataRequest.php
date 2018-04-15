@@ -44,6 +44,7 @@ class InitialDataRequest extends GlobalDataRequest
                 'min' => $validationMessages['min']['string'],
                 'max' => $validationMessages['max']['string'],
                 'maxArray' => $validationMessages['max']['array'],
+                'maxFile' => $validationMessages['max']['file'],
                 'required' => $validationMessages['required'],
                 'slug' => $validationMessages['slug'],
                 'numeric' => $validationMessages['numeric'],
@@ -92,7 +93,12 @@ class InitialDataRequest extends GlobalDataRequest
         }
 
         // upload limits
-        $array['max_file_uploads'] = (int)ini_get('max_file_uploads');
+        $array['max_file_uploads'] = min(
+            (int)ini_get('max_file_uploads'),
+            (int)config('app.max_file_uploads')
+        );
+
+        $array['max_file_kb'] = (int)config('app.upload_max_filesize');
 
         return $array;
     }

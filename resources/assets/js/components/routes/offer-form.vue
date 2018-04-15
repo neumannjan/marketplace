@@ -143,7 +143,7 @@
         description?: string;
         price?: string | number;
         currency?: string | 0;
-        images?: Array<any> | FileList;
+        images?: File[] | FileList;
     }
 
     interface ImageOrderInstance {
@@ -255,11 +255,11 @@
                     },
                 },
                 images: {
-                    required(images: File[]) {
+                    required(images: File[] | FileList) {
                         return (<OfferFormRoute>(<any>this)).imageOrder.length > 0;
                     },
-                    image(images: File[]) {
-                        for (let image of images) {
+                    image(images: File[] | FileList) {
+                        for (let image of Array.from(images)) {
                             if (!image.type.startsWith('image/'))
                                 return false;
                         }
@@ -268,8 +268,20 @@
                     },
                     maxArray: withParams({
                         max: store.state.max_file_uploads
-                    }, (images: File[]) => {
+                    }, (images: File[] | FileList) => {
                         return images && images.length <= store.state.max_file_uploads;
+                    }),
+                    maxFile: withParams({
+                        max: store.state.max_file_kb
+                    }, (images: File[] | FileList) => {
+                        const max = store.state.max_file_kb;
+                        for (let image of Array.from(images)) {
+                            if (image.size > max * 1024) {
+                                return false;
+                            }
+                        }
+
+                        return true;
                     })
                 }
             }

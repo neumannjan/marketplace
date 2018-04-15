@@ -17,3 +17,10 @@ Translation files are located in `resources/lang`, just the way it is common in 
 ## Currencies
 
 You are able to configure which currencies are available in the offer creation form and which currency will be selected by default. See `available_currencies` and `currency` keys in `config/app.php`.
+
+## File upload limits
+
+You are able to limit amount of files per POST request and maximal allowed file size.
+
+See `max_file_uploads` and `upload_max_filesize` keys in `config/app.php`.
+

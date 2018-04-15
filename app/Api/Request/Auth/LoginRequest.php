@@ -68,11 +68,15 @@ class LoginRequest extends ApiRequest
 
     /**
      * @inheritdoc
+     *
      * @param Validator|null $validator
      *
      * @return array
      */
-    protected function rules(Validator $validator = null)
+    protected function rules(
+        Collection $parameters,
+        Validator $validator = null
+    )
     {
         return [
             'login' => 'required|string',
