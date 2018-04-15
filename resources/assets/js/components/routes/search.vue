@@ -59,7 +59,7 @@
                 let params: Dictionary<string>;
 
                 if (this.input)
-                    params = {query: this.input};
+                    params = {query: this.input.trim()};
                 else
                     params = {};
 

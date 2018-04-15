@@ -95,7 +95,7 @@ abstract class SearchRequest extends PaginatedRequest
         /** @var Model|Searchable $modelClass */
         $modelClass = $this->modelClass();
 
-        $query = $modelClass::search($parameters['query']);
+        $query = $modelClass::search(trim($parameters['query']));
 
         $results = $query->get();
         $results = $results->filter(function ($model) use ($parameters) {
