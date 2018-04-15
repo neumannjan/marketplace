@@ -23,6 +23,8 @@ export default abstract class NotificationManager<Identifier extends string = st
 
     protected abstract doHideNotification(identifier: Identifier | string): void;
 
+    public abstract isShown(identifier: Identifier | string): boolean;
+
     showNotification(notification: AnonymousNotification | Notification<Identifier>): string {
         let identifier: string;
 

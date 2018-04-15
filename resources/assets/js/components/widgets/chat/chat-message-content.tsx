@@ -35,6 +35,16 @@ export default Vue.extend({
         }
     },
     render(h): VNode {
+        const messageContent = () => {
+            let content = this.message.content;
+
+            if (content && content !== '') {
+                return content;
+            } else {
+                return <i>{this.$store.getters.trans('interface.message.removed')}</i>;
+            }
+        }
+
         const messageText = () => {
             let user: User | null;
 
@@ -45,9 +55,9 @@ export default Vue.extend({
 
             if (this.type === MessageType.Regular) {
                 if (this.inline && user)
-                    return <span>{user.display_name}: {this.message.content}</span>;
+                    return <span>{user.display_name}: {messageContent()}</span>;
                 else
-                    return <span class={this.inline ? undefined : "chat-message-content"}>{this.message.content}</span>;
+                    return <span class={this.inline ? undefined : "chat-message-content"}>{messageContent()}</span>;
             } else if (this.type === MessageType.Offer) {
                 const OfferMsg = <i>{this.$store.getters.trans('interface.notice.user-buy', {
                     user: this.user.display_name

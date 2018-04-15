@@ -162,11 +162,13 @@ export function doAction(config: ActionConfiguration, func: () => Promise<any>) 
                 notifications.hideNotification(notificationID);
             }
 
-            notifications.showNotification({
-                type: notificationType(config.errorNotification, 'danger'),
-                message: notificationMessage(config.errorNotification, store.getters.trans('interface.error.unknown')),
-                persistent: false
-            });
+            if (!notifications.isShown(NotificationTypes.RequestError)) {
+                notifications.showNotification({
+                    type: notificationType(config.errorNotification, 'danger'),
+                    message: notificationMessage(config.errorNotification, store.getters.trans('interface.error.unknown')),
+                    persistent: false
+                });
+            }
         });
     }
 }

@@ -20,7 +20,11 @@ return [
             'gained' => 'Chat connection was reestablished.',
         ],
     ],
-    'error' => ['unknown' => 'Unknown error.', 'image' => 'Image fetch error.'],
+    'error' => [
+        'unknown' => 'Unknown error.',
+        'image' => 'Image fetch error.',
+        'api' => 'Failed to resolve request.',
+    ],
     'form' => [
         'username' => 'Username',
         'display_name' => 'Display Name',
@@ -186,6 +190,7 @@ return [
         'read' => 'Read',
         'sent' => 'Sent',
         'typing' => 'Typing...',
+        'removed' => 'This message has been removed.',
     ],
     'accessibility' => [
         'profile-img' => 'Profile Image',

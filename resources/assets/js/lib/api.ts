@@ -1,5 +1,7 @@
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {ContinuousResponse, PaginatedResponse} from 'JS/api/types';
+import notifications, {NotificationTypes} from 'JS/notifications';
+import store from 'JS/store';
 
 /**
  * API error
@@ -95,6 +97,18 @@ export default abstract class Api<GlobalResponseData extends Data = object> {
         }
     }
 
+    /**
+     * Reject function an API error.
+     */
+    protected rejectApiError(reject: (error: ApiError) => void, error: ApiError): void {
+        notifications.showNotification({
+            id: NotificationTypes.RequestError,
+            message: store.getters.trans('interface.error.api'),
+            type: 'danger'
+        })
+        reject(error);
+    }
+
     protected responseIncludesGlobal<ResponseData extends Data>(data: RawCompositeApiResponse<ResponseData>):
         data is RawCompositeApiResponseWithGlobal<GlobalResponseData, ResponseData> {
         return !!data.global;
@@ -128,7 +142,7 @@ export default abstract class Api<GlobalResponseData extends Data = object> {
 
                     resolve(response.data);
                 } else {
-                    reject({api: null});
+                    this.rejectApiError(reject, {api: null});
                 }
             };
 
@@ -164,7 +178,7 @@ export default abstract class Api<GlobalResponseData extends Data = object> {
                     if (data.success)
                         resolve(data.result);
                     else
-                        reject({api: data.result});
+                        this.rejectApiError(reject, {api: data.result});
                 } else {
                     throw response;
                 }
@@ -211,9 +225,9 @@ export default abstract class Api<GlobalResponseData extends Data = object> {
                         if (data && data.success)
                             resolve(data.result);
                         else
-                            reject({api: data ? data.result : null});
+                            this.rejectApiError(reject, {api: data ? data.result : null});
                     } else {
-                        reject({api: null});
+                        this.rejectApiError(reject, {api: null});
                     }
                 }
             };
