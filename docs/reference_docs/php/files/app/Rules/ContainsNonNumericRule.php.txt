@@ -1,0 +1,36 @@
+<?php
+
+namespace App\Rules;
+
+use http\Exception\RuntimeException;
+use Illuminate\Contracts\Validation\Rule;
+
+/**
+ * Validation rule that asserts that an attribute contains non-numeric characters.
+ * Useful for password validation.
+ */
+class ContainsNonNumericRule implements Rule
+{
+
+    /**
+     * @inheritDoc
+     */
+    public function passes($attribute, $value)
+    {
+        $result = preg_match('/[^0-9]/', $value);
+
+        if ($result === false) {
+            throw new RuntimeException();
+        }
+
+        return $result ? true : false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function message()
+    {
+        return __('validation.contains.non_numeric');
+    }
+}

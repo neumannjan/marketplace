@@ -1,0 +1,70 @@
+<?php
+
+namespace App\Api\Request\DB\User;
+
+
+use App\Api\Request\DB\SearchRequest;
+use App\User;
+use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Support\Collection;
+
+/**
+ * API request for user search
+ *
+ * @package App\Api\Request\DB\User
+ */
+class UserSearchRequest extends SearchRequest
+{
+    protected $modelClass = User::class;
+    protected $resourceClass = \App\Http\Resources\User::class;
+
+    /** @var Guard */
+    protected $guard;
+
+    /**
+     * @param Guard $guard
+     */
+    public function __construct(Guard $guard)
+    {
+        $this->guard = $guard;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function shouldResolve()
+    {
+        /** @var User | null $user */
+        $user = $this->guard->user();
+
+        return $user && $user->is_admin;
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param Collection $parameters
+     *
+     * @return array
+     */
+    protected function urlParameters(Collection $parameters)
+    {
+        return [
+            'status' => 'sometimes|integer',
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param            $model
+     * @param Collection $parameters
+     *
+     * @return bool
+     */
+    protected function filterResult($model, Collection $parameters)
+    {
+        return $parameters->has('status') ? $model->status
+            === $parameters['status'] : true;
+    }
+}

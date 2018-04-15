@@ -1,0 +1,302 @@
+<?php
+
+namespace App;
+
+use App\Eloquent\AuthorizationAwareModel;
+use App\Eloquent\Order\OrderAware;
+use App\Eloquent\Order\OrderAwareModel;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+/**
+ * Chat message model
+ *
+ * @property int $id
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property string $content
+ * @property array $additional
+ * @property int $received
+ * @property int $read
+ * @property string $from_username
+ * @property string $to_username
+ * @property-read \App\User $from
+ * @property string $identifier
+ * @property-read null|int $offer_id
+ * @property-read \App\Offer $offer
+ * @property-read \App\User $to
+ * @property-read \App\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message after($model)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message any()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message conversationsWith($user_username)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message personal()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereAdditional($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereFromUsername($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereRead($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereReceived($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereToUsername($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+class Message extends Model implements AuthorizationAwareModel, OrderAwareModel
+{
+    use OrderAware;
+
+    const SCOPE_PERSONAL = 'personal';
+    const SCOPE_ANY = 'any';
+
+    protected $fillable
+        = [
+            'from',
+            'to',
+            'from_username',
+            'to_username',
+            'content',
+            'additional',
+            'read',
+            'identifier',
+        ];
+
+    protected $casts
+        = [
+            'additional' => 'array',
+        ];
+
+    protected $with
+        = [
+            'from',
+            'to',
+        ];
+
+    protected $appends = ['identifier'];
+
+    /**
+     * Message identifier. Provided by the client. Not saved to the database.
+     *
+     * @var string
+     */
+    protected $identifier;
+
+    /**
+     * @inheritDoc
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::addGlobalScope('order', function ($query) {
+            /** @var Builder $query */
+            return $query
+                ->orderBy('created_at', 'desc')
+                ->orderBy('id', 'desc');
+        });
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdentifierAttribute()
+    {
+        return $this->identifier;
+    }
+
+    /**
+     * @param $identifier
+     */
+    public function setIdentifierAttribute($identifier)
+    {
+        $this->identifier = $identifier;
+    }
+
+    /**
+     * 'from' user relation
+     *
+     * @return $this|\Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function from()
+    {
+        return $this->belongsTo(User::class, 'from_username', 'username');
+    }
+
+    /**
+     * 'to' user relation
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function to()
+    {
+        return $this->belongsTo(User::class, 'to_username', 'username');
+    }
+
+    /**
+     * Relation for the user that is not the current user
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_username', 'username');
+    }
+
+    /**
+     * Offer relation for messages that are linked to an offer
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function offer()
+    {
+        return $this->belongsTo(Offer::class, 'offer_id', 'id');
+    }
+
+    /**
+     * @return null|int
+     */
+    public function getOfferIdAttribute()
+    {
+        return isset($this->additional['offer']) ? $this->additional['offer']
+            : null;
+    }
+
+    /**
+     * Modifies the query to return a list of conversations between the current
+     * user and another user.
+     *
+     * @param Builder $query
+     * @param         $user_username
+     *
+     * @return $this
+     */
+    public function scopeConversationsWith(Builder $query, $user_username)
+    {
+        /*
+         * SELECT messages.*, m.user_username
+         * FROM messages
+         *   INNER JOIN (
+         *                SELECT
+         *                  IF(to_username = 1, from_username, to_username) AS user_username,
+         *                  MAX(id)                       AS max_id
+         *                FROM messages
+         *                WHERE to_username = 1 OR from_username = 1
+         *                GROUP BY user_username
+         *              ) m
+         *     ON messages.id = m.max_id
+         * ORDER BY messages.created_at DESC, messages.id DESC;
+         */
+
+        $inner = Message::query()
+            ->withoutGlobalScope('order')
+            ->select([
+                DB::raw("IF(to_username = ?, from_username, to_username) AS user_username"),
+                DB::raw('MAX(id) AS max_id'),
+            ])
+            ->addBinding($user_username, 'select')
+            ->where(['to_username' => $user_username])
+            ->orWhere(['from_username' => $user_username])
+            ->groupBy(['user_username']);
+
+        return $query
+            ->select(['messages.*', 'm.user_username'])
+            ->join(DB::raw("({$inner->toSql()}) m"), 'messages.id', '=',
+                'm.max_id')
+            ->addBinding($inner->getBindings(), 'join');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPublicScopes()
+    {
+        return [self::SCOPE_PERSONAL, self::SCOPE_ANY];
+    }
+
+    /**
+     * @param Builder $query
+     *
+     * @return Builder
+     */
+    public function scopeAny(Builder $query)
+    {
+        return $query;
+    }
+
+    /**
+     * @param Builder $query
+     *
+     * @return Builder|static
+     */
+    public function scopePersonal(Builder $query)
+    {
+        $user = Auth::user();
+
+        if ($user === null) {
+            throw new \RuntimeException("Not logged in");
+        }
+
+        $userQuery = function ($query) {
+            /** @var Builder $query */
+            return $query->where(['status' => User::STATUS_ACTIVE]);
+        };
+
+        return $query
+            ->whereNested(function ($query) use ($user) {
+                $username = $user->username;
+
+                /** @var Builder $query */
+                return $query
+                    ->where(['to_username' => $username])
+                    ->orWhere(['from_username' => $username]);
+            })
+            ->whereHas('from', $userQuery)
+            ->whereHas('to', $userQuery);
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param           $scopeName
+     * @param User|null $user
+     *
+     * @return bool|int|mixed
+     */
+    public function canUsePublicScope($scopeName, User $user = null)
+    {
+        switch ($scopeName) {
+            case self::SCOPE_ANY:
+                return $user->is_admin;
+            case self::SCOPE_PERSONAL:
+                return $user && \Auth::check() && $user->id === \Auth::id();
+        }
+
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param $scopeName
+     * @param $columnNames
+     *
+     * @return bool
+     */
+    public function validatePublicScopeParams($scopeName, $columnNames)
+    {
+        switch ($scopeName) {
+            case self::SCOPE_ANY:
+            case self::SCOPE_PERSONAL:
+                return Collection::wrap($columnNames)
+                    ->diff(Collection::make([
+                        'from_username',
+                        'to_username',
+                        'content',
+                        'additional',
+                    ]))
+                    ->isEmpty();
+        }
+
+        return false;
+    }
+}
+

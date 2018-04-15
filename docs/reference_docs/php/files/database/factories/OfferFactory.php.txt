@@ -1,0 +1,34 @@
+<?php
+
+use Faker\Generator as Faker;
+
+/* @var Illuminate\Database\Eloquent\Factory $factory */
+
+$factory->define(\App\Offer::class, function (Faker $faker) {
+    return [
+        'name' => $faker->words(3, true),
+        'description' => $faker->boolean ? $faker->realText($faker->numberBetween(100, 400)) : '',
+        'listed_at' => $faker->dateTimeBetween('-3 months'),
+        'price' => $faker->randomFloat(3, 0, 1000),
+        'currency_code' => $faker->currencyCode,
+        /*'status' => $faker->biasedNumberBetween(0, 2, function ($i) { //TODO add status: sold and status: draft
+            return sin($i * M_PI);
+        }),*/
+        'status' => \App\Offer::STATUS_AVAILABLE,
+        'bumped_times' => $faker->biasedNumberBetween(0, \App\Offer::MAX_BUMP_TIMES, function($i) {
+            return 1 - sqrt($i);
+        }),
+        'reported_times' => $faker->biasedNumberBetween(0, 15, function($i) {
+            return $i === 0 ? 1 : log(1/$i, 1000);
+        }),
+    ];
+});
+
+$factory->state(\App\Offer::class, 'available', [
+    'status' => \App\Offer::STATUS_AVAILABLE
+]);
+
+$factory->state(\App\Offer::class, 'inactive', [
+    'status' => \App\Offer::STATUS_DRAFT
+]);
+
