@@ -5,8 +5,8 @@
 **Čeština:** Webová prodejní burza napsaná v PHP a TypeScriptu \(Laravel, Vue.js\), odpovídající funkčností aplikacím typu Letgo nebo Facebook Marketplace.
 
 * Documentation/Dokumentace
-    * [English](https://neumann.gitbook.io/marketplace/english/about)
-    * [Čeština](https://neumann.gitbook.io/marketplace/cestina/o-aplikaci)
+    * [English](https://kogli.github.io/marketplace)
+    * [Čeština](https://kogli.github.io/marketplace/#/cs/README)
 * [PHP Reference](https://kogli.github.io/marketplace/reference_docs/php/)
 * [TypeScript Reference](https://kogli.github.io/marketplace/reference_docs/ts/)
 
