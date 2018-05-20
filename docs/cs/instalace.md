@@ -46,7 +46,14 @@ Obstaráno je vše níže uvedené:
 Nástroje Docker a `docker-compose` (nejnovější verze - doporučeno stáhnout pomocí nástroje `pip`) jsou vyžadovány. Vše lze poté spustit pomocí jednoho příkazu:
 
 ```bash
+# Pokud všechny Composer a NPM závislosti jsou nainstalovány ve složkách vendor a node_modules
 $ docker-compose up
+
+# Před spuštěním nainstaluje všechny závislosti
+$ INSTALL_DEPS=prod docker-compose up
+
+# Před spuštěním nainstaluje všechny závislosti, včetně vývojářských závislostí
+$ INSTALL_DEPS=dev docker-compose up
 ```
 
 Po zavolání tohoto příkazu postupujte podle [návodu k instalaci](#návod-k-instalaci) níže.
@@ -104,22 +111,18 @@ Kořenový veřejný adresář HTTP serveru by měl být adresář `public`.
 
 ### Nainstalujte Composer závislosti
 
-```bash
-# Pokud NEPOUŽÍVÁTE poskytovanou Docker konfiguraci
-$ composer install --no-dev
+?> Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
 
-# Pokud používáte poskytovanou Docker konfiguraci
-$ docker-compose exec web sh -c "cd app && composer install --no-dev"
+```bash
+$ composer install --no-dev
 ```
 
 ### Nainstalujte NPM závislosti
 
-```bash
-# Pokud NEPOUŽÍVÁTE poskytovanou Docker konfiguraci
-$ npm install --production
+?> Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
 
-# Pokud používáte poskytovanou Docker konfiguraci
-$ docker-compose exec nodejs sh -c "cd app && npm install --production"
+```bash
+$ npm install --production
 ```
 
 Pokud budete upravovat a [kompilovat CSS a JS](cs/vyvoj.md#kompilace-css-a-js), vynechte `--production`.

@@ -24,6 +24,7 @@ services:
       XDEBUG_REMOTE_HOST: 172.19.0.1
       WEB_DOCUMENT_ROOT: "/app/public"
       APP_ROOT: "/app"
+      INSTALL_DEPS: "${INSTALL_DEPS-none}"
   db:
     #image: mysql:5.7
     #image: mariadb:10.2
@@ -63,6 +64,7 @@ services:
       - .:/app:z
     environment:
       APP_ROOT: "/app"
+      INSTALL_DEPS: "${INSTALL_DEPS-none}"
 volumes:
   databasevol:
   cachevol:

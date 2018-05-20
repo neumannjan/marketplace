@@ -46,10 +46,17 @@ It handles the following:
 Docker and `docker-compose` (newest version - recommended installation using `pip`) are required. Everything is then launched with a single command:
 
 ```bash
+# If all Composer and NPM dependencies are already installed in the vendor and node_modules directories
 $ docker-compose up
+
+# Will also install all dependencies (required only once)
+$ INSTALL_DEPS=prod docker-compose up
+
+# Will also install all dependencies, including development dependencies (required only once)
+$ INSTALL_DEPS=dev docker-compose up
 ```
 
-After you have run this command, follow [installation instructions](#installation-instructions) below.
+After you have run this command, you may follow the [installation instructions](#installation-instructions) below.
 
 The application will then be available on this URL:
 ```
@@ -96,7 +103,7 @@ $ exit
 
 Read [Laravel's documentation](https://laravel.com/docs/5.6/installation#configuration) for more information about directory permissions.
 
-### Configure Your HTTP Server (Apache, Nginx,...)
+### Configure Your HTTP Server (Apache, Nginx, ...)
 
 ?> If you are using provided Docker configuration, skip this step.
 
@@ -104,22 +111,18 @@ Your web server's document / web root should be the `public` directory.
 
 ### Install Composer Production Dependencies
 
-```bash
-# If you are NOT using provided Docker configuration
-$ composer install --no-dev
+?> If you are using provided Docker configuration, skip this step.
 
-# If you are using provided Docker configuration
-$ docker-compose exec web sh -c "cd app && composer install --no-dev"
+```bash
+$ composer install --no-dev
 ```
 
 ### Install NPM Dependencies
 
-```bash
-# If you are NOT using provided Docker configuration
-$ npm install --production
+?> If you are using provided Docker configuration, skip this step.
 
-# If you are using provided Docker configuration
-$ docker-compose exec nodejs sh -c "cd app && npm install --production"
+```bash
+$ npm install --production
 ```
 
 Skip the `--production` flag if you intend to [build assets](development.md#building-assets).
