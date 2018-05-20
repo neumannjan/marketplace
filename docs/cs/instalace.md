@@ -49,7 +49,7 @@ Nástroje Docker a `docker-compose` (nejnovější verze - doporučeno stáhnout
 $ docker-compose up
 ```
 
-Po zavolání tohoto příkazu postupujte podle [#návod-k-instalaci](návodu k instalaci) níže.
+Po zavolání tohoto příkazu postupujte podle [návodu k instalaci](#návod-k-instalaci) níže.
 
 Aplikace bude následně k dispozici na této adrese:
 ```

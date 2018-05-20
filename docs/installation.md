@@ -49,7 +49,7 @@ Docker and `docker-compose` (newest version - recommended installation using `pi
 $ docker-compose up
 ```
 
-After you have run this command, follow [#installation-instructions](installation instructions) below.
+After you have run this command, follow [installation instructions](#installation-instructions) below.
 
 The application will then be available on this URL:
 ```
