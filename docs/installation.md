@@ -43,11 +43,13 @@ It handles the following:
 
 ### Usage
 
-Docker and `docker-compose` are required. Everything is then launched with a single command:
+Docker and `docker-compose` (newest version - recommended installation using `pip`) are required. Everything is then launched with a single command:
 
 ```bash
 $ docker-compose up
 ```
+
+After you have run this command, follow [#installation-instructions](installation instructions) below.
 
 The application will then be available on this URL:
 ```
@@ -65,7 +67,7 @@ $ docker-compose down
 All `php artisan` commands that access the database have to be executed in the `web` Docker container. It can be done like this:
 
 ```bash
- $ docker-compose exec web php app/artisan <rest of the command>
+$ docker-compose exec web php app/artisan <rest of the command>
 ```
 
 Alternatively, the following may be done:
@@ -103,13 +105,21 @@ Your web server's document / web root should be the `public` directory.
 ### Install Composer Production Dependencies
 
 ```bash
+# If you are NOT using provided Docker configuration
 $ composer install --no-dev
+
+# If you are using provided Docker configuration
+$ docker-compose exec php sh -c "cd app && composer install --no-dev"
 ```
 
 ### Install NPM Dependencies
 
 ```bash
+# If you are NOT using provided Docker configuration
 $ npm install --production
+
+# If you are using provided Docker configuration
+$ docker-compose exec nodejs sh -c "cd app && npm install --production"
 ```
 
 Skip the `--production` flag if you intend to [build assets](development.md#building-assets).

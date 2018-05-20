@@ -43,11 +43,13 @@ Obstaráno je vše níže uvedené:
 
 ### Použití
 
-Nástroje Docker a `docker-compose` jsou vyžadovány. Vše lze poté spustit pomocí jednoho příkazu:
+Nástroje Docker a `docker-compose` (nejnovější verze - doporučeno stáhnout pomocí nástroje `pip`) jsou vyžadovány. Vše lze poté spustit pomocí jednoho příkazu:
 
 ```bash
 $ docker-compose up
 ```
+
+Po zavolání tohoto příkazu postupujte podle [#návod-k-instalaci](návodu k instalaci) níže.
 
 Aplikace bude následně k dispozici na této adrese:
 ```
@@ -65,7 +67,7 @@ $ docker-compose down
 Všechny `php artisan` příkazy, které přistupují k databázi, musí být volány v Docker kontejneru `web`. Volat je lze takto:
 
 ```bash
- $ docker-compose exec web php app/artisan <zbytek příkazu>
+$ docker-compose exec web php app/artisan <zbytek příkazu>
 ```
 
 Alternativně lze provést toto:
@@ -103,13 +105,21 @@ Kořenový veřejný adresář HTTP serveru by měl být adresář `public`.
 ### Nainstalujte Composer závislosti
 
 ```bash
+# Pokud NEPOUŽÍVÁTE poskytovanou Docker konfiguraci
 $ composer install --no-dev
+
+# Pokud používáte poskytovanou Docker konfiguraci
+$ docker-compose exec php sh -c "cd app && composer install --no-dev"
 ```
 
 ### Nainstalujte NPM závislosti
 
 ```bash
+# Pokud NEPOUŽÍVÁTE poskytovanou Docker konfiguraci
 $ npm install --production
+
+# Pokud používáte poskytovanou Docker konfiguraci
+$ docker-compose exec nodejs sh -c "cd app && npm install --production"
 ```
 
 Pokud budete upravovat a [kompilovat CSS a JS](cs/vyvoj.md#kompilace-css-a-js), vynechte `--production`.
