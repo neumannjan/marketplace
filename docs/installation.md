@@ -109,7 +109,7 @@ Your web server's document / web root should be the `public` directory.
 $ composer install --no-dev
 
 # If you are using provided Docker configuration
-$ docker-compose exec php sh -c "cd app && composer install --no-dev"
+$ docker-compose exec web sh -c "cd app && composer install --no-dev"
 ```
 
 ### Install NPM Dependencies

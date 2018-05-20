@@ -109,7 +109,7 @@ Kořenový veřejný adresář HTTP serveru by měl být adresář `public`.
 $ composer install --no-dev
 
 # Pokud používáte poskytovanou Docker konfiguraci
-$ docker-compose exec php sh -c "cd app && composer install --no-dev"
+$ docker-compose exec web sh -c "cd app && composer install --no-dev"
 ```
 
 ### Nainstalujte NPM závislosti
