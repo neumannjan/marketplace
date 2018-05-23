@@ -11,4 +11,9 @@ then
     composer install --no-dev
 fi
 
+if [ "$MIGRATE_DB" == "true" ] || [ "$MIGRATE_DB" == "TRUE" ] || [ "$MIGRATE_DB" == "1" ] ;
+then
+    php /app/artisan migrate
+fi
+
 /usr/bin/supervisord -n

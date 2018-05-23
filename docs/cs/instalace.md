@@ -27,7 +27,7 @@
   * _npm_
 * _Redis 3+_
 
-## Docker
+## Rychlá instalace pomocí Docker
 
 Konfigurační soubor [Docker](https://www.docker.com/) kontejnerů `docker-compose.yml` je k dispozici pro rychlé splnění všech požadavků a spuštění aplikace s minimem dodatečných kroků.
 
@@ -41,22 +41,27 @@ Obstaráno je vše níže uvedené:
 
 !> **Použitá Docker konfigurace je určena pouze pro lokální používání**. Pro úpravu pro použití v praxi prosím zkontrolujte správné nastavení souboru `docker-compose.yml` a složky `docker`, která obsahuje `Dockerfile` soubory.
 
-### Použití
+### První použití
 
-Nástroje Docker a `docker-compose` (nejnovější verze - doporučeno stáhnout pomocí nástroje `pip`) jsou vyžadovány. Vše lze poté spustit pomocí jednoho příkazu:
+Nástroje Docker a `docker-compose` (nejnovější verze - doporučeno stáhnout pomocí nástroje `pip`) jsou vyžadovány.
+
+Zaprvé je třeba připravit `.env` soubor:
 
 ```bash
-# Pokud všechny Composer a NPM závislosti jsou nainstalovány ve složkách vendor a node_modules
-$ docker-compose up
-
-# Před spuštěním nainstaluje všechny závislosti
-$ INSTALL_DEPS=prod docker-compose up
-
-# Před spuštěním nainstaluje všechny závislosti, včetně vývojářských závislostí
-$ INSTALL_DEPS=dev docker-compose up
+$ cp .env.example .env
 ```
 
-Po zavolání tohoto příkazu postupujte podle [návodu k instalaci](#návod-k-instalaci) níže.
+Následně zavolejte příkaz `docker-compose` (pro instalaci vvojářskch závislostí zaměňte `prod` za `dev`):
+
+```bash
+$ INSTALL_DEPS=prod MIGRATE_DB=true docker-compose up
+```
+
+Počkejte, než jsou všechny operace dokončeny. V určitou chvíli by se měly přestat vypisovat nové zprávy,
+což znamená, že všechny závislosti byly nainstalovány a server byl spuštěn.
+
+Nyní je třeba vytvořit uživatele s administrátorskými právy. Jak to udělat se dozvíte po přečtení
+o [komplikacích přístupu k databázi](#komplikace-přístupu-k-databázi) a o [vytváření uživatelů](#vytvořte-administrátorský-účet).
 
 Aplikace bude následně k dispozici na této adrese:
 ```
@@ -64,7 +69,6 @@ http://localhost:8080/
 ```
 
 Pro ukončení běhu aplikace zavolejte následující příkaz:
-
 ```bash
 $ docker-compose down
 ```
@@ -92,6 +96,23 @@ Následně kontejner opustíte takto:
 $ exit
 ```
 
+### Použití
+
+Spusťte server pomocí následujícího příkazu:
+```bash
+$ docker-compose up
+```
+
+Aplikace bude následně k dispozici na této adrese:
+```
+http://localhost:8080/
+```
+
+Pro ukončení serveru zavolejte následující příkaz:
+```bash
+$ docker-compose down
+```
+
 ## Návod k instalaci
 
 ?> Dobrá znalost [Laravel](https://laravel.com/docs/5.6) je pro instalaci a správu běžící aplikace výhodou.
@@ -105,21 +126,15 @@ Přečtěte si [dokumentaci Laravel frameworku](https://laravel.com/docs/5.6/ins
 
 ### Nakonfigurujte HTTP server (Apache, Nginx,...)
 
-?> Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
-
 Kořenový veřejný adresář HTTP serveru by měl být adresář `public`.
 
 ### Nainstalujte Composer závislosti
-
-?> Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
 
 ```bash
 $ composer install --no-dev
 ```
 
 ### Nainstalujte NPM závislosti
-
-?> Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
 
 ```bash
 $ npm install --production
@@ -146,13 +161,9 @@ Nastavte `APP_NAME` dle vlastní libosti.
 
 ### Nastavte dodatečné proměnné `.env`
 
-?> Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
-
 Nastavte proměnnou `APP_URL`.
 
 ### Nakonfigurujte queue worker a plánovač úloh
-
-?> Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
 
 Přečtěte si [dokumentaci Laravel frameworku](https://laravel.com/docs/5.6/scheduling#introduction) pro více informací o plánování úloh.
 
@@ -166,8 +177,6 @@ $ php artisan queue:work --sleep=3 --tries=3
   Pokud nechcete používat frontu (_nedoporučujeme_), nastavte v `.env` souboru `SCOUT_QUEUE` proměnnou na `false` a `QUEUE_DRIVER` proměnnou na `sync`.
 
 ### Nakonfigurujte připojení k MySQL a Redis
-
-?> Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
 
 Konfiguraci lze provést v souborech `.env` nebo `config/database.php`. Více informací najdete v [dokumentaci Laravel frameworku](https://laravel.com/docs/5.6).
 
@@ -187,15 +196,11 @@ $ php artisan key:generate
 
 ### Zavolejte databázové migrations
 
-!> Při používání poskytované Docker konfigurace je nutné dbát na [komplikace přístupu k databázi](#komplikace-přístupu-k-databázi)!
-
 ```bash
 $ php artisan migrate
 ```
 
 ### Vytvořte administrátorský účet
-
-!> Při používání poskytované Docker konfigurace je nutné dbát na [komplikace přístupu k databázi](#komplikace-přístupu-k-databázi)!
 
 ```bash
 $ php artisan user:create <jmeno> <email> <heslo> -a
@@ -208,13 +213,9 @@ Možnost `-a` udělí vytvářenému uživateli administrátorská oprávnění.
 
 ### Nastavte oprávnění nově vytvořených souborů
 
-?> Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
-
 Vytvořením nového uživatele došlo k vytvoření souboru `storage/search/users.index`. Zajistěte, aby byl soubor čitelný a upravitelný webovým serverem.
 
 ### Nakonfigurujte a spusťte WebSocket server
-
-?> Používáte-li poskytovanou Docker konfiguraci, tento krok přeskočte.
 
 Nejprve nakonfigurujte proměnnou `WEBSOCKET_PORT`, která určuje, na kterém portu WebSocket server poběží. Soubor `.env` je jediné místo, kde je třeba tuto proměnnou nakonfigurovat (pokud nepoužíváte poskytovanou Docker konfiguraci a `docker-compose.yml`).
 
