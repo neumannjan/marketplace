@@ -27,7 +27,7 @@
   * _npm_
 * _Redis 3+_
 
-## Docker
+## Quick Installation Using Docker
 
 A [Docker](https://www.docker.com/) `docker-compose.yml` file is available to quickly provide all requirements and serve the application with only a few additional steps.
 
@@ -41,22 +41,28 @@ It handles the following:
 
 !> **Provided Docker setup is meant for local use only**. In order to modify it for production, please see `docker-compose.yml` and the `docker` directory, which contains custom Dockerfiles.
 
-### Usage
+### First Use
 
-Docker and `docker-compose` (newest version - recommended installation using `pip`) are required. Everything is then launched with a single command:
+Docker and `docker-compose` (newest version - recommended installation using `pip`) are required.
+
+The first step is to prepare the `.env` file:
 
 ```bash
-# If all Composer and NPM dependencies are already installed in the vendor and node_modules directories
-$ docker-compose up
-
-# Will also install all dependencies (required only once)
-$ INSTALL_DEPS=prod docker-compose up
-
-# Will also install all dependencies, including development dependencies (required only once)
-$ INSTALL_DEPS=dev docker-compose up
+$ cp .env.example .env
 ```
 
-After you have run this command, you may follow the [installation instructions](#installation-instructions) below.
+Next, run the `docker-compose` command (replace `prod` with `dev` to install development dependencies as well):
+
+```bash
+$ INSTALL_DEPS=prod MIGRATE_DB=true docker-compose up
+```
+
+Wait for all operations to finish. The log should stop writing new messages at a certain point.
+All dependencies will then have been installed and the server will have been launched.
+
+Now, user with administrator privileges has to be created.
+To learn how to do that, see [Database Access Caveat](#database-access-caveat) and
+[admin user creation](#create-an-admin-user).
 
 The application will then be available on this URL:
 ```
@@ -64,7 +70,6 @@ http://localhost:8080/
 ```
 
 To shut it down, execute the following:
-
 ```bash
 $ docker-compose down
 ```
@@ -92,7 +97,24 @@ You may then leave the container:
 $ exit
 ```
 
-## Installation Instructions
+### Usage
+
+Launch the server with the following command:
+```bash
+$ docker-compose up
+```
+
+The application will then be available on this URL:
+```
+http://localhost:8080/
+```
+
+To shut it down, execute the following:
+```bash
+$ docker-compose down
+```
+
+## Full Installation Instructions
 
 ?> Good knowledge of [Laravel](https://laravel.com/docs/5.6) is an advantage for those installing and maintaining the application.
   Instructions below contain, however, all necessary installation information.
@@ -105,21 +127,15 @@ Read [Laravel's documentation](https://laravel.com/docs/5.6/installation#configu
 
 ### Configure Your HTTP Server (Apache, Nginx, ...)
 
-?> If you are using provided Docker configuration, skip this step.
-
 Your web server's document / web root should be the `public` directory.
 
 ### Install Composer Production Dependencies
-
-?> If you are using provided Docker configuration, skip this step.
 
 ```bash
 $ composer install --no-dev
 ```
 
 ### Install NPM Dependencies
-
-?> If you are using provided Docker configuration, skip this step.
 
 ```bash
 $ npm install --production
@@ -146,13 +162,9 @@ APP_DEBUG=false
 
 ### Set Additional `.env` Variables
 
-?> If you are using provided Docker configuration, skip this step.
-
 Set the `APP_URL` variable appropriately.
 
 ### Configure Laravel's Queue Worker and Task Scheduling
-
-?> If you are using provided Docker configuration, skip this step.
 
 Read [Laravel's documentation](https://laravel.com/docs/5.6/scheduling#introduction) for more information about task scheduling.
 
@@ -166,8 +178,6 @@ $ php artisan queue:work --sleep=3 --tries=3
     If you do not want to use a queue (_not recommended_), change the `SCOUT_QUEUE` environment variable to `false` and the `QUEUE_DRIVER` environment variable to `sync`.
 
 ### Configure MySQL and Redis Connections
-
-?> If you are using provided Docker configuration, skip this step.
 
 Configuration may be done in `.env` or `config/database.php`. Details are in [Laravel's documentation](https://laravel.com/docs/5.6).
 
@@ -187,15 +197,11 @@ $ php artisan key:generate
 
 ### Run Database Migrations
 
-!> If you are using provided Docker configuration, the [database access caveat](#database-access-caveat) applies here!
-
 ```bash
 $ php artisan migrate
 ```
 
 ### Create an Admin User
-
-!> If you are using provided Docker configuration, the [database access caveat](#database-access-caveat) applies here!
 
 ```bash
 $ php artisan user:create <username> <email> <password> -a
@@ -208,13 +214,9 @@ The `-a` option gives the user admin privileges.
 
 ### Fix Newly Created File Permissions
 
-?> If you are using provided Docker configuration, skip this step.
-
 By creating a new user, the `storage/search/users.index` file has been created. Ensure that it is readable and writable by the web server.
 
 ### Configure and Launch the WebSocket Server
-
-?> If you are using provided Docker configuration, skip this step.
 
 First, configure the `WEBSOCKET_PORT` variable. It determines which port the WebSocket server will run on. `.env` is the only place where this value has to be set (unless you are using provided `docker-compose.yml`).
 

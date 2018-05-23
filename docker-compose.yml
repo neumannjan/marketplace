@@ -25,6 +25,7 @@ services:
       WEB_DOCUMENT_ROOT: "/app/public"
       APP_ROOT: "/app"
       INSTALL_DEPS: "${INSTALL_DEPS-none}"
+      MIGRATE_DB: "${MIGRATE_DB-false}"
   db:
     #image: mysql:5.7
     #image: mariadb:10.2
