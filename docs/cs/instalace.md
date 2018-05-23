@@ -60,7 +60,12 @@ $ INSTALL_DEPS=prod MIGRATE_DB=true docker-compose up
 Počkejte, než jsou všechny operace dokončeny. V určitou chvíli by se měly přestat vypisovat nové zprávy,
 což znamená, že všechny závislosti byly nainstalovány a server byl spuštěn.
 
-Nyní je třeba vytvořit uživatele s administrátorskými právy. Jak to udělat se dozvíte po přečtení
+Nyní je třeba vytvořit unikátní klíč aplikace:
+```bash
+$ php artisan key:generate
+```
+
+Na závěr vytvořte uživatele s administrátorskými právy. Jak to udělat se dozvíte po přečtení
 o [komplikacích přístupu k databázi](#komplikace-přístupu-k-databázi) a o [vytváření uživatelů](#vytvořte-administrátorský-účet).
 
 Aplikace bude následně k dispozici na této adrese:

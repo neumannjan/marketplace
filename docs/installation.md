@@ -45,13 +45,13 @@ It handles the following:
 
 Docker and `docker-compose` (newest version - recommended installation using `pip`) are required.
 
-The first step is to prepare the `.env` file:
+Firstly, prepare the `.env` file:
 
 ```bash
 $ cp .env.example .env
 ```
 
-Next, run the `docker-compose` command (replace `prod` with `dev` to install development dependencies as well):
+Secondly, run the `docker-compose` command (replace `prod` with `dev` to install development dependencies as well):
 
 ```bash
 $ INSTALL_DEPS=prod MIGRATE_DB=true docker-compose up
@@ -60,7 +60,12 @@ $ INSTALL_DEPS=prod MIGRATE_DB=true docker-compose up
 Wait for all operations to finish. The log should stop writing new messages at a certain point.
 All dependencies will then have been installed and the server will have been launched.
 
-Now, user with administrator privileges has to be created.
+After that, a unique app key has to be generated:
+```bash
+$ php artisan key:generate
+```
+
+Lastly, create a user with administrator privileges.
 To learn how to do that, see [Database Access Caveat](#database-access-caveat) and
 [admin user creation](#create-an-admin-user).
 
